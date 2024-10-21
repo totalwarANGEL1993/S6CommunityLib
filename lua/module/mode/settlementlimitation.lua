@@ -227,7 +227,7 @@ function Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID)
             local MoneyCost = WallCost;
 
             if WallCost > 0 then
-                if GetPlayerResources(Goods.G_Gold, WallCost) < WallCost then
+                if GetPlayerResources(Goods.G_Gold, _PlayerID) < WallCost then
                     local WallList = {Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)};
                     local Deteriation = Lib.SettlementLimitation.Shared.Upkeep.WallDeteriation;
                     for _,ID in pairs(WallList) do
