@@ -26,13 +26,17 @@ Lib.SettlementSurvival.Global = {
         IsActive = false,
         AffectAI = false,
     },
-    Enemy = {
+    Misc = {
         PredatorBlockClaim = false,
         BanditsBlockClaim = false,
+        ClothesForOuterRim = false,
     },
     SuspendedSettlers = {},
 };
 Lib.SettlementSurvival.Local  = {
+    Misc = {
+        ClothesForOuterRim = false,
+    },
     SuspendedSettlers = {},
 };
 Lib.SettlementSurvival.Shared = {
@@ -172,7 +176,7 @@ end
 function Lib.SettlementSurvival.Global:InitLimitations()
     -- Check predators in territory
     SettlementSurvival_Global_ClaimTerritoryPredatorRule = function(_PlayerID, _Type, _X, _Y)
-        if Lib.SettlementSurvival.Global.Enemy.PredatorBlockClaim then
+        if Lib.SettlementSurvival.Global.Misc.PredatorBlockClaim then
             if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Outpost) == 1 then
                 local TerritoryID1 = Logic.GetTerritoryAtPosition(_X, _Y);
                 for _, SpawnerType in pairs(GetPredatorSpawnerTypes()) do
@@ -195,7 +199,7 @@ function Lib.SettlementSurvival.Global:InitLimitations()
 
     -- Check bandits in territory
     SettlementSurvival_Global_ClaimTerritoryBanditRule = function(_PlayerID, _Type, _X, _Y)
-        if Lib.SettlementSurvival.Global.Enemy.BanditsBlockClaim then
+        if Lib.SettlementSurvival.Global.Misc.BanditsBlockClaim then
             if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Outpost) == 1 then
                 local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
                 for PlayerID = 1, 8 do
@@ -734,9 +738,12 @@ function Lib.SettlementSurvival.Global:OverwriteNeeds()
         for Need, _ in pairs (PlayerActiveNeeds[_PlayerID]) do
             if Logic.IsEntityInCategory(_EntityID, EntityCategories.OuterRimBuilding) == 1 then
                 if Need == Needs.Nutrition
-                or Need == Needs.Clothes
                 or Need == Needs.Medicine then
                     Logic.SetNeedActive(_EntityID, Need, true);
+                end
+                if Need == Needs.Clothes then
+                    local Active = Lib.SettlementSurvival.Global.Misc.ClothesForOuterRim;
+                    Logic.SetNeedActive(_EntityID, Need, Active == true);
                 end
             end
             if Logic.IsEntityInCategory(_EntityID, EntityCategories.CityBuilding) == 1 then
@@ -750,13 +757,20 @@ function Lib.SettlementSurvival.Global:OverwriteNeeds()
         if _NeedTable == nil then
             return;
         end
+
+        local OuterRimNeeds = {
+            [Needs.Nutrition] = true,
+            [Needs.Medicine] = true,
+        };
+        if Lib.SettlementSurvival.Global.Misc.ClothesForOuterRim then
+            OuterRimNeeds[Needs.Clothes] = true;
+        end
+
         for k =1, #_NeedTable do
             local Need = _NeedTable[k];
             PlayerActiveNeeds[_PlayerID][Need] = true;
             local Buildings = {Logic.GetPlayerEntitiesInCategory(_PlayerID,EntityCategories.CityBuilding)};
-            if Need == Needs.Nutrition
-            or Need == Needs.Clothes
-            or Need == Needs.Medicine then
+            if OuterRimNeeds[Need] then
                 local OuterRimBuildings = {Logic.GetPlayerEntitiesInCategory(_PlayerID,EntityCategories.OuterRimBuilding)};
                 for j=1, #OuterRimBuildings do
                     local BuildingID = OuterRimBuildings[j];
@@ -768,6 +782,21 @@ function Lib.SettlementSurvival.Global:OverwriteNeeds()
                 Logic.SetNeedActive(BuildingID, Need, true);
             end
             Logic.ExecuteInLuaLocalState("GUI_BuildingInfo.UpdateActiveNeedsGUI()");
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:UpdateClothesStateForOuterRim()
+    for PlayerID = 1, 8 do
+        local OuterRimBuildings = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.OuterRimBuilding)};
+        for i=1, #OuterRimBuildings do
+            local BuildingID = OuterRimBuildings[i];
+            if  Lib.SettlementSurvival.Global.Misc.ClothesForOuterRim
+            and PlayerActiveNeeds[PlayerID][Needs.Clothes] then
+                Logic.SetNeedActive(BuildingID, Needs.Clothes, true);
+            else
+                Logic.SetNeedActive(BuildingID, Needs.Clothes, false);
+            end
         end
     end
 end
@@ -973,7 +1002,11 @@ end
 function Lib.SettlementSurvival.Local:OnBuildingSelected()
     local EntityID = GUI.GetSelectedEntity();
     if Logic.IsEntityInCategory(EntityID, EntityCategories.OuterRimBuilding) == 1 then
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 1);
+        if self.Misc.ClothesForOuterRim then
+            XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 1);
+        else
+            XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 0);
+        end
     end
 end
 

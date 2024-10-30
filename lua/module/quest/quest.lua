@@ -303,7 +303,6 @@ end
 -- lock the game if fully relying on this trigger without thinking! This is
 -- only here to ensure functionality in case of errors and NOT to support the
 -- sloth of mappers!
--- Also this technically is a bugfix but can not be put into the kernel.
 function Lib.Quest.Global:GetFreeSpaceInlineTrigger()
     return {
         Triggers.Custom2, {
@@ -326,19 +325,8 @@ end
 -- -------------------------------------------------------------------------- --
 
 function Lib.Quest.Global:OverrideKernelQuestApi()
-    FailQuest_Orig_ModuleQuest = FailQuest;
-    FailQuest = function(_QuestName, _NoMessage)
-        -- Fail segments of quest fist
-        if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
-            for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
-                    FailQuest_Orig_ModuleQuest(v.Name, true);
-                end
-            end
-        end
-        -- Proceed with failing
-        FailQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
-    end
+    -- FIX: FailQuest wpn't be overwritten, because failing all segments
+    -- automatically might break quests.
 
     RestartQuest_Orig_ModuleQuest = RestartQuest;
     RestartQuest = function(_QuestName, _NoMessage)
@@ -355,19 +343,8 @@ function Lib.Quest.Global:OverrideKernelQuestApi()
         RestartQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
     end
 
-    StartQuest_Orig_ModuleQuest = StartQuest;
-    StartQuest = function(_QuestName, _NoMessage)
-        -- Start segments of quest first
-        if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
-            for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
-                    StartQuest_Orig_ModuleQuest(v.Name, true);
-                end
-            end
-        end
-        -- Proceed with starting
-        StartQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
-    end
+    -- FIX: StartQuest won't be overwritten, because all segments are
+    -- triggered automatically if no other triggers are present.
 
     StopQuest_Orig_ModuleQuest = StopQuest;
     StopQuest = function(_QuestName, _NoMessage)
@@ -383,19 +360,8 @@ function Lib.Quest.Global:OverrideKernelQuestApi()
         StopQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
     end
 
-    WinQuest_Orig_ModuleQuest = WinQuest;
-    WinQuest = function(_QuestName, _NoMessage)
-        -- Stop segments of quest first
-        if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
-            for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
-                    StopQuest_Orig_ModuleQuest(v.Name, true);
-                end
-            end
-        end
-        -- Proceed with winning
-        WinQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
-    end
+    -- FIX: WinQuest wpn't be overwritten, because winning all segments
+    -- automatically might break quests.
 end
 
 -- -------------------------------------------------------------------------- --

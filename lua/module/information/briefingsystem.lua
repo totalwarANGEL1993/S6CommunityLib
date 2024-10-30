@@ -1336,6 +1336,8 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     Camera.SwitchCameraBehaviour(5);
 
     InitializeFader();
+    -- FIX: Push text widgets over the fader
+    XGUIEng.PushPage("/InGame/ThroneRoom/Main/MissionBriefing", false);
     g_Fade.To = 0;
     SetFaderAlpha(0);
 
@@ -1386,6 +1388,7 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
         XGUIEng.ShowWidget(self.ParallaxWidgets[i][2], 0);
         XGUIEng.PopPage();
     end
+    XGUIEng.PopPage();
     XGUIEng.PopPage();
     XGUIEng.PopPage();
     XGUIEng.PopPage();
