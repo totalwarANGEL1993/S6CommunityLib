@@ -125,7 +125,7 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
                 local Current = 0;
                 Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.CityBuilding, 0)};
                 Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.OuterRimBuilding, 0)};
-                Current = Current - ((OutpostID ~= 0 and 1) or 0);
+                -- Current = Current - ((OutpostID ~= 0 and 1) or 0);
                 if (Limit or -1) ~= -1 then
                     return Current < ((Limit > 0 and Limit + Bonus) or Limit);
                 end

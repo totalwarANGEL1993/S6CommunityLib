@@ -6,7 +6,10 @@ Lib.UITools.Widget = {
 };
 
 function Lib.UITools.Widget:DisplayInterfaceButton(_Widget, _Hide)
-    self.HiddenWidgets[_Widget] = _Hide == true;
+    self.HiddenWidgets[_Widget] = nil;
+    if _Hide == true then
+        self.HiddenWidgets[_Widget] = true;
+    end
     XGUIEng.ShowWidget(_Widget, (_Hide == true and 0) or 1);
 end
 

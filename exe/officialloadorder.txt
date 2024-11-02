@@ -2,8 +2,6 @@ comfort/copytable
 comfort/getcategoriesofentity
 comfort/getdelayedplayers
 comfort/getplayeratslot
-comfort/getplayername
-comfort/setplayername
 comfort/getsoldiersofgroup
 comfort/islocalscript
 comfort/keyof

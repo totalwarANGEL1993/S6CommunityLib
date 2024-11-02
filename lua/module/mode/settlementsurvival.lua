@@ -75,6 +75,7 @@ Lib.SettlementSurvival.Shared = {
 };
 
 Lib.Require("comfort/GetPredatorSpawnerTypes");
+Lib.Require("comfort/GetHealth");
 Lib.Require("comfort/SetHealth");
 Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
@@ -349,10 +350,11 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
                     local AnyIgnited = false;
                     for i= 1, #BuildingList do
                         if  Logic.IsConstructionComplete(BuildingList[i]) == 1
+                        and GetHealth(BuildingList[i]) >= 100
                         and not Logic.IsBurning(BuildingList[i]) then
                             local IgnitionChance = Lib.SettlementSurvival.Shared.HotWeather.IgnitionChance;
                             if math.random(1, 100) <= IgnitionChance then
-                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 50);
+                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 15);
                                 AnyIgnited = true;
                             end
                         end
