@@ -447,6 +447,23 @@ function Lib.Core.Local:InitLoadscreenHandler()
     end
 end
 
+function Lib.Core.Local:Preload_ViewWholeMap()
+    local WorldX, WorldY = Logic.WorldGetSize();
+    Display.SetFarClipPlaneMinAndMax(0, 0);
+    Camera.SwitchCameraBehaviour(0);
+    Camera.RTS_ToggleMapMode(1);
+    Camera.RTS_SetMapModeFOV(90);
+    Camera.RTS_SetMapModeZoomDistance(100000);
+    Camera.RTS_SetMapModeZoomAngle(90);
+    Camera.RTS_SetLookAtPosition(WorldX * 0.5, WorldY * 0.5);
+    Display.SetRenderFogOfWar(0);
+end
+
+function Lib.Core.Local:Preload_ResetView()
+    Camera.RTS_ToggleMapMode(0);
+    Display.SetRenderFogOfWar(1);
+end
+
 -- -------------------------------------------------------------------------- --
 
 function PrepareLibrary()

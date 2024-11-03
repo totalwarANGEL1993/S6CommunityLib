@@ -20,6 +20,7 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 --- * `EnableSky`               - Display the sky during the briefing                   
 --- * `EnableFoW`               - Displays the fog of war during the briefing           
 --- * `EnableBorderPins`        - Displays the border pins during the briefing          
+--- * `PreloadAssets`           - Allows to use a wide vision area in briefings
 ---
 --- *-> Example #1*
 ---
@@ -244,6 +245,7 @@ API.AddBriefingPages = AddBriefingPages;
 --- * `BarOpacity`      - Opacity of bars
 --- * `BigBars`         - Use big bars
 --- * `FlyTo`           - Table with second set of camera configuration were camera flys to
+--- * `Performance`     - (Optional) Lower graphic settings for this page
 --- * `MC`              - Table with choices to branch of in dialogs
 ---
 --- *-> Example #1*
@@ -356,13 +358,13 @@ end
 --- #### Settings
 --- The function expects the following parameters:
 --- 
---- * `Name`           - (Optional) Name of page
---- * `Title`          - Displayed page title
---- * `Text`           - Displayed page text
---- * `DialogCamera`   - Use closeup camera
---- * `Position`       - (Optional) Scriptname of focused entity
---- * `Action`         - (Optional) Action when page is shown
---- * `EnableSkipping` - (Optional) Allow/Forbid skipping page
+--- * `Name`            - (Optional) Name of page
+--- * `Title`           - Displayed page title
+--- * `Text`            - Displayed page text
+--- * `DialogCamera`    - Use closeup camera
+--- * `Position`        - (Optional) Scriptname of focused entity
+--- * `Action`          - (Optional) Action when page is shown
+--- * `DisableSkipping` - (Optional) Allow/Forbid skipping page
 ---
 --- #### Examples
 ---

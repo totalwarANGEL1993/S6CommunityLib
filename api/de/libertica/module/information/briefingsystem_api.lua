@@ -19,7 +19,8 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 --- * `EnableGlobalImmortality` - Während Einleitungen sind alle Entitäten unverwundbar        
 --- * `EnableSky`               - Zeigt den Himmel während der Einleitung an                   
 --- * `EnableFoW`               - Zeigt den Nebel des Krieges während der Einleitung an           
---- * `EnableBorderPins`        - Zeigt die Randnadeln während der Einleitung an          
+--- * `EnableBorderPins`        - Zeigt die Randnadeln während der Einleitung an     
+--- * `PreloadAssets`           - Erlaubt weites Sichtfeld in Briefings     
 ---
 --- *-> Beispiel #1*
 ---
@@ -243,6 +244,7 @@ API.AddBriefingPages = AddBriefingPages;
 --- * `BarOpacity`      - Deckkraft der Balken
 --- * `BigBars`         - Verwende große Balken
 --- * `FlyTo`           - Tabelle mit zweitem Satz von Kamerakonfigurationen, wobei die Kamera zufliegt
+--- * `Performance`     - (Optional) Grafiksettings für diese Seite herabsetzen
 --- * `MC`              - Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
 ---
 --- *-> Beispiel #1*
@@ -354,13 +356,13 @@ end
 --- #### Einstellungen
 --- Die Funktion erwartet die folgenden Parameter:
 --- 
---- * `Name`           - (Optional) Name der Seite
---- * `Title`          - Angezeigter Seitentitel
---- * `Text`           - Angezeigter Seitentext
---- * `DialogCamera`   - Verwendung der Nahaufnahmekamera
---- * `Position`       - (Optional) Skriptname der fokussierten Entität
---- * `Action`         - (Optional) Aktion, wenn die Seite angezeigt wird
---- * `EnableSkipping` - (Optional) Erlauben/Verbieten des Überspringens der Seite
+--- * `Name`            - (Optional) Name der Seite
+--- * `Title`           - Angezeigter Seitentitel
+--- * `Text`            - Angezeigter Seitentext
+--- * `DialogCamera`    - Verwendung der Nahaufnahmekamera
+--- * `Position`        - (Optional) Skriptname der fokussierten Entität
+--- * `Action`          - (Optional) Aktion, wenn die Seite angezeigt wird
+--- * `DisableSkipping` - (Optional) Erlauben/Verbieten des Überspringens der Seite
 ---
 --- #### Beispiele
 ---
