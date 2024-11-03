@@ -187,7 +187,7 @@ API.IsBriefingActive = IsBriefingActive;
 
 --- Creates a point from a position.
 --- @param _Entity any      Target entity
---- @param _ZOffset integer Z-Offset
+--- @param _ZOffset integer Z-Offset (< 0 -> Z overwrite)
 --- @return number X X-Koordinate
 --- @return number Y Y-Koordinate
 --- @return number Z Z-Koordinate
@@ -197,9 +197,9 @@ end
 
 --- Creates an vector from 2 positions.
 --- @param _Entity1 any      Target position entity
---- @param _ZOffset1 integer Z-Offset of position
+--- @param _ZOffset1 integer Z-Offset of position (< 0 -> Z overwrite)
 --- @param _Entity2 any      Target lookat entity
---- @param _ZOffset2 integer Z-Offset of lookat
+--- @param _ZOffset2 integer Z-Offset of lookat (< 0 -> Z overwrite)
 --- @return number X1        X-Coordinate Position
 --- @return number Y1        Y-Coordinate Position
 --- @return number Z1        Z-Coordinate Position

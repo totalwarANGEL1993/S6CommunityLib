@@ -128,14 +128,14 @@ function Lib.BriefingSystem.Global:BriefingExecutionController()
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingGetPage(_Briefing)
-    _Briefing.GetPage = function(self, _NameOrID)
+    _Briefing.GetPage = _Briefing.GetPage or function(self, _NameOrID)
         local ID = Lib.BriefingSystem.Global:GetPageIDByName(_Briefing.PlayerID, _NameOrID);
         return Lib.BriefingSystem.Global.Briefing[_Briefing.PlayerID][ID];
     end
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
-    _Briefing.AddPage = function(self, _Page)
+    _Briefing.AddPage = _Briefing.AddPage or function(self, _Page)
         -- Briefing length
         self.Length = (self.Length or 0) +1;
         -- Animations
@@ -236,7 +236,7 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddMCPage(_Briefing)
-    _Briefing.AddMCPage = function(self, _Page)
+    _Briefing.AddMCPage = _Briefing.AddMCPage or function(self, _Page)
         -- Create base page
         local Page = self:AddPage(_Page);
 
@@ -264,7 +264,7 @@ function Lib.BriefingSystem.Global:CreateBriefingAddMCPage(_Briefing)
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddRedirect(_Briefing)
-    _Briefing.AddRedirect = function(self, _Target)
+    _Briefing.AddRedirect = _Briefing.AddRedirect or function(self, _Target)
         -- Dialog length
         self.Length = (self.Length or 0) +1;
         -- Return page
@@ -336,7 +336,7 @@ function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
                     Entry.Interpolation = v[i].Interpolation;
                     Entry.Modulation = v[i].Modulation or ((#v[i] >= 4 and 1.25) or 1);
                     Entry.Duration = v[i][1] or (2 * 60);
-                    if v[i][4] and type(v[i][4]) ~= "table" then
+                    if v[i][2] and type(v[i][4]) ~= "table" then
                         Entry.Start = {
                             Position = (type(v[i][2]) ~= "table" and {v[i][2],0}) or v[i][2],
                             Rotation = v[i][3] or CONST_BRIEFING.CAMERA_ROTATIONDEFAULT,
@@ -815,8 +815,7 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
                     u0,v0,u1,v1,Alpha = unpack(Data.AnimData);
                 else
                     if #Data.AnimData >= 4 then
-                        local FirstFrame = math.floor(Factor * (FrameCount - 3)) + 1;
-                        FirstFrame = math.min(FirstFrame, FrameCount - 3);
+                        local FirstFrame = math.max(1, math.floor(Factor * (FrameCount - 3)));
                         u0,v0,u1,v1,Alpha = self:CubicParallaxInterpolation(
                             Data.AnimData[FirstFrame],
                             Data.AnimData[FirstFrame +1],
@@ -825,7 +824,7 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
                             Factor
                         );
                     elseif #Data.AnimData >= 2 then
-                        local FirstFrame = math.floor(Factor * (FrameCount - 1)) + 1;
+                        local FirstFrame = math.max(1, math.floor(Factor * (FrameCount - 1)));
                         FirstFrame = math.min(FirstFrame, FrameCount - 1);
                         u0,v0,u1,v1,Alpha = self:LinearParallaxInterpolation(
                             Data.AnimData[FirstFrame],
@@ -904,7 +903,7 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
             if #CurrentAnimation.AnimFrames >= 4 then
                 local Factor = self:GetInterpolationFactor(_PlayerID);
                 local FrameCount = #CurrentAnimation.AnimFrames;
-                local FirstFrame = math.floor(Factor * (FrameCount - 3)) + 1;
+                local FirstFrame = math.max(1, math.floor(Factor * (FrameCount - 3)));
                 FirstFrame = math.min(FirstFrame, #CurrentAnimation.AnimFrames - 3);
                 PX, PY, PZ, LX, LY, LZ = self:CubicInterpolation(
                     CurrentAnimation.AnimFrames[FirstFrame],
@@ -916,7 +915,7 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
             elseif #CurrentAnimation.AnimFrames >= 2 then
                 local Factor = self:GetInterpolationFactor(_PlayerID);
                 local FrameCount = #CurrentAnimation.AnimFrames;
-                local FirstFrame = math.floor(Factor * (FrameCount - 1)) + 1;
+                local FirstFrame = math.max(1, math.floor(Factor * (FrameCount - 1)));
                 FirstFrame = math.min(FirstFrame, #CurrentAnimation.AnimFrames - 1);
                 PX, PY, PZ, LX, LY, LZ = self:LinearInterpolation(
                     CurrentAnimation.AnimFrames[FirstFrame],
@@ -1098,18 +1097,26 @@ function Lib.BriefingSystem.Local:LinearParallaxInterpolation(_UV1, _UV2, _Facto
     return UV.U0, UV.V0, UV.U1, UV.V1, UV.A;
 end
 
+-- function Lib.BriefingSystem.Local:CubicInterpolation(_Pos1, _Pos2, _Pos3, _Pos4, _Factor)
+--     local PX = (1 - _Factor)^3 * _Pos1[1] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[1] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[1] + _Factor^3 * _Pos4[1];
+--     local PY = (1 - _Factor)^3 * _Pos1[2] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[2] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[2] + _Factor^3 * _Pos4[2];
+--     local PZ = (1 - _Factor)^3 * _Pos1[3] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[3] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[3] + _Factor^3 * _Pos4[3];
+--     local LX = (1 - _Factor)^3 * _Pos1[4] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[4] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[4] + _Factor^3 * _Pos4[4];
+--     local LY = (1 - _Factor)^3 * _Pos1[5] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[5] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[5] + _Factor^3 * _Pos4[5];
+--     local LZ = (1 - _Factor)^3 * _Pos1[6] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[6] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[6] + _Factor^3 * _Pos4[6];
+--     return PX, PY, PZ, LX, LY, LZ;
+-- end
+
 function Lib.BriefingSystem.Local:CubicInterpolation(_Pos1, _Pos2, _Pos3, _Pos4, _Factor)
-    local Position = {
-        PX = 0.5 * (2 * _Pos2[1] + (_Pos3[1] - _Pos1[1]) * _Factor + (2 * _Pos1[1] - 5 * _Pos2[1] + 4 * _Pos3[1] - _Pos4[1]) * (_Factor^2) + (3 * (_Pos2[1] - _Pos3[1]) + _Pos4[1] - _Pos1[1]) * (_Factor^3)),
-        PY = 0.5 * (2 * _Pos2[2] + (_Pos3[2] - _Pos1[2]) * _Factor + (2 * _Pos1[2] - 5 * _Pos2[2] + 4 * _Pos3[2] - _Pos4[2]) * (_Factor^2) + (3 * (_Pos2[2] - _Pos3[2]) + _Pos4[2] - _Pos1[2]) * (_Factor^3)),
-        PZ = 0.5 * (2 * _Pos2[3] + (_Pos3[3] - _Pos1[3]) * _Factor + (2 * _Pos1[3] - 5 * _Pos2[3] + 4 * _Pos3[3] - _Pos4[3]) * (_Factor^2) + (3 * (_Pos2[3] - _Pos3[3]) + _Pos4[3] - _Pos1[3]) * (_Factor^3))
-    }
-    local LookAt = {
-        LX = 0.5 * (2 * _Pos2[1] + (_Pos3[4] - _Pos1[4]) * _Factor + (2 * _Pos1[4] - 5 * _Pos2[4] + 4 * _Pos3[4] - _Pos4[4]) * (_Factor^2) + (3 * (_Pos2[4] - _Pos3[4]) + _Pos4[4] - _Pos1[4]) * (_Factor^3)),
-        LY = 0.5 * (2 * _Pos2[5] + (_Pos3[5] - _Pos1[5]) * _Factor + (2 * _Pos1[5] - 5 * _Pos2[5] + 4 * _Pos3[5] - _Pos4[5]) * (_Factor^2) + (3 * (_Pos2[5] - _Pos3[5]) + _Pos4[5] - _Pos1[5]) * (_Factor^3)),
-        LZ = 0.5 * (2 * _Pos2[6] + (_Pos3[6] - _Pos1[6]) * _Factor + (2 * _Pos1[6] - 5 * _Pos2[6] + 4 * _Pos3[6] - _Pos4[6]) * (_Factor^2) + (3 * (_Pos2[6] - _Pos3[6]) + _Pos4[6] - _Pos1[6]) * (_Factor^3))
-    }
-    return Position.PX, Position.PY, Position.PZ, LookAt.LX, LookAt.LY, LookAt.LZ;
+    local tangent1 = (_Pos2[1] - _Pos1[1]) * 0.5;
+    local tangent4 = (_Pos4[1] - _Pos3[1]) * 0.5;
+    local PX = (1 - _Factor)^3 * _Pos1[1] + 3 * (1 - _Factor)^2 * _Factor * (_Pos1[1] + tangent1) + 3 * (1 - _Factor) * _Factor^2 * (_Pos4[1] - tangent4) + _Factor^3 * _Pos4[1];
+    local PY = (1 - _Factor)^3 * _Pos1[2] + 3 * (1 - _Factor)^2 * _Factor * (_Pos1[2] + tangent1) + 3 * (1 - _Factor) * _Factor^2 * (_Pos4[2] - tangent4) + _Factor^3 * _Pos4[2];
+    local PZ = (1 - _Factor)^3 * _Pos1[3] + 3 * (1 - _Factor)^2 * _Factor * (_Pos1[3] + tangent1) + 3 * (1 - _Factor) * _Factor^2 * (_Pos4[3] - tangent4) + _Factor^3 * _Pos4[3];
+    local LX = (1 - _Factor)^3 * _Pos1[4] + 3 * (1 - _Factor)^2 * _Factor * (_Pos1[4] + tangent1) + 3 * (1 - _Factor) * _Factor^2 * (_Pos4[4] - tangent4) + _Factor^3 * _Pos4[4];
+    local LY = (1 - _Factor)^3 * _Pos1[5] + 3 * (1 - _Factor)^2 * _Factor * (_Pos1[5] + tangent1) + 3 * (1 - _Factor) * _Factor^2 * (_Pos4[5] - tangent4) + _Factor^3 * _Pos4[5];
+    local LZ = (1 - _Factor)^3 * _Pos1[6] + 3 * (1 - _Factor)^2 * _Factor * (_Pos1[6] + tangent1) + 3 * (1 - _Factor) * _Factor^2 * (_Pos4[6] - tangent4) + _Factor^3 * _Pos4[6];
+    return PX, PY, PZ, LX, LY, LZ;
 end
 
 function Lib.BriefingSystem.Local:CubicParallaxInterpolation(_UV1, _UV2, _UV3, _UV4, _Factor)
