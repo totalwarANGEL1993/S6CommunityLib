@@ -45,7 +45,7 @@ Lib.SettlementSurvival.Local  = {
 };
 Lib.SettlementSurvival.Shared = {
     AnimalPlague = {
-        InfectionChance = 6,
+        InfectionChance = 4,
         InfectionTimer = 60,
         DeathChance = 12,
         DeathTimer = 30,
@@ -62,15 +62,15 @@ Lib.SettlementSurvival.Shared = {
         Temperature = 30,
     },
     Famine = {
-        DeathChance = 6,
+        DeathChance = 4,
         DeathTimer = 30,
     },
     Negligence = {
-        InfectionChance = 6,
+        InfectionChance = 4,
         InfectionTimer = 90,
     },
     Plague = {
-        DeathChance = 12,
+        DeathChance = 9,
         DeathTimer = 30,
     },
     SuspendedSettlers = {
@@ -364,7 +364,7 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
                         and not Logic.IsBurning(BuildingList[i]) then
                             local IgnitionChance = Lib.SettlementSurvival.Shared.HotWeather.IgnitionChance;
                             if math.random(1, 100) <= IgnitionChance then
-                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 15);
+                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 10);
                                 AnyIgnited = true;
                             end
                         end

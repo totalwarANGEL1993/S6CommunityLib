@@ -276,5 +276,9 @@ function Lib.Core.LuaExtension:OverrideMath()
     math.qmod = function(a, b)
         return a - math.floor(a/b)*b;
     end
+
+    math.factorial = function(n)
+        return (n == 0 and 1) or n * math.factorial(n - 1);
+    end
 end
 

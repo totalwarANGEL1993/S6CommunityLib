@@ -276,9 +276,11 @@ function Lib.Warehouse.Global:CalculateInflation(_PlayerID, _GoodType)
 end
 
 function Lib.Warehouse.Global:PerformTrade(_PlayerID, _ScriptName, _Inflation, _OfferIndex, _OfferGood, _GoodAmount, _PaymentGood, _BasePrice)
+    local BuildingID = GetID(_ScriptName.. "_Post");
+    local Amount = _GoodAmount or 1;
     -- Send good type
     if KeyOf(_OfferGood, Goods) ~= nil then
-        SendCart(_ScriptName.. "_Post", _PlayerID, _OfferGood, _GoodAmount);
+        SendCart(_ScriptName.. "_Post", _PlayerID, _OfferGood, Amount);
     -- Create units
     elseif KeyOf(_OfferGood, Entities) ~= nil then
         if Logic.IsEntityTypeInCategory(_OfferGood, EntityCategories.Military) == 1 then
@@ -287,8 +289,13 @@ function Lib.Warehouse.Global:PerformTrade(_PlayerID, _ScriptName, _Inflation, _
             local ID  = Logic.CreateBattalionOnUnblockedLand(_OfferGood, x, y, Orientation, _PlayerID);
             Logic.MoveSettler(ID, x, y, -1);
         else
-            local x,y = Logic.GetBuildingApproachPosition(GetID(_ScriptName.. "_Post"));
-            Logic.HireEntertainer(_OfferGood, _PlayerID, x, y);
+            if Logic.IsEntityTypeInCategory(_OfferGood, EntityCategories.CattlePasture) == 1
+            or Logic.IsEntityTypeInCategory(_OfferGood, EntityCategories.SheepPasture) == 1 then
+                Amount = 5;
+            end
+            for i= 1, Amount do
+                ExecuteLocal([[GUI.CreateEntityAtBuilding(%d, %d, 0)]], BuildingID, _OfferGood);
+            end
         end
     end
     -- Pay offer
@@ -612,6 +619,9 @@ function Lib.Warehouse.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _En
         if Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.Military) == 1 then
             OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[4]), OfferName, Quantity);
         elseif EngineType or Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SiegeEngine) == 1 then
+            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[5]), OfferName, Quantity);
+        elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.CattlePasture) == 1
+            or Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SheepPasture) == 1 then
             OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[5]), OfferName, Quantity);
         else
             OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[3]), OfferName);

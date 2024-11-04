@@ -24,6 +24,32 @@ Lib.Require("module/balancing/Damage");
 Lib.Require("module/quest/Quest");
 Lib.Require("module/mode/SettlementLimitation");
 Lib.Require("module/entity/EntitySearch");
+Lib.Require("module/trade/Warehouse");
+
+-- ========================================================================== --
+
+function TestWarehouses()
+    CreateWarehouse {
+        ScriptName = "TP1",
+        Costs      = {Goods.G_Gold, 150, Goods.G_Wood, 8},
+        Offers     = {
+            {Amount      = 2,
+             GoodType    = Goods.G_Milk,
+             GoodAmount  = 12,
+             PaymentType = Goods.G_Grain,
+             BasePrice   = 12,},
+            {Amount      = 2,
+             GoodType    = Goods.G_Cheese,
+             GoodAmount  = 6,
+             PaymentType = Goods.G_Gold,
+             BasePrice   = 120,},
+            {Amount      = 2,
+             GoodType    = Entities.A_X_Cow01,
+             PaymentType = Goods.G_Gold,
+             BasePrice   = 300,},
+        },
+    }
+end
 
 -- ========================================================================== --
 

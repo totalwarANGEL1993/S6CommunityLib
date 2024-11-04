@@ -30,8 +30,9 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 --- bei Verwendung der Notation. Um eine Animation zu erstellen, darf die Seite keine
 --- Position haben. Andernfalls werden Standardwerte verwendet.
 ---
---- Die Animationsrahmen sollten als Tabelle bereitgestellt werden. Rahmen werden linear interpoliert,
---- wenn es mindestens 2 Einträge gibt, und kubisch interpoliert, wenn es mindestens 4 Einträge gibt.
+--- Die Frames der Animation sollten als Tabelle bereitgestellt werden. Der Weg
+--- der Kamera wird über Bézirkurven bestimmt. Das bedeutet 2 Frames werden zu
+--- einer geraden, 3 erzeugen eine Parabel und ab 4 Frames entsteht eine Kurve.
 ---
 --- *-> Beispiel #2*
 ---
@@ -98,8 +99,8 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 --- Briefing.PageAnimation = {
 ---     ["Seite1"] = {
 ---         Clear = true,
----         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
----              {GetFrameVector("pos3", 500, "pos4", 1000)}},
+---         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
+---              {GetFrameVector("pos3", 500, "pos4", -3000)}},
 ---     },
 --- };
 --- ```
@@ -109,10 +110,10 @@ Lib.BriefingSystem = Lib.BriefingSystem or {};
 --- Briefing.PageAnimation = {
 ---     ["Seite1"] = {
 ---         Repeat = true,
----         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
----              {GetFrameVector("pos3", 500, "pos4", 1000)},
----              {GetFrameVector("pos7", 500, "pos8", 1000)},
----              {GetFrameVector("pos5", 500, "pos6", 1000)}},
+---         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
+---              {GetFrameVector("pos3", 500, "pos4", -3000)},
+---              {GetFrameVector("pos7", 500, "pos8", -3000)},
+---              {GetFrameVector("pos5", 500, "pos6", -3000)}},
 ---     },
 --- };
 --- ```

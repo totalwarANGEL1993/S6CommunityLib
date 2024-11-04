@@ -333,7 +333,6 @@ function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
                 for i= 1, #v, 1 do
                     local Entry = {};
                     Entry.Interpolation = v[i].Interpolation;
-                    Entry.Modulation = v[i].Modulation or ((#v[i] >= 4 and 1.25) or 1);
                     Entry.Duration = v[i][1] or (2 * 60);
                     if v[i][2] and type(v[i][4]) ~= "table" then
                         Entry.Start = {
@@ -377,7 +376,6 @@ function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
                         local Entry = {};
                         Entry.Image = v[i][1];
                         Entry.Interpolation = v[i].Interpolation;
-                        Entry.Modulation = v[i].Modulation or 1;
                         Entry.Duration = v[i][2] or (2 * 60);
                         Entry.AnimData = {};
                         for j= 3, #v[i] do
@@ -847,8 +845,6 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
             end
             if type(Data.Modulation) == "function" then
                 Factor = Data:Modulation(CurrentTime, Factor);
-            elseif type(Data.Modulation) == "number" then
-                Factor = self:ModulateInterpolationFactor(Factor, Data.Modulation);
             end
             Factor = math.min(math.max(Factor, 0), 1);
 
@@ -863,26 +859,13 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
 
             local u0,v0,u1,v1,Alpha = 0, 0, 1, 1, 255;
             if Data.AnimData then
-                local FrameCount = #Data.AnimData;
                 if Data.AnimData[3] and type(Data.AnimData[3]) ~= "table" then
                     u0,v0,u1,v1,Alpha = unpack(Data.AnimData);
                 else
-                    if #Data.AnimData >= 4 then
-                        local FirstFrame = math.max(1, math.floor(Factor * (FrameCount - 3)));
-                        u0,v0,u1,v1,Alpha = self:CubicParallaxInterpolation(
+                    if #Data.AnimData >= 2 then
+                        u0,v0,u1,v1,Alpha = self:BezierCurveParallax(
                             Factor,
-                            Data.AnimData[FirstFrame],
-                            Data.AnimData[FirstFrame +1],
-                            Data.AnimData[FirstFrame +2],
-                            Data.AnimData[FirstFrame +3]
-                        );
-                    elseif #Data.AnimData >= 2 then
-                        local FirstFrame = math.max(1, math.floor(Factor * (FrameCount - 1)));
-                        FirstFrame = math.min(FirstFrame, FrameCount - 1);
-                        u0,v0,u1,v1,Alpha = self:LinearParallaxInterpolation(
-                            Factor,
-                            Data.AnimData[FirstFrame],
-                            Data.AnimData[FirstFrame +1]
+                            unpack(Data.AnimData)
                         );
                     end
                 end
@@ -953,27 +936,11 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
         local PX, PY, PZ, LX, LY, LZ = 0, 0, 0, 0, 0, 0;
         local CurrentAnimation = self.Briefing[_PlayerID].CurrentAnimation;
         if CurrentAnimation and CurrentAnimation.AnimFrames then
-            if #CurrentAnimation.AnimFrames == 4 then
-                local Factor = self:GetInterpolationFactor(_PlayerID);
-                local FrameCount = #CurrentAnimation.AnimFrames;
-                local FirstFrame = math.max(1, math.ceil(Factor * (FrameCount - 3)));
-                FirstFrame = math.min(FirstFrame, #CurrentAnimation.AnimFrames - 3);
-                PX, PY, PZ, LX, LY, LZ = self:CubicInterpolation(
+            if #CurrentAnimation.AnimFrames >= 2 then
+                local Factor = self:GetInterpolationFactor(_PlayerID, true);
+                PX, PY, PZ, LX, LY, LZ = self:BezierCurve(
                     Factor,
-                    CurrentAnimation.AnimFrames[FirstFrame],
-                    CurrentAnimation.AnimFrames[FirstFrame +1],
-                    CurrentAnimation.AnimFrames[FirstFrame +2],
-                    CurrentAnimation.AnimFrames[FirstFrame +3]
-                );
-            elseif #CurrentAnimation.AnimFrames == 2 then
-                local Factor = self:GetInterpolationFactor(_PlayerID);
-                local FrameCount = #CurrentAnimation.AnimFrames;
-                local FirstFrame = math.max(1, math.ceil(Factor * (FrameCount - 1)));
-                FirstFrame = math.min(FirstFrame, #CurrentAnimation.AnimFrames - 1);
-                PX, PY, PZ, LX, LY, LZ = self:LinearInterpolation(
-                    Factor,
-                    CurrentAnimation.AnimFrames[FirstFrame],
-                    CurrentAnimation.AnimFrames[FirstFrame +1]
+                    unpack(CurrentAnimation.AnimFrames)
                 );
             else
                 PX, PY, PZ, LX, LY, LZ = unpack(CurrentAnimation.AnimFrames[1]);
@@ -1093,7 +1060,7 @@ function Lib.BriefingSystem.Local:ConvertPosition(_Table)
     return x, y, z;
 end
 
-function Lib.BriefingSystem.Local:GetInterpolationFactor(_PlayerID)
+function Lib.BriefingSystem.Local:GetInterpolationFactor(_PlayerID, _Modulate)
     if self.Briefing[_PlayerID].CurrentAnimation then
         local CurrentTime = XGUIEng.GetSystemTime();
         local Data = self.Briefing[_PlayerID].CurrentAnimation;
@@ -1109,60 +1076,52 @@ function Lib.BriefingSystem.Local:GetInterpolationFactor(_PlayerID)
         end
         if type(Data.Modulation) == "function" then
             Factor = Data:Modulation(CurrentTime, Factor);
-        elseif type(Data.Modulation) == "number" then
-            Factor = self:ModulateInterpolationFactor(Factor, Data.Modulation);
+        elseif _Modulate then
+            Factor = self:ModulateInterpolationFactor(Factor);
         end
         return math.min(math.max(Factor, 0), 1);
     end
     return 1;
 end
 
-function Lib.BriefingSystem.Local:ModulateInterpolationFactor(_Factor, _Modulation)
-    local m = _Modulation or 1;
-    -- Smoothstep function
-    local f = _Factor ^ m / ((_Factor ^ m) + ((1 - _Factor) ^ m));
-    return math.min(math.max(f, 0), 1);
+function Lib.BriefingSystem.Local:ModulateInterpolationFactor(_Factor)
+    return (1 / (0.97 + math.exp(-8 * (_Factor - 0.5)))) - 0.01;
 end
 
-function Lib.BriefingSystem.Local:LinearInterpolation(_Factor, _Pos1, _Pos2)
+function Lib.BriefingSystem.Local:BernsteinPolynome(n, i, t)
+    return (math.factorial(n) / (math.factorial(i) * math.factorial(n - i))) * (t ^ i) * ((1 - t) ^ (n - i));
+end
+
+function Lib.BriefingSystem.Local:BezierCurve(_Factor, ...)
     _Factor = math.max(0, math.min(1, _Factor));
-    local PX = (1 - _Factor) * _Pos1[1] + _Factor * _Pos2[1];
-    local PY = (1 - _Factor) * _Pos1[2] + _Factor * _Pos2[2];
-    local PZ = (1 - _Factor) * _Pos1[3] + _Factor * _Pos2[3];
-    local LX = (1 - _Factor) * _Pos1[4] + _Factor * _Pos2[4];
-    local LY = (1 - _Factor) * _Pos1[5] + _Factor * _Pos2[5];
-    local LZ = (1 - _Factor) * _Pos1[6] + _Factor * _Pos2[6];
+    local Points = {...};
+    local n = #Points;
+    local PX, PY, PZ, LX, LY, LZ = 0, 0, 0, 0, 0, 0;
+    for i = 1, n do
+        local f = self:BernsteinPolynome(n - 1, i - 1, _Factor);
+        PX = PX + Points[i][1] * f;
+        PY = PY + Points[i][2] * f;
+        PZ = PZ + Points[i][3] * f;
+        LX = LX + Points[i][4] * f;
+        LY = LY + Points[i][5] * f;
+        LZ = LZ + Points[i][6] * f;
+    end
     return PX, PY, PZ, LX, LY, LZ;
 end
 
-function Lib.BriefingSystem.Local:LinearParallaxInterpolation(_Factor, _UV1, _UV2)
+function Lib.BriefingSystem.Local:BezierCurveParallax(_Factor, ...)
     _Factor = math.max(0, math.min(1, _Factor));
-    local U0 = (1 - _Factor) * _UV1[1] + _Factor * _UV2[1];
-    local V0 = (1 - _Factor) * _UV1[2] + _Factor * _UV2[2];
-    local U1 = (1 - _Factor) * _UV1[3] + _Factor * _UV2[3];
-    local V1 = (1 - _Factor) * _UV1[4] + _Factor * _UV2[4];
-    local A  = (1 - _Factor) * _UV1[5] + _Factor * _UV2[5];
-    return U0, V0, U1, V1, A;
-end
-
-function Lib.BriefingSystem.Local:CubicInterpolation(_Factor, _Pos1, _Pos2, _Pos3, _Pos4)
-    _Factor = math.max(0, math.min(1, _Factor));
-    local PX = (1 - _Factor)^3 * _Pos1[1] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[1] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[1] + _Factor^3 * _Pos4[1];
-    local PY = (1 - _Factor)^3 * _Pos1[2] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[2] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[2] + _Factor^3 * _Pos4[2];
-    local PZ = (1 - _Factor)^3 * _Pos1[3] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[3] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[3] + _Factor^3 * _Pos4[3];
-    local LX = (1 - _Factor)^3 * _Pos1[4] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[4] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[4] + _Factor^3 * _Pos4[4];
-    local LY = (1 - _Factor)^3 * _Pos1[5] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[5] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[5] + _Factor^3 * _Pos4[5];
-    local LZ = (1 - _Factor)^3 * _Pos1[6] + 3 * (1 - _Factor)^2 * _Factor * _Pos2[6] + 3 * (1 - _Factor) * _Factor^2 * _Pos3[6] + _Factor^3 * _Pos4[6];
-    return PX, PY, PZ, LX, LY, LZ;
-end
-
-function Lib.BriefingSystem.Local:CubicParallaxInterpolation(_Factor, _UV1, _UV2, _UV3, _UV4)
-    _Factor = math.max(0, math.min(1, _Factor));
-    local U0 = (1 - _Factor)^3 * _UV1[1] + 3 * (1 - _Factor)^2 * _Factor * _UV2[1] + 3 * (1 - _Factor) * _Factor^2 * _UV3[1] + _Factor^3 * _UV4[1];
-    local V0 = (1 - _Factor)^3 * _UV1[2] + 3 * (1 - _Factor)^2 * _Factor * _UV2[2] + 3 * (1 - _Factor) * _Factor^2 * _UV3[2] + _Factor^3 * _UV4[2];
-    local U1 = (1 - _Factor)^3 * _UV1[3] + 3 * (1 - _Factor)^2 * _Factor * _UV2[3] + 3 * (1 - _Factor) * _Factor^2 * _UV3[3] + _Factor^3 * _UV4[3];
-    local V1 = (1 - _Factor)^3 * _UV1[4] + 3 * (1 - _Factor)^2 * _Factor * _UV2[4] + 3 * (1 - _Factor) * _Factor^2 * _UV3[4] + _Factor^3 * _UV4[4];
-    local A  = (1 - _Factor)^3 * _UV1[5] + 3 * (1 - _Factor)^2 * _Factor * _UV2[5] + 3 * (1 - _Factor) * _Factor^2 * _UV3[5] + _Factor^3 * _UV4[5];
+    local Points = {...};
+    local n = #Points;
+    local U0, V0, U1, V1, A = 0, 0, 0, 0, 0;
+    for i = 1, n do
+        local f = self:BernsteinPolynome(n - 1, i - 1, _Factor);
+        U0 = U0 + Points[i][1] * f;
+        V0 = V0 + Points[i][2] * f;
+        U1 = U1 + Points[i][3] * f;
+        V1 = V1 + Points[i][4] * f;
+        A  = A  + Points[i][5] * f;
+    end
     return U0, V0, U1, V1, A;
 end
 
@@ -1283,7 +1242,6 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     if self.CinematicActive or GUI.GetPlayerID() ~= _PlayerID then
         return;
     end
-    self.CinematicActive = true;
 
     if not self.LoadscreenClosed then
         XGUIEng.PopPage();
@@ -1392,13 +1350,13 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     if self.Briefing[_PlayerID].PreloadAssets then
         DeactivateColoredScreen(_PlayerID);
     end
+    self.CinematicActive = true;
 end
 
 function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     if not self.CinematicActive or GUI.GetPlayerID() ~= _PlayerID then
         return;
     end
-    self.CinematicActive = false;
 
     local ConsoleWasVisible = IsScriptConsoleShown();
     if ConsoleWasVisible then
@@ -1453,6 +1411,7 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     if ConsoleWasVisible then
         ShowScriptConsole();
     end
+    self.CinematicActive = false;
 end
 
 -- -------------------------------------------------------------------------- --
