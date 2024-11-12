@@ -30,6 +30,14 @@ Lib.SettlementLimitation.Shared = {
         Palisade = 0.5,
         Wall = 1.5,
     },
+    AbsolutLimitIgnore = {
+        ["B_Beehive"] = true,
+        ["B_GrainField_AS"] = true,
+        ["B_GrainField_ME"] = true,
+        ["B_GrainField_NA"] = true,
+        ["B_GrainField_NE"] = true,
+        ["B_GrainField_SE"] = true,
+    },
 };
 
 Lib.Require("comfort/GetDistance");
@@ -79,6 +87,8 @@ function Lib.SettlementLimitation.Global:OnReportReceived(_ID, ...)
             self:InitDefaultRules(PlayerID);
             CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule");
             CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_TerritoryBuildingTypeLimitRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_HomeTerritoryBuildingGeneralLimitRule");
+            CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_HomeTerritoryBuildingTypeLimitRule");
         end
     elseif _ID == Report.BuildingUpgraded then
         local Costs = Lib.SettlementLimitation.Shared.DevelopTerritoryCosts;
@@ -109,11 +119,18 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
     -- Check general amount of buildings in a territory.
     SettlementLimitation_Global_TerritoryBuildingGeneralLimitRule = function(_PlayerID, _Type, _X, _Y)
         local MainBuilding = Logic.GetStoreHouse(_PlayerID);
+        local MainTerritoryID = GetTerritoryUnderEntity(MainBuilding);
         local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
         local OutpostID = Logic.GetTerritoryAcquiringBuildingID(TerritoryID);
         if  Lib.SettlementLimitation.Global.Active
-        and GetTerritoryUnderEntity(MainBuilding) ~= TerritoryID then
+        and MainTerritoryID ~= TerritoryID then
             if Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID] then
+                local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
+                local TypeName = Logic.GetEntityTypeName(_Type);
+                if IgnoreList[TypeName] then
+                    return true;
+                end
+
                 local Limit = -1;
                 if Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][TerritoryID] then
                     Limit = Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][TerritoryID];
@@ -121,11 +138,11 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
                 if Limit == -1 and Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][0] then
                     Limit = Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID][0];
                 end
-                local Bonus = Lib.SettlementLimitation.Global:GetAdditionalBuildingBonusAmount(_PlayerID, TerritoryID);
+    	        local Bonus = Lib.SettlementLimitation.Global:GetAdditionalBuildingBonusAmount(_PlayerID, TerritoryID);
                 local Current = 0;
                 Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.CityBuilding, 0)};
                 Current = Current + #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.OuterRimBuilding, 0)};
-                Current = Current - ((OutpostID ~= 0 and 1) or 0);
+                -- Current = Current - ((OutpostID ~= 0 and 1) or 0);
                 if (Limit or -1) ~= -1 then
                     return Current < ((Limit > 0 and Limit + Bonus) or Limit);
                 end
@@ -137,10 +154,18 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
     -- Check type amount of buildings in a territory.
     SettlementLimitation_Global_TerritoryBuildingTypeLimitRule = function(_PlayerID, _Type, _X, _Y)
         local MainBuilding = Logic.GetStoreHouse(_PlayerID);
+        local MainTerritoryID = GetTerritoryUnderEntity(MainBuilding);
         local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
+        local OutpostID = Logic.GetTerritoryAcquiringBuildingID(TerritoryID);
         if  Lib.SettlementLimitation.Global.Active
-        and GetTerritoryUnderEntity(MainBuilding) ~= TerritoryID then
+        and MainTerritoryID ~= TerritoryID then
             if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
+                local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
+                local TypeName = Logic.GetEntityTypeName(_Type);
+                if IgnoreList[TypeName] then
+                    return true;
+                end
+
                 local Limit = -1;
                 if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][TerritoryID] then
                     Limit = Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID][TerritoryID][_Type] or -1;
@@ -153,6 +178,50 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
                 if (Limit or -1) ~= -1 then
                     return Current < ((Limit > 0 and Limit + Bonus) or Limit);
                 end
+            end
+        end
+        return true;
+    end
+
+    -- Check amount of outer rim buildings in home territory
+    SettlementLimitation_Global_HomeTerritoryBuildingGeneralLimitRule = function(_PlayerID, _Type, _X, _Y)
+        local MainBuilding = Logic.GetStoreHouse(_PlayerID);
+        local MainTerritoryID = GetTerritoryUnderEntity(MainBuilding);
+        local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
+        local OutpostID = Logic.GetTerritoryAcquiringBuildingID(TerritoryID);
+        if  Lib.SettlementLimitation.Global.Active
+        and Logic.IsEntityTypeInCategory(_Type, EntityCategories.OuterRimBuilding) == 1
+        and MainTerritoryID == TerritoryID then
+            if Lib.SettlementLimitation.Global.TerritoryRestriction[_PlayerID] then
+                local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
+                local TypeName = Logic.GetEntityTypeName(_Type);
+                if IgnoreList[TypeName] then
+                    return true;
+                end
+                local Current = #{Logic.GetEntitiesOfCategoryInTerritory(TerritoryID, _PlayerID, EntityCategories.OuterRimBuilding, 0)};
+                return Current < 3;
+            end
+        end
+        return true;
+    end
+
+    -- Check amount of type of outer rim building in home territory
+    SettlementLimitation_Global_HomeTerritoryBuildingTypeLimitRule = function(_PlayerID, _Type, _X, _Y)
+        local MainBuilding = Logic.GetStoreHouse(_PlayerID);
+        local MainTerritoryID = GetTerritoryUnderEntity(MainBuilding);
+        local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
+        local OutpostID = Logic.GetTerritoryAcquiringBuildingID(TerritoryID);
+        if  Lib.SettlementLimitation.Global.Active
+        and Logic.IsEntityTypeInCategory(_Type, EntityCategories.OuterRimBuilding) == 1
+        and MainTerritoryID == TerritoryID then
+            if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
+                local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
+                local TypeName = Logic.GetEntityTypeName(_Type);
+                if IgnoreList[TypeName] then
+                    return true;
+                end
+                local Current = #{Logic.GetEntitiesOfTypeInTerritory(TerritoryID, _PlayerID, _Type, 0)};
+                return Current < 1;
             end
         end
         return true;
@@ -227,7 +296,7 @@ function Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID)
             local MoneyCost = WallCost;
 
             if WallCost > 0 then
-                if GetPlayerResources(Goods.G_Gold, WallCost) < WallCost then
+                if GetPlayerResources(Goods.G_Gold, _PlayerID) < WallCost then
                     local WallList = {Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)};
                     local Deteriation = Lib.SettlementLimitation.Shared.Upkeep.WallDeteriation;
                     for _,ID in pairs(WallList) do

@@ -26,18 +26,26 @@ Lib.SettlementSurvival.Global = {
         IsActive = false,
         AffectAI = false,
     },
-    Enemy = {
+    Misc = {
         PredatorBlockClaim = false,
         BanditsBlockClaim = false,
+        ClothesForOuterRim = false,
     },
+
     SuspendedSettlers = {},
+    SettlerLives = {},
 };
 Lib.SettlementSurvival.Local  = {
+    Misc = {
+        ClothesForOuterRim = false,
+    },
+
     SuspendedSettlers = {},
+    SettlerLives = {},
 };
 Lib.SettlementSurvival.Shared = {
     AnimalPlague = {
-        InfectionChance = 6,
+        InfectionChance = 4,
         InfectionTimer = 60,
         DeathChance = 12,
         DeathTimer = 30,
@@ -54,23 +62,28 @@ Lib.SettlementSurvival.Shared = {
         Temperature = 30,
     },
     Famine = {
-        DeathChance = 6,
+        DeathChance = 4,
         DeathTimer = 30,
     },
     Negligence = {
-        InfectionChance = 6,
+        InfectionChance = 4,
         InfectionTimer = 90,
     },
     Plague = {
-        DeathChance = 12,
+        DeathChance = 9,
         DeathTimer = 30,
     },
     SuspendedSettlers = {
         MourningTime = 5*60,
     },
+    SettlerLives = {
+        PerMonth = 2,
+        Max = 9,
+    },
 };
 
 Lib.Require("comfort/GetPredatorSpawnerTypes");
+Lib.Require("comfort/GetHealth");
 Lib.Require("comfort/SetHealth");
 Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
@@ -116,6 +129,7 @@ function Lib.SettlementSurvival.Global:Initialize()
             self.Negligence[PlayerID] = {};
             self.Plague[PlayerID] = {};
             self.SuspendedSettlers[PlayerID] = {};
+            self.SettlerLives[PlayerID] = {};
         end
 
         RequestJobByEventType(
@@ -135,6 +149,7 @@ function Lib.SettlementSurvival.Global:Initialize()
         );
 
         self:OverwriteNeeds();
+        self:OverwriteEndOfMonth();
         self:InitLimitations();
 
         -- Garbage collection
@@ -172,7 +187,7 @@ end
 function Lib.SettlementSurvival.Global:InitLimitations()
     -- Check predators in territory
     SettlementSurvival_Global_ClaimTerritoryPredatorRule = function(_PlayerID, _Type, _X, _Y)
-        if Lib.SettlementSurvival.Global.Enemy.PredatorBlockClaim then
+        if Lib.SettlementSurvival.Global.Misc.PredatorBlockClaim then
             if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Outpost) == 1 then
                 local TerritoryID1 = Logic.GetTerritoryAtPosition(_X, _Y);
                 for _, SpawnerType in pairs(GetPredatorSpawnerTypes()) do
@@ -195,7 +210,7 @@ function Lib.SettlementSurvival.Global:InitLimitations()
 
     -- Check bandits in territory
     SettlementSurvival_Global_ClaimTerritoryBanditRule = function(_PlayerID, _Type, _X, _Y)
-        if Lib.SettlementSurvival.Global.Enemy.BanditsBlockClaim then
+        if Lib.SettlementSurvival.Global.Misc.BanditsBlockClaim then
             if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Outpost) == 1 then
                 local TerritoryID = Logic.GetTerritoryAtPosition(_X, _Y);
                 for PlayerID = 1, 8 do
@@ -345,10 +360,11 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
                     local AnyIgnited = false;
                     for i= 1, #BuildingList do
                         if  Logic.IsConstructionComplete(BuildingList[i]) == 1
+                        and GetHealth(BuildingList[i]) >= 100
                         and not Logic.IsBurning(BuildingList[i]) then
                             local IgnitionChance = Lib.SettlementSurvival.Shared.HotWeather.IgnitionChance;
                             if math.random(1, 100) <= IgnitionChance then
-                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 50);
+                                Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 10);
                                 AnyIgnited = true;
                             end
                         end
@@ -537,7 +553,11 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(_Turn)
                         if Chance >= 1 and math.random(1, 100) <= math.ceil(Chance) then
                             SendReport(Report.SettlerDiedFromStarvation, SettlerID);
                             SendReportToLocal(Report.SettlerDiedFromStarvation, SettlerID);
-                            self:SuspendSettler(SettlerID, true);
+                            self:ConsumeSettlersLive(SettlerID);
+                            if self:GetSettlerLives(SettlerID) == 0 then
+                                self:SetSettlerLives(SettlerID, nil);
+                                self:SuspendSettler(SettlerID, true);
+                            end
                             ShowMessage = true;
                         end
                     end
@@ -605,7 +625,11 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(_Turn)
                         if Chance >= 1 and math.random(1, 100) <= math.ceil(Chance) then
                             SendReport(Report.SettlerDiedFromIllness, SettlerID);
                             SendReportToLocal(Report.SettlerDiedFromIllness, SettlerID);
-                            self:SuspendSettler(SettlerID, true);
+                            self:ConsumeSettlersLive(SettlerID);
+                            if self:GetSettlerLives(SettlerID) == 0 then
+                                self:SetSettlerLives(SettlerID, nil);
+                                self:SuspendSettler(SettlerID, true);
+                            end
                             ShowMessage = true;
                         end
                     end
@@ -729,14 +753,68 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.SettlementSurvival.Global:OverwriteEndOfMonth()
+    self.Orig_GameCallback_EndOfMonth = GameCallback_EndOfMonth;
+    GameCallback_EndOfMonth = function(_LastMonth, _CurrentMonth)
+        Lib.SettlementSurvival.Global.Orig_GameCallback_EndOfMonth(_LastMonth, _CurrentMonth);
+        for PlayerID = 1, 8 do
+            Lib.SettlementSurvival.Global:GainSettlerLives(PlayerID);
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:GainSettlerLives(_PlayerID)
+    for EntityID, Amount in pairs(self.SettlerLives[_PlayerID]) do
+        local Max = Lib.SettlementSurvival.Shared.SettlerLives.Max;
+        local Gain = Lib.SettlementSurvival.Shared.SettlerLives.PerMonth;
+        self.SettlerLives[PlayerID][EntityID] = math.min(Amount + Gain, Max);
+    end
+end
+
+function Lib.SettlementSurvival.Global:ConsumeSettlersLive(_Entity)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    if self.SettlerLives[PlayerID] then
+        local Lives = self:GetSettlerLives(_Entity);
+        if Lives == -1 then
+            local Limit = Lib.SettlementSurvival.Shared.SettlerLives.Max;
+            self:SetSettlerLives(_Entity, Limit);
+            Lives = Limit;
+        end
+        self:SetSettlerLives(_Entity, Lives -1);
+    end
+end
+
+function Lib.SettlementSurvival.Global:GetSettlerLives(_Entity)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    if self.SettlerLives[PlayerID] then
+        return self.SettlerLives[PlayerID][EntityID] or -1;
+    end
+    return -1;
+end
+
+function Lib.SettlementSurvival.Global:SetSettlerLives(_Entity, _Amount)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    if self.SettlerLives[PlayerID] then
+        self.SettlerLives[PlayerID][EntityID] = _Amount;
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
 function Lib.SettlementSurvival.Global:OverwriteNeeds()
     ActivateNeedsForBuilding = function(_PlayerID, _EntityID)
         for Need, _ in pairs (PlayerActiveNeeds[_PlayerID]) do
             if Logic.IsEntityInCategory(_EntityID, EntityCategories.OuterRimBuilding) == 1 then
                 if Need == Needs.Nutrition
-                or Need == Needs.Clothes
                 or Need == Needs.Medicine then
                     Logic.SetNeedActive(_EntityID, Need, true);
+                end
+                if Need == Needs.Clothes then
+                    local Active = Lib.SettlementSurvival.Global.Misc.ClothesForOuterRim;
+                    Logic.SetNeedActive(_EntityID, Need, Active == true);
                 end
             end
             if Logic.IsEntityInCategory(_EntityID, EntityCategories.CityBuilding) == 1 then
@@ -750,13 +828,20 @@ function Lib.SettlementSurvival.Global:OverwriteNeeds()
         if _NeedTable == nil then
             return;
         end
+
+        local OuterRimNeeds = {
+            [Needs.Nutrition] = true,
+            [Needs.Medicine] = true,
+        };
+        if Lib.SettlementSurvival.Global.Misc.ClothesForOuterRim then
+            OuterRimNeeds[Needs.Clothes] = true;
+        end
+
         for k =1, #_NeedTable do
             local Need = _NeedTable[k];
             PlayerActiveNeeds[_PlayerID][Need] = true;
             local Buildings = {Logic.GetPlayerEntitiesInCategory(_PlayerID,EntityCategories.CityBuilding)};
-            if Need == Needs.Nutrition
-            or Need == Needs.Clothes
-            or Need == Needs.Medicine then
+            if OuterRimNeeds[Need] then
                 local OuterRimBuildings = {Logic.GetPlayerEntitiesInCategory(_PlayerID,EntityCategories.OuterRimBuilding)};
                 for j=1, #OuterRimBuildings do
                     local BuildingID = OuterRimBuildings[j];
@@ -768,6 +853,21 @@ function Lib.SettlementSurvival.Global:OverwriteNeeds()
                 Logic.SetNeedActive(BuildingID, Need, true);
             end
             Logic.ExecuteInLuaLocalState("GUI_BuildingInfo.UpdateActiveNeedsGUI()");
+        end
+    end
+end
+
+function Lib.SettlementSurvival.Global:UpdateClothesStateForOuterRim()
+    for PlayerID = 1, 8 do
+        local OuterRimBuildings = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.OuterRimBuilding)};
+        for i=1, #OuterRimBuildings do
+            local BuildingID = OuterRimBuildings[i];
+            if  Lib.SettlementSurvival.Global.Misc.ClothesForOuterRim
+            and PlayerActiveNeeds[PlayerID][Needs.Clothes] then
+                Logic.SetNeedActive(BuildingID, Needs.Clothes, true);
+            else
+                Logic.SetNeedActive(BuildingID, Needs.Clothes, false);
+            end
         end
     end
 end
@@ -973,7 +1073,11 @@ end
 function Lib.SettlementSurvival.Local:OnBuildingSelected()
     local EntityID = GUI.GetSelectedEntity();
     if Logic.IsEntityInCategory(EntityID, EntityCategories.OuterRimBuilding) == 1 then
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 1);
+        if self.Misc.ClothesForOuterRim then
+            XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 1);
+        else
+            XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight/Selection/Needs/Clothes", 0);
+        end
     end
 end
 

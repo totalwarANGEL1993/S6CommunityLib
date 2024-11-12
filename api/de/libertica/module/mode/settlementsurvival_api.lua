@@ -210,6 +210,12 @@ function BanditsBlockClaimActivate(_Flag)
 end
 API.BanditsBlockClaimActivate = BanditsBlockClaimActivate;
 
+--- Aktiviert oder deaktiviert ob Kleidung von Sammlern verlangt wird.
+--- @param _Flag boolean Bedürfnis aktiv
+function ClothesForOuterRimActivate(_Flag)
+end
+API.ClothesForOuterRimActivate = ClothesForOuterRimActivate;
+
 
 
 --- Ein Tier ist an Krankheit gestorben.

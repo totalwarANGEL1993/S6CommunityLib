@@ -67,22 +67,19 @@ end
 -- Delivery checkpoint
 
 function Lib.Core.Bugfix:FixMerchantArrivedCheckpoints()
-    QuestTemplate.IsMerchantArrived = function(self, objective)
-        local data = objective.Data;
-        local merchantID = data[3];
-
-        if merchantID ~= nil then
-            if merchantID == 1 then
-                local newID = data[5].ID;
+    QuestTemplate.IsMerchantArrived = function(this, objective)
+        if objective.Data[3] ~= nil then
+            if objective.Data[3] == 1 then
+                local newID = objective.Data[5].ID;
                 if newID ~= nil then
-                    data[3] = newID;
+                    objective.Data[3] = newID;
                     DeleteQuestMerchantWithID(newID);
                     if MapCallback_DeliverCartSpawned then
-                        MapCallback_DeliverCartSpawned(self, newID, data[1]);
+                        MapCallback_DeliverCartSpawned(this, newID, objective.Data[1]);
                     end
                 end
-            elseif Logic.IsEntityDestroyed(merchantID) then
-                DeleteQuestMerchantWithID(merchantID);
+            elseif Logic.IsEntityDestroyed(objective.Data[3]) then
+                DeleteQuestMerchantWithID(objective.Data[3]);
                 objective.Data[3] = nil;
                 objective.Data[5].ID = nil;
             else
@@ -91,12 +88,12 @@ function Lib.Core.Bugfix:FixMerchantArrivedCheckpoints()
                         return false;
                     end
                     local x, y = Logic.GetBuildingApproachPosition(_ID)
-                    return GetDistance(merchantID, {X = x, Y = y}) < 1000;
+                    return GetDistance(objective.Data[3], {X = x, Y = y}) <= 1000;
                 end
 
-                local playerID = data[6] or self.SendingPlaye;
-                return isNearEntrance(Logic.GetStoreHouse(playerID)) or
-                       isNearEntrance(Logic.GetStoreHouse(playerID)) or
+                local playerID = objective.Data[6] or this.SendingPlayer;
+                return isNearEntrance(Logic.GetHeadquarters(playerID)) or
+                       isNearEntrance(Logic.GetMarketplace(playerID)) or
                        isNearEntrance(Logic.GetStoreHouse(playerID));
             end
         end
