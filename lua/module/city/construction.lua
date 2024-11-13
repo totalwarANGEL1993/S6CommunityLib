@@ -608,9 +608,9 @@ function Lib.Construction.Local:AreOtherBallistasToCloseToPosition(_PlayerID, _x
     if self.Construction.ForceBallistaDistance then
         local nSite, SiteID = Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.U_MilitaryBallista_BuildingSite, _x, _y, _AreaSize, 1);
         local nBallista, BallistaID = Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.U_MilitaryBallista, _x, _y, _AreaSize, 1);
-        return nSite > 0 or nBallista > 0;
+        return (nSite + nBallista) > 0;
     end
-    return true;
+    return false;
 end
 
 function Lib.Construction.Local:CancleConstructWallSegmentState(_PlayerID, _SegmentType, _TurretType)
