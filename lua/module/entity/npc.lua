@@ -260,9 +260,9 @@ function Lib.NPC.Global:AdjustHeroTalkingDistance(_Distance)
 end
 
 function Lib.NPC.Global:OverrideQuestFunctions()
-    GameCallback_OnNPCInteraction_Orig_NPC = GameCallback_OnNPCInteraction;
+    self.Orig_GameCallback_OnNPCInteraction = GameCallback_OnNPCInteraction;
     GameCallback_OnNPCInteraction = function(_EntityID, _PlayerID, _KnightID)
-        GameCallback_OnNPCInteraction_Orig_NPC(_EntityID, _PlayerID, _KnightID);
+        Lib.NPC.Global.Orig_GameCallback_OnNPCInteraction(_EntityID, _PlayerID, _KnightID);
         local ClosestKnightID = _KnightID or Lib.NPC.Global:GetClosestKnight(_EntityID, _PlayerID);
         SendReport(Report.NpcInteraction, _EntityID, ClosestKnightID, _PlayerID);
         SendReportToLocal(Report.NpcInteraction, _EntityID, ClosestKnightID, _PlayerID);

@@ -25,6 +25,30 @@ Lib.Require("module/quest/Quest");
 Lib.Require("module/mode/SettlementLimitation");
 Lib.Require("module/entity/EntitySearch");
 Lib.Require("module/trade/Warehouse");
+Lib.Require("module/diplomacy/QuickTravel");
+
+-- ========================================================================== --
+
+function TestQuickTravelHubs()
+    for i= 1, 4 do
+        Lib.QuickTravel.Global:CreateQuickTravelHub {
+            ScriptName  = "FT" ..i,
+            PlayerID    = 8,
+            DisplayName = "Position " ..i,
+        };
+        Lib.QuickTravel.Global:ActivateQuickTravelHub(i);
+    end
+
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(1, 2);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(1, 3);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(1, 4);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(2, 1);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(2, 3);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(2, 4);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(3, 2);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(3, 1);
+    Lib.QuickTravel.Global:ConnectQuickTravelHub(3, 4);
+end
 
 -- ========================================================================== --
 
