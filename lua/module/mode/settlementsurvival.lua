@@ -767,7 +767,7 @@ function Lib.SettlementSurvival.Global:GainSettlerLives(_PlayerID)
     for EntityID, Amount in pairs(self.SettlerLives[_PlayerID]) do
         local Max = Lib.SettlementSurvival.Shared.SettlerLives.Max;
         local Gain = Lib.SettlementSurvival.Shared.SettlerLives.PerMonth;
-        self.SettlerLives[PlayerID][EntityID] = math.min(Amount + Gain, Max);
+        self.SettlerLives[_PlayerID][EntityID] = math.min(Amount + Gain, Max);
     end
 end
 

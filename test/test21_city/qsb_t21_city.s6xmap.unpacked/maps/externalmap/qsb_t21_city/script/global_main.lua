@@ -47,6 +47,14 @@ function TestWarehouses()
              GoodType    = Entities.A_X_Cow01,
              PaymentType = Goods.G_Gold,
              BasePrice   = 300,},
+            {Amount      = 1,
+             GoodType    = Entities.U_CatapultCart,
+             PaymentType = Goods.G_Gold,
+             BasePrice   = 1000,},
+            {Amount      = 2,
+             GoodType    = Entities.U_MilitaryBandit_Melee_ME,
+             PaymentType = Goods.G_Gold,
+             BasePrice   = 90,},
         },
     }
 end

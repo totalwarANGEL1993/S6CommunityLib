@@ -669,13 +669,13 @@ function Lib.BriefingSystem.Local:SetPerformanceMode()
     Display.SetUserOptionAnisotropy(0);
     Display.SetUserOptionReflections(0);
     Display.SetUserOptionTerrainQuality(0);
-    Display.SetRenderClutter(1);
     Display.SetRenderObjectsAlphaBlendPass(0);
-    Display.SetRenderShadows(0);
     Display.SetRenderParticles(0);
     Display.SetRenderUseBatching(0);
     Display.SetRenderUpdateMorphAnim(0);
     Display.SetRenderUpdateParticles(0);
+    Display.SetEffectOption("DoNotUseRimLight", 1);
+    Display.SetEffectOption("SimpleWater", 1);
 end
 
 function Lib.BriefingSystem.Local:SetQualityMode()
@@ -687,13 +687,13 @@ function Lib.BriefingSystem.Local:SetQualityMode()
     Display.SetUserOptionAnisotropy(FilterQuality);
     Display.SetUserOptionReflections(ReflectionQuality);
     Display.SetUserOptionTerrainQuality(TerrainQuality);
-    Display.SetRenderClutter(0);
     Display.SetRenderObjectsAlphaBlendPass(1);
-    Display.SetRenderShadows(1);
     Display.SetRenderParticles(1);
     Display.SetRenderUseBatching(1);
     Display.SetRenderUpdateMorphAnim(1);
     Display.SetRenderUpdateParticles(1);
+    Display.SetEffectOption("DoNotUseRimLight", 0);
+    Display.SetEffectOption("SimpleWater", 0);
 end
 
 function Lib.BriefingSystem.Local:DisplayPageBars(_PlayerID, _PageID)
