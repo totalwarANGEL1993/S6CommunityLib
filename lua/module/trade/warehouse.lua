@@ -589,7 +589,6 @@ function Lib.Warehouse.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _En
     local OfferDescription = "";
     local GoodTypeName = Logic.GetGoodTypeName(Data.GoodType);
     local EntityTypeName = Logic.GetEntityTypeName(Data.GoodType);
-    local EngineType = GetSiegeengineTypeByCartType(Data.GoodType);
     if GoodTypeName ~= nil and GoodTypeName ~= "" then
         OfferName = GetStringText("UI_ObjectNames/" ..GoodTypeName);
         OfferDescription = GetStringText("UI_ObjectDescription/" ..GoodTypeName);
@@ -599,8 +598,15 @@ function Lib.Warehouse.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _En
         if Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.Soldier) == 1 then
             OfferName = GetStringText("UI_ObjectNames/HireMercenaries");
             OfferDescription = GetStringText("UI_ObjectDescription/HireMercenaries");
-        elseif EngineType or Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SiegeEngine) == 1 then
+        elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.CattlePasture) == 1 then
+            OfferName = GetStringText("UI_ObjectNames/G_Cow");
+            OfferDescription = GetStringText("UI_ObjectDescription/G_Sheep");
+        elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SheepPasture) == 1 then
+            OfferName = GetStringText("UI_ObjectNames/G_Sheep");
+            OfferDescription = GetStringText("UI_ObjectDescription/G_Sheep");
+        elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.HeavyWeapon) == 1 then
             OfferName = GetStringText("Names/" ..EntityTypeName);
+            local EngineType = GetSiegeengineTypeByCartType(Data.GoodType);
             local EngineTypeName = Logic.GetEntityTypeName(EngineType);
             OfferDescription = GetStringText("UI_ObjectDescription/Abilities_" ..EngineTypeName);
         end

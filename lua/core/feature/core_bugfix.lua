@@ -233,40 +233,25 @@ end
 -- -------------------------------------------------------------------------- --
 -- House menu
 
-if EntityCategories then
-    Lib.Core.Bugfix.HouseMenuWidgetToCategory = {
-        ["B_Castle_ME"]     = EntityCategories.Headquarters,
-        ["B_Cathedral"]     = EntityCategories.Cathedrals,
-        ["B_Cathedral_Big"] = EntityCategories.Cathedrals,
-        ["B_Outpost_ME"]    = EntityCategories.Outpost,
-    };
-end
-
 function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
     HouseMenuGetNextBuildingID = function(WidgetName)
         local playerID = GUI.GetPlayerID();
-        local category = Lib.Core.Bugfix.HouseMenuWidgetToCategory[WidgetName];
-        local buildingsList;
+        local buildingsList = {Logic.GetBuildingsByPlayer(playerID)};
 
         WidgetName = GetClimateEntityName(WidgetName);
+        local TrimedWidgetName = string.gsub(WidgetName, "_%w%w?%w?$", "");
         if HouseMenu.Widget.CurrentBuilding ~= WidgetName then
             HouseMenu.Widget.CurrentBuilding = WidgetName;
             HouseMenu.Widget.CurrentBuildingNumber = 0;
         end
 
-        if category then
-            buildingsList = {Logic.GetPlayerEntitiesInCategory(playerID, category)};
-        else
-            buildingsList = {Logic.GetBuildingsByPlayer(playerID)};
-        end
-
         local foundNumber = 0;
         local higherBuildingFound = false;
-
         for i = 1, #buildingsList do
             local entityType = Logic.GetEntityType(buildingsList[i]);
             local entityName = Logic.GetEntityTypeName(entityType);
-            if category or entityName == WidgetName then
+            local trimedEntityName = string.gsub(entityName, "_%w%w?%w?$", "");
+            if trimedEntityName == TrimedWidgetName then
                 foundNumber = i;
                 if foundNumber > HouseMenu.Widget.CurrentBuildingNumber then
                     HouseMenu.Widget.CurrentBuildingNumber = foundNumber;
@@ -276,18 +261,20 @@ function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
             end
         end
 
-        if foundNumber ~= 0 and not higherBuildingFound then
+        if foundNumber == 0 then
+            return nil;
+        end
+        if not higherBuildingFound then
             for i = 1, #buildingsList do
                 local entityType = Logic.GetEntityType(buildingsList[i]);
                 local entityName = Logic.GetEntityTypeName(entityType);
-                if category or entityName == WidgetName then
+                if entityName == WidgetName then
                     HouseMenu.Widget.CurrentBuildingNumber = i;
                     break;
                 end
             end
-            return buildingsList[HouseMenu.Widget.CurrentBuildingNumber];
         end
-        return nil;
+        return buildingsList[HouseMenu.Widget.CurrentBuildingNumber];
     end
 
     HouseMenuSetIconsPart = function(_Part, _HighlightBool)
@@ -297,22 +284,17 @@ function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
 
         for i = 1, #houseMenuButtons do
             local widgetName = XGUIEng.GetWidgetNameByID(houseMenuButtons[i]);
-            local category = Lib.Core.Bugfix.HouseMenuWidgetToCategory[widgetName];
+            local trimedWidgetName = string.gsub(widgetName, "_%w%w?%w?$", "");
             local button = _Part .. "/" .. widgetName .. "/Button";
-            local climateWidgetName = GetClimateEntityName(widgetName);
             SetIcon(button, g_TexturePositions.Entities[Entities[widgetName]]);
 
             local count = 0;
-            if category then
-                buildings = {Logic.GetPlayerEntitiesInCategory(playerID, category)};
-                count = #buildings;
-            else
-                for j = 1, #buildings do
-                    local entityType = Logic.GetEntityType(buildings[j]);
-					local entityName = Logic.GetEntityTypeName(entityType);
-                    if entityName == climateWidgetName then
-                        count = count + 1;
-                    end
+            for j = 1, #buildings do
+                local entityType = Logic.GetEntityType(buildings[j]);
+                local entityName = Logic.GetEntityTypeName(entityType);
+                local trimedEntityName = string.gsub(entityName, "_%w%w?%w?$", "");
+                if trimedWidgetName == trimedEntityName then
+                    count = count + 1;
                 end
             end
 
