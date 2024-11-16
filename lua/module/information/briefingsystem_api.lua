@@ -98,7 +98,6 @@ function AddBriefingPages(_Briefing)
         local Name, Title,Text, Position;
         local DialogCam = false;
         local Action = function() end;
-        local NoSkipping = false;
 
         -- Set page parameters
         if (#arg == 3 and type(arg[1]) == "string")
@@ -115,9 +114,6 @@ function AddBriefingPages(_Briefing)
         end
         if #arg > 0 then
             Action = table.remove(arg, 1);
-        end
-        if #arg > 0 then
-            NoSkipping = not table.remove(arg, 1);
         end
 
         -- Calculate camera rotation
@@ -136,7 +132,8 @@ function AddBriefingPages(_Briefing)
             Text            = Text,
             Action          = Action,
             Position        = Position,
-            DisableSkipping = NoSkipping,
+            DisableSkipping = false,
+            Duration        = -1,
             DialogCamera    = DialogCam,
             Rotation        = Rotation,
         };
