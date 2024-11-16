@@ -129,7 +129,6 @@ function Lib.SettlementSurvival.Global:Initialize()
             self.Negligence[PlayerID] = {};
             self.Plague[PlayerID] = {};
             self.SuspendedSettlers[PlayerID] = {};
-            self.SettlerLives[PlayerID] = {};
         end
 
         RequestJobByEventType(
@@ -149,7 +148,6 @@ function Lib.SettlementSurvival.Global:Initialize()
         );
 
         self:OverwriteNeeds();
-        self:OverwriteEndOfMonth();
         self:InitLimitations();
 
         -- Garbage collection
@@ -475,7 +473,8 @@ function Lib.SettlementSurvival.Global:ControlSettlersBecomeIllDueToNegligence(_
                         if math.random(1, 100) <= Chance then
                             if  not self:IsSettlerCarryingHygiene(SettlerID)
                             and not self:IsSettlerCarryingBeer(SettlerID)
-                            and not self:IsSettlerSuspended(SettlerID)  then
+                            and not self:IsSettlerSuspended(SettlerID)
+                            and self:IsSettlerStriking(SettlerID) then
                                 Logic.MakeSettlerIll(SettlerID);
                                 ShowMessage = true;
                             end
@@ -548,16 +547,13 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(_Turn)
             if CurrentTime % DeathTime == 0 then
                 for SettlerID,v in pairs(self.Famine[PlayerID]) do
                     if  not self:IsSettlerCarryingFood(SettlerID)
-                    and not self:IsSettlerSuspended(SettlerID) then
+                    and not self:IsSettlerSuspended(SettlerID)
+                    and self:IsSettlerStriking(SettlerID) then
                         local Chance = Lib.SettlementSurvival.Shared.Famine.DeathChance;
                         if Chance >= 1 and math.random(1, 100) <= math.ceil(Chance) then
                             SendReport(Report.SettlerDiedFromStarvation, SettlerID);
                             SendReportToLocal(Report.SettlerDiedFromStarvation, SettlerID);
-                            self:ConsumeSettlersLive(SettlerID);
-                            if self:GetSettlerLives(SettlerID) == 0 then
-                                self:SetSettlerLives(SettlerID, nil);
-                                self:SuspendSettler(SettlerID, true);
-                            end
+                            self:SuspendSettler(SettlerID, true);
                             ShowMessage = true;
                         end
                     end
@@ -616,7 +612,8 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(_Turn)
             if CurrentTime % DeathTime == 0 then
                 for SettlerID,v in pairs(self.Plague[PlayerID]) do
                     if  not self:IsSettlerCarryingMedicine(SettlerID)
-                    and not self:IsSettlerSuspended(SettlerID) then
+                    and not self:IsSettlerSuspended(SettlerID)
+                    and self:IsSettlerStriking(SettlerID) then
                         local Chance = Lib.SettlementSurvival.Shared.Plague.DeathChance;
                         if GetPlayerResources(Goods.G_Herb, PlayerID) > 10 then
                             AddGood(Goods.G_Herb, -1, PlayerID);
@@ -625,11 +622,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(_Turn)
                         if Chance >= 1 and math.random(1, 100) <= math.ceil(Chance) then
                             SendReport(Report.SettlerDiedFromIllness, SettlerID);
                             SendReportToLocal(Report.SettlerDiedFromIllness, SettlerID);
-                            self:ConsumeSettlersLive(SettlerID);
-                            if self:GetSettlerLives(SettlerID) == 0 then
-                                self:SetSettlerLives(SettlerID, nil);
-                                self:SuspendSettler(SettlerID, true);
-                            end
+                            self:SuspendSettler(SettlerID, true);
                             ShowMessage = true;
                         end
                     end
@@ -751,55 +744,17 @@ function Lib.SettlementSurvival.Global:ResumeSettlersAfterMourning(_Turn)
     end
 end
 
--- -------------------------------------------------------------------------- --
-
-function Lib.SettlementSurvival.Global:OverwriteEndOfMonth()
-    self.Orig_GameCallback_EndOfMonth = GameCallback_EndOfMonth;
-    GameCallback_EndOfMonth = function(_LastMonth, _CurrentMonth)
-        Lib.SettlementSurvival.Global.Orig_GameCallback_EndOfMonth(_LastMonth, _CurrentMonth);
-        for PlayerID = 1, 8 do
-            Lib.SettlementSurvival.Global:GainSettlerLives(PlayerID);
+function Lib.SettlementSurvival.Global:IsSettlerStriking(_Entity)
+    local EntityID = GetID(_Entity);
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    local TaskList = Logic.GetCurrentTaskList(EntityID);
+    local MarketID = Logic.GetMarketplace(PlayerID);
+    if MarketID ~= 0 and TaskList == "TL_WORKER_IDLE_UNFIT" then
+        if Logic.IsEntityMoving(EntityID) == false then
+            return Logic.CheckEntitiesDistance(EntityID, MarketID, 1500) == true;
         end
     end
-end
-
-function Lib.SettlementSurvival.Global:GainSettlerLives(_PlayerID)
-    for EntityID, Amount in pairs(self.SettlerLives[_PlayerID]) do
-        local Max = Lib.SettlementSurvival.Shared.SettlerLives.Max;
-        local Gain = Lib.SettlementSurvival.Shared.SettlerLives.PerMonth;
-        self.SettlerLives[_PlayerID][EntityID] = math.min(Amount + Gain, Max);
-    end
-end
-
-function Lib.SettlementSurvival.Global:ConsumeSettlersLive(_Entity)
-    local EntityID = GetID(_Entity);
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-    if self.SettlerLives[PlayerID] then
-        local Lives = self:GetSettlerLives(_Entity);
-        if Lives == -1 then
-            local Limit = Lib.SettlementSurvival.Shared.SettlerLives.Max;
-            self:SetSettlerLives(_Entity, Limit);
-            Lives = Limit;
-        end
-        self:SetSettlerLives(_Entity, Lives -1);
-    end
-end
-
-function Lib.SettlementSurvival.Global:GetSettlerLives(_Entity)
-    local EntityID = GetID(_Entity);
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-    if self.SettlerLives[PlayerID] then
-        return self.SettlerLives[PlayerID][EntityID] or -1;
-    end
-    return -1;
-end
-
-function Lib.SettlementSurvival.Global:SetSettlerLives(_Entity, _Amount)
-    local EntityID = GetID(_Entity);
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-    if self.SettlerLives[PlayerID] then
-        self.SettlerLives[PlayerID][EntityID] = _Amount;
-    end
+    return false;
 end
 
 -- -------------------------------------------------------------------------- --

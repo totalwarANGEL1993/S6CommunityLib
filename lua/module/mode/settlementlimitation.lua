@@ -27,7 +27,7 @@ Lib.SettlementLimitation.Shared = {
         Chance = 15,
     },
     Upkeep = {
-        Palisade = 0.5,
+        Palisade = 0.3,
         Wall = 1.5,
     },
     AbsolutLimitIgnore = {
@@ -298,7 +298,7 @@ function Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID)
             if WallCost > 0 then
                 if GetPlayerResources(Goods.G_Gold, _PlayerID) < WallCost then
                     local WallList = {Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)};
-                    local Deteriation = Lib.SettlementLimitation.Shared.Upkeep.WallDeteriation;
+                    local Deteriation = Lib.SettlementLimitation.Shared.WallDeteriation;
                     for _,ID in pairs(WallList) do
                         if math.random(1, 100) <= Deteriation.Chance then
                             local Health = Logic.GetEntityHealth(ID);
@@ -314,7 +314,9 @@ function Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID)
                 end
             end
 
-            ExecuteLocal(
+            RequestHiResDelay(
+                0,
+                ExecuteLocal,
                 [[GUI_FeedbackWidgets.GoldAdd(%d, nil, {3, 11, 0}, {1, 8, 0})]],
                 (-1) * MoneyCost
             );

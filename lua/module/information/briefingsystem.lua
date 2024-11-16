@@ -128,23 +128,23 @@ function Lib.BriefingSystem.Global:BriefingExecutionController()
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingGetPage(_Briefing)
-    _Briefing.GetPage = _Briefing.GetPage or function(self, _NameOrID)
+    _Briefing.GetPage = _Briefing.GetPage or function(this, _NameOrID)
         local ID = Lib.BriefingSystem.Global:GetPageIDByName(_Briefing.PlayerID, _NameOrID);
         return Lib.BriefingSystem.Global.Briefing[_Briefing.PlayerID][ID];
     end
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
-    _Briefing.AddPage = _Briefing.AddPage or function(self, _Page)
+    _Briefing.AddPage = _Briefing.AddPage or function(this, _Page)
         -- Briefing length
-        self.Length = (self.Length or 0) +1;
+        this.Length = (this.Length or 0) +1;
         -- Animations
         _Briefing.PageAnimation = _Briefing.PageAnimation or {};
         -- Parallaxes
         _Briefing.PageParallax = _Briefing.PageParallax or {};
 
         -- Set page name
-        local Identifier = "Page" ..(#self +1);
+        local Identifier = "Page" ..(#this +1);
         if _Page.Name then
             Identifier = _Page.Name;
         else
@@ -188,15 +188,15 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
             -- Optional fly to
             local Position2, Rotation2, Zoom2, Angle2;
             if _Page.FlyTo then
-                Position2 = _Page.FlyTo.Position or Position2;
-                Rotation2 = _Page.FlyTo.Rotation or Rotation2;
-                Zoom2     = _Page.FlyTo.Zoom or Zoom2;
-                Angle2    = _Page.FlyTo.Angle or Angle2;
+                Position2 = _Page.FlyTo.Position or _Page.Position;
+                Rotation2 = _Page.FlyTo.Rotation or _Page.Rotation;
+                Zoom2     = _Page.FlyTo.Zoom or _Page.Zoom;
+                Angle2    = _Page.FlyTo.Angle or _Page.Angle;
             end
             -- Create the animation
             _Briefing.PageAnimation[Identifier] = {
                 Clear = true,
-                {_Page.Duration or 1,
+                {math.abs(_Page.Duration or 1),
                  _Page.Position, _Page.Rotation, _Page.Zoom, _Page.Angle,
                  Position2, Rotation2, Zoom2, Angle2}
             };
@@ -226,24 +226,24 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
         end
 
         -- Multiple choice selection
-        _Page.GetSelected = function(self)
+        _Page.GetSelected = function(_Data)
             return 0;
         end
         -- Return page
-        table.insert(self, _Page);
+        table.insert(this, _Page);
         return _Page;
     end
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddMCPage(_Briefing)
-    _Briefing.AddMCPage = _Briefing.AddMCPage or function(self, _Page)
+    _Briefing.AddMCPage = _Briefing.AddMCPage or function(this, _Page)
         -- Create base page
-        local Page = self:AddPage(_Page);
+        local Page = this:AddPage(_Page);
 
         -- Multiple choice selection
-        Page.GetSelected = function(self)
-            if self.MC then
-                return self.MC.Selected;
+        Page.GetSelected = function(_Data)
+            if _Data.MC then
+                return _Data.MC.Selected;
             end
             return 0;
         end
@@ -264,12 +264,12 @@ function Lib.BriefingSystem.Global:CreateBriefingAddMCPage(_Briefing)
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddRedirect(_Briefing)
-    _Briefing.AddRedirect = _Briefing.AddRedirect or function(self, _Target)
+    _Briefing.AddRedirect = _Briefing.AddRedirect or function(this, _Target)
         -- Dialog length
-        self.Length = (self.Length or 0) +1;
+        this.Length = (this.Length or 0) +1;
         -- Return page
         local Page = (_Target == nil and -1) or _Target;
-        table.insert(self, Page);
+        table.insert(this, Page);
         return Page;
     end
 end

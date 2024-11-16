@@ -351,8 +351,10 @@ end
 
 --- Erstellt eine Seite auf vereinfachte Weise.
 ---
---- Die Funktion kann einen automatischen Seitennamen basierend auf dem Seitenindex erstellen. Ein
---- Name kann ein optionales Parameter am Anfang sein.
+--- Die Funktion kann einen automatischen Seitennamen basierend auf dem 
+--- Seitenindex erstellen. Ein Name kann ein optionales Parameter am 
+--- Anfang sein. Die Seite wird nicht weiter springen, bis der Skip-Button 
+--- geklicht wird.
 ---
 --- #### Einstellungen
 --- Die Funktion erwartet die folgenden Parameter:
@@ -363,7 +365,6 @@ end
 --- * `DialogCamera`    - Verwendung der Nahaufnahmekamera
 --- * `Position`        - (Optional) Skriptname der fokussierten Entität
 --- * `Action`          - (Optional) Aktion, wenn die Seite angezeigt wird
---- * `DisableSkipping` - (Optional) Erlauben/Verbieten des Überspringens der Seite
 ---
 --- #### Beispiele
 ---
@@ -376,8 +377,6 @@ end
 --- ASP("Titel", "Einige wichtige Texte.", true, "Marcus");
 --- -- Aktion aufrufen
 --- ASP("Titel", "Einige wichtige Texte.", true, "Marcus", MyFunction);
---- -- Überspringen erlauben/verbieten
---- ASP("Titel", "Einige wichtige Texte.", true, "HQ", nil, true);
 --- ```
 ---
 --- @param ... any Liste der Seitendaten
