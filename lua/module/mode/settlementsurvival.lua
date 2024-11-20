@@ -46,9 +46,9 @@ Lib.SettlementSurvival.Local  = {
 Lib.SettlementSurvival.Shared = {
     AnimalPlague = {
         InfectionChance = 4,
-        InfectionTimer = 60,
-        DeathChance = 12,
-        DeathTimer = 30,
+        InfectionTimer = 90,
+        DeathChance = 9,
+        DeathTimer = 90,
     },
     ColdWeather = {
         ConsumptionFactor = 0.01,
