@@ -335,7 +335,10 @@ function Lib.SettlementLimitation.Global:PayFacilityUpkeep(_PlayerID)
             RequestHiResDelay(
                 0,
                 ExecuteLocal,
-                [[GUI_FeedbackWidgets.GoldAdd(%d, nil, {3, 11, 0}, {1, 8, 0})]],
+                [[if GUI.GetPlayerID() == %d then
+                      GUI_FeedbackWidgets.GoldAdd(%d, nil, {3, 11, 0}, {1, 8, 0})
+                  end]],
+                _PlayerID,
                 (-1) * MoneyCost
             );
         end
