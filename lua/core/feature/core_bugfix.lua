@@ -173,7 +173,7 @@ end
 
 function Lib.Core.Bugfix:FixDestroyAllPlayerUnits()
     QuestTemplate.IsObjectiveCompleted_Orig_Core_Bugfix = QuestTemplate.IsObjectiveCompleted;
-    QuestTemplate.IsObjectiveCompleted = function(self, objective)
+    QuestTemplate.IsObjectiveCompleted = function(this, objective)
         if objective.Completed ~= nil then
             return objective.Completed;
         end
@@ -212,9 +212,9 @@ function Lib.Core.Bugfix:FixDestroyAllPlayerUnits()
                 objective.Completed = true;
             end
         elseif objectiveType == Objective.Distance then
-            objective.Completed = Lib.Core.Quest:IsQuestPositionReached(self, objective);
+            objective.Completed = Lib.Core.Quest:IsQuestPositionReached(this, objective);
         else
-            return self:IsObjectiveCompleted_Orig_Core_Bugfix(objective);
+            return this:IsObjectiveCompleted_Orig_Core_Bugfix(objective);
         end
         return objective.Completed;
     end
@@ -226,7 +226,7 @@ end
 function Lib.Core.Bugfix:FixBigCathedralName()
     AddStringText(
         "Names/B_Cathedral_Big",
-        {de = "Dom", en = "Cathedral", fr = "Cathédrale"}
+        {de = "Kathedrale", en = "Cathedral", fr = "Cathédrale"}
     );
 end
 
