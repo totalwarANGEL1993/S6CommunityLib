@@ -7,27 +7,6 @@
 
 -- ========================================================================== --
 
-if CONST_IS_IN_DEV then
-    Script.Load("E:/Repositories/libertica/var/libertica/librarian.lua");
-    Lib.Loader.PushPath("E:/Repositories/libertica/var/");
-else
-    Script.Load("maps/externalmap/qsb_t21_city/libertica/librarian.lua");
-end
-Lib.Require("comfort/KeyOf");
-Lib.Require("core/Core");
-Lib.Require("module/city/Promotion");
-Lib.Require("module/city/Construction");
-Lib.Require("module/city/LifestockSystem");
-Lib.Require("module/mode/SettlementSurvival");
-Lib.Require("module/entity/EntitySelection");
-Lib.Require("module/balancing/Damage");
-Lib.Require("module/quest/Quest");
-Lib.Require("module/mode/SettlementLimitation");
-Lib.Require("module/entity/EntitySearch");
-Lib.Require("module/trade/Warehouse");
-
--- ========================================================================== --
-
 function TestWarehouses()
     CreateWarehouse {
         ScriptName = "TP1",

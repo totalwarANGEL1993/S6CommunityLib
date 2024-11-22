@@ -1,7 +1,7 @@
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 -- ||||                          GLOBALES SKRIPT                         |||| --
 -- ||||                    --------------------------                    |||| --
--- ||||                            Testmap 04                            |||| --
+-- ||||                            Testmap 07                            |||| --
 -- ||||                           totalwarANGEL                          |||| --
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 
@@ -12,7 +12,7 @@ LibPath = "maps/externalmap/" ..Framework.GetCurrentMapName() .."/";
 
 CONST_IS_IN_DEV = true;
 if CONST_IS_IN_DEV then
-    GlobalPath = "E:/Repositories/libertica/test/test04_io/qsb_t04_io.s6xmap.unpacked/" ..GlobalPath;
+    GlobalPath = "E:/Repositories/libertica/test/test07_trade/qsb_t07_trade.s6xmap.unpacked/" ..GlobalPath;
     LibPath = "E:/Repositories/libertica/release/";
 end
 Script.Load(LibPath.. "libertica/librarian.lua");
