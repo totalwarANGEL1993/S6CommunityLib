@@ -1,7 +1,7 @@
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
--- ||||                          GLOBALES SKRIPT                         |||| --
+-- ||||                          LOKALES SKRIPT                          |||| --
 -- ||||                    --------------------------                    |||| --
--- ||||                            Testmap 04                            |||| --
+-- ||||                            Testmap 07                            |||| --
 -- ||||                           totalwarANGEL                          |||| --
 -- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| --
 
@@ -12,33 +12,18 @@ LibPath = "maps/externalmap/" ..Framework.GetCurrentMapName() .."/";
 
 CONST_IS_IN_DEV = true;
 if CONST_IS_IN_DEV then
-    GlobalPath = "E:/Repositories/libertica/test/test04_io/qsb_t04_io.s6xmap.unpacked/" ..GlobalPath;
+    GlobalPath = "E:/Repositories/libertica/test/test07_trade/qsb_t07_trade.s6xmap.unpacked/" ..GlobalPath;
     LibPath = "E:/Repositories/libertica/release/";
 end
 Script.Load(LibPath.. "libertica/librarian.lua");
 Script.Load(GlobalPath.. "/script/imports.lua");
-Script.Load(GlobalPath.. "script/global_main.lua");
+Script.Load(GlobalPath.. "/script/local_main.lua");
 
 -- ========================================================================== --
 
-function Mission_FirstMapAction()
-
-    -- Mapeditor-Einstellungen werden geladen
-    if Framework.IsNetworkGame() ~= true then
-        Startup_Player();
-        Startup_StartGoods();
-        Startup_Diplomacy();
-    end
-    PrepareLibrary();
+function Mission_LocalOnMapStart()
 end
 
-function Mission_InitPlayers()
-end
-
-function Mission_SetStartingMonth()
-    Logic.SetMonthOffset(3);
-end
-
-function Mission_InitMerchants()
+function Mission_LocalVictory()
 end
 
