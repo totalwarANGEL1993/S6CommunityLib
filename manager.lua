@@ -34,6 +34,7 @@ LibWriter = {
         "module/entity/EntitySearch",
         "module/diplomacy/QuickTravel",
         "module/trade/Trade",
+        "module/trade/TradeRoute",
     },
     FileReadLookup = {},
     Compile = false,

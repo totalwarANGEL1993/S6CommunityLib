@@ -1,3 +1,12 @@
+--- Es kann in den Ablauf von Kauf und Verkauf eingegriffen werden.
+---
+--- #### Berichte
+--- * `Report.GoodsPurchased` - Waren wurden von einem Spieler eingekauft
+--- * `Report.GoodsSold` - Waren wurden an einen Spieler verkauft
+Lib.Trade = Lib.Trade or {};
+
+
+
 --- Fügt einem Spieler ein reguläres Angebot hinzu.
 --- @param _VendorID integer ID des Spielers
 --- @param _OfferType integer Art des Angebots
@@ -308,4 +317,29 @@ API.RemoveTradeOffer = RemoveTradeOffer;
 function ModifyTradeOffer(_PlayerID, _GoodOrEntityType, _NewAmount)
 end
 API.ModifyTradeOffer = ModifyTradeOffer;
+
+
+
+--- Ein Spieler hat ein Angebot in einem Lagerhaus gekauft
+---
+--- #### Parameter
+--- * `_OfferIndex` - Index des Angebot
+--- * `_MerchantType` - Typ des Händlers
+--- * `_Type` - Typ des Angebot
+--- * `_Amount` - Gekaufte Menge
+--- * `_Price` - Bezahlter Preis
+--- * `_PlayerID` - ID des Spielers
+--- * `_PartnerID` - ID des Partners
+Report.Purchased = anyInteger;
+
+--- A player has sold goods to another player.
+---
+--- #### Parameter
+--- * `_MerchantType` - Typ des Händlers
+--- * `_GoodType` - Typ des Angebot
+--- * `_GoodAmount` - Verkaufte Menge
+--- * `_Price` - Erhaltenes Geld
+--- * `_PlayerID` - ID des Spielers
+--- * `_PartnerID` - ID des Partners
+Report.GoodsSold = anyInteger;
 

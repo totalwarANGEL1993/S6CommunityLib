@@ -72,3 +72,5 @@ module/information/Requester
 module/entity/EntitySearch
 module/diplomacy/QuickTravel
 module/trade/Trade
+module/trade/Trade
+module/trade/TradeRoute

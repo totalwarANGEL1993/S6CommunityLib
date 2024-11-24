@@ -1,3 +1,12 @@
+--- Allows to manipulate buying and selling of goods and units.
+---
+--- #### Reports
+--- * `Report.GoodsPurchased` - A player purchased goods
+--- * `Report.GoodsSold` - A player has sold goods
+Lib.Trade = Lib.Trade or {};
+
+
+
 --- Adds a regular good offer to a player.
 --- @param _VendorID integer ID of player
 --- @param _OfferType integer Type of offer
@@ -308,4 +317,29 @@ API.RemoveTradeOffer = RemoveTradeOffer;
 function ModifyTradeOffer(_PlayerID, _GoodOrEntityType, _NewAmount)
 end
 API.ModifyTradeOffer = ModifyTradeOffer;
+
+
+
+--- A player purchased an offer from a storehouse.
+---
+--- #### Parameter
+--- * `_OfferIndex` - Index of offer
+--- * `_MerchantType` - Type of merchant
+--- * `_Type` - Type of offer
+--- * `_Amount` - Amount of offer
+--- * `_Price` - price payed
+--- * `_PlayerID` - PlayerID des Hafens
+--- * `_PartnerID` - ID of partner
+Report.Purchased = anyInteger;
+
+--- A player has sold goods to another player.
+---
+--- #### Parameter
+--- * `_MerchantType` - Type of merchant
+--- * `_GoodType` - Type of good
+--- * `_GoodAmount` - Amount of good
+--- * `_Price` - selling price
+--- * `_PlayerID` - ID of player
+--- * `_TargetID` - ID of partner
+Report.GoodsSold = anyInteger;
 
