@@ -59,9 +59,11 @@ function LibWriter:Run(...)
         os.execute('rm -rf var');
         if self.SingleFile then
             os.execute('mkdir "var"');
+            os.execute('cp "license.md" "var/license.md');
             self:CreateSingleFile();
         else
             os.execute('mkdir "var/libertica"');
+            os.execute('cp "license.md" "var/license.md');
             self:CopyModules();
             self:CreateQsb();
         end
