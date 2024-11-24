@@ -117,3 +117,23 @@ function SetTerritoryDevelopmentCost(_CostType1, _Amount1, _CostType2, _Amount2)
 end
 API.SetTerritoryDevelopmentCost = SetTerritoryDevelopmentCost;
 
+function AddToBuildingTerritoryBlacklist(_Type, _Territory)
+    Lib.SettlementLimitation.Global:AddToBuildingTerritoryBlacklist(_Type, _Territory);
+end
+API.AddToBuildingTerritoryBlacklist = AddToBuildingTerritoryBlacklist;
+
+function AddToBuildingTerritoryWhitelist(_Type, _Territory)
+    Lib.SettlementLimitation.Global:AddToBuildingTerritoryWhitelist(_Type, _Territory);
+end
+API.AddToBuildingTerritoryWhitelist = AddToBuildingTerritoryWhitelist;
+
+function RemoveFromBuildingTerritoryBlacklist(_Type, _Territory)
+    Lib.SettlementLimitation.Global:RemoveFromBuildingTerritoryBlacklist(_Type, _Territory);
+end
+API.RemoveFromBuildingTerritoryBlacklist = RemoveFromBuildingTerritoryBlacklist;
+
+function RemoveFromBuildingTerritoryWhitelist(_Type, _Territory)
+    Lib.SettlementLimitation.Global:RemoveFromBuildingTerritoryWhitelist(_Type, _Territory);
+end
+API.RemoveFromBuildingTerritoryWhitelist = RemoveFromBuildingTerritoryWhitelist;
+
