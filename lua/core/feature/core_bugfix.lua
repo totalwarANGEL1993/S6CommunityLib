@@ -1,7 +1,19 @@
 ---@diagnostic disable: duplicate-set-field
 
 Lib.Core = Lib.Core or {};
-Lib.Core.Bugfix = {};
+Lib.Core.Bugfix = {
+    ForceDeselectEntities = {
+        ["U_Entertainer_NA_FireEater"] = true,
+        ["U_Entertainer_NA_PerformingFireeater"] = true,
+        ["U_Entertainer_NA_PerformingStiltWalker"] = true,
+        ["U_Entertainer_NA_StiltWalker"] = true,
+        ["U_Entertainer_NE_PerformingStrongestMan_Barrel"] = true,
+        ["U_Entertainer_NE_PerformingStrongestMan_Stone"] = true,
+        ["U_Entertainer_NE_StrongestMan_Barrel"] = true,
+        ["U_Entertainer_NE_StrongestMan_Stone"] = true,
+        ["U_FireEater"] = true,
+    },
+};
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/GetDistance");
@@ -17,6 +29,7 @@ function Lib.Core.Bugfix:Initialize()
         self:FixBanditCampFireplace();
     end
     if IsLocalScript() then
+        self:OverrideSelection();
         self:FixInteractiveObjectClicked();
         self:FixBigCathedralName();
         self:FixClimateZoneForHouseMenu();
@@ -412,6 +425,41 @@ function Lib.Core.Bugfix:FixBanditCampFireplace()
             g_Outlaws.Players[playerID][_CaMarketplaceID].ExtinguishedFire = NewID;
             g_Outlaws.Players[playerID][_CaMarketplaceID].CampFire = nil;
         end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Force deselect
+
+function Lib.Core.Bugfix:OnSelectionCanged(_Source)
+    local Selected = {GUI.GetSelectedEntities()};
+    for i= #Selected, 1, -1 do
+        local TypeName = self:GetSelectedTypeName(Selected[i]);
+        if TypeName and self.ForceDeselectEntities[TypeName] then
+            GUI.DeselectEntity(Selected[i]);
+        end
+    end
+end
+
+function Lib.Core.Bugfix:GetSelectedTypeName(_ID)
+    local ID = _ID;
+    local TypeName;
+    if Logic.IsLeader(_ID) == 1 then
+        local _, FirstID = Logic.GetSoldiersAttachedToLeader(ID);
+        ID = FirstID or 0;
+    end
+    if ID > 0 then
+        local Type = Logic.GetEntityType(ID);
+        TypeName = Logic.GetEntityTypeName(Type);
+    end
+    return TypeName;
+end
+
+function Lib.Core.Bugfix:OverrideSelection()
+    self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
+    GameCallback_GUI_SelectionChanged = function(_Source)
+        Lib.Core.Bugfix.Orig_GameCallback_GUI_SelectionChanged(_Source);
+        Lib.Core.Bugfix:OnSelectionCanged(_Source);
     end
 end
 
