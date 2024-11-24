@@ -4,6 +4,8 @@ Lib.SettlementLimitation.Global = {
     Active = false,
     TerritoryRestriction = {},
     TerritoryTypeRestriction = {},
+    TerritoryTypeBlacklist = {},
+    TerritoryTypeWhitelist = {},
     AdditionalBuildingBonus = {},
     MultiConstructionBonus = {},
     WallUpkeepCosts = false,
@@ -13,6 +15,8 @@ Lib.SettlementLimitation.Local  = {
     Active = false,
     TerritoryRestriction = {},
     TerritoryTypeRestriction = {},
+    TerritoryTypeBlacklist = {},
+    TerritoryTypeWhitelist = {},
     AdditionalBuildingBonus = {},
     MultiConstructionBonus = {},
     WallUpkeepCosts = false,
@@ -109,13 +113,11 @@ function Lib.SettlementLimitation.Global:OnReportReceived(_ID, ...)
             CustomRuleConstructBuilding(PlayerID, "SettlementLimitation_Global_HomeTerritoryBuildingTypeLimitRule");
         end
     elseif _ID == Report.BuildingUpgraded then
-        local Costs = Lib.SettlementLimitation.Shared.DevelopTerritoryCosts;
         local IsOutpost = Logic.IsEntityInCategory(arg[1], EntityCategories.Outpost) == 1;
         local TerritoryID = GetTerritoryUnderEntity(arg[1]);
-        local Bonus = self:GetMultiConstructionBonusAmount(arg[2], TerritoryID);
+        local Bonus = self:GetAdditionalBuildingBonusAmount(arg[2], TerritoryID);
         if IsOutpost and Bonus == 0 then
-            AddGood(Costs[1], Costs[2], arg[1]);
-            self:SetMultiConstructionBonusAmount(arg[2], TerritoryID, 1);
+            self:SetAdditionalBuildingBonusAmount(arg[2], TerritoryID, 1);
         end
     end
 end
@@ -123,7 +125,7 @@ end
 function Lib.SettlementLimitation.Global:InitDefaultRules(_PlayerID)
     local Territories = {Logic.GetTerritories()};
     for i = 1, #Territories do
-        SetTerritoryBuildingLimit(_PlayerID, Territories[i], 3);
+        SetTerritoryBuildingLimit(_PlayerID, Territories[i], 2);
         for Type, _ in pairs(Lib.SettlementLimitation.Shared.CityBuildings) do
             SetTerritoryBuildingTypeLimit(_PlayerID, Territories[i], Type, 0);
         end
@@ -178,6 +180,17 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
         if  Lib.SettlementLimitation.Global.Active
         and MainTerritoryID ~= TerritoryID then
             if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
+                if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type] then
+                    if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type][TerritoryID] then
+                        return false;
+                    end
+                end
+                if Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type] then
+                    if not Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type][TerritoryID] then
+                        return false;
+                    end
+                end
+
                 local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
                 local TypeName = Logic.GetEntityTypeName(_Type);
                 if IgnoreList[TypeName] then
@@ -233,6 +246,17 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
         and Logic.IsEntityTypeInCategory(_Type, EntityCategories.OuterRimBuilding) == 1
         and MainTerritoryID == TerritoryID then
             if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
+                if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type] then
+                    if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type][TerritoryID] then
+                        return false;
+                    end
+                end
+                if Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type] then
+                    if not Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type][TerritoryID] then
+                        return false;
+                    end
+                end
+
                 local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
                 local TypeName = Logic.GetEntityTypeName(_Type);
                 if IgnoreList[TypeName] then
@@ -297,6 +321,42 @@ function Lib.SettlementLimitation.Global:SetMultiConstructionBonusAmount(_Player
     end
 end
 
+function Lib.SettlementLimitation.Global:AddToBuildingTerritoryBlacklist(_Type, _Territory)
+    self.TerritoryTypeBlacklist[_Type] = self.TerritoryTypeBlacklist[_Type] or {};
+    self.TerritoryTypeBlacklist[_Type][_Territory] = true;
+    ExecuteLocal([[
+        self.TerritoryTypeBlacklist[%d] = self.TerritoryTypeBlacklist[%d] or {}
+        self.TerritoryTypeBlacklist[%d][%d] = true
+    ]], _Type, _Type, _Type, _Territory);
+end
+
+function Lib.SettlementLimitation.Global:AddToBuildingTerritoryWhitelist(_Type, _Territory)
+    self.TerritoryTypeWhitelist[_Type] = self.TerritoryTypeWhitelist[_Type] or {};
+    self.TerritoryTypeWhitelist[_Type][_Territory] = true;
+    ExecuteLocal([[
+        self.TerritoryTypeWhitelist[%d] = self.TerritoryTypeWhitelist[%d] or {}
+        self.TerritoryTypeWhitelist[%d][%d] = true
+    ]], _Type, _Type, _Type, _Territory);
+end
+
+function Lib.SettlementLimitation.Global:RemoveFromBuildingTerritoryBlacklist(_Type, _Territory)
+    self.TerritoryTypeBlacklist[_Type] = self.TerritoryTypeBlacklist[_Type] or {};
+    self.TerritoryTypeBlacklist[_Type][_Territory] = nil;
+    ExecuteLocal([[
+        self.TerritoryTypeBlacklist[%d] = self.TerritoryTypeBlacklist[%d] or {}
+        self.TerritoryTypeBlacklist[%d][%d] = nil
+    ]], _Type, _Type, _Type, _Territory);
+end
+
+function Lib.SettlementLimitation.Global:RemoveFromBuildingTerritoryWhitelist(_Type, _Territory)
+    self.TerritoryTypeWhitelist[_Type] = self.TerritoryTypeWhitelist[_Type] or {};
+    self.TerritoryTypeWhitelist[_Type][_Territory] = nil;
+    ExecuteLocal([[
+        self.TerritoryTypeWhitelist[%d] = self.TerritoryTypeWhitelist[%d] or {}
+        self.TerritoryTypeWhitelist[%d][%d] = nil
+    ]], _Type, _Type, _Type, _Territory);
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.SettlementLimitation.Global:InitWallUpkeep()
@@ -350,7 +410,8 @@ function Lib.SettlementLimitation.Global:GetWallUpkeep(_PlayerID)
     local UpkeepPalisade = Lib.SettlementLimitation.Shared.Upkeep.Palisade;
     local UpkeepWall = Lib.SettlementLimitation.Shared.Upkeep.Wall;
     for _, ID in pairs{Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)} do
-        if Logic.IsEntityInCategory(ID, EntityCategories.Wall) == 1 then
+        if  Logic.IsEntityInCategory(ID, EntityCategories.Wall) == 1
+        and Logic.IsConstructionComplete(ID) == 1 then
             if Logic.IsEntityInCategory(ID, EntityCategories.PalisadeSegment) == 1 then
                 Upkeep = Upkeep + UpkeepPalisade;
             else
