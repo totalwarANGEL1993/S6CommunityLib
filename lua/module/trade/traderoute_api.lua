@@ -4,9 +4,9 @@ Lib.Register("module/trade/TradeRoute_API");
 function InitHarbor(_PlayerID, ...)
     assert(not IsLocalScript(), "Can not be used in local script!");
     assert(Logic.GetStoreHouse(_PlayerID) ~= 0, "Player " .._PlayerID.. " is dead! :(");
-    Lib.TradeRoute.Global:CreateHarbor(_PlayerID);
+    Lib.TradeRoute.Global:CreateHarbor(_PlayerID, false);
     for i= 1, #arg do
-        API.AddTradeRoute(_PlayerID, arg[i]);
+        AddTradeRoute(_PlayerID, arg[i]);
     end
 end
 API.InitHarbor = InitHarbor;
@@ -28,6 +28,10 @@ function AddTradeRoute(_PlayerID, _Route)
     _Route.Amount = _Route.Amount or ((#_Route.Offers > 4 and 4) or #_Route.Offers);
     assert(_Route.Amount >= 1 and _Route.Amount <= 4, "Route " .._Route.Name.. " can only add up to 4 offers!");
     assert(_Route.Amount <= #_Route.Offers, "Route " .._Route.Name.. " has not enough offers to add!");
+    if  Lib.TradeRoute.Global:CountTradeRoutes(_PlayerID) > 0
+    and Lib.TradeRoute.Global:IsRetroHarbor(_PlayerID) then
+        assert(false, "Can't add routes to traveling salesman!");
+    end
     for i= 1, #_Route.Offers, 1 do
         local IsGoodType = Goods[_Route.Offers[i][1]] ~= nil;
         local IsUnitType = Entities[_Route.Offers[i][1]] ~= nil;
@@ -57,7 +61,33 @@ API.ChangeTradeRouteGoods = ChangeTradeRouteGoods;
 function RemoveTradeRoute(_PlayerID, _RouteName)
     assert(not IsLocalScript(), "Can not be used in local script!");
     assert(Logic.GetStoreHouse(_PlayerID) ~= 0, "Player " .._PlayerID.. " is dead! :(");
+    assert(not Lib.TradeRoute.Global:IsRetroHarbor(_PlayerID), "Can't remove routes to traveling salesman!");
     return Lib.TradeRoute.Global:ShutdownTradeRoute(_PlayerID, _RouteName);
 end
 API.RemoveTradeRoute = RemoveTradeRoute;
+
+function InitTravelingSalesman(_Route)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    assert(type(_Route) == "table", "_Route must be a table!");
+    assert(_Route.PlayerID ~= nil, "_Route.PlayerID is invalid!");
+    local PlayerID = _Route.PlayerID;
+    _Route.PlayerID = nil;
+    Lib.TradeRoute.Global:CreateHarbor(PlayerID, true);
+    assert(Logic.GetStoreHouse(PlayerID) ~= 0, "Player " ..PlayerID.. " is dead! :(");
+    _Route.Name = "Player" ..PlayerID.. "_Route";
+    AddTradeRoute(PlayerID, _Route);
+    Lib.TradeRoute.Global:OnTravelingSalesmanInitalized(PlayerID);
+end
+API.InitTravelingSalesman = InitTravelingSalesman;
+
+function DisposeTravelingSalesman(_PlayerID)
+    DisposeHarbor(_PlayerID);
+end
+API.DisposeTravelingSalesman = DisposeTravelingSalesman;
+
+function ChangeTravelingSalesmanGoods(_PlayerID, _RouteOffers)
+    assert(Lib.TradeRoute.Global:IsRetroHarbor(_PlayerID), "Not a traveling salesman!");
+    ChangeTradeRouteGoods(_PlayerID, "Player" .._PlayerID.. "_Route", _RouteOffers);
+end
+API.ChangeTravelingSalesmanGoods = ChangeTravelingSalesmanGoods;
 
