@@ -83,6 +83,33 @@ function AddTradeRoute4Player2()
     });
 end
 
+function ActivateTravelingSalesmanPlayer2()
+    InitTravelingSalesman{
+        PlayerID = 2,
+        Path = {"Spawn4", "Arrived4"},
+        Interval = 5*60,
+        Duration = 2*60,
+        Amount = 4,
+        Offers = {
+            {"G_Grain", 5},
+            {"U_SiegeTowerCart", 3},
+            {"G_Clothes", 2},
+            {"G_Medicine", 1},
+            {"U_Entertainer_NE_StrongestMan_Stone", 1},
+            {"G_Stone", 5},
+            {"U_BatteringRamCart", 1},
+            {"G_Dye", 2},
+            {"G_Milk", 5},
+            {"U_AmmunitionCart", 2},
+            {"G_Wool", 5},
+            {"U_CatapultCart", 1},
+            {"G_Beer", 2},
+            {"G_Herb", 5},
+            {"U_Entertainer_NA_StiltWalker", 1},
+        }
+    };
+end
+
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()

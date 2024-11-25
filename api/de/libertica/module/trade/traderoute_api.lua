@@ -26,21 +26,21 @@ Lib.TradeRoute = Lib.TradeRoute or {};
 
 
 
---- Initialisiert das Lagerhaus des Spielers als fahrenden Händler.
+--- Initialisiert das Lagerhaus des Spielers als Handelshafen.
 --- @param _PlayerID integer ID des Spielers
 --- @param ... table Liste der Routen
 function InitHarbor(_PlayerID, ...)
 end
 API.InitHarbor = InitHarbor;
 
---- Entfernt den fahrenden Händler aus dem Lagerhaus des Spielers. Auch Schiffe,
+--- Entfernt den Handelshafen aus dem Lagerhaus des Spielers. Auch Schiffe,
 --- die sich derzeit auf der Karte befinden, werden gelöscht.
 --- @param _PlayerID integer ID des Spielers
 function DisposeHarbor(_PlayerID)
 end
 API.DisposeHarbor = DisposeHarbor;
 
---- Fügt einem fahrenden Händler eine Handelsroute hinzu.
+--- Fügt einem Handelshafen eine Handelsroute hinzu.
 --- 
 --- #### Felder der Handelsroute:
 --- * `Name` - Eindeutiger Name für die Route
@@ -112,6 +112,71 @@ function RemoveTradeRoute(_PlayerID, _RouteName)
     return 0;
 end
 API.RemoveTradeRoute = RemoveTradeRoute;
+
+--- Initialisiert einen Spieler als klassichen fahrenden Händler.
+--- 
+--- Diese Variante legt ein anderes verhalten an den Tag. Die Diplomatie WIRD
+--- sich verändern, abhängig davon, ob das Schiff im Hafen ist (Handelspartner) 
+--- oder nicht (Bekannt). Außerdem kann der fahrende Händler nur eine Route
+--- haben und wird Standardnachrichten zum verbleib des Schiffs senden.
+--- 
+--- #### Felder der Handelsroute:
+--- * `PlayerID` - ID des Spielers
+--- * `Path` - Liste der Wegpunkte
+--- * `Offers` - Liste der Angebote (Format: {_Type, _Amount})
+--- * `Amount` - Anzahl der Angebote, die bei der Ankunft ausgewählt werden sollen
+--- * `Duration` - Ankerzeit des Schiffes in Sekunden
+--- * `Interval` - Zeit zwischen Schiffsbesuchen
+--- 
+--- #### Beispiel:
+--- ```lua
+--- InitTravelingSalesman{
+---     PlayerID   = 2,
+---     Path       = {"Spawn3", "Arrived3"},
+---     Interval   = 10*60,
+---     Duration   = 2*60,
+---     Amount     = 2,
+---     Offers     = {
+---         {"G_Wool", 5},
+---         {"U_CatapultCart", 1},
+---         {"G_Beer", 2},
+---         {"G_Herb", 5},
+---         {"U_Entertainer_NA_StiltWalker", 1},
+---     }
+--- };
+--- ```
+--- 
+--- @param _Route table Beschreibung des fahrenden Händlers
+function InitTravelingSalesman(_PlayerID, _Route)
+end
+API.InitTravelingSalesman = InitTravelingSalesman;
+
+--- Entfernt den fahrenden Händler aus dem Lagerhaus des Spielers. Auch Schiffe,
+--- die sich derzeit auf der Karte befinden, werden gelöscht.
+--- @param _PlayerID integer ID des Spielers
+function DisposeTravelingSalesman(_PlayerID)
+end
+API.DisposeTravelingSalesman = DisposeTravelingSalesman;
+
+--- Ändert die Angebote einer bestehenden Handelsroute.
+--- 
+--- #### Example:
+--- ```lua
+--- ChangeTravelingSalesmanGoods(
+---     2,
+---     {{"G_Wool", 3},
+---      {"U_CatapultCart", 5},
+---      {"G_Beer", 2},
+---      {"G_Herb", 3},
+---      {"U_Entertainer_NA_StiltWalker", 1}}
+--- );
+--- ```
+--- 
+--- @param _PlayerID integer ID des Spielers
+--- @param _Offers table Angebote
+function ChangeTravelingSalesmanGoods(_PlayerID, _Offers)
+end
+API.ChangeTravelingSalesmanGoods = ChangeTravelingSalesmanGoods;
 
 
 

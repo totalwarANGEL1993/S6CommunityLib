@@ -26,21 +26,21 @@ Lib.TradeRoute = Lib.TradeRoute or {};
 
 
 
---- Initalizes the storehouse of the player as traveling salesman.
+--- Initalizes the storehouse of the player as trade harbor.
 --- @param _PlayerID integer ID of player
 --- @param ... table List of routes
 function InitHarbor(_PlayerID, ...)
 end
 API.InitHarbor = InitHarbor;
 
---- Removes the traveling salesman from the players storehouse. Also ships
+--- Removes the trade harbor from the players storehouse. Also ships
 --- currently on the map will be deleted.
 --- @param _PlayerID integer ID of player
 function DisposeHarbor(_PlayerID)
 end
 API.DisposeHarbor = DisposeHarbor;
 
---- Adds a trade route to a traveling salesman.
+--- Adds a trade route to a trade harbor.
 --- 
 --- #### Trade route fields:
 --- * `Name` - Unique name for the route
@@ -112,6 +112,71 @@ function RemoveTradeRoute(_PlayerID, _RouteName)
     return 0;
 end
 API.RemoveTradeRoute = RemoveTradeRoute;
+
+--- Creates a classic traveling salesman.
+--- 
+--- This variant is different in their behavior. It WILL change it's diplomacy
+--- depending on if the ship is at the port (trade partner) or not (established
+--- contact). Also the traveling salesman can only have 1 route and they will
+--- send standard messages about the ships whereabouts.
+--- 
+--- #### Trade route fields:
+--- * `PlayerID` - ID of player
+--- * `Path` - List of waypoint names
+--- * `Offers` - List of offers (Format: {_Type, _Amount})
+--- * `Amount` - Amount of offers to select on arrival
+--- * `Duration` - Anchor time of the ship in seconds
+--- * `Interval` - Time between ship visits
+--- 
+--- #### Example:
+--- ```lua
+--- InitTravelingSalesman{
+---     PlayerID   = 2,
+---     Path       = {"Spawn3", "Arrived3"},
+---     Interval   = 10*60,
+---     Duration   = 2*60,
+---     Amount     = 2,
+---     Offers     = {
+---         {"G_Wool", 5},
+---         {"U_CatapultCart", 1},
+---         {"G_Beer", 2},
+---         {"G_Herb", 5},
+---         {"U_Entertainer_NA_StiltWalker", 1},
+---     }
+--- };
+--- ```
+--- 
+--- @param _Route table Traveling salesman description
+function InitTravelingSalesman(_Route)
+end
+API.InitTravelingSalesman = InitTravelingSalesman;
+
+--- Removes the traveling salesman from the players storehouse. Also ships
+--- currently on the map will be deleted.
+--- @param _PlayerID integer ID of player
+function DisposeTravelingSalesman(_PlayerID)
+end
+API.DisposeTravelingSalesman = DisposeTravelingSalesman;
+
+--- Changes the offers of an traveling salesman.
+--- 
+--- #### Example:
+--- ```lua
+--- ChangeTravelingSalesmanGoods(
+---     2,
+---     {{"G_Wool", 3},
+---      {"U_CatapultCart", 5},
+---      {"G_Beer", 2},
+---      {"G_Herb", 3},
+---      {"U_Entertainer_NA_StiltWalker", 1}}
+--- );
+--- ```
+--- 
+--- @param _PlayerID integer ID of player
+--- @param _Offers table Offers
+function ChangeTravelingSalesmanGoods(_PlayerID, _Offers)
+end
+API.ChangeTravelingSalesmanGoods = ChangeTravelingSalesmanGoods;
 
 
 
