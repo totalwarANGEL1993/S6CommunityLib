@@ -137,3 +137,13 @@ function RemoveFromBuildingTerritoryWhitelist(_Type, _Territory)
 end
 API.RemoveFromBuildingTerritoryWhitelist = RemoveFromBuildingTerritoryWhitelist;
 
+function ActivateOutpostLimit(_Flag)
+    Lib.SettlementLimitation.Global:ActivateOutpostLimit(_Flag);
+end
+API.ActivateOutpostLimit = ActivateOutpostLimit;
+
+function SetOutpostLimit(_UpgradeLevel, _Limit)
+    Lib.SettlementLimitation.Global:SetOutpostLimit(_UpgradeLevel, _Limit);
+end
+API.SetOutpostLimit = SetOutpostLimit;
+

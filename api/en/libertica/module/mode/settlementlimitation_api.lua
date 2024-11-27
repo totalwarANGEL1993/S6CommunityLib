@@ -107,3 +107,16 @@ function RemoveFromBuildingTerritoryWhitelist(_Type, _Territory)
 end
 API.RemoveFromBuildingTerritoryWhitelist = RemoveFromBuildingTerritoryWhitelist;
 
+--- Activates or deactivates the limitation of outpost a player can have.
+--- @param _Flag boolean Outpost limit active
+function ActivateOutpostLimit(_Flag)
+end
+API.ActivateOutpostLimit = ActivateOutpostLimit;
+
+--- Changes the outpost limit for the castle upgrade level.
+--- @param _UpgradeLevel integer Castle upgrade level
+--- @param _Limit integer Limit of outposts
+function SetOutpostLimit(_UpgradeLevel, _Limit)
+end
+API.SetOutpostLimit = SetOutpostLimit;
+
