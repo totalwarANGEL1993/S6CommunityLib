@@ -107,3 +107,16 @@ function RemoveFromBuildingTerritoryWhitelist(_Type, _Territory)
 end
 API.RemoveFromBuildingTerritoryWhitelist = RemoveFromBuildingTerritoryWhitelist;
 
+--- Aktiviert oder deaktiviert die Limitierung der Außenposten.
+--- @param _Flag boolean Limitierung ist aktiv
+function ActivateOutpostLimit(_Flag)
+end
+API.ActivateOutpostLimit = ActivateOutpostLimit;
+
+--- Ändert die Limitierung der Außenposten für die Burgausbaustufe.
+--- @param _UpgradeLevel integer Ausbaustufe der Burg
+--- @param _Limit integer Limitierung der Außenposten
+function SetOutpostLimit(_UpgradeLevel, _Limit)
+end
+API.SetOutpostLimit = SetOutpostLimit;
+

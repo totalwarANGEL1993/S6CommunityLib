@@ -33,7 +33,6 @@ Lib.SettlementSurvival.Global = {
     },
 
     SuspendedSettlers = {},
-    SettlerLives = {},
 };
 Lib.SettlementSurvival.Local  = {
     Misc = {
@@ -41,7 +40,6 @@ Lib.SettlementSurvival.Local  = {
     },
 
     SuspendedSettlers = {},
-    SettlerLives = {},
 };
 Lib.SettlementSurvival.Shared = {
     AnimalPlague = {
@@ -51,14 +49,14 @@ Lib.SettlementSurvival.Shared = {
         DeathTimer = 90,
     },
     ColdWeather = {
-        ConsumptionFactor = 0.01,
-        ConsumptionTimer = 90,
+        ConsumptionFactor = 0.015,
+        ConsumptionTimer = 60,
         Temperature = 5,
         InfectionChance = 12,
     },
     HotWeather = {
         IgnitionChance = 5,
-        IgnitionTimer = 30,
+        IgnitionTimer = 90,
         Temperature = 30,
     },
     Famine = {
@@ -75,10 +73,6 @@ Lib.SettlementSurvival.Shared = {
     },
     SuspendedSettlers = {
         MourningTime = 5*60,
-    },
-    SettlerLives = {
-        PerMonth = 2,
-        Max = 9,
     },
 };
 
@@ -360,8 +354,11 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
                         if  Logic.IsConstructionComplete(BuildingList[i]) == 1
                         and GetHealth(BuildingList[i]) >= 100
                         and not Logic.IsBurning(BuildingList[i]) then
-                            local IgnitionChance = Lib.SettlementSurvival.Shared.HotWeather.IgnitionChance;
-                            if math.random(1, 100) <= IgnitionChance then
+                            local IgnitionChance = Lib.SettlementSurvival.Shared.HotWeather.IgnitionChance * 10;
+                            if self:IsWaterSupplierNear(PlayerID, BuildingList[i], 2500) then
+                                IgnitionChance = 1;
+                            end
+                            if IgnitionChance > 0 and math.random(1, 1000) <= IgnitionChance then
                                 Logic.DEBUG_SetBuildingOnFire(BuildingList[i], 10);
                                 AnyIgnited = true;
                             end
@@ -374,6 +371,14 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
             end
         end
     end
+end
+
+function Lib.SettlementSurvival.Global:IsWaterSupplierNear(_PlayerID, _BuildingID, _Area)
+    local x, y, z = Logic.EntityGetPos(_BuildingID);
+    if Logic.IsPlayerEntityOfCategoryInArea(_PlayerID, x, y, _Area, "G_Water_Supplier") == 1 then
+        return true;
+    end
+    return false;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -414,7 +419,7 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(_Turn)
                     local WoodCostPayed = 0;
                     local WoodAmount = GetPlayerResources(Goods.G_Wood, PlayerID);
                     self.ColdWeather[PlayerID].Consumption = self.ColdWeather[PlayerID].Consumption + WoodCost;
-                    if self.ColdWeather[PlayerID].Consumption > 1 then
+                    if self.ColdWeather[PlayerID].Consumption >= 1 then
                         local WoodCostFloored = math.floor(self.ColdWeather[PlayerID].Consumption);
                         AddGood(Goods.G_Wood, (-1) * math.min(WoodCostFloored, WoodAmount), PlayerID);
                         self.ColdWeather[PlayerID].Consumption = self.ColdWeather[PlayerID].Consumption - WoodCostFloored;
@@ -835,6 +840,8 @@ function Lib.SettlementSurvival.Global:UpdateClothesStateForOuterRim()
         end
     end
 end
+
+-- -------------------------------------------------------------------------- --
 
 function Lib.SettlementSurvival.Global:Print(_PlayerID, _Text)
     local Text = ConvertPlaceholders(Localize(_Text));
