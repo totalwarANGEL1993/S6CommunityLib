@@ -176,3 +176,13 @@ function ClothesForOuterRimActivate(_Flag)
 end
 API.ClothesForOuterRimActivate = ClothesForOuterRimActivate;
 
+function BaseConsumptionActivate(_Flag)
+    Lib.SettlementSurvival.Global.Consume.IsActive = _Flag == true;
+end
+API.BaseConsumptionActivate = BaseConsumptionActivate;
+
+function BaseConsumptionActivateForAI(_Flag)
+    Lib.SettlementSurvival.Global.Consume.AffectAI = _Flag == true;
+end
+API.BaseConsumptionActivateForAI = BaseConsumptionActivateForAI;
+
