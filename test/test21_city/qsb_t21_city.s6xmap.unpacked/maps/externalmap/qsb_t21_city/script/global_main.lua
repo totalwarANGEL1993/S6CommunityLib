@@ -123,6 +123,26 @@ end
 
 -- ========================================================================== --
 
+function SetupSettlementSurvival()
+    BanditsBlockClaimActivate(true);
+    PredatorBlockClaimActivate(true);
+    ClothesForOuterRimActivate(true);
+    BaseConsumptionActivate(true);
+
+    AnimalPlagueActivate(true);
+    AnimalInfectionActivateAutomatic(true);
+    HotWeatherActivate(true);
+    ColdWeatherActivate(true);
+    FamineActivate(true);
+    NegligenceActivate(true);
+    PlagueActivate(true);
+
+    HotWeatherSetTemperature(30);
+    ColdWeatherSetTemperature(15);
+end
+
+-- ========================================================================== --
+
 function GameCallback_Lib_LoadingFinished()
     ActivateDebugMode(true, true, true, true, false);
 
