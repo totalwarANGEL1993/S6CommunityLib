@@ -54,7 +54,7 @@ Lib.SettlementSurvival.Shared = {
         DeathTimer = 180,
     },
     ColdWeather = {
-        ConsumptionFactor = 0.03,
+        ConsumptionFactor = 0.06,
         ConsumptionTimer = 60,
         Temperature = 5,
         InfectionChance = 12,
@@ -235,7 +235,10 @@ end
 -- -------------------------------------------------------------------------- --
 
 -- Makes all buildings consume a base amount of their needed goods and resets
--- the state changes effects after end of work cycles.
+-- the state changes effects after end of work cycles. Satisfaction of a need
+-- drops only if no other need is critical. This must be done due to settlers
+-- are unable to fulfill more than one need at a time.
+-- Note: for some reason the max satisfaction is 0.8 instead of 1.0.
 function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
     local PlayerID = _Turn % 10;
     if self.Consume.IsActive and PlayerID >= 1 and PlayerID <= 8 then
@@ -250,15 +253,22 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                 if not self.Consume[PlayerID].Buildings[BuildingID] then
                     self.Consume[PlayerID].Buildings[BuildingID] = {0.8, 0.8, 0.8, 0.8};
                 end
+                local IsStopped = Logic.IsBuildingStopped(BuildingID) == true;
+                local IsOuterRim = Logic.IsEntityInCategory(BuildingID, EntityCategories.OuterRimBuilding) == 1;
                 local AttachedSettlersAmount = self:GetEffectiveWorkerInBuilding(BuildingID);
                 -- Consume food
                 if Logic.IsNeedActive(BuildingID, Needs.Nutrition) then
                     local Factor = Lib.SettlementSurvival.Shared.Consume.FoodFactor;
+                    Factor = (IsStopped and Factor * 0.5) or Factor;
+                    Factor = (IsOuterRim and Factor * 0.3) or Factor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][1];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
+                    if self:IsAnyOtherNeedCritical(BuildingID, Needs.Nutrition) then
+                        ConsumeFactor = 0;
+                    end
                     local Consume = math.max(Contentment - ConsumeFactor, 0);
                     local NeedState = Logic.GetNeedState(BuildingID, Needs.Nutrition);
-                    if NeedState - Consume > 0.2 then
+                    if (NeedState - Consume > 0.2) then
                         Consume = 0.8;
                     end
                     self.Consume[PlayerID].Buildings[BuildingID][1] = Consume;
@@ -267,8 +277,13 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                 -- Consume clothes
                 if Logic.IsNeedActive(BuildingID, Needs.Clothes) then
                     local Factor = Lib.SettlementSurvival.Shared.Consume.ClothesFactor;
+                    Factor = (IsStopped and Factor * 0.5) or Factor;
+                    Factor = (IsOuterRim and Factor * 0.3) or Factor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][2];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
+                    if self:IsAnyOtherNeedCritical(BuildingID, Needs.Clothes) then
+                        ConsumeFactor = 0;
+                    end
                     local Consume = math.max(Contentment - ConsumeFactor, 0);
                     local NeedState = Logic.GetNeedState(BuildingID, Needs.Clothes);
                     if NeedState - Consume > 0.2 then
@@ -280,8 +295,13 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                 -- Consume hygiene
                 if Logic.IsNeedActive(BuildingID, Needs.Hygiene) then
                     local Factor = Lib.SettlementSurvival.Shared.Consume.HygieneFactor;
+                    Factor = (IsStopped and Factor * 0.5) or Factor;
+                    Factor = (IsOuterRim and Factor * 0.3) or Factor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][3];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
+                    if self:IsAnyOtherNeedCritical(BuildingID, Needs.Hygiene) then
+                        ConsumeFactor = 0;
+                    end
                     local Consume = math.max(Contentment - ConsumeFactor, 0);
                     local NeedState = Logic.GetNeedState(BuildingID, Needs.Hygiene);
                     if NeedState - Consume > 0.2 then
@@ -293,8 +313,13 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                 -- Consume beer
                 if Logic.IsNeedActive(BuildingID, Needs.Entertainment) then
                     local Factor = Lib.SettlementSurvival.Shared.Consume.BeerFactor;
+                    Factor = (IsStopped and Factor * 0.5) or Factor;
+                    Factor = (IsOuterRim and Factor * 0.3) or Factor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][4];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
+                    if self:IsAnyOtherNeedCritical(BuildingID, Needs.Entertainment) then
+                        ConsumeFactor = 0;
+                    end
                     local Consume = math.max(Contentment - ConsumeFactor, 0);
                     local NeedState = Logic.GetNeedState(BuildingID, Needs.Entertainment);
                     if NeedState - Consume > 0.2 then
@@ -306,6 +331,43 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
             end
         end
     end
+end
+
+-- Checks if any other need than the passed one is critical.
+function Lib.SettlementSurvival.Global:IsAnyOtherNeedCritical(_BuildingID, _Need)
+    local NeedState, NeedCritical;
+    -- Check sickness
+    NeedState = Logic.GetNeedState(_BuildingID, Needs.Medicine);
+    NeedCritical = Logic.GetNeedCriticalThreshold(_BuildingID, Needs.Medicine);
+    if _Need ~= Needs.Medicine and NeedState <= NeedCritical then
+        return true;
+    end
+    -- Check food
+    NeedState = Logic.GetNeedState(_BuildingID, Needs.Nutrition);
+    NeedCritical = Logic.GetNeedCriticalThreshold(_BuildingID, Needs.Nutrition);
+    if _Need ~= Needs.Nutrition and NeedState <= NeedCritical then
+        return true;
+    end
+    -- Check clothes
+    NeedState = Logic.GetNeedState(_BuildingID, Needs.Clothes);
+    NeedCritical = Logic.GetNeedCriticalThreshold(_BuildingID, Needs.Clothes);
+    if _Need ~= Needs.Clothes and NeedState <= NeedCritical then
+        return true;
+    end
+    -- Check hygiene
+    NeedState = Logic.GetNeedState(_BuildingID, Needs.Hygiene);
+    NeedCritical = Logic.GetNeedCriticalThreshold(_BuildingID, Needs.Hygiene);
+    if _Need ~= Needs.Hygiene and NeedState <= NeedCritical then
+        return true;
+    end
+    -- Check entertainment
+    NeedState = Logic.GetNeedState(_BuildingID, Needs.Entertainment);
+    NeedCritical = Logic.GetNeedCriticalThreshold(_BuildingID, Needs.Entertainment);
+    if _Need ~= Needs.Entertainment and NeedState <= NeedCritical then
+        return true;
+    end
+    -- Nothing critical
+    return false;
 end
 
 -- -------------------------------------------------------------------------- --

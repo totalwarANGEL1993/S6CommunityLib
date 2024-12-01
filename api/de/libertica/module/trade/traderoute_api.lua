@@ -127,6 +127,7 @@ API.RemoveTradeRoute = RemoveTradeRoute;
 --- * `Amount` - Anzahl der Angebote, die bei der Ankunft ausgewählt werden sollen
 --- * `Duration` - Ankerzeit des Schiffes in Sekunden
 --- * `Interval` - Zeit zwischen Schiffsbesuchen
+--- * `Message` - Benachrichtungungen über Schiff ein-/ausschalten
 --- 
 --- #### Beispiel:
 --- ```lua
