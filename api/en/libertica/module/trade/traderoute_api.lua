@@ -127,6 +127,7 @@ API.RemoveTradeRoute = RemoveTradeRoute;
 --- * `Amount` - Amount of offers to select on arrival
 --- * `Duration` - Anchor time of the ship in seconds
 --- * `Interval` - Time between ship visits
+--- * `Message` - Activate/Deactivate ship status messages
 --- 
 --- #### Example:
 --- ```lua

@@ -489,7 +489,8 @@ function Lib.SettlementLimitation.Global:GetOutpostLimit(_PlayerID)
         local OutpostLimit = Lib.SettlementLimitation.Shared.CastleOutpostLimit;
         local CastleID = Logic.GetHeadquarters(_PlayerID);
         local Level = (Logic.GetUpgradeLevel(CastleID) or 0) +1;
-        return OutpostLimit[Level];
+        local ArchdukeBonus = (Logic.GetKnightTitle(_PlayerID) >= 6 and 1.5) or 1.0;
+        return math.floor(OutpostLimit[Level] * ArchdukeBonus);
     end
     return -1;
 end
@@ -693,7 +694,8 @@ function Lib.SettlementLimitation.Local:GetOutpostLimit(_PlayerID)
         local OutpostLimit = Lib.SettlementLimitation.Shared.CastleOutpostLimit;
         local CastleID = Logic.GetHeadquarters(_PlayerID);
         local Level = (Logic.GetUpgradeLevel(CastleID) or 0) +1;
-        return OutpostLimit[Level];
+        local ArchdukeBonus = (Logic.GetKnightTitle(_PlayerID) >= 6 and 1.5) or 1.0;
+        return math.floor(OutpostLimit[Level] * ArchdukeBonus);
     end
     return -1;
 end

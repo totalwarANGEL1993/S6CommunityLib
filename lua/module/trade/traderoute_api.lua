@@ -75,6 +75,7 @@ function InitTravelingSalesman(_Route)
     Lib.TradeRoute.Global:CreateHarbor(PlayerID, true);
     assert(Logic.GetStoreHouse(PlayerID) ~= 0, "Player " ..PlayerID.. " is dead! :(");
     _Route.Name = "Player" ..PlayerID.. "_Route";
+    _Route.Message = _Route.Message ~= false;
     AddTradeRoute(PlayerID, _Route);
     Lib.TradeRoute.Global:OnTravelingSalesmanInitalized(PlayerID);
 end

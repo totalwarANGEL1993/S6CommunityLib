@@ -85,6 +85,12 @@ function Lib.TradeRoute.Global:IsRetroHarbor(_PlayerID)
     return false;
 end
 
+function Lib.TradeRoute.Global:IsSendingMessage(_PlayerID)
+    return self.Harbors[_PlayerID] and
+           self.Harbors[_PlayerID].Routes[1] and
+           self.Harbors[_PlayerID].Routes[1].Message;
+end
+
 function Lib.TradeRoute.Global:CountTradeRoutes(_PlayerID)
     if self.Harbors[_PlayerID] then
         return #self.Harbors[_PlayerID].Routes;
@@ -114,6 +120,7 @@ function Lib.TradeRoute.Global:AlterTradeRouteOffers(_PlayerID, _Name, _Offers)
     end
     for i= #self.Harbors[_PlayerID].Routes, 1, -1 do
         if self.Harbors[_PlayerID].Routes[i].Name == _Name then
+            _Offers.Message = self.Harbors[_PlayerID].Routes[i].Message == true;
             self.Harbors[_PlayerID].Routes[i].Offers = _Offers;
             return;
         end
@@ -403,14 +410,18 @@ end
 function Lib.TradeRoute.Global:OnTravelingSalesmanShipSpawned(_PlayerID, _RouteName, _ShipID)
     if self:IsRetroHarbor(_PlayerID) then
         -- Send "voice" message
-        ExecuteLocal("LocalScriptCallback_QueueVoiceMessage(".. _PlayerID ..", 'TravelingSalesmanSpotted')");
+        if self:IsSendingMessage(_PlayerID) then
+            ExecuteLocal("LocalScriptCallback_QueueVoiceMessage(".. _PlayerID ..", 'TravelingSalesmanSpotted')");
+        end
     end
 end
 
 function Lib.TradeRoute.Global:OnTravelingSalesmanShipArrived(_PlayerID, _RouteName, _ShipID)
     if self:IsRetroHarbor(_PlayerID) then
         -- Send "voice" message
-        ExecuteLocal("LocalScriptCallback_QueueVoiceMessage(".. _PlayerID ..", 'TravelingSalesman')");
+        if self:IsSendingMessage(_PlayerID) then
+            ExecuteLocal("LocalScriptCallback_QueueVoiceMessage(".. _PlayerID ..", 'TravelingSalesman')");
+        end
         -- Change diplomacy
         for PlayerID = 1, 8 do
             if _PlayerID ~= PlayerID and Logic.PlayerGetIsHumanFlag(PlayerID) then
@@ -423,7 +434,9 @@ end
 function Lib.TradeRoute.Global:OnTravelingSalesmanShipLeft(_PlayerID, _RouteName, _ShipID)
     if self:IsRetroHarbor(_PlayerID) then
         -- Send "voice" message
-        ExecuteLocal("LocalScriptCallback_QueueVoiceMessage(".. _PlayerID ..", 'TravelingSalesman_Failure')");
+        if self:IsSendingMessage(_PlayerID) then
+            ExecuteLocal("LocalScriptCallback_QueueVoiceMessage(".. _PlayerID ..", 'TravelingSalesman_Failure')");
+        end
         -- Change diplomacy
         for PlayerID = 1, 8 do
             if _PlayerID ~= PlayerID and Logic.PlayerGetIsHumanFlag(PlayerID) then
