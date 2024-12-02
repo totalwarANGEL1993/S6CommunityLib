@@ -170,7 +170,7 @@ function Lib.Core.Report:CreateReportReceiver(_EventID, _Function)
     local Data = self.ScriptEventListener[_EventID];
     self.ScriptEventListener[_EventID].SequenceID = Data.SequenceID +1;
     self.ScriptEventListener[_EventID][Data.SequenceID] = _Function;
-    return Data.IDSequence;
+    return Data.SequenceID;
 end
 
 function Lib.Core.Report:RemoveReportReceiver(_EventID, _ID)

@@ -1,6 +1,13 @@
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/mode/SettlementSurvival_API");
 
+function SettlementSurvivalActivate(_Flag)
+    local Flag = _Flag == true;
+    Lib.SettlementSurvival.Global.IsActive = Flag;
+    ExecuteLocal([[Lib.SettlementSurvival.Local.IsActive = %s]], tostring(Flag));
+end
+API.SettlementSurvivalActivate = SettlementSurvivalActivate;
+
 function AnimalPlagueActivate(_Flag)
     Lib.SettlementSurvival.Global.AnimalPlague.IsActive = _Flag == true;
 end
@@ -10,11 +17,6 @@ function AnimalPlagueActivateForAI(_Flag)
     Lib.SettlementSurvival.Global.AnimalPlague.AffectAI = _Flag == true;
 end
 API.AnimalPlagueActivateForAI = AnimalPlagueActivateForAI;
-
-function AnimalInfectionActivateAutomatic(_Flag)
-    Lib.SettlementSurvival.Global.AnimalPlague.AnimalsBecomeSick = _Flag == true;
-end
-API.AnimalInfectionActivateAutomatic = AnimalInfectionActivateAutomatic;
 
 function AnimalPlagueSetDeathInterval(_Interval)
     Lib.SettlementSurvival.Shared.AnimalPlague.DeathTimer = _Interval;
@@ -177,12 +179,16 @@ end
 API.ClothesForOuterRimActivate = ClothesForOuterRimActivate;
 
 function BaseConsumptionActivate(_Flag)
-    Lib.SettlementSurvival.Global.Consume.IsActive = _Flag == true;
+    local Flag = _Flag == true;
+    Lib.SettlementSurvival.Global.Consume.IsActive = Flag;
+    ExecuteLocal([[Lib.SettlementSurvival.Local.Consume.IsActive = %s]], tostring(Flag));
 end
 API.BaseConsumptionActivate = BaseConsumptionActivate;
 
 function BaseConsumptionActivateForAI(_Flag)
-    Lib.SettlementSurvival.Global.Consume.AffectAI = _Flag == true;
+    local Flag = _Flag == true;
+    Lib.SettlementSurvival.Global.Consume.AffectAI = Flag;
+    ExecuteLocal([[Lib.SettlementSurvival.Local.Consume.AffectAI = %s]], tostring(Flag));
 end
 API.BaseConsumptionActivateForAI = BaseConsumptionActivateForAI;
 

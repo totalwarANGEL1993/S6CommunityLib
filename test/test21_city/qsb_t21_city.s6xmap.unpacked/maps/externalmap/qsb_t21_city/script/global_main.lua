@@ -130,7 +130,6 @@ function SetupSettlementSurvival()
     BaseConsumptionActivate(true);
 
     AnimalPlagueActivate(true);
-    AnimalInfectionActivateAutomatic(true);
     HotWeatherActivate(true);
     ColdWeatherActivate(true);
     FamineActivate(true);
