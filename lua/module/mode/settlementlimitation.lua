@@ -63,10 +63,11 @@ Lib.SettlementLimitation.Shared = {
         ["B_Well"] = true,
     },
     CastleOutpostLimit = {
-        [1] = 2,
+        ArchdukeFactor = 2.0,
+        [1] = 3,
         [2] = 4,
-        [3] = 6,
-        [4] = 8,
+        [3] = 5,
+        [4] = 6,
     },
     CastleOutpostPenalty = {
         Amount = 5,
@@ -132,6 +133,7 @@ function Lib.SettlementLimitation.Global:OnReportReceived(_ID, ...)
         local Bonus = self:GetAdditionalBuildingBonusAmount(arg[2], TerritoryID);
         if IsOutpost and Bonus == 0 then
             self:SetAdditionalBuildingBonusAmount(arg[2], TerritoryID, 1);
+            self:SetMultiConstructionBonusAmount(arg[2], TerritoryID, 1);
         end
     end
 end
@@ -194,15 +196,8 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
         if  Lib.SettlementLimitation.Global.Active
         and MainTerritoryID ~= TerritoryID then
             if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
-                if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type] then
-                    if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type][TerritoryID] then
-                        return false;
-                    end
-                end
-                if Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type] then
-                    if not Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type][TerritoryID] then
-                        return false;
-                    end
+                if not self:IsTypeAllowedByListing(_Type, TerritoryID) then
+                    return false;
                 end
 
                 local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
@@ -260,15 +255,8 @@ function Lib.SettlementLimitation.Global:InitConstructionLimitRules()
         and Logic.IsEntityTypeInCategory(_Type, EntityCategories.OuterRimBuilding) == 1
         and MainTerritoryID == TerritoryID then
             if Lib.SettlementLimitation.Global.TerritoryTypeRestriction[_PlayerID] then
-                if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type] then
-                    if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type][TerritoryID] then
-                        return false;
-                    end
-                end
-                if Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type] then
-                    if not Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type][TerritoryID] then
-                        return false;
-                    end
+                if not self:IsTypeAllowedByListing(_Type, TerritoryID) then
+                    return false;
                 end
 
                 local IgnoreList = Lib.SettlementLimitation.Shared.AbsolutLimitIgnore;
@@ -369,6 +357,20 @@ function Lib.SettlementLimitation.Global:RemoveFromBuildingTerritoryWhitelist(_T
         Lib.SettlementLimitation.Local.TerritoryTypeWhitelist[%d] = Lib.SettlementLimitation.Local.TerritoryTypeWhitelist[%d] or {}
         Lib.SettlementLimitation.Local.TerritoryTypeWhitelist[%d][%d] = nil
     ]], _Type, _Type, _Type, _Territory);
+end
+
+function Lib.SettlementLimitation.Global:IsTypeAllowedByListing(_Type, _TerritoryID)
+    if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type] then
+        if Lib.SettlementLimitation.Global.TerritoryTypeBlacklist[_Type][_TerritoryID] then
+            return false;
+        end
+    end
+    if Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type] then
+        if not Lib.SettlementLimitation.Global.TerritoryTypeWhitelist[_Type][_TerritoryID] then
+            return false;
+        end
+    end
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -489,7 +491,8 @@ function Lib.SettlementLimitation.Global:GetOutpostLimit(_PlayerID)
         local OutpostLimit = Lib.SettlementLimitation.Shared.CastleOutpostLimit;
         local CastleID = Logic.GetHeadquarters(_PlayerID);
         local Level = (Logic.GetUpgradeLevel(CastleID) or 0) +1;
-        local ArchdukeBonus = (Logic.GetKnightTitle(_PlayerID) >= 6 and 1.5) or 1.0;
+        local ArchdukeFactor = Lib.SettlementLimitation.Shared.CastleOutpostLimit.ArchdukeFactor;
+        local ArchdukeBonus = (Logic.GetKnightTitle(_PlayerID) >= 6 and ArchdukeFactor) or 1.0;
         return math.floor(OutpostLimit[Level] * ArchdukeBonus);
     end
     return -1;
@@ -520,6 +523,7 @@ function Lib.SettlementLimitation.Local:Initialize()
         end
         Lib.SettlementLimitation.Shared:CreateTypeLists();
 
+        self:ClearConstructionTextWidgets();
         self:OverwritePlacementUpdate();
         self:OverwriteClaimTerritory();
 
@@ -531,6 +535,7 @@ end
 
 -- Local load game
 function Lib.SettlementLimitation.Local:OnSaveGameLoaded()
+    self:ClearConstructionTextWidgets();
 end
 
 -- Local report listener
@@ -662,11 +667,19 @@ function Lib.SettlementLimitation.Local:GetRestrictionTypeText(_PlayerID, _Terri
         if TypeRestriction then
             local TerritoryRestriction = TypeRestriction[_TerritoryID];
             if TerritoryRestriction and TerritoryRestriction[_Type] and TerritoryRestriction[_Type] ~= -1 then
-                return getRestrictionText(_PlayerID, _TerritoryID, _Type, TerritoryRestriction[_Type]);
+                local Limit = TerritoryRestriction[_Type];
+                if not self:IsTypeAllowedByListing(_Type, _TerritoryID) then
+                    Limit = 0;
+                end
+                return getRestrictionText(_PlayerID, _TerritoryID, _Type, Limit);
             end
             local GeneralRestriction = TypeRestriction[0]
             if GeneralRestriction and GeneralRestriction[_Type] and GeneralRestriction[_Type] ~= -1 then
-                return getRestrictionText(_PlayerID, _TerritoryID, _Type, GeneralRestriction[_Type]);
+                local Limit = GeneralRestriction[_Type];
+                if not self:IsTypeAllowedByListing(_Type, _TerritoryID) then
+                    Limit = 0;
+                end
+                return getRestrictionText(_PlayerID, _TerritoryID, _Type, Limit);
             end
         end
     end
@@ -687,6 +700,21 @@ function Lib.SettlementLimitation.Local:GetMultiConstructionBonusAmount(_PlayerI
     end
     return 0;
 end
+
+function Lib.SettlementLimitation.Local:IsTypeAllowedByListing(_Type, _TerritoryID)
+    if Lib.SettlementLimitation.Local.TerritoryTypeBlacklist[_Type] then
+        if Lib.SettlementLimitation.Local.TerritoryTypeBlacklist[_Type][_TerritoryID] then
+            return false;
+        end
+    end
+    if Lib.SettlementLimitation.Local.TerritoryTypeWhitelist[_Type] then
+        if not Lib.SettlementLimitation.Local.TerritoryTypeWhitelist[_Type][_TerritoryID] then
+            return false;
+        end
+    end
+    return true;
+end
+
 -- -------------------------------------------------------------------------- --
 
 function Lib.SettlementLimitation.Local:GetOutpostLimit(_PlayerID)
@@ -694,7 +722,8 @@ function Lib.SettlementLimitation.Local:GetOutpostLimit(_PlayerID)
         local OutpostLimit = Lib.SettlementLimitation.Shared.CastleOutpostLimit;
         local CastleID = Logic.GetHeadquarters(_PlayerID);
         local Level = (Logic.GetUpgradeLevel(CastleID) or 0) +1;
-        local ArchdukeBonus = (Logic.GetKnightTitle(_PlayerID) >= 6 and 1.5) or 1.0;
+        local ArchdukeFactor = Lib.SettlementLimitation.Shared.CastleOutpostLimit.ArchdukeFactor;
+        local ArchdukeBonus = (Logic.GetKnightTitle(_PlayerID) >= 6 and ArchdukeFactor) or 1.0;
         return math.floor(OutpostLimit[Level] * ArchdukeBonus);
     end
     return -1;
@@ -751,6 +780,14 @@ function Lib.SettlementLimitation.Local:OverwriteClaimTerritory()
             CaptionText = CaptionText.. " (" ..(#Outposts).. "/" ..Limit.. ")";
         end
         SetTooltipCosts(CaptionText, DescriptionText, DisabledText, Costs, false);
+    end
+end
+
+function Lib.SettlementLimitation.Local:ClearConstructionTextWidgets()
+    for i = 0, 4 do
+        XGUIEng.SetText("/Ingame/Root/Normal/PlacementStatus/TerritoryName" .. i, "");
+        XGUIEng.SetText("/Ingame/Root/Normal/PlacementStatus/TerritoryReason" .. i, "");
+        XGUIEng.SetText("/Ingame/Root/Normal/PlacementStatus/OtherReason" .. i, "");
     end
 end
 

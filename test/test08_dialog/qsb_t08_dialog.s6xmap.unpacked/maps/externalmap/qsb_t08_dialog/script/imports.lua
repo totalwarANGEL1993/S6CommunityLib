@@ -10,4 +10,5 @@ Lib.Require("module/entity/NPC");
 Lib.Require("module/information/BriefingSystem");
 Lib.Require("module/information/CutsceneSystem");
 Lib.Require("module/information/DialogSystem");
+Lib.Require("module/information/Requester");
 Lib.Require("module/settings/Sound");
