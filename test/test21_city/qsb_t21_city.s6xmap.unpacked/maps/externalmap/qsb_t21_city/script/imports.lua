@@ -3,6 +3,10 @@ if CONST_IS_IN_DEV then
 end
 
 Lib.Require("comfort/KeyOf");
+Lib.Require("comfort/GetPredatorSpawnerTypes");
+Lib.Require("comfort/GetSiegeengineTypeByCartType");
+Lib.Require("comfort/GetSiegecartTypeByEngineType");
+Lib.Require("comfort/IsValidPosition");
 Lib.Require("core/Core");
 Lib.Require("module/city/Promotion");
 Lib.Require("module/city/Construction");

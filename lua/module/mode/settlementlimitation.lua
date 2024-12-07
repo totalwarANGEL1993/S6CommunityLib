@@ -63,11 +63,11 @@ Lib.SettlementLimitation.Shared = {
         ["B_Well"] = true,
     },
     CastleOutpostLimit = {
-        ArchdukeFactor = 2.0,
-        [1] = 3,
+        ArchdukeFactor = 1.5,
+        [1] = 2,
         [2] = 4,
-        [3] = 5,
-        [4] = 6,
+        [3] = 6,
+        [4] = 8,
     },
     CastleOutpostPenalty = {
         Amount = 5,

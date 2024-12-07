@@ -21,6 +21,7 @@ Lib.Camera.Local  = {
 CONST_FARCLIPPLANE = 45000;
 CONST_FARCLIPPLANE_DEFAULT = 0;
 
+Lib.Require("comfort/GetPosition");
 Lib.Require("core/Core");
 Lib.Require("module/settings/Camera_API");
 Lib.Require("module/settings/Camera_Text");
