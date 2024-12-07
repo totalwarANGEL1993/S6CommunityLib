@@ -59,8 +59,8 @@ Lib.SettlementSurvival.Shared = {
         DeathTimer = 180,
     },
     ColdWeather = {
-        ConsumptionFactor = 0.06,
-        ConsumptionTimer = 60,
+        ConsumptionFactor = 0.075,
+        ConsumptionTimer = 30,
         Temperature = 5,
         InfectionChance = 12,
     },
@@ -70,11 +70,11 @@ Lib.SettlementSurvival.Shared = {
         Temperature = 30,
     },
     Famine = {
-        DeathChance = 4,
+        DeathChance = 6,
         DeathTimer = 30,
     },
     Negligence = {
-        InfectionChance = 4,
+        InfectionChance = 6,
         InfectionTimer = 90,
     },
     Plague = {

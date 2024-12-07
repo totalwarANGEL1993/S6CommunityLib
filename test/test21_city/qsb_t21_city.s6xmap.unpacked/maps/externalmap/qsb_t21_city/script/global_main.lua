@@ -138,6 +138,9 @@ function SetupSettlementSurvival()
 
     HotWeatherSetTemperature(30);
     ColdWeatherSetTemperature(15);
+
+    RequireTitleToBreedCattle(KnightTitles.Earl);
+    RequireTitleToBreedSheep(KnightTitles.Earl);
 end
 
 -- ========================================================================== --
