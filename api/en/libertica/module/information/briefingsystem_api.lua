@@ -353,7 +353,8 @@ end
 --- Creates a page in a simplified manner.
 ---
 --- The function can create a automatic page name based of the page index. A
---- name can be an optional parameter at the start.
+--- name can be an optional parameter at the start. The page won't turn until
+--- the player presses the skip button.
 ---
 --- #### Settings
 --- The function expects the following parameters:
@@ -364,7 +365,6 @@ end
 --- * `DialogCamera`    - Use closeup camera
 --- * `Position`        - (Optional) Scriptname of focused entity
 --- * `Action`          - (Optional) Action when page is shown
---- * `DisableSkipping` - (Optional) Allow/Forbid skipping page
 ---
 --- #### Examples
 ---
@@ -377,8 +377,6 @@ end
 --- ASP("Title", "Some important text.", true, "Marcus");
 --- -- Call action
 --- ASP("Title", "Some important text.", true, "Marcus", MyFunction);
---- -- Allow/forbid skipping
---- ASP("Title", "Some important text.", true, "HQ", nil, true);
 --- ```
 ---
 --- @param ... any List of page parameters

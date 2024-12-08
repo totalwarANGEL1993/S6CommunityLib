@@ -7,27 +7,6 @@
 
 -- ========================================================================== --
 
-if CONST_IS_IN_DEV then
-    Script.Load("E:/Repositories/libertica/var/libertica/librarian.lua");
-    Lib.Loader.PushPath("E:/Repositories/libertica/var/");
-else
-    Script.Load("maps/externalmap/qsb_t21_city/libertica/librarian.lua");
-end
-Lib.Require("comfort/KeyOf");
-Lib.Require("core/Core");
-Lib.Require("module/city/Promotion");
-Lib.Require("module/city/Construction");
-Lib.Require("module/city/LifestockSystem");
-Lib.Require("module/mode/SettlementSurvival");
-Lib.Require("module/entity/EntitySelection");
-Lib.Require("module/balancing/Damage");
-Lib.Require("module/quest/Quest");
-Lib.Require("module/mode/SettlementLimitation");
-Lib.Require("module/entity/EntitySearch");
-Lib.Require("module/trade/Warehouse");
-
--- ========================================================================== --
-
 function TestWarehouses()
     CreateWarehouse {
         ScriptName = "TP1",
@@ -47,6 +26,14 @@ function TestWarehouses()
              GoodType    = Entities.A_X_Cow01,
              PaymentType = Goods.G_Gold,
              BasePrice   = 300,},
+            {Amount      = 1,
+             GoodType    = Entities.U_CatapultCart,
+             PaymentType = Goods.G_Gold,
+             BasePrice   = 1000,},
+            {Amount      = 2,
+             GoodType    = Entities.U_MilitaryBandit_Melee_ME,
+             PaymentType = Goods.G_Gold,
+             BasePrice   = 90,},
         },
     }
 end
@@ -132,6 +119,28 @@ BuildRule_WallGate = function(_PlayerID, _Type, _x, _y, _HomeTerritoryID)
         return TerritoryID == _HomeTerritoryID;
     end
     return true;
+end
+
+-- ========================================================================== --
+
+function SetupSettlementSurvival()
+    BanditsBlockClaimActivate(true);
+    PredatorBlockClaimActivate(true);
+    ClothesForOuterRimActivate(true);
+    BaseConsumptionActivate(true);
+
+    AnimalPlagueActivate(true);
+    HotWeatherActivate(true);
+    ColdWeatherActivate(true);
+    FamineActivate(true);
+    NegligenceActivate(true);
+    PlagueActivate(true);
+
+    HotWeatherSetTemperature(30);
+    ColdWeatherSetTemperature(15);
+
+    RequireTitleToBreedCattle(KnightTitles.Earl);
+    RequireTitleToBreedSheep(KnightTitles.Earl);
 end
 
 -- ========================================================================== --

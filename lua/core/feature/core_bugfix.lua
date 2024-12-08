@@ -1,7 +1,19 @@
 ---@diagnostic disable: duplicate-set-field
 
 Lib.Core = Lib.Core or {};
-Lib.Core.Bugfix = {};
+Lib.Core.Bugfix = {
+    ForceDeselectEntities = {
+        ["U_Entertainer_NA_FireEater"] = true,
+        ["U_Entertainer_NA_PerformingFireeater"] = true,
+        ["U_Entertainer_NA_PerformingStiltWalker"] = true,
+        ["U_Entertainer_NA_StiltWalker"] = true,
+        ["U_Entertainer_NE_PerformingStrongestMan_Barrel"] = true,
+        ["U_Entertainer_NE_PerformingStrongestMan_Stone"] = true,
+        ["U_Entertainer_NE_StrongestMan_Barrel"] = true,
+        ["U_Entertainer_NE_StrongestMan_Stone"] = true,
+        ["U_FireEater"] = true,
+    },
+};
 
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/GetDistance");
@@ -17,6 +29,7 @@ function Lib.Core.Bugfix:Initialize()
         self:FixBanditCampFireplace();
     end
     if IsLocalScript() then
+        self:OverrideSelection();
         self:FixInteractiveObjectClicked();
         self:FixBigCathedralName();
         self:FixClimateZoneForHouseMenu();
@@ -173,7 +186,7 @@ end
 
 function Lib.Core.Bugfix:FixDestroyAllPlayerUnits()
     QuestTemplate.IsObjectiveCompleted_Orig_Core_Bugfix = QuestTemplate.IsObjectiveCompleted;
-    QuestTemplate.IsObjectiveCompleted = function(self, objective)
+    QuestTemplate.IsObjectiveCompleted = function(this, objective)
         if objective.Completed ~= nil then
             return objective.Completed;
         end
@@ -212,9 +225,9 @@ function Lib.Core.Bugfix:FixDestroyAllPlayerUnits()
                 objective.Completed = true;
             end
         elseif objectiveType == Objective.Distance then
-            objective.Completed = Lib.Core.Quest:IsQuestPositionReached(self, objective);
+            objective.Completed = Lib.Core.Quest:IsQuestPositionReached(this, objective);
         else
-            return self:IsObjectiveCompleted_Orig_Core_Bugfix(objective);
+            return this:IsObjectiveCompleted_Orig_Core_Bugfix(objective);
         end
         return objective.Completed;
     end
@@ -226,47 +239,32 @@ end
 function Lib.Core.Bugfix:FixBigCathedralName()
     AddStringText(
         "Names/B_Cathedral_Big",
-        {de = "Dom", en = "Cathedral", fr = "Cathédrale"}
+        {de = "Kathedrale", en = "Cathedral", fr = "Cathédrale"}
     );
 end
 
 -- -------------------------------------------------------------------------- --
 -- House menu
 
-if EntityCategories then
-    Lib.Core.Bugfix.HouseMenuWidgetToCategory = {
-        ["B_Castle_ME"]     = EntityCategories.Headquarters,
-        ["B_Cathedral"]     = EntityCategories.Cathedrals,
-        ["B_Cathedral_Big"] = EntityCategories.Cathedrals,
-        ["B_Outpost_ME"]    = EntityCategories.Outpost,
-    };
-end
-
 function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
     HouseMenuGetNextBuildingID = function(WidgetName)
         local playerID = GUI.GetPlayerID();
-        local category = Lib.Core.Bugfix.HouseMenuWidgetToCategory[WidgetName];
-        local buildingsList;
+        local buildingsList = {Logic.GetBuildingsByPlayer(playerID)};
 
         WidgetName = GetClimateEntityName(WidgetName);
+        local TrimedWidgetName = string.gsub(WidgetName, "_%w%w?%w?$", "");
         if HouseMenu.Widget.CurrentBuilding ~= WidgetName then
             HouseMenu.Widget.CurrentBuilding = WidgetName;
             HouseMenu.Widget.CurrentBuildingNumber = 0;
         end
 
-        if category then
-            buildingsList = {Logic.GetPlayerEntitiesInCategory(playerID, category)};
-        else
-            buildingsList = {Logic.GetBuildingsByPlayer(playerID)};
-        end
-
         local foundNumber = 0;
         local higherBuildingFound = false;
-
         for i = 1, #buildingsList do
             local entityType = Logic.GetEntityType(buildingsList[i]);
             local entityName = Logic.GetEntityTypeName(entityType);
-            if category or entityName == WidgetName then
+            local trimedEntityName = string.gsub(entityName, "_%w%w?%w?$", "");
+            if trimedEntityName == TrimedWidgetName then
                 foundNumber = i;
                 if foundNumber > HouseMenu.Widget.CurrentBuildingNumber then
                     HouseMenu.Widget.CurrentBuildingNumber = foundNumber;
@@ -276,18 +274,20 @@ function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
             end
         end
 
-        if foundNumber ~= 0 and not higherBuildingFound then
+        if foundNumber == 0 then
+            return nil;
+        end
+        if not higherBuildingFound then
             for i = 1, #buildingsList do
                 local entityType = Logic.GetEntityType(buildingsList[i]);
                 local entityName = Logic.GetEntityTypeName(entityType);
-                if category or entityName == WidgetName then
+                if entityName == WidgetName then
                     HouseMenu.Widget.CurrentBuildingNumber = i;
                     break;
                 end
             end
-            return buildingsList[HouseMenu.Widget.CurrentBuildingNumber];
         end
-        return nil;
+        return buildingsList[HouseMenu.Widget.CurrentBuildingNumber];
     end
 
     HouseMenuSetIconsPart = function(_Part, _HighlightBool)
@@ -297,22 +297,17 @@ function Lib.Core.Bugfix:FixClimateZoneForHouseMenu()
 
         for i = 1, #houseMenuButtons do
             local widgetName = XGUIEng.GetWidgetNameByID(houseMenuButtons[i]);
-            local category = Lib.Core.Bugfix.HouseMenuWidgetToCategory[widgetName];
+            local trimedWidgetName = string.gsub(widgetName, "_%w%w?%w?$", "");
             local button = _Part .. "/" .. widgetName .. "/Button";
-            local climateWidgetName = GetClimateEntityName(widgetName);
             SetIcon(button, g_TexturePositions.Entities[Entities[widgetName]]);
 
             local count = 0;
-            if category then
-                buildings = {Logic.GetPlayerEntitiesInCategory(playerID, category)};
-                count = #buildings;
-            else
-                for j = 1, #buildings do
-                    local entityType = Logic.GetEntityType(buildings[j]);
-					local entityName = Logic.GetEntityTypeName(entityType);
-                    if entityName == climateWidgetName then
-                        count = count + 1;
-                    end
+            for j = 1, #buildings do
+                local entityType = Logic.GetEntityType(buildings[j]);
+                local entityName = Logic.GetEntityTypeName(entityType);
+                local trimedEntityName = string.gsub(entityName, "_%w%w?%w?$", "");
+                if trimedWidgetName == trimedEntityName then
+                    count = count + 1;
                 end
             end
 
@@ -430,6 +425,41 @@ function Lib.Core.Bugfix:FixBanditCampFireplace()
             g_Outlaws.Players[playerID][_CaMarketplaceID].ExtinguishedFire = NewID;
             g_Outlaws.Players[playerID][_CaMarketplaceID].CampFire = nil;
         end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Force deselect
+
+function Lib.Core.Bugfix:OnSelectionCanged(_Source)
+    local Selected = {GUI.GetSelectedEntities()};
+    for i= #Selected, 1, -1 do
+        local TypeName = self:GetSelectedTypeName(Selected[i]);
+        if TypeName and self.ForceDeselectEntities[TypeName] then
+            GUI.DeselectEntity(Selected[i]);
+        end
+    end
+end
+
+function Lib.Core.Bugfix:GetSelectedTypeName(_ID)
+    local ID = _ID;
+    local TypeName;
+    if Logic.IsLeader(_ID) == 1 then
+        local _, FirstID = Logic.GetSoldiersAttachedToLeader(ID);
+        ID = FirstID or 0;
+    end
+    if ID > 0 then
+        local Type = Logic.GetEntityType(ID);
+        TypeName = Logic.GetEntityTypeName(Type);
+    end
+    return TypeName;
+end
+
+function Lib.Core.Bugfix:OverrideSelection()
+    self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
+    GameCallback_GUI_SelectionChanged = function(_Source)
+        Lib.Core.Bugfix.Orig_GameCallback_GUI_SelectionChanged(_Source);
+        Lib.Core.Bugfix:OnSelectionCanged(_Source);
     end
 end
 
