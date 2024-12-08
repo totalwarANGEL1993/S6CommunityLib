@@ -79,7 +79,7 @@ Lib.SettlementSurvival.Shared = {
     },
     Plague = {
         DeathChance = 9,
-        DeathTimer = 30,
+        DeathTimer = 90,
     },
     Consume = {
         FoodFactor = 0.0006,
