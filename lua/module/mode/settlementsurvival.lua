@@ -1,7 +1,7 @@
 Lib.SettlementSurvival = Lib.SettlementSurvival or {};
 Lib.SettlementSurvival.Name = "SettlementSurvival";
 Lib.SettlementSurvival.Global = {
-    IsActive = true,
+    IsActive = false,
     AnimalPlague = {
         IsActive = false,
         AffectAI = false,
