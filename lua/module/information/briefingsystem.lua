@@ -285,6 +285,7 @@ function Lib.BriefingSystem.Global:StartBriefing(_Name, _PlayerID, _Data)
 end
 
 function Lib.BriefingSystem.Global:EndBriefing(_PlayerID)
+    collectgarbage("collect");
     Logic.SetGlobalInvulnerability(0);
     local Briefing = self.Briefing[_PlayerID];
     SendReport(Report.BriefingEnded, _PlayerID, Briefing.Name);
@@ -588,6 +589,7 @@ function Lib.BriefingSystem.Local:StartBriefing(_PlayerID, _BriefingName, _Brief
 end
 
 function Lib.BriefingSystem.Local:EndBriefing(_PlayerID, _BriefingName)
+    collectgarbage("collect");
     if GUI.GetPlayerID() ~= _PlayerID then
         return;
     end

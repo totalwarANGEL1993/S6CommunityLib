@@ -135,6 +135,7 @@ function Lib.CutsceneSystem.Global:StartCutscene(_Name, _PlayerID, _Data)
 end
 
 function Lib.CutsceneSystem.Global:EndCutscene(_PlayerID)
+    collectgarbage("collect");
     Logic.SetGlobalInvulnerability(0);
     SendReportToLocal(Report.CutsceneEnded, _PlayerID);
     if self.Cutscene[_PlayerID].Finished then
@@ -292,6 +293,7 @@ function Lib.CutsceneSystem.Local:StartCutscene(_PlayerID, _CutsceneName, _Cutsc
 end
 
 function Lib.CutsceneSystem.Local:EndCutscene(_PlayerID)
+    collectgarbage("collect");
     if GUI.GetPlayerID() ~= _PlayerID then
         return;
     end
