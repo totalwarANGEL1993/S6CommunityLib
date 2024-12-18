@@ -1269,21 +1269,19 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
 
     -- Throneroom Main
     XGUIEng.ShowWidget("/InGame/ThroneRoom", 1);
-    XGUIEng.PushPage("/InGame/ThroneRoom/KnightInfo", false);
     XGUIEng.PushPage("/InGame/ThroneRoomBars", false);
     XGUIEng.PushPage("/InGame/ThroneRoomBars_2", false);
     XGUIEng.PushPage("/InGame/ThroneRoom/Main", false);
     XGUIEng.PushPage("/InGame/ThroneRoomBars_Dodge", false);
     XGUIEng.PushPage("/InGame/ThroneRoomBars_2_Dodge", false);
-    XGUIEng.PushPage("/InGame/ThroneRoom/KnightInfo/LeftFrame", false);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/Skip", 1);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/StartButton", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogTopChooseKnight", 1);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogTopChooseKnight/Frame", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogTopChooseKnight/DialogBG", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogTopChooseKnight/FrameEdges", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogBottomRight3pcs", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/KnightInfoButton", 0);
+    XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogBottomRight3pcs", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/BackButton", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/Briefing", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/TitleContainer", 0);
@@ -1302,12 +1300,9 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     XGUIEng.SetWidgetScreenPosition("/InGame/ThroneRoom/Main/DialogTopChooseKnight/ChooseYourKnight", x, 65 * (ScreenY/1080));
     XGUIEng.SetWidgetPositionAndSize("/InGame/ThroneRoom/KnightInfo/Objectives", 2, 0, 2000, 20);
 
-    -- Briefing messages
-    XGUIEng.ShowAllSubWidgets("/InGame/ThroneRoom/KnightInfo", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoom/KnightInfo/Text", 1);
-    XGUIEng.ShowWidget("/InGame/ThroneRoom/KnightInfo/BG", 0);
-    XGUIEng.SetText("/InGame/ThroneRoom/KnightInfo/Text", " ");
-    XGUIEng.SetWidgetPositionAndSize("/InGame/ThroneRoom/KnightInfo/Text", 200, 300, 1000, 10);
+    if self.Briefing[_PlayerID].HideNotes then
+        XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 0);
+    end
 
     self.SelectionBackup = {GUI.GetSelectedEntities()};
     GUI.ClearSelection();
@@ -1393,13 +1388,15 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.PopPage();
     XGUIEng.PopPage();
     XGUIEng.PopPage();
-    XGUIEng.PopPage();
-    XGUIEng.PopPage();
     XGUIEng.ShowWidget("/InGame/ThroneRoom", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_Dodge", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
+
+    if self.Briefing[_PlayerID].HideNotes then
+        XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 1);
+    end
 
     ResetRenderDistance();
     self:SetQualityMode();

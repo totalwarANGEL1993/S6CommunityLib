@@ -372,7 +372,12 @@ function Lib.Requester.Local:ShowTextWindow(_Data)
     XGUIEng.SetText("/InGame/Root/Normal/ChatOptions/ChatLog", _Data.Content);
     XGUIEng.SetText("/InGame/Root/Normal/MessageLog/Name","{center}" .._Data.Caption);
     if _Data.DisableClose then
-        XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions/Exit",0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions/Exit", 0);
+    else
+        local Button = "/InGame/Root/Normal/ChatOptions/Exit";
+        local Action = "Lib.Requester.Local:CloseTextWindow(GUI.GetPlayerID())";
+        XGUIEng.ShowWidget(Button, 1);
+        XGUIEng.SetActionFunction(Button, Action);
     end
     self:ShouldShowSlider(_Data.Content);
     XGUIEng.SliderSetValueAbs("/InGame/Root/Normal/ChatOptions/ChatLogSlider", 0);
