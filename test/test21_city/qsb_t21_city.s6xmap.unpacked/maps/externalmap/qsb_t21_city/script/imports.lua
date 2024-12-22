@@ -18,3 +18,4 @@ Lib.Require("module/quest/Quest");
 Lib.Require("module/mode/SettlementLimitation");
 Lib.Require("module/entity/EntitySearch");
 Lib.Require("module/trade/Warehouse");
+Lib.Require("module/information/Requester");

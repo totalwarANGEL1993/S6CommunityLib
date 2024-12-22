@@ -324,16 +324,16 @@ function Lib.Requester.Local:OpenSelectionDialog(_PlayerID, _Title, _Text, _Acti
 end
 
 function Lib.Requester.Local:DialogOverwriteOriginal()
-    OpenDialog_Orig_Windows = OpenDialog;
+    self.Orig_OpenDialog = OpenDialog;
     OpenDialog = function(_Message, _Title, _IsMPError)
         if XGUIEng.IsWidgetShown(RequesterDialog) == 0 then
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
             Action = Action .. "; XGUIEng.PopPage()";
-            OpenDialog_Orig_Windows(_Title, _Message);
+            Lib.Requester.Local.Orig_OpenDialog(_Message, _Title, _IsMPError);
         end
     end
 
-    OpenRequesterDialog_Orig_Windows = OpenRequesterDialog;
+    self.Orig_OpenRequesterDialog = OpenRequesterDialog;
     OpenRequesterDialog = function(_Message, _Title, action, _OkCancel, no_action)
         if XGUIEng.IsWidgetShown(RequesterDialog) == 0 then
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
@@ -342,7 +342,7 @@ function Lib.Requester.Local:DialogOverwriteOriginal()
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
             Action = Action .. "; XGUIEng.PopPage()";
             XGUIEng.SetActionFunction(RequesterDialog_No, Action);
-            OpenRequesterDialog_Orig_Windows(_Message, _Title, action, _OkCancel, no_action);
+            Lib.Requester.Local.Orig_OpenRequesterDialog(_Message, _Title, action, _OkCancel, no_action);
         end
     end
 end
@@ -448,65 +448,65 @@ function Lib.Requester.Local:ShouldShowSlider(_Text)
 end
 
 function Lib.Requester.Local:OverrideChatLog()
-    GUI_Chat.ChatlogAddMessage_Orig_Requester = GUI_Chat.ChatlogAddMessage;
+    self.Orig_GUI_Chat_ChatlogAddMessage = GUI_Chat.ChatlogAddMessage;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ChatlogAddMessage = function(_Message)
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.ChatlogAddMessage_Orig_Requester(_Message);
+            Lib.Requester.Local.Orig_GUI_Chat_ChatlogAddMessage(_Message);
             return;
         end
         table.insert(Lib.Requester.Local.Chat.History[PlayerID], _Message);
     end
 
-    GUI_Chat.DisplayChatLog_Orig_Requester = GUI_Chat.DisplayChatLog;
+    self.Orig_GUI_Chat_DisplayChatLog = GUI_Chat.DisplayChatLog;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.DisplayChatLog = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.DisplayChatLog_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_DisplayChatLog();
         end
     end
 
-    GUI_Chat.CloseChatMenu_Orig_Requester = GUI_Chat.CloseChatMenu;
+    self.Orig_GUI_Chat_CloseChatMenu = GUI_Chat.CloseChatMenu;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.CloseChatMenu = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.CloseChatMenu_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_CloseChatMenu();
             return;
         end
         Lib.Requester.Local:RestoreChatLog();
         XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions",0);
     end
 
-    GUI_Chat.ToggleWhisperTargetUpdate_Orig_Requester = GUI_Chat.ToggleWhisperTargetUpdate;
+    self.Orig_GUI_Chat_ToggleWhisperTargetUpdate = GUI_Chat.ToggleWhisperTargetUpdate;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ToggleWhisperTargetUpdate = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.ToggleWhisperTargetUpdate_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_ToggleWhisperTargetUpdate();
             return;
         end
         Lib.Requester.Local:UpdateToggleWhisperTarget();
     end
 
-    GUI_Chat.CheckboxMessageTypeWhisperUpdate_Orig_Requester = GUI_Chat.CheckboxMessageTypeWhisperUpdate;
+    self.Orig_GUI_Chat_CheckboxMessageTypeWhisperUpdate = GUI_Chat.CheckboxMessageTypeWhisperUpdate;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.CheckboxMessageTypeWhisperUpdate = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.CheckboxMessageTypeWhisperUpdate_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_CheckboxMessageTypeWhisperUpdate();
             return;
         end
     end
 
-    GUI_Chat.ToggleWhisperTarget_Orig_Requester = GUI_Chat.ToggleWhisperTarget;
+    self.Orig_GUI_Chat_ToggleWhisperTarget = GUI_Chat.ToggleWhisperTarget;
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ToggleWhisperTarget = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.ToggleWhisperTarget_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_ToggleWhisperTarget();
             return;
         end
         if Lib.Requester.Local.Chat.Data[PlayerID].Button.Action then
