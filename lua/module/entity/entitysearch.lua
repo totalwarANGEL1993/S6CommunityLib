@@ -198,8 +198,8 @@ function Lib.EntitySearch.Shared:SearchEntitiesInTerritory(_Territory, _PlayerID
 
     local a = _Territory;
     local p = _PlayerID;
-    local t = _Type;
-    local c = _Category;
+    local t = _Type or "0";
+    local c = _Category or "0";
 
     local Key = "teri_"..a.."_"..p.."_"..t.."_"..c;
 
