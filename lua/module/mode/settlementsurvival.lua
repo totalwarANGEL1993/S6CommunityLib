@@ -82,10 +82,11 @@ Lib.SettlementSurvival.Shared = {
         DeathTimer = 90,
     },
     Consume = {
-        FoodFactor = 0.0006,
+        FoodFactor = 0.0012,
         ClothesFactor = 0.0006,
-        BeerFactor = 0.0006,
+        BeerFactor = 0.0012,
         HygieneFactor = 0.0006,
+        Progression = 35000,
     },
     SuspendedSettlers = {
         MourningTime = 5*60,
@@ -243,7 +244,9 @@ end
 -- the state changes effects after end of work cycles. Satisfaction of a need
 -- drops only if no other need is critical. This must be done due to settlers
 -- are unable to fulfill more than one need at a time.
--- Note: for some reason the max satisfaction is 0.8 instead of 1.0.
+-- If buildings are far away from the players storehouse satisfaction will
+-- decline slower so that they can work longer. This is to not punish the
+-- player to hard for larger distances.
 function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
     local PlayerID = _Turn % 10;
     if self.IsActive and self.Consume.IsActive and PlayerID >= 1 and PlayerID <= 8 then
@@ -261,11 +264,13 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                 local IsStopped = Logic.IsBuildingStopped(BuildingID) == true;
                 local IsOuterRim = Logic.IsEntityInCategory(BuildingID, EntityCategories.OuterRimBuilding) == 1;
                 local AttachedSettlersAmount = self:GetEffectiveWorkerInBuilding(BuildingID);
+                local DistanceFactor = self:CalculateDistanceFactor(BuildingID);
                 -- Consume food
                 if Logic.IsNeedActive(BuildingID, Needs.Nutrition) then
                     local Factor = Lib.SettlementSurvival.Shared.Consume.FoodFactor;
                     Factor = (IsStopped and Factor * 0.50) or Factor;
                     Factor = (IsOuterRim and Factor * 0.50) or Factor;
+                    Factor = Factor * DistanceFactor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][1];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
                     if self:IsAnyOtherNeedCritical(BuildingID, Needs.Nutrition) then
@@ -284,6 +289,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                     local Factor = Lib.SettlementSurvival.Shared.Consume.ClothesFactor;
                     Factor = (IsStopped and Factor * 0.50) or Factor;
                     Factor = (IsOuterRim and Factor * 0.25) or Factor;
+                    Factor = Factor * DistanceFactor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][2];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
                     if self:IsAnyOtherNeedCritical(BuildingID, Needs.Clothes) then
@@ -302,6 +308,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                     local Factor = Lib.SettlementSurvival.Shared.Consume.HygieneFactor;
                     Factor = (IsStopped and Factor * 0.50) or Factor;
                     Factor = (IsOuterRim and Factor * 0.25) or Factor;
+                    Factor = Factor * DistanceFactor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][3];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
                     if self:IsAnyOtherNeedCritical(BuildingID, Needs.Hygiene) then
@@ -320,6 +327,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                     local Factor = Lib.SettlementSurvival.Shared.Consume.BeerFactor;
                     Factor = (IsStopped and Factor * 0.50) or Factor;
                     Factor = (IsOuterRim and Factor * 0.25) or Factor;
+                    Factor = Factor * DistanceFactor;
                     local Contentment = self.Consume[PlayerID].Buildings[BuildingID][4];
                     local ConsumeFactor = Factor * AttachedSettlersAmount;
                     if self:IsAnyOtherNeedCritical(BuildingID, Needs.Entertainment) then
@@ -332,6 +340,10 @@ function Lib.SettlementSurvival.Global:ControlSettlersBaseConsumption(_Turn)
                     end
                     self.Consume[PlayerID].Buildings[BuildingID][4] = Consume;
                     Logic.SetNeedState(BuildingID, Needs.Entertainment, Consume);
+                end
+                -- Save distance
+                if not self.Consume[PlayerID].Buildings[BuildingID].Factor then
+                    self.Consume[PlayerID].Buildings[BuildingID].Factor = DistanceFactor;
                 end
             end
         end
@@ -373,6 +385,24 @@ function Lib.SettlementSurvival.Global:IsAnyOtherNeedCritical(_BuildingID, _Need
     end
     -- Nothing critical
     return false;
+end
+
+function Lib.SettlementSurvival.Global:CalculateDistanceFactor(_BuildingID)
+    local PlayerID = Logic.EntityGetPlayer(_BuildingID);
+    local StorehouseID = Logic.GetStoreHouse(PlayerID);
+    if StorehouseID == 0 then
+        return 1;
+    end
+    if  self.Consume[PlayerID].Buildings[_BuildingID]
+    and self.Consume[PlayerID].Buildings[_BuildingID].Factor then
+        return self.Consume[PlayerID].Buildings[_BuildingID].Factor;
+    end
+    local Distance = GetDistance(_BuildingID, StorehouseID);
+    local Progression = Lib.SettlementSurvival.Shared.Consume.Progression;
+    if Distance > Progression then
+        return 2 ^ (((-1) * (Distance - Progression)) / Progression);
+    end
+    return 1;
 end
 
 -- -------------------------------------------------------------------------- --
