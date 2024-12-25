@@ -325,14 +325,16 @@ end
 
 function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
     if self.Briefing[_PlayerID].PageAnimation then
-        for k, v in pairs(self.Briefing[_PlayerID].PageAnimation) do
-            local PageID = self:GetPageIDByName(_PlayerID, k);
+        for Name, v in pairs(self.Briefing[_PlayerID].PageAnimation) do
+            local PageID = self:GetPageIDByName(_PlayerID, Name);
             if PageID ~= 0 then
                 self.Briefing[_PlayerID][PageID].Animations = {};
                 self.Briefing[_PlayerID][PageID].Animations.Repeat = v.Repeat == true;
                 self.Briefing[_PlayerID][PageID].Animations.Clear = v.Clear == true;
                 for i= 1, #v, 1 do
                     local Entry = {};
+                    Entry.Source = Name;
+                    Entry.Local = v.Local == true;
                     Entry.Interpolation = v[i].Interpolation;
                     Entry.Duration = v[i][1] or (2 * 60);
                     if v[i][2] and type(v[i][4]) ~= "table" then
@@ -366,8 +368,8 @@ end
 
 function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
     if self.Briefing[_PlayerID].PageParallax then
-        for k, v in pairs(self.Briefing[_PlayerID].PageParallax) do
-            local PageID = self:GetPageIDByName(_PlayerID, k);
+        for Name, v in pairs(self.Briefing[_PlayerID].PageParallax) do
+            local PageID = self:GetPageIDByName(_PlayerID, Name);
             if PageID ~= 0 then
                 self.Briefing[_PlayerID][PageID].Parallax = {};
                 self.Briefing[_PlayerID][PageID].Parallax.Repeat = v.Repeat == true;
@@ -375,6 +377,8 @@ function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
                 for i= 1, 4, 1 do
                     if v[i] then
                         local Entry = {};
+                        Entry.Source = Name;
+                        Entry.Local = v.Local == true;
                         Entry.Image = v[i][1];
                         Entry.Interpolation = v[i].Interpolation;
                         Entry.Duration = v[i][2] or (2 * 60);
@@ -772,13 +776,46 @@ end
 function Lib.BriefingSystem.Local:DisplayPageAnimation(_PlayerID, _PageID)
     local Page = self.Briefing[_PlayerID][_PageID];
     if Page.Animations then
+        local Postponed = {};
+        -- Clear animations
         if Page.Animations.Clear then
             self.Briefing[_PlayerID].CurrentAnimation = nil;
             self.Briefing[_PlayerID].AnimationQueue = {};
+        -- Postpone animations and clear
+        elseif Page.Animations.Postpone then
+            if self.Briefing[_PlayerID].CurrentAnimation then
+                local Animation = table.copy(self.Briefing[_PlayerID].CurrentAnimation);
+                local Factor = self:GetInterpolationFactor(_PlayerID, true);
+                Animation.Completion = Factor;
+                table.insert(Postponed, Animation);
+            end
+            for i= 1, #self.Briefing[_PlayerID].AnimationQueue do
+                local Animation = table.copy(self.Briefing[_PlayerID].AnimationQueue[i]);
+                table.insert(Postponed, Animation);
+            end
+            self.Briefing[_PlayerID].CurrentAnimation = nil;
+            self.Briefing[_PlayerID].AnimationQueue = {};
         end
-        for i= 1, #Page.Animations, 1 do
+        -- Fill animation queue
+        for i= 1, #Page.Animations do
             local Animation = table.copy(Page.Animations[i]);
             table.insert(self.Briefing[_PlayerID].AnimationQueue, Animation);
+        end
+        for i= 1, #Postponed do
+            table.insert(self.Briefing[_PlayerID].AnimationQueue, Postponed[i]);
+        end
+        -- Remove page local animations
+        if self.Briefing[_PlayerID].CurrentAnimation then
+            local Animation = self.Briefing[_PlayerID].CurrentAnimation;
+            if Animation.Local and Page.Name ~= Animation.Source then
+                self.Briefing[_PlayerID].CurrentAnimation = nil;
+            end
+        end
+        for i= #self.Briefing[_PlayerID].AnimationQueue, 1, -1 do
+            local Animation = self.Briefing[_PlayerID].AnimationQueue[i];
+            if Animation.Local and Page.Name ~= Animation.Source then
+                table.remove(self.Briefing[_PlayerID].AnimationQueue, i);
+            end
         end
     end
 end
@@ -934,6 +971,9 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
         if CurrentAnimation and CurrentAnimation.AnimFrames then
             if #CurrentAnimation.AnimFrames >= 2 then
                 local Factor = self:GetInterpolationFactor(_PlayerID, true);
+                if CurrentAnimation.Completion then
+                    Factor = math.max(Factor, CurrentAnimation.Completion);
+                end
                 PX, PY, PZ, LX, LY, LZ = self:BezierCurve(
                     Factor,
                     unpack(CurrentAnimation.AnimFrames)
