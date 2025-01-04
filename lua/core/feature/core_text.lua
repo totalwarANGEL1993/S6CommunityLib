@@ -7,24 +7,24 @@ Lib.Core.Text = {
     },
 
     Colors = {
-        red     = "{@color:255,80,80,255}",
-        blue    = "{@color:104,104,232,255}",
-        yellow  = "{@color:255,255,80,255}",
-        green   = "{@color:80,180,0,255}",
-        white   = "{@color:255,255,255,255}",
-        black   = "{@color:0,0,0,255}",
-        grey    = "{@color:140,140,140,255}",
-        azure   = "{@color:0,160,190,255}",
-        orange  = "{@color:255,176,30,255}",
-        amber   = "{@color:224,197,117,255}",
-        violet  = "{@color:180,100,190,255}",
-        pink    = "{@color:255,170,200,255}",
-        scarlet = "{@color:190,0,0,255}",
-        magenta = "{@color:190,0,89,255}",
-        olive   = "{@color:74,120,0,255}",
-        celeste = "{@color:145,170,210,255}",
-        tooltip = "{@color:51,51,120,255}",
-        none    = "{@color:none}"
+        none    = "{@color:none}",
+        red     = "#ff5050",
+        blue    = "#6868e8",
+        yellow  = "#ffff50",
+        green   = "#50b400",
+        white   = "#ffffff",
+        black   = "#000000",
+        grey    = "#8c8c8c",
+        azure   = "#00a0be",
+        orange  = "#ffb01e",
+        amber   = "#e0c575",
+        violet  = "#b464be",
+        pink    = "#ffaac8",
+        scarlet = "#be0000",
+        magenta = "#be0059",
+        olive   = "#4a7800",
+        celeste = "#91aad2",
+        tooltip = "#333378",
     },
 
     Letters = {
@@ -186,7 +186,8 @@ end
 
 function Lib.Core.Text:ReplaceColorPlaceholders(_Text)
     for k, v in pairs(self.Colors) do
-        _Text = _Text:gsub("{" ..k.. "}", v);
+        local Color = (v:find("color") and v) or HexToColorString(v);
+        _Text = _Text:gsub("{" ..k.. "}", Color);
     end
     return _Text;
 end
