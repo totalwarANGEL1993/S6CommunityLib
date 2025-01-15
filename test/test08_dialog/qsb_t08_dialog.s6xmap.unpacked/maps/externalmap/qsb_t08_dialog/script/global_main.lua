@@ -163,6 +163,35 @@ function BriefingTest4(_Name, _PlayerID)
     StartBriefing(Briefing, _Name, _PlayerID)
 end
 
+-- > BriefingTest5([[foo]], 1)
+function BriefingTest5(_Name, _PlayerID)
+    local Briefing = {
+        HideBorderPins = true,
+        ShowSky = true,
+    }
+    local AP, ASP, AAN = AddBriefingPages(Briefing);
+
+    AP {
+       Title        = "Page 1",
+       Text         = "This is a briefing with default animation.",
+       Position     = "pos2",
+       DialogCamera = true,
+       MC = {
+           {"Option 1", "Option1"},
+           {"Option 2", "Option2"},
+       },
+    };
+    ASP("Option1", "Page 2", "It works just as you are used to it.", false, "pos2");
+    AP();
+    ASP("Option2", "Page 4", "Text is displayed until the player skips the page.", false, "pos4");
+
+    Briefing.Starting = function(_Data)
+    end
+    Briefing.Finished = function(_Data)
+    end
+    StartBriefing(Briefing, _Name, _PlayerID)
+end
+
 -- |||| CUTSCENE |||| --
 
 -- > CutsceneTest([[Foo]], 1)
@@ -204,10 +233,10 @@ function CutsceneBriefingTest(_Name, _PlayerID)
 
     Briefing.PageAnimation = {
         ["Page1"] = {
-            {30, {GetFrameVector("pos1", 1750, "hero", 500)},
-                 {GetFrameVector("pos2", 1500, "hero", 500)},
-                 {GetFrameVector("pos3", 1250, "Pos1", 500)},
-                 {GetFrameVector("pos4", 1150, "Pos1", 500)},
+            {30, {GetFrameVector("cs1p01", 1500, "cs1l01", 500)},
+                 {GetFrameVector("cs1p02",  800, "cs1l02", 250)},
+                 {GetFrameVector("cs1p03", 1200, "cs1l03", 150)},
+                 {GetFrameVector("cs1p04",  100, "cs1l04",  50)},
             },
         },
     };
@@ -257,6 +286,7 @@ function CreateTestNPCDialogQuest()
     }
 end
 
+-- > CreateTestNPCDialogBriefing([[Foo]], 1)
 function CreateTestNPCDialogBriefing(_Name, _PlayerID)
     local Dialog = {
         DisableFow = true,

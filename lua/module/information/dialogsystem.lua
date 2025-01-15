@@ -848,9 +848,9 @@ end
 function Lib.DialogSystem.Local:OverrideThroneRoomFunctions()
     -- We only need this to update the sound provider list box for the multiple
     -- choice options. We do not even use the throneroom camera.
-    self.Orig_GameCallback_Camera_ThroneroomCameraControl = GameCallback_Camera_ThroneroomCameraControl;
-    GameCallback_Camera_ThroneroomCameraControl = function(_PlayerID)
-        Lib.DialogSystem.Local.Orig_GameCallback_Camera_ThroneroomCameraControl(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl = GameCallback_Lib_Camera_ThroneroomCameraControl;
+    GameCallback_Lib_Camera_ThroneroomCameraControl = function(_PlayerID)
+        Lib.DialogSystem.Local.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             local Dialog = Lib.DialogSystem.Local:GetCurrentDialog(_PlayerID);
             if Dialog ~= nil then

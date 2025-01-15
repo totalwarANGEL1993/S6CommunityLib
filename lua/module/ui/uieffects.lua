@@ -461,34 +461,34 @@ function Lib.UIEffects.Local:OverrideInterfaceUpdateForCinematicMode()
 end
 
 function Lib.UIEffects.Local:OverrideInterfaceThroneroomForCinematicMode()
-    GameCallback_Camera_StartButtonPressed = function(_PlayerID)
+    GameCallback_Lib_Camera_StartButtonPressed = function(_PlayerID)
     end
     OnStartButtonPressed = function()
-        GameCallback_Camera_StartButtonPressed(GUI.GetPlayerID());
+        GameCallback_Lib_Camera_StartButtonPressed(GUI.GetPlayerID());
     end
 
-    GameCallback_Camera_BackButtonPressed = function(_PlayerID)
+    GameCallback_Lib_Camera_BackButtonPressed = function(_PlayerID)
     end
     OnBackButtonPressed = function()
-        GameCallback_Camera_BackButtonPressed(GUI.GetPlayerID());
+        GameCallback_Lib_Camera_BackButtonPressed(GUI.GetPlayerID());
     end
 
-    GameCallback_Camera_SkipButtonPressed = function(_PlayerID)
+    GameCallback_Lib_Camera_SkipButtonPressed = function(_PlayerID)
     end
     OnSkipButtonPressed = function()
-        GameCallback_Camera_SkipButtonPressed(GUI.GetPlayerID());
+        GameCallback_Lib_Camera_SkipButtonPressed(GUI.GetPlayerID());
     end
 
-    GameCallback_Camera_ThroneRoomLeftClick = function(_PlayerID)
+    GameCallback_Lib_Camera_ThroneRoomLeftClick = function(_PlayerID)
     end
     ThroneRoomLeftClick = function()
-        GameCallback_Camera_ThroneRoomLeftClick(GUI.GetPlayerID());
+        GameCallback_Lib_Camera_ThroneRoomLeftClick(GUI.GetPlayerID());
     end
 
-    GameCallback_Camera_ThroneroomCameraControl = function(_PlayerID)
+    GameCallback_Lib_Camera_ThroneroomCameraControl = function(_PlayerID)
     end
     ThroneRoomCameraControl = function()
-        GameCallback_Camera_ThroneroomCameraControl(GUI.GetPlayerID());
+        GameCallback_Lib_Camera_ThroneroomCameraControl(GUI.GetPlayerID());
     end
 end
 
