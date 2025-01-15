@@ -165,6 +165,10 @@ function Lib.Core.Text:ConvertPlaceholders(_Text)
                 Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{v:");
                 Replacement = self:ReplaceValuePlaceholder(Placeholder);
                 _Text = Before .. self:Localize(Replacement or ("v:" ..tostring(Placeholder).. ": not found")) .. After;
+            elseif _Text:find("#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]") then
+                Before, Placeholder, After, s1, e1, s2, e2 = self:SpliceHexColors(_Text);
+                Replacement = HexToColorString(Placeholder);
+                _Text = Before .. self:Localize(Replacement or ("n:" ..tostring(Placeholder).. ": not found")) .. After;
             end
             if s1 == nil or e1 == nil or s2 == nil or e2 == nil then
                 break;
@@ -182,6 +186,23 @@ function Lib.Core.Text:SplicePlaceholderText(_Text, _Start)
     local Placeholder = _Text:sub(e1+1, s2-1);
     local After       = _Text:sub(e2+1);
     return Before, Placeholder, After, s1, e1, s2, e2;
+end
+
+function Lib.Core.Text:SpliceHexColors(_Text)
+    local hex3 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+    local hex4 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+    local hex6 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+    local hex8 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+
+    local s,e = _Text:find(hex8);
+    if s == nil then s,e = _Text:find(hex6); end
+    if s == nil then s,e = _Text:find(hex4); end
+    if s == nil then s,e = _Text:find(hex3); end
+
+    local Before = _Text:sub(1, s-1);
+    local Placeholder = _Text:sub(s, e);
+    local After = _Text:sub(e+1);
+    return Before, Placeholder, After, s, s, e, e;
 end
 
 function Lib.Core.Text:ReplaceColorPlaceholders(_Text)
