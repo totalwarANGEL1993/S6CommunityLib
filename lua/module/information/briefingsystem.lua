@@ -102,25 +102,56 @@ function Lib.BriefingSystem.Global:OnReportReceived(_ID, ...)
 end
 
 function Lib.BriefingSystem.Global:UpdateQueue()
-    for i= 1, 8 do
-        if self:CanStartBriefing(i) then
-            local Next = Lib.UIEffects.Global:LookUpCinematicInQueue(i);
+    for PlayerID = 1, 8 do
+        if self:CanStartBriefing(PlayerID) then
+            local Next = Lib.UIEffects.Global:LookUpCinematicInQueue(PlayerID);
             if Next and Next[1] == CinematicEventTypes.Briefing then
-                self:NextBriefing(i);
+                self:NextBriefing(PlayerID);
             end
         end
     end
 end
 
 function Lib.BriefingSystem.Global:BriefingExecutionController()
-    for i= 1, 8 do
-        if self.Briefing[i] and not self.Briefing[i].DisplayIngameCutscene then
-            local PageID = self.Briefing[i].CurrentPage;
-            local Page = self.Briefing[i][PageID];
+    for PlayerID = 1, 8 do
+        if self.Briefing[PlayerID] and not self.Briefing[PlayerID].DisplayIngameCutscene then
+            local PageID = self.Briefing[PlayerID].CurrentPage;
+            local Page = self.Briefing[PlayerID][PageID];
+
+            -- Player selected option
+            if self.Briefing[PlayerID].RequestOptionEvaluation then
+                self.Briefing[PlayerID].RequestOptionEvaluation = nil;
+                local OptionID = self.Briefing[PlayerID].RequestOptionEvaluation;
+                if Page.MC then
+                    local Option;
+                    for i= 1, #Page.MC, 1 do
+                        if Page.MC[i].ID == OptionID then
+                            Option = Page.MC[i];
+                        end
+                    end
+                    if Option ~= nil then
+                        local Target = Option[2];
+                        if type(Option[2]) == "function" then
+                            Target = Option[2](PlayerID, PageID, OptionID);
+                        end
+                        self.Briefing[PlayerID][PageID].MC.Selected = Option.ID;
+                        self.Briefing[PlayerID].CurrentPage = self:GetPageIDByName(PlayerID, Target) -1;
+                        self:NextPage(PlayerID);
+                    end
+                end
+            -- Player skips page
+            elseif self.Briefing[PlayerID].RequestPageSkip then
+                self.Briefing[PlayerID].RequestPageSkip = nil;
+                if self.Briefing[PlayerID][PageID].OnForward then
+                    self.Briefing[PlayerID][PageID]:OnForward();
+                end
+                self:NextPage(PlayerID);
             -- Auto Skip
-            if Page and not Page.MC and Page.Duration > 0 then
-                if (Page.Started + Page.Duration) < Logic.GetTime() then
-                    self:NextPage(i);
+            else
+                if Page and not Page.MC and Page.Duration > 0 then
+                    if (Page.Started + Page.Duration) < Logic.GetTime() then
+                        self:NextPage(PlayerID);
+                    end
                 end
             end
         end
@@ -452,11 +483,7 @@ function Lib.BriefingSystem.Global:SkipButtonPressed(_PlayerID, _PageID)
     if not self.Briefing[_PlayerID] then
         return;
     end
-    local PageID = self.Briefing[_PlayerID].CurrentPage;
-    if self.Briefing[_PlayerID][PageID].OnForward then
-        self.Briefing[_PlayerID][PageID]:OnForward();
-    end
-    self:NextPage(_PlayerID);
+    self.Briefing[_PlayerID].RequestPageSkip = true;
 end
 
 function Lib.BriefingSystem.Global:OnOptionSelected(_PlayerID, _OptionID)
@@ -467,6 +494,8 @@ function Lib.BriefingSystem.Global:OnOptionSelected(_PlayerID, _OptionID)
     if type(self.Briefing[_PlayerID][PageID]) ~= "table" then
         return;
     end
+    self.Briefing[_PlayerID].RequestOptionEvaluation = _OptionID;
+
     local Page = self.Briefing[_PlayerID][PageID];
     if Page.MC then
         local Option;
@@ -831,7 +860,6 @@ function Lib.BriefingSystem.Local:DisplayPageFader(_PlayerID, _PageID)
 
     local PageFadeOut = Page.FadeOut;
     if PageFadeOut then
-        -- FIXME: This would create jobs that are only be paused at the end!
         self.Briefing[_PlayerID].FaderJob = RequestHiResJob(function(_Time, _FadeOut)
             if Logic.GetTimeMs() > _Time - (_FadeOut * 1000) then
                 FadeOut(_FadeOut);
@@ -974,7 +1002,7 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
                 if CurrentAnimation.Completion then
                     Factor = math.max(Factor, CurrentAnimation.Completion);
                 end
-                PX, PY, PZ, LX, LY, LZ = self:BezierCurve(
+                PX, PY, PZ, LX, LY, LZ = self:SplineCurve(
                     Factor,
                     unpack(CurrentAnimation.AnimFrames)
                 );
@@ -1124,25 +1152,50 @@ function Lib.BriefingSystem.Local:ModulateInterpolationFactor(_Factor)
     return (1 / (0.97 + math.exp(-8 * (_Factor - 0.5)))) - 0.01;
 end
 
-function Lib.BriefingSystem.Local:BernsteinPolynome(n, i, t)
-    return (math.factorial(n) / (math.factorial(i) * math.factorial(n - i))) * (t ^ i) * ((1 - t) ^ (n - i));
-end
-
-function Lib.BriefingSystem.Local:BezierCurve(_Factor, ...)
-    _Factor = math.max(0, math.min(1, _Factor));
+function Lib.BriefingSystem.Local:SplineCurve(_Factor, ...)
     local Points = {...};
     local n = #Points;
-    local PX, PY, PZ, LX, LY, LZ = 0, 0, 0, 0, 0, 0;
-    for i = 1, n do
-        local f = self:BernsteinPolynome(n - 1, i - 1, _Factor);
-        PX = PX + Points[i][1] * f;
-        PY = PY + Points[i][2] * f;
-        PZ = PZ + Points[i][3] * f;
-        LX = LX + Points[i][4] * f;
-        LY = LY + Points[i][5] * f;
-        LZ = LZ + Points[i][6] * f;
-    end
-    return PX, PY, PZ, LX, LY, LZ;
+    _Factor = math.max(0, math.min(1, _Factor));
+
+    -- Calculate camera position
+    local posSegment = math.floor((n - 1) * _Factor) + 1;
+    local localTPos = (_Factor * (n - 1)) % 1;
+
+    local p0 = Points[math.max(1, posSegment - 1)];
+    local p1 = Points[posSegment];
+    local p2 = Points[math.min(posSegment + 1, n)];
+    local p3 = Points[math.min(posSegment + 2, n)];
+
+    local x1 = self:CatmullRom(localTPos, p0[1], p1[1], p2[1], p3[1]);
+    local y1 = self:CatmullRom(localTPos, p0[2], p1[2], p2[2], p3[2]);
+    local z1 = self:CatmullRom(localTPos, p0[3], p1[3], p2[3], p3[3]);
+
+    -- Calculate camera target
+    local lookSegment = math.floor((n - 1) * _Factor) + 1;
+    local localTLook = (_Factor * (n - 1)) % 1;
+
+    local l0 = Points[math.max(1, lookSegment - 1)];
+    local l1 = Points[lookSegment];
+    local l2 = Points[math.min(lookSegment + 1, n)];
+    local l3 = Points[math.min(lookSegment + 2, n)];
+
+    local x2 = self:CatmullRom(localTLook, l0[4], l1[4], l2[4], l3[4]);
+    local y2 = self:CatmullRom(localTLook, l0[5], l1[5], l2[5], l3[5]);
+    local z2 = self:CatmullRom(localTLook, l0[6], l1[6], l2[6], l3[6]);
+
+    return x1, y1, z1, x2, y2, z2;
+end
+
+function Lib.BriefingSystem.Local:CatmullRom(t, p0, p1, p2, p3)
+    local t2 = t * t;
+    local t3 = t2 * t;
+
+    local c0 = -0.5 * t3 + t2 - 0.5 * t;
+    local c1 = 1.5 * t3 - 2.5 * t2 + 1;
+    local c2 = -1.5 * t3 + 2 * t2 + 0.5 * t;
+    local c3 = 0.5 * t3 - 0.5 * t2;
+
+    return c0 * p0 + c1 * p1 + c2 * p2 + c3 * p3;
 end
 
 function Lib.BriefingSystem.Local:BezierCurveParallax(_Factor, ...)
@@ -1159,6 +1212,10 @@ function Lib.BriefingSystem.Local:BezierCurveParallax(_Factor, ...)
         A  = A  + Points[i][5] * f;
     end
     return U0, V0, U1, V1, A;
+end
+
+function Lib.BriefingSystem.Local:BernsteinPolynome(n, i, t)
+    return (math.factorial(n) / (math.factorial(i) * math.factorial(n - i))) * (t ^ i) * ((1 - t) ^ (n - i));
 end
 
 function Lib.BriefingSystem.Local:GetCameraProperties(_PlayerID, _FOV)
@@ -1200,8 +1257,8 @@ function Lib.BriefingSystem.Local:SkipButtonPressed(_PlayerID)
     if not self.Briefing[_PlayerID] then
         return;
     end
-    if (self.Briefing[_PlayerID].LastSkipButtonPressed + 500) < Logic.GetTimeMs() then
-        self.Briefing[_PlayerID].LastSkipButtonPressed = Logic.GetTimeMs();
+    if (self.Briefing[_PlayerID].LastSkipButtonPressed + 5) < Logic.GetCurrentTurn() then
+        self.Briefing[_PlayerID].LastSkipButtonPressed = Logic.GetCurrentTurn();
 
         SendReportToGlobal(Report.BriefingSkipButtonPressed, _PlayerID);
         SendReport(Report.BriefingSkipButtonPressed, _PlayerID);
@@ -1234,26 +1291,26 @@ function Lib.BriefingSystem.Local:GetPageIDByName(_PlayerID, _Name)
 end
 
 function Lib.BriefingSystem.Local:OverrideThroneRoomFunctions()
-    self.Orig_GameCallback_Camera_ThroneRoomLeftClick = GameCallback_Camera_ThroneRoomLeftClick;
-    GameCallback_Camera_ThroneRoomLeftClick = function(_PlayerID)
-        Lib.BriefingSystem.Local.Orig_GameCallback_Camera_ThroneRoomLeftClick(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_ThroneRoomLeftClick = GameCallback_Lib_Camera_ThroneRoomLeftClick;
+    GameCallback_Lib_Camera_ThroneRoomLeftClick = function(_PlayerID)
+        Lib.BriefingSystem.Local.Orig_GameCallback_Lib_Camera_ThroneRoomLeftClick(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             SendReportToGlobal(Report.BriefingLeftClick, _PlayerID);
             SendReport(Report.BriefingLeftClick, _PlayerID);
         end
     end
 
-    self.Orig_GameCallback_Camera_SkipButtonPressed = GameCallback_Camera_SkipButtonPressed;
-    GameCallback_Camera_SkipButtonPressed = function(_PlayerID)
-        Lib.BriefingSystem.Local.Orig_GameCallback_Camera_SkipButtonPressed(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_SkipButtonPressed = GameCallback_Lib_Camera_SkipButtonPressed;
+    GameCallback_Lib_Camera_SkipButtonPressed = function(_PlayerID)
+        Lib.BriefingSystem.Local.Orig_GameCallback_Lib_Camera_SkipButtonPressed(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             Lib.BriefingSystem.Local:SkipButtonPressed(_PlayerID);
         end
     end
 
-    self.Orig_GameCallback_Camera_ThroneroomCameraControl = GameCallback_Camera_ThroneroomCameraControl;
-    GameCallback_Camera_ThroneroomCameraControl = function(_PlayerID)
-        Lib.BriefingSystem.Local.Orig_GameCallback_Camera_ThroneroomCameraControl(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl = GameCallback_Lib_Camera_ThroneroomCameraControl;
+    GameCallback_Lib_Camera_ThroneroomCameraControl = function(_PlayerID)
+        Lib.BriefingSystem.Local.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             local Briefing = Lib.BriefingSystem.Local:GetCurrentBriefing(_PlayerID);
             if Briefing ~= nil then
