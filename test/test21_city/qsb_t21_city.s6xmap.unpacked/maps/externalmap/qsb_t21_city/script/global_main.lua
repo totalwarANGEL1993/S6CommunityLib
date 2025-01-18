@@ -155,5 +155,7 @@ function GameCallback_Lib_LoadingFinished()
     AddGood(Goods.G_RawFish, 10, 1);
     AddGood(Goods.G_Milk, 10, 1);
     AddGood(Goods.G_Carcass, 10, 1);
+
+    TestReport = CreateReport("Test");
 end
 
