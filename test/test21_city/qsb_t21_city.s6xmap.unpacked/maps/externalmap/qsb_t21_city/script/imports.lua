@@ -6,6 +6,7 @@ Lib.Require("comfort/KeyOf");
 Lib.Require("comfort/GetPredatorSpawnerTypes");
 Lib.Require("comfort/GetSiegeengineTypeByCartType");
 Lib.Require("comfort/GetSiegecartTypeByEngineType");
+Lib.Require("comfort/HexToColor");
 Lib.Require("comfort/IsValidPosition");
 Lib.Require("core/Core");
 Lib.Require("module/city/Promotion");

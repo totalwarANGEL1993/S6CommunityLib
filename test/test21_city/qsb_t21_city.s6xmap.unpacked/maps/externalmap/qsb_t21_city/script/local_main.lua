@@ -27,5 +27,6 @@ end
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
+    TestReport = CreateReport("Test")
 end
 

@@ -5,7 +5,7 @@ Lib.Core.Report = {
     ScriptEventListener = {},
 
     ScriptCommandRegister = {},
-    ScriptCommandSequence = 0,
+    ScriptCommandSequence = 2,
 };
 
 Report = Report or {};
@@ -21,10 +21,14 @@ Lib.Register("core/feature/Core_Report");
 
 function Lib.Core.Report:Initialize()
     if not IsLocalScript() then
-        self:OverrideSoldierPayment();
+        self:OverrideSoldierPaymentGlobal();
         self:CreateScriptCommand("Cmd_SendReportToGlobal", function(_ID, ...)
-            SendReport(_ID, ...);
+            if _ID then
+                SendReport(_ID, ...);
+            end
         end);
+    else
+        self:OverrideSoldierPaymentLocal();
     end
 end
 
@@ -34,13 +38,38 @@ end
 function Lib.Core.Report:OnReportReceived(_ID, ...)
 end
 
-function Lib.Core.Report:OverrideSoldierPayment()
+function Lib.Core.Report:OverrideSoldierPaymentGlobal()
     GameCallback_SetSoldierPaymentLevel_Orig_Libertica = GameCallback_SetSoldierPaymentLevel;
     GameCallback_SetSoldierPaymentLevel = function(_PlayerID, _Level)
         if _Level <= 2 then
             return GameCallback_SetSoldierPaymentLevel_Orig_Libertica(_PlayerID, _Level);
         end
-        Lib.Core.Event:ProcessScriptCommand(_PlayerID, _Level);
+        Lib.Core.Report:ProcessScriptCommand(_PlayerID, _Level);
+    end
+end
+
+function Lib.Core.Report:OverrideSoldierPaymentLocal()
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_BuildingInfo.PaymentLevelSliderChanged = function()
+        local CurrentWidgetID = XGUIEng.GetCurrentWidgetID()
+        local PlayerID = GUI.GetPlayerID()
+        local PaymentLevel = PlayerSoldierPaymentLevel[PlayerID]
+        local PaymentSliderLevel = XGUIEng.SliderGetValueAbs(CurrentWidgetID)
+        if PaymentSliderLevel <= 2 and PaymentLevel ~= PaymentSliderLevel then
+            GUI.SetSoldierPaymentLevel(PaymentSliderLevel);
+        end
+    end
+
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_BuildingInfo.PaymentLevelSliderUpdate = function()
+        local WidgetPath = "/InGame/Root/Normal/AlignBottomRight/Selection/Castle/Treasury/Payment/PaymentSlider";
+        local WidgetID = XGUIEng.GetWidgetID(WidgetPath);
+        local PlayerID = GUI.GetPlayerID();
+        local PaymentLevel = PlayerSoldierPaymentLevel[PlayerID];
+        local PaymentSliderLevel = XGUIEng.SliderGetValueAbs(WidgetID);
+        if PaymentSliderLevel <= 2 and PaymentLevel ~= PaymentSliderLevel then
+            XGUIEng.SliderSetValueAbs(WidgetID, PaymentLevel);
+        end
     end
 end
 

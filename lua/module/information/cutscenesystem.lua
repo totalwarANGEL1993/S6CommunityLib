@@ -582,17 +582,17 @@ function Lib.CutsceneSystem.Local:GetPageIDByName(_PlayerID, _Name)
 end
 
 function Lib.CutsceneSystem.Local:OverrideThroneRoomFunctions()
-    self.Orig_GameCallback_Camera_SkipButtonPressed = GameCallback_Camera_SkipButtonPressed;
-    GameCallback_Camera_SkipButtonPressed = function(_PlayerID)
-        Lib.CutsceneSystem.Local.Orig_GameCallback_Camera_SkipButtonPressed(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_SkipButtonPressed = GameCallback_Lib_Camera_SkipButtonPressed;
+    GameCallback_Lib_Camera_SkipButtonPressed = function(_PlayerID)
+        Lib.CutsceneSystem.Local.Orig_GameCallback_Lib_Camera_SkipButtonPressed(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             SendReportToGlobal(Report.CutsceneSkipButtonPressed, _PlayerID);
         end
     end
 
-    self.Orig_GameCallback_Camera_ThroneroomCameraControl = GameCallback_Camera_ThroneroomCameraControl;
-    GameCallback_Camera_ThroneroomCameraControl = function(_PlayerID)
-        Lib.CutsceneSystem.Local.Orig_GameCallback_Camera_ThroneroomCameraControl(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl = GameCallback_Lib_Camera_ThroneroomCameraControl;
+    GameCallback_Lib_Camera_ThroneroomCameraControl = function(_PlayerID)
+        Lib.CutsceneSystem.Local.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             local Cutscene = Lib.CutsceneSystem.Local:GetCurrentCutscene(_PlayerID);
             if Cutscene ~= nil then
