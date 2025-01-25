@@ -9,5 +9,6 @@ function GetHealth(_Entity)
     end
     return 0;
 end
+API.GetEntityHealth = GetHealth;
 API.GetHealth = GetHealth;
 

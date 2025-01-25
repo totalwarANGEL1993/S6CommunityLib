@@ -1,7 +1,9 @@
 comfort/copytable
+comfort/getbattalionsizebysoldiertype
 comfort/getcategoriesofentity
 comfort/getdelayedplayers
 comfort/getplayeratslot
+comfort/getslotbyplayer
 comfort/getsoldiersofgroup
 comfort/islocalscript
 comfort/keyof
@@ -14,6 +16,7 @@ comfort/ismultiplayer
 comfort/getactiveplayers
 comfort/getcircleposition
 comfort/getgeometricfocus
+comfort/getlineposition
 comfort/getsiegecarttypebyenginetype
 comfort/getterritoryid
 comfort/ishistoryedition
@@ -35,10 +38,15 @@ comfort/isvalidquest
 comfort/isvalidquestname
 comfort/lookat
 comfort/move
+comfort/moveandlookat
+comfort/movetoposition
 comfort/replaceentity
 comfort/sendcart
 comfort/sethealth
 comfort/setposition
+comfort/setpositionandlookat
+comfort/setpositionrelativeto
+comfort/unlocktitleforplayer
 
 core/QSB
 core/Core
