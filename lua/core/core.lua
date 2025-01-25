@@ -472,21 +472,25 @@ function PrepareLibrary()
     Lib.Core.Global:Initialize();
     ExecuteLocal("Lib.Core.Local:Initialize()");
 end
+API.PrepareLibrary = PrepareLibrary;
 
 function RegisterModule(_Name)
     assert(Lib[_Name], "Module '" .._Name.. "' does not exist!");
     table.insert(Lib.Core.ModuleList, _Name);
 end
+API.RegisterModule = RegisterModule;
 
 function ExecuteLocal(_Command, ...)
     if not IsLocalScript() then
         Lib.Core.Global:ExecuteLocal(_Command, ...);
     end
 end
+API.ExecuteLocal = ExecuteLocal;
 
 function ExecuteGlobal(_Command, ...)
     if IsLocalScript() then
         Lib.Core.Local:ExecuteGlobal(_Command, ...);
     end
 end
+API.ExecuteGlobal = ExecuteGlobal;
 
