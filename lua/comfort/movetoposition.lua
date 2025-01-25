@@ -1,17 +1,15 @@
-Lib.Register("comfort/Move");
+Lib.Require("comfort/GetCirclePosition");
+Lib.Require("comfort/IsValidPosition");
+Lib.Register("comfort/MoveToPosition");
 
-function Move(_Entity, _Target, _IgnoreBlocking)
+function MoveToPosition(_Entity, _Target, _Distance, _Angle, _IgnoreBlocking)
     local ID = GetID(_Entity);
     assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     assert(ID ~= 0, "Moving entity does not exist!");
 
-    local Target;
-    if type(_Target) ~= "table" then
-        local ID2 = GetID(_Target);
-        local x,y,z = Logic.EntityGetPos(ID2);
-        Target = {X= x, Y= y};
-    else
-        Target = _Target;
+    local Target = GetCirclePosition(_Target, _Distance, _Angle);
+    if not IsValidPosition(Target) then
+        return;
     end
 
     if _IgnoreBlocking then
@@ -33,8 +31,8 @@ function Move(_Entity, _Target, _IgnoreBlocking)
             end
             return true;
         end
-    end, ID, Target);
+    end, ID);
 end
-API.MoveEntity = Move;
-API.Move = Move;
+API.MoveEntityToPosition = MoveToPosition;
+API.MoveToPosition = MoveToPosition;
 

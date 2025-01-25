@@ -18,3 +18,7 @@ Summary:  Input is parsed into `Commands` and then iterated. But the Index was m
 Location: any String Table regex
 Summary:  Wrong range defined in regex. Quests use different format
 for string tables
+
+## Behavior :Debug method never called
+Location: missing in RegisterBehavior
+Summary:  :Debug is not called because the overwrite is missing
