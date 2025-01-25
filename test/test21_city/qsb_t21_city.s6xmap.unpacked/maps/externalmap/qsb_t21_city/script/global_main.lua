@@ -123,24 +123,142 @@ end
 
 -- ========================================================================== --
 
-function SetupSettlementSurvival()
-    BanditsBlockClaimActivate(true);
-    PredatorBlockClaimActivate(true);
-    ClothesForOuterRimActivate(true);
-    BaseConsumptionActivate(true);
+function ModeSelection_Done()
+    RequireTitleToRefilCisterns(KnightTitles.Mayor);
+    RequireTitleToRefilStoneMines(KnightTitles.Earl);
+    RequireTitleToRefilIronMines(KnightTitles.Earl);
+    RequireTitleToBreedCattle(KnightTitles.Marquees);
+    RequireTitleToBreedSheep(KnightTitles.Marquees);
 
+    ModeSelection_DifficultyEasy();
+    ModeSelection_DifficultyNormal();
+    ModeSelection_DifficultyHard();
+    ModeSelection_DifficultyMercyless();
+end
+
+function ModeSelection_DifficultyEasy()
+    ActivateSettlementLimitation(false);
+    UseForceBallistaDistance(false);
+    UseWallUpkeepCosts(false);
+    UseWallDeteriation(false);
+    ActivateOutpostLimit(false);
+
+    SettlementSurvivalActivate(false);
+    BanditsBlockClaimActivate(false);
+    PredatorBlockClaimActivate(false);
+    ClothesForOuterRimActivate(false);
+    BaseConsumptionActivate(false);
+    AnimalPlagueActivate(false);
+    HotWeatherActivate(false);
+    ColdWeatherActivate(false);
+    FamineActivate(false);
+    NegligenceActivate(false);
+    PlagueActivate(false);
+end
+
+function ModeSelection_DifficultyNormal()
+    ActivateSettlementLimitation(true);
+    UseWallUpkeepCosts(true);
+    UseWallDeteriation(true);
+
+    SettlementSurvivalActivate(true);
     AnimalPlagueActivate(true);
     HotWeatherActivate(true);
-    ColdWeatherActivate(true);
-    FamineActivate(true);
-    NegligenceActivate(true);
-    PlagueActivate(true);
-
     HotWeatherSetTemperature(30);
-    ColdWeatherSetTemperature(15);
+    ColdWeatherActivate(true);
+    ColdWeatherSetTemperature(14);
+end
 
-    RequireTitleToBreedCattle(KnightTitles.Earl);
-    RequireTitleToBreedSheep(KnightTitles.Earl);
+function ModeSelection_DifficultyHard()
+    -- Grain Farm Whitelist
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 3);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 3);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 7);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 7);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 9);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 9);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 14);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 14);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 19);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 19);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 23);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 23);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 33);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 33);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 35);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 35);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainFarm, 37);
+    AddToBuildingTerritoryWhitelist(Entities.B_GrainField_SE, 37);
+    -- Cattle Farm Whitelist
+    AddToBuildingTerritoryWhitelist(Entities.B_CattleFarm, 6);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattlePasture, 6);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattleFarm, 22);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattlePasture, 22);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattleFarm, 24);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattlePasture, 24);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattleFarm, 27);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattlePasture, 27);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattleFarm, 39);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattlePasture, 39);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattleFarm, 40);
+    AddToBuildingTerritoryWhitelist(Entities.B_CattlePasture, 40);
+    -- Sheep Farm Whitelist
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepFarm, 6);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepPasture, 6);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepFarm, 22);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepPasture, 22);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepFarm, 24);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepPasture, 24);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepFarm, 27);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepPasture, 27);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepFarm, 39);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepPasture, 39);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepFarm, 40);
+    AddToBuildingTerritoryWhitelist(Entities.B_SheepPasture, 40);
+    -- Beekeeper Whitelist
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 8);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 8);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 11);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 11);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 12);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 12);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 17);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 17);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 18);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 18);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 21);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 21);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 23);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 23);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 25);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 25);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 33);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 33);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 35);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 35);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 39);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 39);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 40);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 40);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beekeeper, 42);
+    AddToBuildingTerritoryWhitelist(Entities.B_Beehive, 42);
+    -- Herb Gatherer
+    AddToBuildingTerritoryWhitelist(Entities.B_HerbGatherer, 28);
+    AddToBuildingTerritoryWhitelist(Entities.B_HerbGatherer, 42);
+
+    PlagueActivate(true);
+    FamineActivate(true);
+    BaseConsumptionActivate(true);
+end
+
+function ModeSelection_DifficultyMercyless()
+    UseForceBallistaDistance(true);
+    ActivateOutpostLimit(true);
+
+    ClothesForOuterRimActivate(true);
+    NegligenceActivate(true);
+    BanditsBlockClaimActivate(true);
+    PredatorBlockClaimActivate(true);
 end
 
 -- ========================================================================== --

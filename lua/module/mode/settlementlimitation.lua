@@ -429,8 +429,7 @@ function Lib.SettlementLimitation.Global:GetWallUpkeep(_PlayerID)
     local UpkeepPalisade = Lib.SettlementLimitation.Shared.Upkeep.Palisade;
     local UpkeepWall = Lib.SettlementLimitation.Shared.Upkeep.Wall;
     for _, ID in pairs{Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.Wall)} do
-        if  Logic.IsEntityInCategory(ID, EntityCategories.Wall) == 1
-        and Logic.IsConstructionComplete(ID) == 1 then
+        if Logic.IsConstructionComplete(ID) == 1 then
             if Logic.IsEntityInCategory(ID, EntityCategories.PalisadeSegment) == 1 then
                 Upkeep = Upkeep + UpkeepPalisade;
             else
