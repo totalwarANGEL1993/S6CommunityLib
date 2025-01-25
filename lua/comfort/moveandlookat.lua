@@ -1,6 +1,7 @@
-Lib.Register("comfort/Move");
+Lib.Require("comfort/LookAt");
+Lib.Register("comfort/MoveAndLookAt");
 
-function Move(_Entity, _Target, _IgnoreBlocking)
+function MoveAndLookAt(_Entity, _Target, _LookAt, _IgnoreBlocking)
     local ID = GetID(_Entity);
     assert(Lib.Loader.IsLocalEnv == false, "Can only be used in global script.");
     assert(ID ~= 0, "Moving entity does not exist!");
@@ -23,18 +24,19 @@ function Move(_Entity, _Target, _IgnoreBlocking)
         Logic.MoveSettler(ID, Target.X, Target.Y);
     end
 
-    StartSimpleJobEx(function(_ID)
+    StartSimpleJobEx(function(_ID, _LookAt)
         if not IsExisting(_ID) then
             return true;
         end
         if Logic.IsEntityMoving(_ID) == false then
             if Logic.IsSettler(_ID) == 1 then
                 Logic.SetTaskList(_ID, TaskLists.TL_NPC_IDLE);
+                LookAt(_ID, _LookAt);
             end
             return true;
         end
-    end, ID, Target);
+    end, ID, _LookAt);
 end
-API.MoveEntity = Move;
-API.Move = Move;
+API.MoveEntityAndLookAt = MoveAndLookAt;
+API.MoveAndLookAt = MoveAndLookAt;
 

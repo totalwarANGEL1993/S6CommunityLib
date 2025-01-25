@@ -467,6 +467,12 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function API.SetLogLevel(_ScreenLogLevel, _FileLogLevel)
+    -- Legacy support...
+    -- Log levels do not exist anymore.
+end
+API.SetLoggingLevel = API.SetLogLevel
+
 function PrepareLibrary()
     assert(not IsLocalScript(), "Must be called from global script!");
     Lib.Core.Global:Initialize();

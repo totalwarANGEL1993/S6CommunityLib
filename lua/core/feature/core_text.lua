@@ -321,6 +321,7 @@ function AddMessage(_Text, _Sound)
     end
     Message(_Text, (_Sound and _Sound ~= "" and _Sound:gsub("/", "\\")) or nil);
 end
+API.Message = AddMessage;
 
 function ClearNotes()
     if not IsLocalScript() then
@@ -330,6 +331,24 @@ function ClearNotes()
     GUI.ClearNotes();
 end
 API.ClearNotes = ClearNotes;
+
+function AddNamePlaceholder(_Name, _Replacement)
+    error(
+        type(_Replacement) ~= "function" and type(_Replacement) ~= "thread",
+        "Only strings, numbers, or tables are allowed!"
+    );
+    Lib.Core.Text.Placeholders.Names[_Name] = _Replacement;
+end
+API.AddNamePlaceholder = AddNamePlaceholder;
+
+function AddEntityTypePlaceholder(_Type, _Replacement)
+    error(
+        Entities[_Type] == nil,
+        "EntityType does not exist!"
+    );
+    Lib.Core.Text.Placeholders.EntityTypes[_Type] = _Replacement;
+end
+API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
 
 function AddStringText(_Key, _Text)
     assert(IsLocalScript(), "Text can only be set in local script!");
