@@ -7,7 +7,7 @@ function GetPlayerAtSlot(_SlotID)
             return CurrentPlayerID;
         end
     end
-    return 0;
+    return -1;
 end
 API.GetSlotPlayerID = GetPlayerAtSlot;
 
