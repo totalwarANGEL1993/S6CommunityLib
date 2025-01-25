@@ -1,4 +1,4 @@
-Lib.Register("comfort/GetAngleBetween");
+Lib.Register("comfort/GetBattalionSizeBySoldierType");
 
 CONST_TYPE_SOLDIER_AMOUNT_MAP = {
     -- Base
