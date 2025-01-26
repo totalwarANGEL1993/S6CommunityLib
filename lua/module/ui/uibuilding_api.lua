@@ -90,6 +90,18 @@ end
 API.SetDowngradeCosts = SetDowngradeBuildingCost;
 API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
 
+function ActivateSingleReserveBuilding()
+    error(not IsLocalScript(), "Can only be used in global script!");
+    ExecuteLocal([[Lib.UIBuilding.Local.ExtraButton.SingleReserve:Activate()]]);
+end
+API.ActivateSingleReserveBuilding = ActivateSingleReserveBuilding;
+
+function DeactivateSingleReserveBuilding()
+    error(not IsLocalScript(), "Can only be used in global script!");
+    ExecuteLocal([[Lib.UIBuilding.Local.ExtraButton.SingleReserve:Deactivate()]]);
+end
+API.DeactivateSingleReserveBuilding = DeactivateSingleReserveBuilding;
+
 function ActivateSingleStopBuilding()
     error(not IsLocalScript(), "Can only be used in global script!");
     ExecuteLocal([[Lib.UIBuilding.Local.ExtraButton.SingleStop:Activate()]]);
@@ -111,6 +123,14 @@ API.UseDowngrade = function(_Flag)
         return;
     end
     DeactivateDowngradeBuilding();
+end
+
+API.UseSingleReserve = function(_Flag)
+    if _Flag then
+        ActivateSingleReserveBuilding();
+        return;
+    end
+    DeactivateSingleReserveBuilding();
 end
 
 API.UseSingleStop = function(_Flag)

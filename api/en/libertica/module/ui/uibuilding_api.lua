@@ -148,6 +148,16 @@ end
 API.SetDowngradeCosts = SetDowngradeBuildingCost;
 API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
 
+--- Activates the reservation of goods direcrly at the building.
+function ActivateSingleReserveBuilding()
+end
+API.ActivateSingleReserveBuilding = ActivateSingleReserveBuilding;
+
+--- Deactivates the reservation of goods direcrly at the building.
+function DeactivateSingleReserveBuilding()
+end
+API.DeactivateSingleReserveBuilding = DeactivateSingleReserveBuilding;
+
 --- Activates the pausing of individual buildings.
 function ActivateSingleStopBuilding()
 end
@@ -165,6 +175,20 @@ API.DeactivateSingleStopBuilding = DeactivateSingleStopBuilding;
 --- #### Parameter
 --- * `EntityID` - ID of building
 Report.DowngradeBuilding = anyInteger;
+
+--- The player has locked a good type.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID of player
+--- * `GoodType` - Type of good
+Report.LockGoodType = anyInteger;
+
+--- The player has unlocked a good type.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID of player
+--- * `GoodType` - Type of good
+Report.UnlockGoodType = anyInteger;
 
 --- The player has resumed the production in a building.
 --- 
