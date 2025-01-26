@@ -131,7 +131,31 @@ function DropBuildingButtonFromEntity(_ScriptName, _ID)
 end
 API.DropBuildingButtonFromEntity = DropBuildingButtonFromEntity;
 
+--- Activates the downgrade option for city and gatherer buildings.
+function ActivateDowngradeBuilding()
+end
+API.ActivateDowngradeBuilding = ActivateDowngradeBuilding;
 
+--- Dectivates the downgrade option for city and gatherer buildings.
+function DeactivateDowngradeBuilding()
+end
+API.DeactivateDowngradeBuilding = DeactivateDowngradeBuilding;
+
+--- Sets the costs for downgrading a building for all players.
+--- @param _MoneyCost integer Downgrade costs
+function SetDowngradeBuildingCost(_MoneyCost)
+end
+API.SetDowngradeCosts = SetDowngradeBuildingCost;
+API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
+
+
+
+--- The player has downgraded a building.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID of owner
+--- * `EntityID` - ID of building
+Report.DowngradeBuilding = anyInteger;
 
 --- The player clicked the cancel upgrade button.
 --- 
