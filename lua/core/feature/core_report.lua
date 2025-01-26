@@ -24,9 +24,10 @@ Lib.Register("core/feature/Core_Report");
 function Lib.Core.Report:Initialize()
     if not IsLocalScript() then
         self:OverrideSoldierPaymentGlobal();
-        self:CreateScriptCommand("Cmd_SendReportToGlobal", function(_ID, ...)
-            if _ID then
-                SendReport(_ID, ...);
+        self:CreateScriptCommand("Cmd_SendReportToGlobal", function(_Params)
+            local ID = table.remove(_Params, 1);
+            if ID then
+                SendReport(ID, unpack(_Params));
             end
         end);
     else
@@ -82,7 +83,7 @@ function Lib.Core.Report:ProcessScriptCommand(_PlayerID, _ID)
     local PlayerName = Logic.GetPlayerName(_PlayerID +4);
     local Parameters = self:DecodeScriptCommandParameters(PlayerName);
     self.OriginPlayer = _PlayerID;
-    self.ScriptCommandRegister[_ID][2](unpack(Parameters));
+    self.ScriptCommandRegister[_ID][2](Parameters);
     self.OriginPlayer = 0;
 end
 
@@ -187,15 +188,16 @@ function Lib.Core.Report:CreateReport(_Name)
 end
 
 function Lib.Core.Report:SendReport(_ID, ...)
+    local arg = {...};
     assert(self.ScriptEventRegister[_ID] ~= nil, "Report type does not exist.");
     ---@diagnostic disable-next-line: undefined-global
     if GameCallback_Lib_OnEventReceived then
-        GameCallback_Lib_OnEventReceived(_ID, ...);
+        GameCallback_Lib_OnEventReceived(_ID, unpack(arg));
     end
     if self.ScriptEventListener[_ID] then
         for k, v in pairs(self.ScriptEventListener[_ID]) do
             if tonumber(k) then
-                v(...);
+                v(unpack(arg));
             end
         end
     end
@@ -223,7 +225,8 @@ end
 API.CreateScriptEvent = CreateReport;
 
 function SendReport(_ID, ...)
-    Lib.Core.Report:SendReport(_ID, ...);
+    local arg = {...};
+    Lib.Core.Report:SendReport(_ID, unpack(arg));
 end
 API.SendScriptEvent = SendReport;
 

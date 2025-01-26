@@ -178,31 +178,33 @@ end
 
 function Lib.Core.Global:InitReportListener()
     GameCallback_Lib_OnEventReceived = function(_ID, ...)
-        Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
-        Lib.Core.Report:OnReportReceived(_ID, ...);
-        Lib.Core.Text:OnReportReceived(_ID, ...);
-        Lib.Core.Job:OnReportReceived(_ID, ...);
-        Lib.Core.ScriptingValue:OnReportReceived(_ID, ...);
-        Lib.Core.Save:OnReportReceived(_ID, ...);
-        Lib.Core.Quest:OnReportReceived(_ID, ...);
-        Lib.Core.Chat:OnReportReceived(_ID, ...);
-        Lib.Core.Debug:OnReportReceived(_ID, ...);
-        Lib.Core.Bugfix:OnReportReceived(_ID, ...);
-        Lib.Core.Player:OnReportReceived(_ID, ...);
+        local arg = {...};
+
+        Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Report:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Text:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Job:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.ScriptingValue:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Save:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Quest:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Chat:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Debug:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Bugfix:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Player:OnReportReceived(_ID, unpack(arg));
 
         -- Loadscreen
         if _ID == Report.LoadingFinished then
-            SendReportToLocal(Report.LoadingFinished, ...);
+            SendReportToLocal(Report.LoadingFinished, unpack(arg));
         end
         -- Escape
         if _ID == Report.EscapePressed then
-            SendReportToLocal(Report.EscapePressed, ...);
+            SendReportToLocal(Report.EscapePressed, unpack(arg));
         end
 
         for i= 1, #Lib.Core.ModuleList do
             local Name = Lib.Core.ModuleList[i];
             if Lib[Name].Global and Lib[Name].Global.OnReportReceived then
-                Lib[Name].Global:OnReportReceived(_ID, ...);
+                Lib[Name].Global:OnReportReceived(_ID, unpack(arg));
             end
         end
 
@@ -347,17 +349,18 @@ end
 
 function Lib.Core.Local:InitReportListener()
     GameCallback_Lib_OnEventReceived = function(_ID, ...)
-        Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
-        Lib.Core.Report:OnReportReceived(_ID, ...);
-        Lib.Core.Text:OnReportReceived(_ID, ...);
-        Lib.Core.Job:OnReportReceived(_ID, ...);
-        Lib.Core.ScriptingValue:OnReportReceived(_ID, ...);
-        Lib.Core.Save:OnReportReceived(_ID, ...);
-        Lib.Core.Quest:OnReportReceived(_ID, ...);
-        Lib.Core.Chat:OnReportReceived(_ID, ...);
-        Lib.Core.Debug:OnReportReceived(_ID, ...);
-        Lib.Core.Bugfix:OnReportReceived(_ID, ...);
-        Lib.Core.Player:OnReportReceived(_ID, ...);
+        local arg = {...};
+        Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Report:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Text:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Job:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.ScriptingValue:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Save:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Quest:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Chat:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Debug:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Bugfix:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Player:OnReportReceived(_ID, unpack(arg));
 
         -- Loadscreen
         if _ID == Report.LoadingFinished then
@@ -367,7 +370,7 @@ function Lib.Core.Local:InitReportListener()
         for i= 1, #Lib.Core.ModuleList do
             local Name = Lib.Core.ModuleList[i];
             if Lib[Name].Local and Lib[Name].Local.OnReportReceived then
-                Lib[Name].Local:OnReportReceived(_ID, ...);
+                Lib[Name].Local:OnReportReceived(_ID, unpack(arg));
             end
         end
 
