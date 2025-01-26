@@ -131,7 +131,31 @@ function DropBuildingButtonFromEntity(_ScriptName, _ID)
 end
 API.DropBuildingButtonFromEntity = DropBuildingButtonFromEntity;
 
+--- Aktiviert den Rückbau von Stadt- und Sammlergebäuden.
+function ActivateDowngradeBuilding()
+end
+API.ActivateDowngradeBuilding = ActivateDowngradeBuilding;
 
+--- Deaktiviert den Rückbau von Stadt- und Sammlergebäuden.
+function DeactivateDowngradeBuilding()
+end
+API.DeactivateDowngradeBuilding = DeactivateDowngradeBuilding;
+
+--- Setzt die Kosten für den Rückbau für alle Spieler.
+--- @param _MoneyCost integer Rückbaukosten
+function SetDowngradeBuildingCost(_MoneyCost)
+end
+API.SetDowngradeCosts = SetDowngradeBuildingCost;
+API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
+
+
+
+--- Der Spieler hat ein gebäude zurückgebaut.
+--- 
+--- #### Parameter
+--- * `PlayerID` - ID des Besitzers
+--- * `EntityID` - ID des Gebäudes
+Report.DowngradeBuilding = anyInteger;
 
 --- Der Spieler hat auf die Schaltfläche "Upgrade abbrechen" geklickt.
 --- 
