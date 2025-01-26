@@ -90,12 +90,34 @@ end
 API.SetDowngradeCosts = SetDowngradeBuildingCost;
 API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
 
--- Compability
+function ActivateSingleStopBuilding()
+    error(not IsLocalScript(), "Can only be used in global script!");
+    ExecuteLocal([[Lib.UIBuilding.Local.ExtraButton.SingleStop:Activate()]]);
+end
+API.ActivateSingleStopBuilding = ActivateSingleStopBuilding;
+
+function DeactivateSingleStopBuilding()
+    error(not IsLocalScript(), "Can only be used in global script!");
+    ExecuteLocal([[Lib.UIBuilding.Local.ExtraButton.SingleStop:Deactivate()]]);
+end
+API.DeactivateSingleStopBuilding = DeactivateSingleStopBuilding;
+
+
+
+
 API.UseDowngrade = function(_Flag)
     if _Flag then
         ActivateDowngradeBuilding();
         return;
     end
     DeactivateDowngradeBuilding();
+end
+
+API.UseSingleStop = function(_Flag)
+    if _Flag then
+        ActivateSingleStopBuilding();
+        return;
+    end
+    DeactivateSingleStopBuilding();
 end
 

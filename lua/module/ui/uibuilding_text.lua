@@ -17,5 +17,25 @@ Lib.UIBuilding.Text.ExtraButton = {
             Error = "UI_ButtonDisabled/AbilityNotReady",
         },
     },
+    SingleStop = {
+        Normal = {
+            Title = "UI_ObjectNames/BuildingsMenuStopProduction",
+            Text = {
+                de = "- Gebäude produziert keine Waren",
+                en = "- Building does not produce goods",
+                fr = "- le bâtiment ne produit pas de biens",
+            },
+            Error = "UI_ButtonDisabled/AbilityNotReady",
+        },
+        Stopped = {
+            Title = "UI_ObjectNames/BuildingsMenuResumeProduction",
+            Text = {
+                de = "- Gebäude produzieren Waren",
+                en = "- Building produces goods",
+                fr = "- Le bâtiment produit des biens",
+            },
+            Error = "UI_ButtonDisabled/AbilityNotReady",
+        },
+    },
 };
 
