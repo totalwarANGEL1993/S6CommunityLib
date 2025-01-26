@@ -17,6 +17,18 @@ Lib.UIBuilding.Text.ExtraButton = {
             Error = "UI_ButtonDisabled/AbilityNotReady",
         },
     },
+    SingleReserve = {
+        Normal = {
+            Title = "UI_ObjectNames/BuildingsMenuStopConsumption",
+            Text = "UI_ObjectDescription/BuildingsMenuStopConsumption",
+            Error = "UI_ButtonDisabled/AbilityNotReady",
+        },
+        Stopped = {
+            Title = "UI_ObjectNames/BuildingsMenuResumeConsumption",
+            Text = "UI_ObjectDescription/BuildingsMenuResumeConsumption",
+            Error = "UI_ButtonDisabled/AbilityNotReady",
+        },
+    },
     SingleStop = {
         Normal = {
             Title = "UI_ObjectNames/BuildingsMenuStopProduction",
