@@ -75,6 +75,7 @@ function Lib.UIBuilding.Global:Initialize()
         Report.TheatrePlayClicked = CreateReport("Event_TheatrePlayClicked");
 
         self.ExtraButton.Downgrade:InitEvents();
+        self.ExtraButton.SingleStop:InitEvents();
     end
     self.IsInstalled = true;
 end
@@ -99,6 +100,7 @@ function Lib.UIBuilding.Global:OnReportReceived(_ID, ...)
         SendReportToLocal(_ID, ...);
     end
     self.ExtraButton.Downgrade:ExtraButtonOnReportReceived(_ID, ...);
+    self.ExtraButton.SingleStop:ExtraButtonOnReportReceived(_ID, ...);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -126,6 +128,7 @@ function Lib.UIBuilding.Local:Initialize()
         self:OverrideStartSermon();
 
         self.ExtraButton.Downgrade:InitEvents();
+        self.ExtraButton.SingleStop:InitEvents();
     end
     self.IsInstalled = true;
 end
@@ -140,6 +143,7 @@ function Lib.UIBuilding.Local:OnReportReceived(_ID, ...)
         self.LoadscreenClosed = true;
     end
     self.ExtraButton.Downgrade:ExtraButtonOnReportReceived(_ID, ...);
+    self.ExtraButton.SingleStop:ExtraButtonOnReportReceived(_ID, ...);
 end
 
 -- -------------------------------------------------------------------------- --

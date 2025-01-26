@@ -148,14 +148,35 @@ end
 API.SetDowngradeCosts = SetDowngradeBuildingCost;
 API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
 
+--- Aktiviert das Stoppen von einzelnen Gebäuden. 
+function ActivateSingleStopBuilding()
+end
+API.ActivateSingleStopBuilding = ActivateSingleStopBuilding;
+
+--- Deaktiviert das Stoppen von einzelnen Gebäuden.
+function DeactivateSingleStopBuilding()
+end
+API.DeactivateSingleStopBuilding = DeactivateSingleStopBuilding;
 
 
---- Der Spieler hat ein gebäude zurückgebaut.
+
+--- Der Spieler hat ein Gebäude zurückgebaut.
 --- 
 --- #### Parameter
---- * `PlayerID` - ID des Besitzers
 --- * `EntityID` - ID des Gebäudes
 Report.DowngradeBuilding = anyInteger;
+
+--- Der Spieler hat die Produktion im Gebäude fortgeführt.
+--- 
+--- #### Parameter
+--- * `EntityID` - ID des Gebäudes
+Report.ResumeBuilding = anyInteger;
+
+--- Der Spieler hat die Produktion im Gebäude angehalten.
+--- 
+--- #### Parameter
+--- * `EntityID` - ID des Gebäudes
+Report.YieldBuilding = anyInteger;
 
 --- Der Spieler hat auf die Schaltfläche "Upgrade abbrechen" geklickt.
 --- 
