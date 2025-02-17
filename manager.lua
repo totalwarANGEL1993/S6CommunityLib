@@ -34,6 +34,8 @@ LibWriter = {
         "module/entity/EntitySearch",
         "module/trade/Trade",
         "module/trade/TradeRoute",
+        "module/campaign/MapLoader",
+        "module/campaign/MapLoaderMap",
     },
     FileReadLookup = {},
     Compile = false,

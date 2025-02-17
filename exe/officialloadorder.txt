@@ -81,3 +81,5 @@ module/information/Requester
 module/entity/EntitySearch
 module/trade/Trade
 module/trade/TradeRoute
+module/campaign/MapLoader
+module/campaign/MapLoaderMap

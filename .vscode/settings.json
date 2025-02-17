@@ -257,7 +257,8 @@
         "GameCallback_Lib_CalculateRangedCloseCombatDamageFactor",
         "GameCallback_Lib_CalculateWallCatapultDamageFactor",
         "PlacementStates",
-        "this"
+        "this",
+        "CustomGame_FillHeroComboBox_Orig_MapLoader"
     ],
     "Lua.workspace.ignoreDir": [
         "demo",
