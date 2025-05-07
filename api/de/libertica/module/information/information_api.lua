@@ -1,9 +1,10 @@
---- Dieses Modul steuert die Kino-Events.
---- 
---- Kino-Events werden von Briefings, Cutscenes u.ä. verwendet, um so die
---- Anzeigereihefolge zu synchronisieren. Verwende dieses Modul nur, wenn
---- du selbst eine Präsentationsform implementierst, die mit z.B. Briefings
---- zusammen funktionieren soll.
+--- ...
+---
+--- #### Reports
+--- `Report.CinematicActivated` - Ein Kinoevent, empfangen von einem bestimmten Spieler, startet.
+--- `Report.GameInterfaceShown` - Ein Kinoevent, empfangen von einem bestimmten Spieler, endet.
+---
+Lib.Information = Lib.Information or {};
 
 
 
@@ -22,11 +23,11 @@ end
 API.FinishCinematicEvent = FinishCinematicEvent;
 
 ---
---- Gibt den Zustand des Kino-Event zurück.
+--- Gibt den Zustand des Kinoevent zurück.
 ---
 --- @param _Identifier any Bezeichner oder ID
 --- @param _PlayerID integer ID des Spielers
---- @return integer State Zustand des Kino-Event
+--- @return integer State Zustand des Kinoevent
 ---
 function GetCinematicEvent(_Identifier, _PlayerID)
     return 0;
@@ -34,10 +35,10 @@ end
 API.GetCinematicEvent = GetCinematicEvent;
 
 ---
---- Prüft ob gerade ein Kino-Event für den Spieler aktiv ist.
+--- Prüft ob gerade ein Kinoevent für den Spieler aktiv ist.
 ---
 --- @param _PlayerID integer ID des Spielers
---- @return boolean Active Kino-Event ist aktiv
+--- @return boolean Active Kinoevent ist aktiv
 ---
 function IsCinematicEventActive(_PlayerID)
     return false;
@@ -46,16 +47,16 @@ API.IsCinematicEventActive = IsCinematicEventActive;
 
 
 
---- Ein Kino-Event, empfangen von einem bestimmten Spieler, startet.
+--- Ein Kinoevent, empfangen von einem bestimmten Spieler, startet.
 ---
 --- #### Parameter
---- * `EventID`  - ID des Kino-Event
+--- * `EventID`  - ID des Kinoevent
 --- * `PlayerID` - ID des Empfängers
 Report.CinematicActivated = anyInteger;
 
---- Ein Kino-Event, empfangen von einem bestimmten Spieler, endet.
+--- Ein Kinoevent, empfangen von einem bestimmten Spieler, endet.
 --- 
 --- #### Parameter
---- * `EventID`  - ID des Kino-Event
+--- * `EventID`  - ID des Kinoevent
 --- * `PlayerID` - ID des Empfängers
 Report.CinematicConcluded = anyInteger;

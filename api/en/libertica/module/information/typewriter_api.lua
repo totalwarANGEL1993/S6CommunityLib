@@ -1,32 +1,31 @@
---- This module allows to print text to the screen like being typed.
---- 
---- #### How it works
---- The text is put byte by byte to the screen. Each byte becomes a token to
---- be printed. If a special substring (like {cr}) is found, it will become
---- one token instead. The game automatically trims multiple spaces to a
---- single space. The typewriter will also be affected by this.
---- 
---- If used at game start, the typing starts after the loadscreen vanishes.
---- If another cinematic event is running, it must end first.
---- 
+--- ...
+---
+Lib.Typewriter = Lib.Typewriter or {};
 
 
 
 --- Displays a text byte by byte.
 ---
---- #### Fields `_Data`:
---- * `Text`:         <b>string</b> Text to display
---- * `Name`:         (Optional) <b>string</b> Name for event
---- * `PlayerID`:     (Optional) <b>integer</b> Player text is shown
---- * `Callback`:     (Optional) <b>function</b> Callback function
---- * `TargetEntity`: (Optional) <b>string</b> Entity camera is focused on
---- * `CharSpeed`:    (Optional) <b>integer</b> Factor of typing speed (default: 1.0)
---- * `Waittime`:     (Optional) <b>integer</b> Initial waittime before typing
---- * `Opacity`:      (Optional) <b>float</b> Opacity of background (default: 1.0)
---- * `Color`:        (Optional) <b>table</b> Background color (default: {R= 0, G= 0, B= 0})
---- * `Image`:        (Optional) <b>string</b> Background image (needs to be 16:9 ratio)
+--- If used at game start the text starts, after the map is loaded. If another
+--- cinema event is running the typewriter waits for completion.
 ---
---- #### Example:
+--- Controll symbols like {cr} are evaluated as one token and are handled as
+--- an atomic token and are displayed immedaitly. More than 1 space in a row
+--- is atomaticaly trunk to 1 space (by the game engine).
+---
+--- #### Fields of table
+--- * Text         - Text to display
+--- * Name         - (Optional) Name for event
+--- * PlayerID     - (Optional) Player text is shown
+--- * Callback     - (Optional) Callback function
+--- * TargetEntity - (Optional) Entity camera is focused on
+--- * CharSpeed    - (Optional) Factor of typing speed (default: 1.0)
+--- * Waittime     - (Optional) Initial waittime before typing
+--- * Opacity      - (Optional) Opacity of background (default: 1.0)
+--- * Color        - (Optional) Background color (default: {R= 0, G= 0, B= 0})
+--- * Image        - (Optional) Background image (needs to be 16:9 ratio)
+---
+--- #### Examples
 --- ```lua
 --- local EventName = StartTypewriter {
 ---     PlayerID = 1,
