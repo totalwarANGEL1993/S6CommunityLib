@@ -39,10 +39,7 @@ CONST_BRIEFING = {
 
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
-Lib.Require("module/settings/Sound");
-Lib.Require("module/ui/UIEffects");
-Lib.Require("module/ui/UITools");
-Lib.Require("module/information/Requester");
+Lib.Require("module/information/Information");
 Lib.Require("module/information/BriefingSystem_Text");
 Lib.Require("module/information/BriefingSystem_API");
 Lib.Require("module/information/BriefingSystem_Behavior");
@@ -104,7 +101,7 @@ end
 function Lib.BriefingSystem.Global:UpdateQueue()
     for PlayerID = 1, 8 do
         if self:CanStartBriefing(PlayerID) then
-            local Next = Lib.UIEffects.Global:LookUpCinematicInQueue(PlayerID);
+            local Next = Lib.Information.Global:LookUpCinematicInQueue(PlayerID);
             if Next and Next[1] == CinematicEventTypes.Briefing then
                 self:NextBriefing(PlayerID);
             end
@@ -307,7 +304,7 @@ end
 
 function Lib.BriefingSystem.Global:StartBriefing(_Name, _PlayerID, _Data)
     self.BriefingQueue[_PlayerID] = self.BriefingQueue[_PlayerID] or {};
-    Lib.UIEffects.Global:PushCinematicEventToQueue(
+    Lib.Information.Global:PushCinematicEventToQueue(
         _PlayerID,
         CinematicEventTypes.Briefing,
         _Name,
@@ -329,7 +326,7 @@ end
 
 function Lib.BriefingSystem.Global:NextBriefing(_PlayerID)
     if self:CanStartBriefing(_PlayerID) then
-        local BriefingData = Lib.UIEffects.Global:PopCinematicEventFromQueue(_PlayerID);
+        local BriefingData = Lib.Information.Global:PopCinematicEventFromQueue(_PlayerID);
         assert(BriefingData[1] == CinematicEventTypes.Briefing);
         StartCinematicEvent(BriefingData[2], _PlayerID);
 
@@ -368,7 +365,7 @@ function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
                     Entry.Local = v.Local == true;
                     Entry.Interpolation = v[i].Interpolation;
                     Entry.Duration = v[i][1] or (2 * 60);
-                    if v[i][2] and type(v[i][4]) ~= "table" then
+                    if v[i][2] and v[i][4] ~= nil and type(v[i][4]) ~= "table" then
                         Entry.Start = {
                             Position = (type(v[i][2]) ~= "table" and {v[i][2],0}) or v[i][2],
                             Rotation = v[i][3] or CONST_BRIEFING.CAMERA_ROTATIONDEFAULT,
