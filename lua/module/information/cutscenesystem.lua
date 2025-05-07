@@ -14,10 +14,7 @@ Lib.CutsceneSystem.Local = {
 
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
-Lib.Require("module/ui/UIEffects");
-Lib.Require("module/ui/UITools");
-Lib.Require("module/settings/Sound");
-Lib.Require("module/information/Requester");
+Lib.Require("module/information/Information");
 Lib.Require("module/information/CutsceneSystem_Text");
 Lib.Require("module/information/CutsceneSystem_API");
 Lib.Require("module/information/CutsceneSystem_Behavior");
@@ -79,7 +76,7 @@ end
 function Lib.CutsceneSystem.Global:UpdateQueue()
     for i= 1, 8 do
         if self:CanStartCutscene(i) then
-            local Next = Lib.UIEffects.Global:LookUpCinematicInQueue(i);
+            local Next = Lib.Information.Global:LookUpCinematicInQueue(i);
             if Next and Next[1] == CinematicEventTypes.Cutscene then
                 self:NextCutscene(i);
             end
@@ -126,7 +123,7 @@ end
 
 function Lib.CutsceneSystem.Global:StartCutscene(_Name, _PlayerID, _Data)
     self.CutsceneQueue[_PlayerID] = self.CutsceneQueue[_PlayerID] or {};
-    Lib.UIEffects.Global:PushCinematicEventToQueue(
+    Lib.Information.Global:PushCinematicEventToQueue(
         _PlayerID,
         CinematicEventTypes.Cutscene,
         _Name,
@@ -147,7 +144,7 @@ end
 
 function Lib.CutsceneSystem.Global:NextCutscene(_PlayerID)
     if self:CanStartCutscene(_PlayerID) then
-        local CutsceneData = Lib.UIEffects.Global:PopCinematicEventFromQueue(_PlayerID);
+        local CutsceneData = Lib.Information.Global:PopCinematicEventFromQueue(_PlayerID);
         assert(CutsceneData[1] == CinematicEventTypes.Cutscene);
         StartCinematicEvent(CutsceneData[2], _PlayerID);
 
