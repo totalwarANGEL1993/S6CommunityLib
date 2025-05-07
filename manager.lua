@@ -24,6 +24,8 @@ LibWriter = {
         "module/ui/UIBuilding",
         "module/mode/SettlementSurvival",
         "module/mode/SettlementLimitation",
+        "module/information/Information",
+        "module/information/Typewriter",
         "module/information/BriefingSystem",
         "module/information/CutsceneSystem",
         "module/information/DialogSystem",
