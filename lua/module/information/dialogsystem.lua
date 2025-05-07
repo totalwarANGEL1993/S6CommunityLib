@@ -27,16 +27,13 @@ CONST_DIALOG = {
 Lib.Require("comfort/GetPosition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
-Lib.Require("module/ui/UIEffects");
-Lib.Require("module/ui/UITools");
-Lib.Require("module/settings/Sound");
-Lib.Require("module/information/Requester");
+Lib.Require("module/information/Information");
 Lib.Require("module/information/DialogSystem_Text");
 Lib.Require("module/information/DialogSystem_API");
 Lib.Require("module/information/DialogSystem_Behavior");
 Lib.Register("module/information/DialogSystem");
 
-CinematicEventTypes.Dialog = 5;
+CinematicEventTypes.Dialog = 4;
 
 -- -------------------------------------------------------------------------- --
 -- Global
@@ -88,7 +85,7 @@ end
 function Lib.DialogSystem.Global:UpdateQueue()
     for i= 1, 8 do
         if self:CanStartDialog(i) then
-            local Next = Lib.UIEffects.Global:LookUpCinematicInQueue(i);
+            local Next = Lib.Information.Global:LookUpCinematicInQueue(i);
             if Next and Next[1] == CinematicEventTypes.Dialog then
                 self:NextDialog(i);
             end
@@ -229,7 +226,7 @@ end
 -- all informational stuff and executed later by a job.
 function Lib.DialogSystem.Global:StartDialog(_Name, _PlayerID, _Data)
     self.DialogQueue[_PlayerID] = self.DialogQueue[_PlayerID] or {};
-    Lib.UIEffects.Global:PushCinematicEventToQueue(
+    Lib.Information.Global:PushCinematicEventToQueue(
         _PlayerID,
         CinematicEventTypes.Dialog,
         _Name,
@@ -265,7 +262,7 @@ end
 
 function Lib.DialogSystem.Global:NextDialog(_PlayerID)
     if self:CanStartDialog(_PlayerID) then
-        local DialogData = Lib.UIEffects.Global:PopCinematicEventFromQueue(_PlayerID);
+        local DialogData = Lib.Information.Global:PopCinematicEventFromQueue(_PlayerID);
         assert(DialogData[1] == CinematicEventTypes.Dialog);
         StartCinematicEvent(DialogData[2], _PlayerID);
 
@@ -837,7 +834,7 @@ function Lib.DialogSystem.Local:GetPageIDByName(_PlayerID, _Name)
 end
 
 function Lib.DialogSystem.Local:IsAnyCinematicEventActive(_PlayerID)
-    for k, v in pairs(Lib.UIEffects.Local.CinematicEventStatus[_PlayerID]) do
+    for k, v in pairs(Lib.Information.Local.CinematicEventStatus[_PlayerID]) do
         if v == 1 then
             return true;
         end
