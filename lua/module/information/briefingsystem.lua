@@ -11,16 +11,17 @@ Lib.BriefingSystem.Local = {
     },
     ParallaxWidgets = {
         Pushed = {},
-        -- Can not set UV coordinates for this... :(
-        -- {"/EndScreen/EndScreen/BG", "/EndScreen/EndScreen"},
         {"/EndScreen/EndScreen/BackGround", "/EndScreen/EndScreen"},
-        -- Can not set UV coordinates for this... :(
-        -- {"/InGame/MissionStatistic/BG", "/InGame/MissionStatistic"},
+        {"/InGame/ThroneRoom/KnightInfo/BG", "/InGame/ThroneRoom/KnightInfo", true},
+        {"/InGame/Root/BlackStartScreen/BG", "/InGame/Root/BlackStartScreen", true},
         {"/InGame/Root/EndScreen/BlackBG", "/InGame/Root/EndScreen"},
         {"/InGame/Root/EndScreen/BG", "/InGame/Root/EndScreen"},
-        {"/InGame/Root/BlackStartScreen/BG", "/InGame/Root/BlackStartScreen"},
+        {"/InGame/Root/Normal/PauseScreen", "/InGame/Root/Normal"},
         -- Can not set UV coordinates for this... :(
         -- {"/InGame/Root/PresentationLoadingScreen/BG", "/InGame/Root/PresentationLoadingScreen"},
+        -- {"/InGame/MissionStatistic/BG", "/InGame/MissionStatistic"},
+        -- {"/InGame/Background/BG", "/InGame/Background"},
+        -- {"/EndScreen/EndScreen/BG", "/EndScreen/EndScreen"},
     },
     Briefing = {},
 };
@@ -362,7 +363,7 @@ function Lib.BriefingSystem.Global:TransformAnimations(_PlayerID)
                 for i= 1, #v, 1 do
                     local Entry = {};
                     Entry.Source = Name;
-                    Entry.Local = v.Local == true;
+                    Entry.PageTied = v.PageTied == true;
                     Entry.Interpolation = v[i].Interpolation;
                     Entry.Duration = v[i][1] or (2 * 60);
                     if v[i][2] and v[i][4] ~= nil and type(v[i][4]) ~= "table" then
@@ -402,11 +403,11 @@ function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
                 self.Briefing[_PlayerID][PageID].Parallax = {};
                 self.Briefing[_PlayerID][PageID].Parallax.Repeat = v.Repeat == true;
                 self.Briefing[_PlayerID][PageID].Parallax.Clear = v.Clear == true;
-                for i= 1, 4, 1 do
+                for i= 1, 6, 1 do
                     if v[i] then
                         local Entry = {};
                         Entry.Source = Name;
-                        Entry.Local = v.Local == true;
+                        Entry.PageTied = v.PageTied == true;
                         Entry.Image = v[i][1];
                         Entry.Interpolation = v[i].Interpolation;
                         Entry.Duration = v[i][2] or (2 * 60);
@@ -833,13 +834,13 @@ function Lib.BriefingSystem.Local:DisplayPageAnimation(_PlayerID, _PageID)
         -- Remove page local animations
         if self.Briefing[_PlayerID].CurrentAnimation then
             local Animation = self.Briefing[_PlayerID].CurrentAnimation;
-            if Animation.Local and Page.Name ~= Animation.Source then
+            if Animation.PageTied and Page.Name ~= Animation.Source then
                 self.Briefing[_PlayerID].CurrentAnimation = nil;
             end
         end
         for i= #self.Briefing[_PlayerID].AnimationQueue, 1, -1 do
             local Animation = self.Briefing[_PlayerID].AnimationQueue[i];
-            if Animation.Local and Page.Name ~= Animation.Source then
+            if Animation.PageTied and Page.Name ~= Animation.Source then
                 table.remove(self.Briefing[_PlayerID].AnimationQueue, i);
             end
         end
@@ -876,7 +877,7 @@ function Lib.BriefingSystem.Local:DisplayPageParallaxes(_PlayerID, _PageID)
             end
             self.Briefing[_PlayerID].ParallaxLayers = {};
         end
-        for i= 1, 4, 1 do
+        for i= 1, 6, 1 do
             if Page.Parallax[i] then
                 local Animation = table.copy(Page.Parallax[i]);
                 Animation.Started = XGUIEng.GetSystemTime();
@@ -1346,8 +1347,12 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     -- Parallax
     function EndScreen_ExitGame() end
     function MissionFadeInEndScreen() end
+    Lib.UIEffects.Local.PauseScreenShown = true;
     for i= 1, #self.ParallaxWidgets do
         XGUIEng.ShowWidget(self.ParallaxWidgets[i][2], 1);
+        if self.ParallaxWidgets[i][3] then
+            XGUIEng.ShowAllSubWidgets(self.ParallaxWidgets[i][2], 0);
+        end
         if not self.ParallaxWidgets.Pushed[self.ParallaxWidgets[i][2]] then
             self.ParallaxWidgets.Pushed[self.ParallaxWidgets[i][2]] = true;
             XGUIEng.PushPage(self.ParallaxWidgets[i][2], false);
@@ -1368,6 +1373,7 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     XGUIEng.PushPage("/InGame/ThroneRoom/Main", false);
     XGUIEng.PushPage("/InGame/ThroneRoomBars_Dodge", false);
     XGUIEng.PushPage("/InGame/ThroneRoomBars_2_Dodge", false);
+    XGUIEng.ShowWidget("/InGame/ThroneRoom/KnightInfo/Objectives", 1);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/Skip", 1);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/StartButton", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/DialogTopChooseKnight", 1);
@@ -1470,6 +1476,8 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
 
     XGUIEng.ShowWidget("/EndScreen/EndScreen/BG", 1);
     XGUIEng.ShowWidget("/InGame/Root/PresentationLoadingScreen/Logo", 1);
+    XGUIEng.SetMaterialColor("/InGame/Root/Normal/PauseScreen", 0, 80, 80, 80, 100);
+    Lib.UIEffects.Local.PauseScreenShown = false;
     self.ParallaxWidgets.Pushed = {};
     for i= 1, #self.ParallaxWidgets do
         XGUIEng.ShowWidget(self.ParallaxWidgets[i][1], 0);
