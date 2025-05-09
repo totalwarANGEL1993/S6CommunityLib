@@ -95,12 +95,12 @@ function BriefingTest3(_Name, _PlayerID)
 
     Briefing.PageParallax = {
         ["SpecialNamedPage1"] = {
-            {"C:/IMG/Paralax1.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
             {"C:/IMG/Paralax2.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
-            {"C:/IMG/Paralax3.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
-            {"C:/IMG/Paralax4.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
-            -- {"C:/IMG/Paralax5.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
-            --{"C:/IMG/Paralax6.png", 60, {0, 0, 1, 1, 255}, {0, 0, 1, 1, 255}},
+            {"C:/IMG/Paralax3.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
+            {"C:/IMG/Paralax4.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
+            {"C:/IMG/Paralax5.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
+            {"C:/IMG/Paralax6.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
+            {"C:/IMG/Paralax66.png", 60, {0, 0, 1, 1, 255}, {0.5, 0.5, 1, 1, 255}},
         },
         ["SpecialNamedPage2"] = {
             Clear = true
