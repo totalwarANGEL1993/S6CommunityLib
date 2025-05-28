@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -rf var/doc
+mkdir -p var/doc
+lua "./lua/tools/ldoc/ldoc.lua" -d "./var/doc" "./api/de/libertica"
