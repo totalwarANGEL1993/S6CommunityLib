@@ -89,7 +89,7 @@ table.index td { text-align: left; vertical-align: top; }
 
 #navigation {
     float: left;
-    width: 25em;
+    width: 14em;
     vertical-align: top;
     background-color: #f0f0f0;
     overflow: visible;
@@ -123,8 +123,9 @@ table.index td { text-align: left; vertical-align: top; }
 }
 
 #content {
-    margin-left: 25em;
+    margin-left: 14em;
     padding: 1em;
+    width: 700px;
     border-left: 2px solid #cccccc;
     border-right: 2px solid #cccccc;
     background-color: #ffffff;
