@@ -1,8 +1,4 @@
 --- Adds search functions reguarding entities.
---- 
---- <b>Attention</b>: The search functions provided by this module iterate
---- over all(!) entities. It is highly adviced to not use them in jobs to
---- aviod performance problems.
 
 
 

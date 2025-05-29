@@ -67,39 +67,39 @@ API.RequireTitleToBreedSheep = RequireTitleToBreedSheep;
 
 --- The player has clicked the buy animal button.
 --- 
---- #### Parameters:
---- * `Index`:      <b>integer</b> "Cattle" or "Sheep"
---- * `PlayerID`:   <b>integer</b> ID of player
---- * `EntityID`:   <b>integer</b> ID of pasture
+--- #### Parameters:s
+--- * `Index`      - "Cattle" or "Sheep"
+--- * `PlayerID`   - ID of player
+--- * `EntityID`   - ID of pasture
 Report.BreedAnimalClicked = anyInteger;
 
 --- The player has bought a cow.
 --- 
---- #### Parameters:
---- * `PlayerID`:   <b>integer</b> ID of player
---- * `EntityID`:   <b>integer</b> ID of created cow
---- * `BuildingID`: <b>integer</b> ID of pasture
+--- #### Parameters:s
+--- * `PlayerID`   - ID of player
+--- * `EntityID`   - ID of created cow
+--- * `BuildingID` - ID of pasture
 Report.CattleBought = anyInteger;
 
 --- The player has bought a sheep.
 --- 
---- #### Parameters:
---- * `PlayerID`:   <b>integer</b> ID of player
---- * `EntityID`:   <b>integer</b> ID of created sheep
---- * `BuildingID`: <b>integer</b> ID of pasture
+--- #### Parameters:s
+--- * `PlayerID`   - ID of player
+--- * `EntityID`   - ID of created sheep
+--- * `BuildingID` - ID of pasture
 Report.SheepBought = anyInteger;
 
 --- A cow has starved.
 --- 
---- #### Parameters:
---- * `PlayerID`:   <b>integer</b> ID of player
---- * `EntityID`:   <b>integer</b> ID of created cow
+--- #### Parameters:s
+--- * `PlayerID`   - ID of player
+--- * `EntityID`   - ID of created cow
 Report.CattleStarved = anyInteger;
 
 --- A sheep has starved.
 --- 
---- #### Parameters:
---- * `PlayerID`:   <b>integer</b> ID of player
---- * `EntityID`:   <b>integer</b> ID of created cow
+--- #### Parameters:s
+--- * `PlayerID`   - ID of player
+--- * `EntityID`   - ID of created cow
 Report.SheepStarved = anyInteger;
 

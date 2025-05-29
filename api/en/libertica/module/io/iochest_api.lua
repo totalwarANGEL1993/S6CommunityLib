@@ -1,13 +1,5 @@
 --- Offers easy to use treasure chests.
 ---
---- #### Reports
---- * `Report.InteractiveTreasureActivated` - The player activated a treasure.
----
---- #### Debug Functions
---- * `Debug_GoldChest(Entity)   - Creates a random gold chest
---- * `Debug_GoodChest(Entity)   - Creates a random resource chest
---- * `Debug_LuxuryChest(Entity) - Creates a random luxury chest
----
 Lib.IOChest = Lib.IOChest or {};
 
 
@@ -56,9 +48,9 @@ API.CreateRandomLuxuryChest = CreateRandomLuxuryChest;
 
 --- The player activated a treasure
 --- 
---- #### Parameters:
---- * `ScriptName`: <b>string</b> Scriptname of entity
---- * `KnightID`:   <b>integer</b> ID of activating hero
---- * `PlayerID`:   <b>integer</b> ID of activating player
+--- #### Parameters:s
+--- * `ScriptName` - Scriptname of entity
+--- * `KnightID`   - ID of activating hero
+--- * `PlayerID`   - ID of activating player
 Report.InteractiveTreasureActivated = anyInteger;
 

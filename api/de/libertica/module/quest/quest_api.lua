@@ -6,12 +6,14 @@
 ---
 --- Alle Texte eines Quest-Texte können auch String Tables sein. Das Format für
 --- diese Texte ist "FileName/StringName".
+---
+Lib.Quest = Lib.Quest or {};
 
 
 
 --- Erstellt eine normale Quest.
 ---
---- #### Fields `_Data`:
+--- #### Felder der Tabelle
 --- * `Name`        - Eindeutiger Name für die Quest
 --- * `Sender`      - Spieler-ID des Quest-Gebers
 --- * `Receiver`    - Spieler-ID des Quest-Empfängers

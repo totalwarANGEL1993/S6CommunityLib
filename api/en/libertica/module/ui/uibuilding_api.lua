@@ -1,16 +1,4 @@
---- Allows adding additional buttons in building menus.
----
---- Since only 6 buttons can be used, the assignment of buttons 
---- is prioritized by binding type:
---- <ol>
---- <li>Buttons bound by script name</li>
---- <li>Buttons bound by entity type</li>
---- <li>Global (general) buttons</li>
---- </ol>
---- <p>
---- If you add more than 6 buttons to a building, 
---- they will be assigned in this order until all 6 slots are filled.
-
+--- Allows to place up to 6 additional buttons in building menus.
 
 
 
@@ -180,66 +168,66 @@ API.DeactivateSingleStopBuilding = DeactivateSingleStopBuilding;
 --- The player has downgraded a building.
 --- 
 --- #### Parameters:
---- * `EntityID`: <b>integer</b> ID of building
+--- * `EntityID` - ID of building
 Report.DowngradeBuilding = anyInteger;
 
 --- The player has locked a good type.
 --- 
 --- #### Parameters:
---- * `PlayerID`: <b>integer</b> ID of player
---- * `GoodType`: <b>integer</b> Type of good
+--- * `PlayerID` - ID of player
+--- * `GoodType` - Type of good
 Report.LockGoodType = anyInteger;
 
 --- The player has unlocked a good type.
 --- 
 --- #### Parameters:
---- * `PlayerID`: <b>integer</b> ID of player
---- * `GoodType`: <b>integer</b> Type of good
+--- * `PlayerID` - ID of player
+--- * `GoodType` - Type of good
 Report.UnlockGoodType = anyInteger;
 
 --- The player has resumed the production in a building.
 --- 
 --- #### Parameters:
---- * `EntityID`: <b>integer</b> ID of building
+--- * `EntityID` - ID of building
 Report.ResumeBuilding = anyInteger;
 
 --- The player has paused the production in a building.
 --- 
 --- #### Parameters:
---- * `EntityID`: <b>integer</b> ID of building
+--- * `EntityID` - ID of building
 Report.YieldBuilding = anyInteger;
 
 --- The player clicked the cancel upgrade button.
 --- 
 --- #### Parameters:
---- * `EntityID`: <b>integer</b> ID of building
---- * `PlayerID`: <b>integer</b> ID of owner
+--- * `EntityID` - ID of building
+--- * `PlayerID` - ID of owner
 Report.CancelUpgradeClicked = anyInteger;
 
 --- The player clicked the start upgrade button.
 --- 
 --- #### Parameters:
---- * `EntityID`: <b>integer</b> ID of building
---- * `PlayerID`: <b>integer</b> ID of owner
+--- * `EntityID` - ID of building
+--- * `PlayerID` - ID of owner
 Report.StartUpgradeClicked = anyInteger;
 
 --- The player clicked the start festival button.
 --- 
 --- #### Parameters:
---- * `PlayerID`: <b>integer</b> ID of player
---- * `Type`:     <b>integer</b> Type of festival
+--- * `PlayerID` - ID of player
+--- * `Type`     - Type of festival
 Report.FestivalClicked = anyInteger;
 
 --- The player clicked the start sermon button.
 --- 
 --- #### Parameters:
---- * `PlayerID`: <b>integer</b> ID of player
+--- * `PlayerID` - ID of player
 Report.SermonClicked = anyInteger;
 
 --- The player clicked the start theatre play button.
 --- 
 --- #### Parameters:
---- * `EntityID`: <b>integer</b> ID of building
---- * `PlayerID`: <b>integer</b> ID of owner
+--- * `EntityID` - ID of building
+--- * `PlayerID` - ID of owner
 Report.TheatrePlayClicked = anyInteger;
 

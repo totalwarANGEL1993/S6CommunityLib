@@ -1,14 +1,4 @@
 --- Bietet einfach zu verwendende Schatzkisten.
----
---- #### Reports
---- * `Report.InteractiveTreasureActivated` - Der Spieler hat einen Schatz aktivier.
----
---- #### Debug Functions
---- * `Debug_GoldChest(Entity)   - Erzeugt eine Kiste mit zufälligem Gold
---- * `Debug_GoodChest(Entity)   - Erzeugt eine Kiste mit zufälligem Rohstoff
---- * `Debug_LuxuryChest(Entity) - Erzeugt eine Kiste mit zufälligem Luxusgut
----
-Lib.IOChest = Lib.IOChest or {};
 
 
 
@@ -57,8 +47,8 @@ API.CreateRandomLuxuryChest = CreateRandomLuxuryChest;
 --- Der Spieler hat einen Schatz aktivier.
 --- 
 --- #### Parameters:
---- * `ScriptName`: <b>string</b> Scriptname der Entität
---- * `KnightID`:   <b>integer</b> ID des Helden
---- * `PlayerID`:   <b>integer</b> ID des Spielers
+--- * `ScriptName` - Scriptname der Entität
+--- * `KnightID`   - ID des Helden
+--- * `PlayerID`   - ID des Spielers
 Report.InteractiveTreasureActivated = anyInteger;
 

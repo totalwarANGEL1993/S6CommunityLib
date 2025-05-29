@@ -4,20 +4,22 @@
 --- animated heads in a function-stripped briefing.
 ---
 
+
+
 --- Starts a dialog.
 ---
---- #### Fields `_Dialog`:
---- * `Starting`:                (optional) <b>function</b> Function called when the introduction starts              
---- * `Finished`:                (optional) <b>function</b> Function called when the introduction ends             
---- * `RestoreCamera`:           (optional) <b>boolean</b> Camera position is saved and restored after the introduction
---- * `RestoreGameSpeed`:        (optional) <b>boolean</b> Game speed is saved and restored after the introduction      
---- * `EnableGlobalImmortality`: (optional) <b>boolean</b> All entities are invulnerable during the introduction        
---- * `EnableSky`:               (optional) <b>boolean</b> Shows the sky during the introduction                   
---- * `EnableFoW`:               (optional) <b>boolean</b> Shows the fog of war during the introduction 
---- * `EnableBorderPins`:        (optional) <b>boolean</b> Shows border pins during the introduction      
---- * `HideNotes`:               (optional) <b>boolean</b> Hides messages
+--- Possible fields for the dialog table:
+--- * `Starting`                - Function called when dialog is started              
+--- * `Finished`                - Function called when dialog is finished             
+--- * `RestoreCamera`           - Camera position is saved and restored at dialog end 
+--- * `RestoreGameSpeed`        - Game speed is saved and restored at dialog end      
+--- * `EnableGlobalImmortality` - During dialogs all entities are invulnerable        
+--- * `EnableSky`               - Display the sky during the dialog                   
+--- * `EnableFoW`               - Displays the fog of war during the dialog           
+--- * `EnableBorderPins`        - Displays the border pins during the dialog
+--- * `HideNotes`               - Do not show notes
 ---
---- #### Example
+--- #### Example:
 ---
 --- ```lua
 --- function Dialog1(_Name, _PlayerID)
@@ -90,8 +92,59 @@ API.AddDialogPages = AddDialogPages;
 --- * `[1]`: <b>any</b> Displayed text (string oder language table)
 --- * `[2]`: <b>any</b> Jump target (string or function)
 ---
---- #### Example:
---- Create a simple page.
+--- * `Actor`           - (optional) PlayerID of speaker
+--- * `Title`           - (optional) Name of actor (only with actor)
+--- * `Text`            - (optional) Displayed page text
+--- * `Speech`          - Path to voiceover (MP3 file)
+--- * `Position`        - Position of camera (not with target)
+--- * `Target`          - Entity the camera follows (not with position)
+--- * `Distance`        - (optional) Distance of camera
+--- * `Action`          - (optional) Function called when page is displayed
+--- * `FadeIn`          - (optional) Duration of fadein from black
+--- * `FadeOut`         - (optional) Duration of fadeout to black
+--- * `FaderAlpha`      - (optional) Mask alpha
+--- * `MC`              - (optional) Table with choices to branch of in dialogs
+---
+--- *→ Example #1*
+---
+--- #### Flow control
+--- In a dialog the player can be forced to make a choice that will have
+--- different results. That is called multiple choice. Options must be provided
+--- in a table. The target page can be defined with it's name or a function can
+--- be provided for more control over the flow. Such funktions must return a
+--- page name.
+---
+--- *→ Example #2*
+---
+--- Additionally each function can be marked to be removed when used
+--- and not shown again when reentering the page.
+---
+--- *→ Example #3*
+---
+--- Also pages can be hidden by providing a function to check conditions.
+---
+--- *→ Example #4*
+---
+--- If a dialog is branched it must be manually ended after a branch is done
+--- or it just simply shows the next page. To end a dialog, an empty page
+--- must be added.
+---
+--- *→ Example #5*
+---
+--- Alternativly the dialog can continue at a different page. This allows to
+--- create repeating structures within a dialog.
+---
+--- *→ Example #6*
+---
+--- To obtain selected answers at a later point the selection can be saved in a
+--- global variable either in a option callback or in the finished function. The
+--- number returned is the ID of the answer.
+---
+--- *→ Example #7*
+---
+--- #### Examples
+---
+--- * Example #1: A simple page
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",

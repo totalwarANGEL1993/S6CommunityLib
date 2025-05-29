@@ -1,19 +1,23 @@
 --- Allows defining cutscenes.
 ---
---- Cutscenes are XML-defined camera movements that can be played by the
---- game engine. Cutscenes are characterized by smooth camera transitions.
+--- Cutscenes are XML defined camera movemehts that can be played by the
+--- game engine. Cutscenes feature smooth camera animations.
 ---
+
+
 
 --- Starts a cutscene.
 ---
---- #### Fields `_Cutscene`:
---- * `Starting`:                (optional) <b>function</b> Function called when the introduction starts              
---- * `Finished`:                (optional) <b>function</b> Function called when the introduction ends             
---- * `EnableGlobalImmortality`: (optional) <b>boolean</b> All entities are invulnerable during the introduction        
---- * `EnableSky`:               (optional) <b>boolean</b> Shows the sky during the introduction                   
---- * `EnableFoW`:               (optional) <b>boolean</b> Shows the fog of war during the introduction 
---- * `EnableBorderPins`:        (optional) <b>boolean</b> Shows border pins during the introduction     
---- * `HideNotes`:               (optional) <b>boolean</b> Hides messages
+--- Possible fields for the cutscene table:
+--- * `Starting`                - Function called when cutscene is started              
+--- * `Finished`                - Function called when cutscene is finished                 
+--- * `EnableGlobalImmortality` - During cutscenes all entities are invulnerable        
+--- * `EnableSky`               - Display the sky during the cutscene                   
+--- * `EnableFoW`               - Displays the fog of war during the cutscene           
+--- * `EnableBorderPins`        - Displays the border pins during the cutscene
+--- * `HideNotes`               - Do not show notes
+---
+--- #### Example:
 ---
 --- #### Example:
 --- ```lua

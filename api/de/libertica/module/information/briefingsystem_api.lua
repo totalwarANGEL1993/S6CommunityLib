@@ -99,7 +99,66 @@
 --- * `PreloadAssets`:           (optional) <b>boolean</b> Erlaubt weites Sichtfeld in Briefings
 --- * `HideNotes`:               (optional) <b>boolean</b> Nachrichten nicht anzeigen
 ---
+--- Mögliche Felder für die Einleitungstabelle:
+--- * `Starting`                - Funktion, die beim Starten der Einleitung aufgerufen wird              
+--- * `Finished`                - Funktion, die beim Beenden der Einleitung aufgerufen wird             
+--- * `RestoreCamera`           - Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
+--- * `RestoreGameSpeed`        - Spielgeschwindigkeit wird am Ende der Einleitung gespeichert und wiederhergestellt      
+--- * `EnableGlobalImmortality` - Während Einleitungen sind alle Entitäten unverwundbar        
+--- * `EnableSky`               - Zeigt den Himmel während der Einleitung an                   
+--- * `EnableFoW`               - Zeigt den Nebel des Krieges während der Einleitung an 
+--- * `EnableBorderPins`        - Zeigt die Randnadeln während der Einleitung an     
+--- * `PreloadAssets`           - Erlaubt weites Sichtfeld in Briefings
+--- * `HideNotes`               - Nachrichten nicht anzeigen
+---
+--- *→ Beispiel #1*
+---
+--- #### Animationen
+--- Die Kameraeinstellungen können vom Text der Seite getrennt werden. Dies ermöglicht nicht nur
+--- das flüssige Schreiben von Dialogen, sondern auch weitere Möglichkeiten werden freigeschaltet
+--- bei Verwendung der Notation. Um eine Animation zu erstellen, darf die Seite keine
+--- Position haben. Andernfalls werden Standardwerte verwendet.
+---
+--- Die Frames der Animation sollten als Tabelle bereitgestellt werden. Der Weg
+--- der Kamera wird über Bézirkurven bestimmt. Das bedeutet 2 Frames werden zu
+--- einer geraden, 3 erzeugen eine Parabel und ab 4 Frames entsteht eine Kurve.
+---
+--- *→ Beispiel #2*
+---
+--- *→ Beispiel #3*
+---
+--- *→ Beispiel #4*
+---
+--- Die aktuelle Animation kann auch zwischengespeichert werden, um für eine
+--- Page eine neue Animation zu starten, nach deren Abschluss die vorherige
+--- fortgeführt wird. Die Animation kann ebenfalls so eingestellt werden, dass
+--- sie nur für ihre Aktuelle Page gültig ist und danach gelöscht wird.
+---
+--- *→ Beispiel #5*
+---
+--- #### Parallax
+--- Im Kontext eines Videospiels sind Parallaxen scrollbare Hintergründe. Dies
+--- Technik wurde von Side-Scrollers verwendet. Während einer Einleitungsseite bis zu 4 Ebenen
+--- von Grafiken angezeigt und animiert werden. Parallaxen werden ähnlich notiert wie
+--- Kameraanimationen. Das Scrollen erfolgt durch Einstellen der UV-Koordinaten.
+---
+--- Grafiken müssen immer im Format 16:9 vorliegen. Wenn ein Spieler eine 4:3-Auflösung hat
+--- wird das Bild links und rechts beschnitten, um in den Rahmen zu passen. Koordinaten - solange
+--- als relative Koordinaten bereitgestellt - werden angepasst.
+---
+--- Es ist auch möglich, eine Tabelle von Animationsrahmen für das Bild bereitzustellen.
+--- Die Rahmen werden linear interpoliert, wenn es mindestens 2 Einträge gibt und
+--- kubisch interpoliert, wenn es mindestens 4 Einträge gibt.
+---
+--- *→ Beispiel #6*
+---
+--- *→ Beispiel #7*
+---
+--- *→ Beispiel #8*
+---
 --- #### Example:
+---
+--- * Beispiel #1: Grundlegende Struktur
 --- ```lua
 --- function Briefing1(_Name, _PlayerID)
 ---     local Briefing = {};
@@ -137,7 +196,7 @@ API.IsBriefingActive = IsBriefingActive;
 
 --- Erstellt einen Punkt aus einer Position.
 --- @param _Entity any      Zielentität
---- @param _ZOffset integer Z-Offset (<> 0 → Z überschreiben)
+--- @param _ZOffset integer Z-Offset (< 0 → Z überschreiben)
 --- @return number X X-Koordinate
 --- @return number Y Y-Koordinate
 --- @return number Z Z-Koordinate
@@ -147,9 +206,9 @@ end
 
 --- Erstellt einen Vektor aus 2 Positionen.
 --- @param _Entity1 any      Zielpositions-Entität
---- @param _ZOffset1 integer Z-Offset der Position (<> 0 → Z überschreiben)
+--- @param _ZOffset1 integer Z-Offset der Position (< 0 → Z überschreiben)
 --- @param _Entity2 any      Ziel-LookAt-Entität
---- @param _ZOffset2 integer Z-Offset von LookAt (<> 0 → Z überschreiben)
+--- @param _ZOffset2 integer Z-Offset von LookAt (< 0 → Z überschreiben)
 --- @return number X1        X-Koordinate Position
 --- @return number Y1        Y-Koordinate Position
 --- @return number Z1        Z-Koordinate Position
@@ -173,42 +232,68 @@ API.AddBriefingPages = AddBriefingPages;
 
 --- Erstellt eine Seite.
 ---
---- #### Fields `_Data`:
---- * `Title`:           <b>any</b> Angezeigter Seitentitel (String oder Language Table)
---- * `Text`:            <b>any</b> Angezeigter Seitentext (String oder Language Table)
---- * `Speech`:          <b>string</b> Pfad zum Voiceover (MP3-Datei)
---- * `Position`:        (Optional) <b>string</b> Skriptname der Position
---- * `Duration`:        (Optional) <b>integer</b> Zeit bis zum automatischen Überspringen und Kameraanimation
---- * `DialogCamera`:    (Optional) <b>boolean</b> Verwendung der Nahaufnahmekamera
---- * `DisableSkipping`: (Optional) <b>boolean</b> Erlauben/Verbieten des Überspringens von Seiten
---- * `Action`:          (Optional) <b>function</b> Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
---- * `FarClipPlane`:    (Optional) <b>integer</b> Renderabstand
---- * `Rotation`:        (Optional) <b>float</b> Kamerarotation
---- * `Zoom`:            (Optional) <b>float</b> Kamerazoom
---- * `Angle`:           (Optional) <b>float</b> Kamerawinkel
---- * `FadeIn`:          (Optional) <b>float</b> Dauer des Einblendens aus Schwarz
---- * `FadeOut`:         (Optional) <b>float</b> Dauer des Ausblendens in Schwarz
---- * `FaderAlpha`:      (Optional) <b>float</b> Maskenalpha
---- * `BarOpacity`:      (Optional) <b>float</b> Deckkraft der Balken
---- * `BigBars`:         (Optional) <b>boolean</b> Verwende große Balken
---- * `FlyTo`:           (Optional) <b>table</b> Tabelle mit zweitem Satz von Kamerakonfigurationen, wobei die Kamera zufliegt
---- * `Performance`:     (Optional) <b>boolean</b> Grafiksettings für diese Seite herabsetzen
---- * `MC`:              (Optional) <b>table</b> Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
---- 
---- #### Fields `_Data.FlyTo`:
---- * `Position`:     <b>string</b> Skriptname der Position
---- * `Action`:       <b>function</b> Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
---- * `FarClipPlane`: <b>integer</b> Renderabstand
---- * `Rotation`:     <b>float</b> Kamerarotation
---- * `Zoom`:         <b>float</b> Kamerazoom
---- * `Angle`:        <b>float</b> Kamerawinkel
---- 
---- #### Fields `_Data.MC`:
---- * `[1]`: <b>any</b> Angezeigter Text (String oder Language Table)
---- * `[2]`: <b>any</b> Sprungziel (String oder Funktion)
+--- Mögliche Felder für die Seite:
+---
+--- * `Title`           - Angezeigter Seitentitel
+--- * `Text`            - Angezeigter Seitentext
+--- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
+--- * `Position`        - Skriptname der Position
+--- * `Duration`        - Zeit bis zum automatischen Überspringen
+--- * `DialogCamera`    - Verwendung der Nahaufnahmekamera
+--- * `DisableSkipping` - Erlauben/Verbieten des Überspringens von Seiten
+--- * `Action`          - Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
+--- * `FarClipPlane`    - Renderabstand
+--- * `Rotation`        - Kamerarotation
+--- * `Zoom`            - Kamerazoom
+--- * `Angle`           - Kamerawinkel
+--- * `FadeIn`          - Dauer des Einblendens aus Schwarz
+--- * `FadeOut`         - Dauer des Ausblendens in Schwarz
+--- * `FaderAlpha`      - Maskenalpha
+--- * `BarOpacity`      - Deckkraft der Balken
+--- * `BigBars`         - Verwende große Balken
+--- * `FlyTo`           - Tabelle mit zweitem Satz von Kamerakonfigurationen, wobei die Kamera zufliegt
+--- * `Performance`     - (Optional) Grafiksettings für diese Seite herabsetzen
+--- * `MC`              - Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
+---
+--- *→ Beispiel #1*
+---
+--- #### Flusskontrolle
+--- In einer Einleitung kann der Spieler gezwungen werden, eine Wahl zu treffen, die
+--- verschiedene Ergebnisse haben wird. Das nennt man Multiple Choice. Optionen müssen bereitgestellt werden
+--- in einer Tabelle. Die Zielseite kann mit ihrem Namen definiert werden oder eine Funktion kann
+--- für mehr Kontrolle über den Ablauf bereitgestellt werden. Solche Funktionen müssen zurückgeben
+--- ein Seitenname.
+---
+--- *→ Beispiel #2*
+---
+--- Zusätzlich kann jede Funktion markiert werden, um entfernt zu werden, wenn sie verwendet wird,
+--- und nicht wieder angezeigt zu werden, wenn die Seite erneut betreten wird.
+---
+--- *→ Beispiel #3*
+---
+--- Auch Seiten können ausgeblendet werden, indem eine Funktion zum Überprüfen von Bedingungen bereitgestellt wird.
+---
+--- *→ Beispiel #4*
+---
+--- Wenn eine Einleitung verzweigt ist, muss sie manuell beendet werden, nachdem eine Verzweigung erfolgt ist
+--- oder es zeigt einfach die nächste Seite an. Um eine Einleitung zu beenden, muss eine leere Seite hinzugefügt werden.
+---
+--- *→ Beispiel #5*
+---
+--- Alternativ kann die Einleitung an einer anderen Seite fortgesetzt werden. Dies ermöglicht es, zu erstellen
+--- sich wiederholende Strukturen innerhalb einer Einleitung.
+---
+--- *→ Beispiel #6*
+---
+--- Um ausgewählte Antworten zu einem späteren Zeitpunkt zu erhalten, kann die Auswahl in einem
+--- globalen Variablen entweder in einem Optionsrückruf oder in der fertigen Funktion gespeichert werden. Die
+--- Die zurückgegebene Nummer ist die ID der Antwort.
+---
+--- *→ Beispiel #7*
 ---
 --- #### Example:
---- Eine einfache Seite erstellen.
+---
+--- * Beispiel #1: Eine einfache Seite
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -270,6 +355,15 @@ end
 --- Seitenindex erstellen. Ein Name kann ein optionales Parameter am 
 --- Anfang sein. Die Seite wird nicht weiter springen, bis der Skip-Button 
 --- geklicht wird.
+---
+--- Die Funktion erwartet die folgenden Parameter:
+--- 
+--- * `Name`            - (Optional) Name der Seite
+--- * `Title`           - Angezeigter Seitentitel
+--- * `Text`            - Angezeigter Seitentext
+--- * `DialogCamera`    - Verwendung der Nahaufnahmekamera
+--- * `Position`        - (Optional) Skriptname der fokussierten Entität
+--- * `Action`          - (Optional) Aktion, wenn die Seite angezeigt wird
 ---
 --- #### Example:
 ---
