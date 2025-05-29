@@ -77,29 +77,17 @@
 --- 
 --- Der Definition der Animationen können mehrere Switches hinzugefügt werden,
 --- die das Verhalten der Animationen beeinflussen.
---- * `Clear`:    (optional) <b>boolean</b> Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
---- * `Repeat`:   (optional) <b>boolean</b> Die Animationssets begingen nach dem Ende von vorn.
---- * `Postpone`: (optional) <b>boolean</b> Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
---- * `PageTied`: (optional) <b>boolean</b> Die Animationssets werden nur auf dieser Seite abgespielt.
+--- * `Clear`    - Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
+--- * `Repeat`   - Die Animationssets begingen nach dem Ende von vorn.
+--- * `Postpone` - Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
+--- * `Local`    - Die Animationssets werden nur auf dieser Seite abgespielt.
 ---
 
 
 
 --- Startet eine Briefing.
 --- 
---- #### Fields `_Briefing`:
---- * `Starting`:                (optional) <b>function</b> Funktion, die beim Starten der Einleitung aufgerufen wird              
---- * `Finished`:                (optional) <b>function</b> Funktion, die beim Beenden der Einleitung aufgerufen wird             
---- * `RestoreCamera`:           (optional) <b>boolean</b> Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
---- * `RestoreGameSpeed`:        (optional) <b>boolean</b> Spielgeschwindigkeit wird am Ende der Einleitung gespeichert und wiederhergestellt      
---- * `EnableGlobalImmortality`: (optional) <b>boolean</b> Während Einleitungen sind alle Entitäten unverwundbar        
---- * `EnableSky`:               (optional) <b>boolean</b> Zeigt den Himmel während der Einleitung an                   
---- * `EnableFoW`:               (optional) <b>boolean</b> Zeigt den Nebel des Krieges während der Einleitung an 
---- * `EnableBorderPins`:        (optional) <b>boolean</b> Zeigt die Randnadeln während der Einleitung an     
---- * `PreloadAssets`:           (optional) <b>boolean</b> Erlaubt weites Sichtfeld in Briefings
---- * `HideNotes`:               (optional) <b>boolean</b> Nachrichten nicht anzeigen
----
---- Mögliche Felder für die Einleitungstabelle:
+--- Das Briefing selbst kann verschiedene Attribute bekommen.
 --- * `Starting`                - Funktion, die beim Starten der Einleitung aufgerufen wird              
 --- * `Finished`                - Funktion, die beim Beenden der Einleitung aufgerufen wird             
 --- * `RestoreCamera`           - Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
@@ -111,54 +99,7 @@
 --- * `PreloadAssets`           - Erlaubt weites Sichtfeld in Briefings
 --- * `HideNotes`               - Nachrichten nicht anzeigen
 ---
---- *→ Beispiel #1*
----
---- #### Animationen
---- Die Kameraeinstellungen können vom Text der Seite getrennt werden. Dies ermöglicht nicht nur
---- das flüssige Schreiben von Dialogen, sondern auch weitere Möglichkeiten werden freigeschaltet
---- bei Verwendung der Notation. Um eine Animation zu erstellen, darf die Seite keine
---- Position haben. Andernfalls werden Standardwerte verwendet.
----
---- Die Frames der Animation sollten als Tabelle bereitgestellt werden. Der Weg
---- der Kamera wird über Bézirkurven bestimmt. Das bedeutet 2 Frames werden zu
---- einer geraden, 3 erzeugen eine Parabel und ab 4 Frames entsteht eine Kurve.
----
---- *→ Beispiel #2*
----
---- *→ Beispiel #3*
----
---- *→ Beispiel #4*
----
---- Die aktuelle Animation kann auch zwischengespeichert werden, um für eine
---- Page eine neue Animation zu starten, nach deren Abschluss die vorherige
---- fortgeführt wird. Die Animation kann ebenfalls so eingestellt werden, dass
---- sie nur für ihre Aktuelle Page gültig ist und danach gelöscht wird.
----
---- *→ Beispiel #5*
----
---- #### Parallax
---- Im Kontext eines Videospiels sind Parallaxen scrollbare Hintergründe. Dies
---- Technik wurde von Side-Scrollers verwendet. Während einer Einleitungsseite bis zu 4 Ebenen
---- von Grafiken angezeigt und animiert werden. Parallaxen werden ähnlich notiert wie
---- Kameraanimationen. Das Scrollen erfolgt durch Einstellen der UV-Koordinaten.
----
---- Grafiken müssen immer im Format 16:9 vorliegen. Wenn ein Spieler eine 4:3-Auflösung hat
---- wird das Bild links und rechts beschnitten, um in den Rahmen zu passen. Koordinaten - solange
---- als relative Koordinaten bereitgestellt - werden angepasst.
----
---- Es ist auch möglich, eine Tabelle von Animationsrahmen für das Bild bereitzustellen.
---- Die Rahmen werden linear interpoliert, wenn es mindestens 2 Einträge gibt und
---- kubisch interpoliert, wenn es mindestens 4 Einträge gibt.
----
---- *→ Beispiel #6*
----
---- *→ Beispiel #7*
----
---- *→ Beispiel #8*
----
 --- #### Example:
----
---- * Beispiel #1: Grundlegende Struktur
 --- ```lua
 --- function Briefing1(_Name, _PlayerID)
 ---     local Briefing = {};
@@ -196,7 +137,7 @@ API.IsBriefingActive = IsBriefingActive;
 
 --- Erstellt einen Punkt aus einer Position.
 --- @param _Entity any      Zielentität
---- @param _ZOffset integer Z-Offset (< 0 → Z überschreiben)
+--- @param _ZOffset integer Z-Offset (<> 0 → Z überschreiben)
 --- @return number X X-Koordinate
 --- @return number Y Y-Koordinate
 --- @return number Z Z-Koordinate
@@ -206,9 +147,9 @@ end
 
 --- Erstellt einen Vektor aus 2 Positionen.
 --- @param _Entity1 any      Zielpositions-Entität
---- @param _ZOffset1 integer Z-Offset der Position (< 0 → Z überschreiben)
+--- @param _ZOffset1 integer Z-Offset der Position (<> 0 → Z überschreiben)
 --- @param _Entity2 any      Ziel-LookAt-Entität
---- @param _ZOffset2 integer Z-Offset von LookAt (< 0 → Z überschreiben)
+--- @param _ZOffset2 integer Z-Offset von LookAt (<> 0 → Z überschreiben)
 --- @return number X1        X-Koordinate Position
 --- @return number Y1        Y-Koordinate Position
 --- @return number Z1        Z-Koordinate Position
@@ -232,8 +173,7 @@ API.AddBriefingPages = AddBriefingPages;
 
 --- Erstellt eine Seite.
 ---
---- Mögliche Felder für die Seite:
----
+--- Die Seite kann verschiedene Attribute bekommen.
 --- * `Title`           - Angezeigter Seitentitel
 --- * `Text`            - Angezeigter Seitentext
 --- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
@@ -255,45 +195,8 @@ API.AddBriefingPages = AddBriefingPages;
 --- * `Performance`     - (Optional) Grafiksettings für diese Seite herabsetzen
 --- * `MC`              - Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
 ---
---- *→ Beispiel #1*
----
---- #### Flusskontrolle
---- In einer Einleitung kann der Spieler gezwungen werden, eine Wahl zu treffen, die
---- verschiedene Ergebnisse haben wird. Das nennt man Multiple Choice. Optionen müssen bereitgestellt werden
---- in einer Tabelle. Die Zielseite kann mit ihrem Namen definiert werden oder eine Funktion kann
---- für mehr Kontrolle über den Ablauf bereitgestellt werden. Solche Funktionen müssen zurückgeben
---- ein Seitenname.
----
---- *→ Beispiel #2*
----
---- Zusätzlich kann jede Funktion markiert werden, um entfernt zu werden, wenn sie verwendet wird,
---- und nicht wieder angezeigt zu werden, wenn die Seite erneut betreten wird.
----
---- *→ Beispiel #3*
----
---- Auch Seiten können ausgeblendet werden, indem eine Funktion zum Überprüfen von Bedingungen bereitgestellt wird.
----
---- *→ Beispiel #4*
----
---- Wenn eine Einleitung verzweigt ist, muss sie manuell beendet werden, nachdem eine Verzweigung erfolgt ist
---- oder es zeigt einfach die nächste Seite an. Um eine Einleitung zu beenden, muss eine leere Seite hinzugefügt werden.
----
---- *→ Beispiel #5*
----
---- Alternativ kann die Einleitung an einer anderen Seite fortgesetzt werden. Dies ermöglicht es, zu erstellen
---- sich wiederholende Strukturen innerhalb einer Einleitung.
----
---- *→ Beispiel #6*
----
---- Um ausgewählte Antworten zu einem späteren Zeitpunkt zu erhalten, kann die Auswahl in einem
---- globalen Variablen entweder in einem Optionsrückruf oder in der fertigen Funktion gespeichert werden. Die
---- Die zurückgegebene Nummer ist die ID der Antwort.
----
---- *→ Beispiel #7*
----
 --- #### Example:
----
---- * Beispiel #1: Eine einfache Seite
+--- Eine einfache Seite erstellen.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -327,8 +230,7 @@ API.AddBriefingPages = AddBriefingPages;
 --- ```
 ---
 --- #### Example:
---- Das Sprungziel einer Option kann durch eine Funktion bestimmt werden. Die
---- Funktion muss den Namen der Zielseite zurückgeben.
+--- Das Sprungziel einer Option kann durch eine Funktion bestimmt werden.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -357,7 +259,6 @@ end
 --- geklicht wird.
 ---
 --- Die Funktion erwartet die folgenden Parameter:
---- 
 --- * `Name`            - (Optional) Name der Seite
 --- * `Title`           - Angezeigter Seitentitel
 --- * `Text`            - Angezeigter Seitentext

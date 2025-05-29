@@ -17,8 +17,6 @@
 --- * `HideNotes`               - Nachrichten nicht anzeigen
 ---
 --- #### Example:
----
---- #### Example:
 --- ```lua
 --- function Cutscene1(_Name, _PlayerID)
 ---     local Cutscene = {};

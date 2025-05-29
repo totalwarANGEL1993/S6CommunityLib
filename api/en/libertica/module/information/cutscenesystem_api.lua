@@ -1,23 +1,19 @@
 --- Allows defining cutscenes.
 ---
---- Cutscenes are XML defined camera movemehts that can be played by the
---- game engine. Cutscenes feature smooth camera animations.
+--- Cutscenes are XML-defined camera movements that can be played by the
+--- game engine. Cutscenes are characterized by smooth camera transitions.
 ---
-
-
 
 --- Starts a cutscene.
 ---
 --- Possible fields for the cutscene table:
---- * `Starting`                - Function called when cutscene is started              
---- * `Finished`                - Function called when cutscene is finished                 
---- * `EnableGlobalImmortality` - During cutscenes all entities are invulnerable        
---- * `EnableSky`               - Display the sky during the cutscene                   
---- * `EnableFoW`               - Displays the fog of war during the cutscene           
---- * `EnableBorderPins`        - Displays the border pins during the cutscene
---- * `HideNotes`               - Do not show notes
----
---- #### Example:
+--- * `Starting`                - Function called at the start of the cutscene              
+--- * `Finished`                - Function called at the end of the cutscene                 
+--- * `EnableGlobalImmortality` - All entities are invulnerable during the cutscene        
+--- * `EnableSky`               - Show sky during the cutscene                   
+--- * `EnableFoW`               - Show fog of war during the cutscene           
+--- * `EnableBorderPins`        - Show border pins during the cutscene
+--- * `HideNotes`               - Do not display messages
 ---
 --- #### Example:
 --- ```lua
@@ -82,6 +78,19 @@ API.AddCutscenePages = AddCutscenePages;
 --- * `DisableSkipping` (optional) <b>boolean</b> Allow/disallow skipping of pages
 --- * `BarOpacity`      (optional) <b>float</b> Opacity of the bars
 --- * `BigBars`         (optional) <b>boolean</b> Use large cinematic bars
+---
+--- * `Flight`          - Name of the flight XML (without .cs)
+--- * `Title`           - Displayed page title
+--- * `Text`            - Displayed page text
+--- * `Speech`          - Path to the voiceover (MP3 file)
+--- * `Action`          - Function called when the page is shown
+--- * `FarClipPlane`    - Rendering distance
+--- * `FadeIn`          - Duration of fade-in from black
+--- * `FadeOut`         - Duration of fade-out to black
+--- * `FaderAlpha`      - Mask alpha
+--- * `DisableSkipping` - Allow/disallow skipping of pages
+--- * `BarOpacity`      - Opacity of the bars
+--- * `BigBars`         - Use large cinematic bars
 ---
 --- #### Example:
 ---

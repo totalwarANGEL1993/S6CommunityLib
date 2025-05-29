@@ -4,22 +4,20 @@
 --- animated heads in a function-stripped briefing.
 ---
 
-
-
 --- Starts a dialog.
 ---
---- Possible fields for the dialog table:
---- * `Starting`                - Function called when dialog is started              
---- * `Finished`                - Function called when dialog is finished             
---- * `RestoreCamera`           - Camera position is saved and restored at dialog end 
---- * `RestoreGameSpeed`        - Game speed is saved and restored at dialog end      
---- * `EnableGlobalImmortality` - During dialogs all entities are invulnerable        
---- * `EnableSky`               - Display the sky during the dialog                   
---- * `EnableFoW`               - Displays the fog of war during the dialog           
---- * `EnableBorderPins`        - Displays the border pins during the dialog
---- * `HideNotes`               - Do not show notes
+--- The dialog itself can have various attributes.
+--- * `Starting`                - Function called when the dialog starts              
+--- * `Finished`                - Function called when the dialog ends             
+--- * `RestoreCamera`           - Camera position is saved and restored at the end of the dialog 
+--- * `RestoreGameSpeed`        - Game speed is saved and restored at the end of the dialog      
+--- * `EnableGlobalImmortality` - All units are invulnerable during the dialog       
+--- * `EnableSky`               - Show sky during the dialog                  
+--- * `EnableFoW`               - Show fog of war during the dialog          
+--- * `EnableBorderPins`        - Show border pins during the dialog
+--- * `HideNotes`               - Do not display messages
 ---
---- #### Example:
+--- #### Example
 ---
 --- ```lua
 --- function Dialog1(_Name, _PlayerID)
@@ -74,77 +72,22 @@ API.AddDialogPages = AddDialogPages;
 
 --- Creates a page.
 ---
---- #### Fields `_Data`:
---- * `Actor`:      (optional) <b>integer</b> Player ID of actor
---- * `Title`:      (optional) <b>any</b> Name of actor (only with actor)
---- * `Text`:       (optional) <b>any</b> Displayed text (string or language table)
---- * `Speech`:     <b>string</b> Pfad zum Voiceover (MP3 file)
---- * `Position`:   <b>string</b> Position of camera (not with target)
---- * `Target`:     <b>string</b> Unit camera follows (not with position)
---- * `Distance`:   (optional) <b>float</b> Distance of camera
---- * `Action`:     (optional) <b>function</b> Function called when page is shown
---- * `FadeIn`:     (optional) <b>float</b> Duration of fade-in from black
---- * `FadeOut`:    (optional) <b>float</b> Duration of fade-out to black
---- * `FaderAlpha`: (optional) <b>float</b> Mask alpha
---- * `MC`:         (optional) <b>table</b> Table with choices for branching dialogues
---- 
---- #### Fields `_Data.MC`:
---- * `[1]`: <b>any</b> Displayed text (string oder language table)
---- * `[2]`: <b>any</b> Jump target (string or function)
+--- The page can have various attributes.
+--- * `Actor`      - (optional) Player ID of the speaker
+--- * `Title`      - (optional) Name of the actor (only with Actor)
+--- * `Text`       - (optional) Displayed page text
+--- * `Speech`     - Path to the voiceover (MP3 file)
+--- * `Position`   - Camera position (not with Target)
+--- * `Target`     - Entity the camera follows (not with Position)
+--- * `Distance`   - (optional) Camera distance
+--- * `Action`     - (optional) Function called when the page is shown
+--- * `FadeIn`     - (optional) Duration of fade-in from black
+--- * `FadeOut`    - (optional) Duration of fade-out to black
+--- * `FaderAlpha` - (optional) Mask alpha
+--- * `MC`         - (optional) Table with options for branching dialogs
 ---
---- * `Actor`           - (optional) PlayerID of speaker
---- * `Title`           - (optional) Name of actor (only with actor)
---- * `Text`            - (optional) Displayed page text
---- * `Speech`          - Path to voiceover (MP3 file)
---- * `Position`        - Position of camera (not with target)
---- * `Target`          - Entity the camera follows (not with position)
---- * `Distance`        - (optional) Distance of camera
---- * `Action`          - (optional) Function called when page is displayed
---- * `FadeIn`          - (optional) Duration of fadein from black
---- * `FadeOut`         - (optional) Duration of fadeout to black
---- * `FaderAlpha`      - (optional) Mask alpha
---- * `MC`              - (optional) Table with choices to branch of in dialogs
----
---- *→ Example #1*
----
---- #### Flow control
---- In a dialog the player can be forced to make a choice that will have
---- different results. That is called multiple choice. Options must be provided
---- in a table. The target page can be defined with it's name or a function can
---- be provided for more control over the flow. Such funktions must return a
---- page name.
----
---- *→ Example #2*
----
---- Additionally each function can be marked to be removed when used
---- and not shown again when reentering the page.
----
---- *→ Example #3*
----
---- Also pages can be hidden by providing a function to check conditions.
----
---- *→ Example #4*
----
---- If a dialog is branched it must be manually ended after a branch is done
---- or it just simply shows the next page. To end a dialog, an empty page
---- must be added.
----
---- *→ Example #5*
----
---- Alternativly the dialog can continue at a different page. This allows to
---- create repeating structures within a dialog.
----
---- *→ Example #6*
----
---- To obtain selected answers at a later point the selection can be saved in a
---- global variable either in a option callback or in the finished function. The
---- number returned is the ID of the answer.
----
---- *→ Example #7*
----
---- #### Examples
----
---- * Example #1: A simple page
+--- #### Example:
+--- Create a simple page.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -199,16 +142,26 @@ API.AddDialogPages = AddDialogPages;
 --- };
 --- ```
 ---
---- @param _Data table Seitendaten
---- @return table Erzeugte Seite
 function AP(_Data)
-    return {};
 end
 
 --- Creates a page in a simplified way.
 ---
 --- The function can automatically generate a page name based on the page index.
 --- A name can be optionally provided as the first parameter.
+---
+--- #### Settings
+--- The function expects the following parameters:
+--- 
+--- * `Name`         - (Optional) Name of the page
+--- * `Sender`       - Player ID of the actor
+--- * `Target`       - Entity the camera focuses on
+--- * `Title`        - Displayed page title
+--- * `Text`         - Displayed page text
+--- * `DialogCamera` - Use dialog close-up camera
+--- * `Action`       - (Optional) Action when the page is shown
+---
+--- #### Example:
 ---
 --- #### Example:
 --- ```lua
@@ -224,15 +177,7 @@ end
 --- ASP("Title", "Some important text.", true, "HQ", nil, true);
 --- ```
 ---
---- @param _Name? string Name of page
---- @param _Sender integer Player ID of actor
---- @param _Target string Entity the camera focuses on
---- @param _Title string Displayed page title
---- @param _Text string Displayed page text
---- @param _DialogCamera boolean Use dialog close-up camera
---- @param _Action? boolean Action when the page is shown
---- @return table Page Created page
+--- @param ... any List of page settings
 function ASP(...)
-    return {};
 end
 

@@ -8,7 +8,7 @@
 
 --- Startet einen Dialog.
 ---
---- Mögliche Felder für die Dialogtabelle:
+--- Der Dialog selbst kann verschiedene Attribute bekommen.
 --- * `Starting`                - Funktion, die aufgerufen wird, wenn der Dialog gestartet wird              
 --- * `Finished`                - Funktion, die aufgerufen wird, wenn der Dialog beendet ist             
 --- * `RestoreCamera`           - Kameraposition wird am Ende des Dialogs gespeichert und wiederhergestellt 
@@ -74,61 +74,22 @@ API.AddDialogPages = AddDialogPages;
 
 --- Erstellt eine Seite.
 ---
---- Mögliche Felder für die Seite:
----
---- * `Actor`           - (optional) Spieler-ID des Sprechers
---- * `Title`           - (optional) Name des Akteurs (nur mit Akteur)
---- * `Text`            - (optional) Angezeigter Seitentext
---- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
---- * `Position`        - Position der Kamera (nicht mit Ziel)
---- * `Target`          - Einheit, der die Kamera folgt (nicht mit Position)
---- * `Distance`        - (optional) Entfernung der Kamera
---- * `Action`          - (optional) Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
---- * `FadeIn`          - (optional) Dauer des Einblendens aus Schwarz
---- * `FadeOut`         - (optional) Dauer des Ausblendens zu Schwarz
---- * `FaderAlpha`      - (optional) Maskenalpha
---- * `MC`              - (optional) Tabelle mit Auswahlmöglichkeiten zum Verzweigen in Dialogen
----
---- *→ Beispiel #1*
----
---- #### Flusssteuerung
---- In einem Dialog kann der Spieler gezwungen werden, eine Auswahl zu treffen, die
---- unterschiedliche Ergebnisse haben wird. Das nennt man Mehrfachauswahl. Optionen müssen bereitgestellt werden
---- in einer Tabelle. Die Zielseite kann mit ihrem Namen definiert werden oder eine Funktion kann bereitgestellt werden
---- für mehr Kontrolle über den Fluss. Solche Funktionen müssen einen
---- Seitennamen zurückgeben.
----
---- *→ Beispiel #2*
----
---- Darüber hinaus kann jede Funktion markiert werden, um entfernt zu werden, wenn sie verwendet wird
---- und nicht erneut angezeigt werden, wenn die Seite erneut betreten wird.
----
---- *→ Beispiel #3*
----
---- Außerdem können Seiten ausgeblendet werden, indem eine Funktion bereitgestellt wird, um Bedingungen zu überprüfen.
----
---- *→ Beispiel #4*
----
---- Wenn ein Dialog verzweigt ist, muss er manuell beendet werden, nachdem ein Zweig abgeschlossen ist
---- oder es zeigt einfach die nächste Seite an. Um einen Dialog zu beenden, muss eine leere Seite
---- hinzugefügt werden.
----
---- *→ Beispiel #5*
----
---- Alternativ kann der Dialog an einer anderen Seite fortgesetzt werden. Dies ermöglicht es, zu erstellen
---- sich wiederholende Strukturen innerhalb eines Dialogs.
----
---- *→ Beispiel #6*
----
---- Um ausgewählte Antworten zu einem späteren Zeitpunkt zu erhalten, können die Auswahlmöglichkeiten in einer
---- globalen Variable entweder in einem Optionsrückruf oder in der fertigen Funktion gespeichert werden. Die
---- zurückgegebene Zahl ist die ID der Antwort.
----
---- *→ Beispiel #7*
+--- Die Seite kann verschiedene Attribute bekommen.
+--- * `Actor`      - (optional) Spieler-ID des Sprechers
+--- * `Title`      - (optional) Name des Akteurs (nur mit Akteur)
+--- * `Text`       - (optional) Angezeigter Seitentext
+--- * `Speech`     - Pfad zum Voiceover (MP3-Datei)
+--- * `Position`   - Position der Kamera (nicht mit Ziel)
+--- * `Target`     - Einheit, der die Kamera folgt (nicht mit Position)
+--- * `Distance`   - (optional) Entfernung der Kamera
+--- * `Action`     - (optional) Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
+--- * `FadeIn`     - (optional) Dauer des Einblendens aus Schwarz
+--- * `FadeOut`    - (optional) Dauer des Ausblendens zu Schwarz
+--- * `FaderAlpha` - (optional) Maskenalpha
+--- * `MC`         - (optional) Tabelle mit Auswahlmöglichkeiten zum Verzweigen in Dialogen
 ---
 --- #### Example:
----
---- * Beispiel #1: Eine einfache Seite
+--- Eine einfache Seite erstellen.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -183,8 +144,6 @@ API.AddDialogPages = AddDialogPages;
 --- };
 --- ```
 ---
----@param _Data table Seitendaten
----@return table Erzeugte Seite
 function AP(_Data)
     return {};
 end
@@ -197,13 +156,13 @@ end
 --- #### Einstellungen
 --- Die Funktion erwartet die folgenden Parameter:
 --- 
---- * `Name`           - (Optional) Name der Seite
---- * `Sender`         - Spieler-ID des Akteurs
---- * `Target`         - Einheit, auf die die Kamera schaut
---- * `Title`          - Angezeigter Seitentitel
---- * `Text`           - Angezeigter Seitentext
---- * `DialogCamera`   - Verwendung der Nahkamera
---- * `Action`         - (Optional) Aktion, wenn die Seite angezeigt wird
+--- * `Name`         - (Optional) Name der Seite
+--- * `Sender`       - Spieler-ID des Akteurs
+--- * `Target`       - Einheit, auf die die Kamera schaut
+--- * `Title`        - Angezeigter Seitentitel
+--- * `Text`         - Angezeigter Seitentext
+--- * `DialogCamera` - Verwendung der Nahkamera
+--- * `Action`       - (Optional) Aktion, wenn die Seite angezeigt wird
 ---
 --- #### Example:
 ---
