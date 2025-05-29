@@ -2,10 +2,10 @@
 
 --- Konvertiert Farbwerte in die Hexadezimaldarstellung
 --- 
---- @param _R integer Wert fürr Rot
---- @param _G integer Wert fürr Grün
---- @param _B integer Wert fürr Blau
---- @param _A? integer Wert fürr Alpha
+--- @param _R integer Wert für Rot
+--- @param _G integer Wert für Grün
+--- @param _B integer Wert für Blau
+--- @param _A? integer Wert für Alpha
 --- @return string Hex Hexdecimal color string
 --- 
 --- #### Example:

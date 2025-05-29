@@ -1,3 +1,5 @@
+-- Behavior des Core-Modul.
+
 --- Aktiviert den Debug.
 ---
 --- @param _Assertions boolean Assertions aktivieren
@@ -66,7 +68,7 @@ end
 --- Wenn ein Spieler zuvor mit seinen Einheiten auf dem Territorium war, ist
 --- es bereits entdeckt und das Ziel sofort erfüllt.
 ---
---- @param _Territory string|integer Name oder ID des Territorium
+--- @param _Territory any Name oder ID des Territorium
 ---
 function Goal_DiscoverTerritory(_Territory)
 end
@@ -76,7 +78,7 @@ end
 ---
 --- Die Partei gilt als besiegt, wenn ein Hauptgebäude (Burg, Kirche, Lager)
 --- zerstört wurde.
---- 
+--- <p>
 --- <b>Achtung:</b> Bei Banditen ist dieses Behavior wenig sinnvoll, da sie
 --- nicht durch zerstörung ihres Hauptzeltes vernichtet werden. Hier bietet
 --- sich Goal_DestroyAllPlayerUnits an.
@@ -91,7 +93,7 @@ end
 ---
 --- Der Spieler muss einen Dieb entsenden um Informationen aus der Burg zu
 --- stehlen. 
----
+--- <p>
 --- <b>Achtung:</b> Das ist nur bei Feinden möglich!
 ---
 --- @param _PlayerID integer ID der Partei
@@ -212,8 +214,8 @@ end
 ---
 --- Zwei Punkte auf der Spielwelt müssen mit einer Straße verbunden werden.
 ---
---- @param _Position1 string|integer Erster Endpunkt der Straße
---- @param _Position2 string|integer Zweiter Endpunkt der Straße
+--- @param _Position1 any Erster Endpunkt der Straße
+--- @param _Position2 any Zweiter Endpunkt der Straße
 --- @param _OnlyRoads boolean Keine Wege akzeptieren
 ---
 function Goal_BuildRoad(_Position1, _Position2, _OnlyRoads)
@@ -229,13 +231,13 @@ end
 --- Beispiel: Spieler 3 ist der Feind von Spieler 1, aber Bekannt mit Spieler 2.
 --- Wenn er sich nicht mehr zwischen den Marktplätzen von Spieler 1 und 2
 --- bewegen kann, weil eine Mauer dazwischen ist, ist das Ziel erreicht.
----
+--- <p>
 --- <b>Achtung:</b> Bei Monsun kann dieses Ziel fälschlicher Weise als erfüllt
 --- gewertet werden, wenn der Weg durch Wasser blockiert wird!
 ---
 --- @param _PlayerID  integer PlayerID, die blockiert wird
---- @param _Position1 string|integer Erste Position
---- @param _Position2 string|integer Zweite Position
+--- @param _Position1 any Erste Position
+--- @param _Position2 any Zweite Position
 ---
 function Goal_BuildWall(_PlayerID, _Position1, _Position2)
 end
@@ -265,7 +267,7 @@ end
 ---
 --- @param _Type      string Typ des Entity
 --- @param _Amount    integer Menge an Entities
---- @param _Territory string|integer Territorium
+--- @param _Territory any Territorium
 ---
 function Goal_Create(_Type, _Amount, _Territory)
 end
@@ -699,6 +701,7 @@ end
 --- Skript.
 --- <pre> Reprisal_MapScriptFunction(ReplaceEntity, "block", Entities.XD_ScriptEntity);
 --- -- entspricht: ReplaceEntity("block", Entities.XD_ScriptEntity);</pre>
+--- <p>
 --- <b>Achtung:</b> Nicht über den Assistenten verfügbar!
 ---
 --- @param _Function string any der Funktion oder Funktionsreferenz
@@ -784,31 +787,32 @@ end
 ---
 --- @param _ScriptName string Skriptname des Handelsposten
 --- @param _PlayerID integer Spieler der Angebot erhält
---- @param _PayType1 string Typ der Bezahlung
---- @param _PayAmount1 integer Menge der Bezehlung
---- @param _GoodType string Typ der Tauschware
---- @param _GoodAmount1 integer Menge der Tauschware
---- @param _PayType2 string Typ der Bezahlung
---- @param _PayAmount2 integer Menge der Bezehlung
---- @param _GoodType2 string Typ der Tauschware
---- @param _GoodAmount2 integer Menge der Tauschware
---- @param _PayType3 string Typ der Bezahlung
---- @param _PayAmount3 integer AMenge der Bezehlung
---- @param _GoodType3 string Typ der Tauschware
---- @param _GoodAmount3 integer Menge der Tauschware
---- @param _PayType4 string Typ der Bezahlung
---- @param _PayAmount4 integer Menge der Bezehlung
---- @param _GoodType4 string Typ der Tauschware
---- @param _GoodAmount4 integer Menge der Tauschware
+--- @param _pt1 string Typ der Bezahlung
+--- @param _pa1 integer Menge der Bezehlung
+--- @param _gt1 string Typ der Tauschware
+--- @param _ga1 integer Menge der Tauschware
+--- @param _pt2 string Typ der Bezahlung
+--- @param _pa2 integer Menge der Bezehlung
+--- @param _gt2 string Typ der Tauschware
+--- @param _ga2 integer Menge der Tauschware
+--- @param _pt3 string Typ der Bezahlung
+--- @param _pa3 integer AMenge der Bezehlung
+--- @param _gt3 string Typ der Tauschware
+--- @param _ga3 integer Menge der Tauschware
+--- @param _pt4 string Typ der Bezahlung
+--- @param _pa4 integer Menge der Bezehlung
+--- @param _gt4 string Typ der Tauschware
+--- @param _ga4 integer Menge der Tauschware
 ---
-function Reward_TradePost(_ScriptName, _PlayerID, _PayType1, _PayAmount1, _GoodType, _GoodAmount1, _PayType2, _PayAmount2, _GoodType2, _GoodAmount2, _PayType3, _PayAmount3, _GoodType3, _GoodAmount3, _PayType4, _PayAmount4, _GoodType4, _GoodAmount4)
+function Reward_TradePost(_ScriptName, _PlayerID, _pt1, _pa1, _gt1, _ga1, _pt2, _pa2, _gt2, _ga2, _pt3, _pa3, _gt3, _ga3, _pt4, _pa4, _gt4, _ga4)
 end
 
 ---
 --- Erzeugt Handelsangebote im Lagerhaus des angegebenen Spielers.
 ---
 --- Sollen Angebote gelöscht werden, muss "-" als Ware ausgewählt werden.
----
+--- 
+--- <p>
 --- <b>Achtung:</b> Stadtlagerhäuser können keine Söldner anbieten!
 ---
 --- @param _PlayerID integer Partei, die Anbietet
@@ -1080,7 +1084,7 @@ end
 
 ---
 --- Setzt die Menge von Rohstoffen in einer Mine.
----
+--- <p>
 --- <b>Achtung:</b> Im Reich des Ostens darf die Mine nicht eingestürzt sein!
 --- Außerdem bringt dieses Behavior die Nachfüllmechanik durcheinander.
 ---
@@ -1215,6 +1219,7 @@ end
 --- Skript.
 --- <pre>Reward_MapScriptFunction(ReplaceEntity, "block", Entities.XD_ScriptEntity);
 --- -- entspricht: ReplaceEntity("block", Entities.XD_ScriptEntity);</pre>
+--- <p>
 --- <b>Achtung:</b> Nicht über den Assistenten verfügbar!
 ---
 --- @param _FunctionName any Name der Funktion oder Funktionsreferenz
@@ -1265,7 +1270,7 @@ end
 --- Baut das angegebene Gabäude um eine Stufe aus. Das Gebäude wird durch einen
 --- Arbeiter um eine Stufe erweitert. Der Arbeiter muss zuerst aus dem Lagerhaus
 --- kommen und sich zum Gebäude bewegen.
----
+--- <p>
 --- <b>Achtung:</b> Ein Gebäude muss erst fertig ausgebaut sein, bevor ein
 --- weiterer Ausbau begonnen werden kann!
 ---
@@ -1423,7 +1428,7 @@ end
 
 ---
 --- Startet den Quest sobald der Monsunregen einsetzt.
----
+--- <p>
 --- <b>Achtung:</b> Dieses Behavior ist nur für Reich des Ostens verfügbar.
 ---
 function Trigger_OnMonsoon()
