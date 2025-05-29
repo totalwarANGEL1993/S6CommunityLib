@@ -1,4 +1,4 @@
---- Ermöglicht das Definieren von Einleitungen
+--- Ermöglicht das Definieren von Einleitungen.
 ---
 --- Der Höhepunkt für die Skripting-Dialoge und einfachen Kameraanimationen. Ein vielseitiges
 --- Werkzeug, um die Handlung der Karte zu skripten.

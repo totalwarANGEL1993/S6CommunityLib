@@ -1,4 +1,4 @@
---- Offers easy to use treasure chests
+--- Bietet einfach zu verwendende Schatzkisten.
 ---
 --- #### Reports
 --- * `Report.InteractiveTreasureActivated` - Der Spieler hat einen Schatz aktivier.

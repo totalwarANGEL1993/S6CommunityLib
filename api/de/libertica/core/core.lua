@@ -1,8 +1,4 @@
 --- Dieses Modul beinhalet die Kernkomponenten der Bibliothek.
----
---- #### Debug-Funktionen
---- * Debug_ShowVersion() - Zeigt die aktuelle Version an
---- * Debug_Execute(_Function, ...) - Führt eine Funktion im globalen Skript aus
 Lib.Core = Lib.Core or {};
 
 --- Schreibt eine Nachricht ins Log.
