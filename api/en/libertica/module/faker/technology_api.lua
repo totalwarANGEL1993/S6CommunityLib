@@ -2,7 +2,6 @@
 ---
 --- Technologies should be defined directly on game start.
 ---
-Lib.Technology = Lib.Technology or {};
 
 
 

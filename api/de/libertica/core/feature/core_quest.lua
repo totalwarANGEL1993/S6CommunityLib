@@ -1,5 +1,4 @@
 --- Fügt zusätzliche Funktionalität zum Quest-System hinzu.
-Lib.Core.Quest = {}
 
 --- Setzt die Menge an Ressourcen in einer Mine und optional die Auffüllmenge.
 --- @param _Entity any Entität, die geändert werden soll

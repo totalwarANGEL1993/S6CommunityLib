@@ -16,6 +16,7 @@ function LibScribe:UpdateDoc()
     os.execute("cp web/css/prism.min.css \"" ..self.DocDirectory.. "\"");
     os.execute("cp web/js/prism.min.js \"" ..self.DocDirectory.. "\"");
     os.execute("cp web/js/prism-lua.min.js \"" ..self.DocDirectory.. "\"");
+    os.execute("cp web/js/prism-xml.min.js \"" ..self.DocDirectory.. "\"");
 end
 
 function LibScribe:ReplaceSimpleMarkdownWithHtml(_File)
@@ -32,6 +33,9 @@ function LibScribe:ReplaceSimpleMarkdownWithHtml(_File)
     nfc = nfc:gsub("####%s*(.-)%s*\n", "<h3>%1</h3>");
     nfc = nfc:gsub("```lua\n", "<pre><code class=\"language-lua\">");
     nfc = nfc:gsub("%s+```\n", "</code></pre>");
+    nfc = nfc:gsub("```xml\n", "<pre><code class=\"language-xml\">");
+    nfc = nfc:gsub("%s+xml```\n", "</code></pre>");
+    nfc = nfc:gsub("%s%*%s*(.-)\n", "<li>%1</li>");
     nfc = nfc:gsub("`(.-)`", "<code>%1</code>");
     -- Replace parameter types
     nfc = nfc:gsub("</span>%s+any%s", "</span> <b>any</b> ");

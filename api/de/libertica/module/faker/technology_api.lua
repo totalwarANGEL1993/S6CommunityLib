@@ -2,7 +2,6 @@
 ---
 --- Technologien sollten direkt zu Spielbeginn initialisiert werden.
 ---
-Lib.Technology = Lib.Technology or {};
 
 
 
