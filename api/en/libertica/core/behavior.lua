@@ -1,3 +1,5 @@
+--- Behavior of the core module.
+
 --- Enables debug mode.
 ---
 --- @param _Assertions boolean Enable assertions
@@ -59,7 +61,7 @@ end
 ---
 --- If a player's units have been on the territory before, it is already discovered, and the goal is immediately fulfilled.
 ---
---- @param _Territory string|integer Name or ID of the territory
+--- @param _Territory any Name or ID of the territory
 ---
 function Goal_DiscoverTerritory(_Territory)
 end
@@ -192,8 +194,8 @@ end
 ---
 --- Connects two points on the game world with a road.
 ---
---- @param _Position1 string|integer First endpoint of the road
---- @param _Position2 string|integer Second endpoint of the road
+--- @param _Position1 any First endpoint of the road
+--- @param _Position2 any Second endpoint of the road
 --- @param _OnlyRoads boolean Whether to accept only roads
 ---
 function Goal_BuildRoad(_Position1, _Position2, _OnlyRoads)
@@ -208,8 +210,8 @@ end
 --- <b>Caution:</b> During monsoon, this goal may mistakenly be considered achieved if the path is blocked by water!
 ---
 --- @param _PlayerID  integer The PlayerID to be blocked
---- @param _Position1 string|integer First position
---- @param _Position2 string|integer Second position
+--- @param _Position1 any First position
+--- @param _Position2 any Second position
 ---
 function Goal_BuildWall(_PlayerID, _Position1, _Position2)
 end
@@ -238,7 +240,7 @@ end
 ---
 --- @param _Type      string Type of the entity
 --- @param _Amount    integer Number of entities
---- @param _Territory string|integer Territory
+--- @param _Territory any Territory
 ---
 function Goal_Create(_Type, _Amount, _Territory)
 end
