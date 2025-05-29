@@ -54,7 +54,7 @@ p.name {
     border-right: 1px solid #d3dbec;
     border-bottom: 1px solid #d3dbec;
 
-    width: 14em;
+    width: 25em;
     vertical-align: top;
     overflow: visible;
 }
@@ -166,7 +166,7 @@ table.index td { text-align: left; vertical-align: top; }
 }
 
 #content {
-    margin-left: 14em;
+    margin-left: 25em;
 }
 
 #content p {
