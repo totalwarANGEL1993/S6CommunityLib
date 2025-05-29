@@ -10,5 +10,4 @@
 --- <li>Ability hints only trigger if player has knight and storehouse</li>
 --- <li>Deleted camp fires don't crash the game anymore</li>
 ---
-Lib.Core.Bugfix = {};
 

@@ -1,6 +1,5 @@
 --- Provides control over output, placeholders for text and overwrites for
 --- type names in the interface.
-Lib.Core.Text = {}
 
 --- Localizes the passed text or table. 
 --- @param _Text any Text to localize
@@ -12,12 +11,12 @@ API.Localize = Localize;
 
 --- Replaces all placeholders inside the string with their respective values.
 ---
---- <li><code>{n:xyz}</code> Replaces a scriptname with a predefined value</li>
---- <li><code>{t:xyz}</code> Replaces a type with a predefined value</li>
---- <li><code>{v:xyz}</code> Replaces a variable in _G with it's value.</li>
---- <li><code>{color}</code> Replaces the name of the color with it's color code.</li>
+--- * `{n:xyz}` Replaces a scriptname with a predefined value
+--- * `{t:xyz}` Replaces a type with a predefined value
+--- * `{v:xyz}` Replaces a variable in _G with it's value.
+--- * `{color}` Replaces the name of the color with it's color code.
 --- 
---- Colors:
+--- <p>Colors: 
 --- red, blue, yellow, green, white, black, grey, azure, orange, amber, violet,
 --- pink, scarlet, magenta, olive, tooltip, none
 ---
@@ -99,10 +98,10 @@ end
 --- Returns the estimated amount of lines required to print the text.
 --- 
 --- #### Categories:
---- <li>Length 4: <code>ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ</code></li>
---- <li>Length 3: <code>abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ</code></li>
---- <li>Length 2: <code>\"#+*~_\\§$%&=?@fijlft</code></li>
---- <li>Length 1: <code>!-/()?',.|[]{}</code></li>
+--- <li>Length 4: `ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ`</li>
+--- <li>Length 3: `abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ`</li>
+--- <li>Length 2: `\"#+*~_\\§$%&=?@fijlft`</li>
+--- <li>Length 1: `!-/()?',.|[]{}`</li>
 --- 
 --- All not defined characters will have a estimate of 2.
 --- 

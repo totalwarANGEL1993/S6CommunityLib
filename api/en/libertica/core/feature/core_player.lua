@@ -5,7 +5,6 @@
 --- <li>Player name</li>
 --- <li>Player portrait</li>
 --- <li>Territory name</li>
-Lib.Core.Player = {}
 
 --- Returns the name of the territory.
 --- @param _TerritoryID number ID of territory
@@ -41,7 +40,7 @@ API.SetPlayerColor = SetPlayerColor;
 
 --- Changes the portrait of a player.
 ---
---- #### Examples
+--- #### Example:
 --- ```lua
 --- -- Example #1: Set model by player hero
 --- SetPlayerPortrait(2);
@@ -50,6 +49,7 @@ API.SetPlayerColor = SetPlayerColor;
 --- -- Example #3: Set model name directly
 --- SetPlayerPortrait(2, "H_NPC_Monk_AS");
 --- ```
+--- 
 --- @param _PlayerID number  ID of player
 --- @param _Portrait? string Name of model
 function SetPlayerPortrait(_PlayerID, _Portrait)
