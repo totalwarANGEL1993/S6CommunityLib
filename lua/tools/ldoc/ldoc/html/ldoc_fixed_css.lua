@@ -92,7 +92,7 @@ table.index td { text-align: left; vertical-align: top; }
     top: 0;
     left: 0;
     float: left;
-    width: 14em;
+    width: 25em;
     vertical-align: top;
     background-color:#FFFFFF; // #f0f0f0;
     border-right: 2px solid #cccccc;
@@ -129,10 +129,9 @@ table.index td { text-align: left; vertical-align: top; }
 }
 
 #content {
-    margin-left: 14em;
+    margin-left: 25em;
     padding: 1em;
     padding-left: 2em;
-    width: 700px;
     border-left: 2px solid #cccccc;
    // border-right: 2px solid #cccccc;
     background-color: #ffffff;
