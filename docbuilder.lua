@@ -19,24 +19,24 @@ function LibScribe:UpdateDoc()
 end
 
 function LibScribe:ReplaceSimpleMarkdownWithHtml(_File)
-    local fh, FileContent;
+    local fh, fc;
 
     -- Get file content
     fh = io.open(_File, "r");
     assert(fh ~= nil, "Could not find file: " ..tostring(_File));
-    FileContent = fh:read("*all");
+    fc = fh:read("*all");
     fh:close();
+    local nfc;
     -- Replace markdown
-    local NewFileContent;
-    NewFileContent = FileContent:gsub("\r", "");
-    NewFileContent = NewFileContent:gsub("####%s*(.-)%s*\n", "<h3>%1</h3>");
-    NewFileContent = NewFileContent:gsub("```lua\n", "<pre><code class=\"language-lua\">");
-    NewFileContent = NewFileContent:gsub("%s+```\n", "</code></pre>");
+    nfc = fc:gsub("\r", "");
+    nfc = nfc:gsub("####%s*(.-)%s*\n", "<h3>%1</h3>");
+    nfc = nfc:gsub("```lua\n", "<pre><code class=\"language-lua\">");
+    nfc = nfc:gsub("%s+```\n", "</code></pre>");
     -- Write file
     os.remove(_File);
     fh = io.open(_File, "w");
     assert(fh ~= nil, "File not created: " ..tostring(_File));
-    fh:write(NewFileContent);
+    fh:write(nfc);
     fh:close();
 end
 
@@ -54,21 +54,28 @@ function LibScribe:ReplaceHtmlHead(_File, _Tpl)
     -- Get file content
     fh = io.open(_File, "r");
     assert(fh ~= nil, "Could not find file: " ..tostring(_File));
-    FileContent = fh:read("*all");
+    fc = fh:read("*all");
     fh:close();
+    local tmp, nfc, s1, e1, s2, e2;
+    nfc = fc;
     -- Replace header
-    local NewFileContent, s1, e1, s2, e2;
-    s1,e1 = FileContent:find("<head>");
-    s2,e2 = FileContent:find("</head>");
-    NewFileContent = "";
-    NewFileContent = NewFileContent .. FileContent:sub(1, s1-1);
-    NewFileContent = NewFileContent .. TplContent;
-    NewFileContent = NewFileContent .. FileContent:sub(e2+1);
+    s1,e1 = nfc:find("<head>");
+    s2,e2 = nfc:find("</head>");
+    tmp = nfc:sub(1, s1-1) .. TplContent .. nfc:sub(e2+1);
+    nfc = tmp;
+    -- Remove function list
+    if _File:find("modules/comfort") then
+        s1,e1 = nfc:find("<h2><a%shref=\"#Functions\">");
+        s2,e2 = nfc:find("<h2 class=\"section-header", nil, true);
+        os.execute("echo \""..tostring(s1)..","..tostring(e1)..","..tostring(s2)..","..tostring(e2).."\" > foo.txt")
+        tmp = nfc:sub(1, s1-1) .. nfc:sub(s2-1);
+        nfc = tmp;
+    end
     -- Write file
     os.remove(_File);
     fh = io.open(_File, "w");
     assert(fh ~= nil, "File not created: " ..tostring(_File));
-    fh:write(NewFileContent);
+    fh:write(nfc);
     fh:close();
 end
 
