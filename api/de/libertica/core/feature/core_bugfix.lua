@@ -6,9 +6,8 @@
 --- <li>IO-Interaktionsprüfungen für beide Güter, wenn sie verfügbar sind</li>
 --- <li>Das Zerstören aller Einheiten zählt jetzt nicht mehr Standorte und spezielle Entitäten</li>
 --- <li>Der große Dom zeigt den richtigen Namen in der Auswahl an</li>
---- <li>Das Hausmenü ist für Gebäude anderer Klimazonen behoben</li>
+--- <li>Das Hausmenü ist für Gebäude anderer Klimazonen angepasst</li>
 --- <li>Fähigkeitshinweise werden nur ausgelöst, wenn der Spieler einen Ritter und ein Lagerhaus hat</li>
---- <li>Gelöschte Lagerfeuer stürzen das Spiel nicht mehr ab</li>
+--- <li>Gelöschte Lagerfeuer von Banditen verusrachen keine Spielabstürze mehr</li>
 ---
-Lib.Core.Bugfix = {};
 
