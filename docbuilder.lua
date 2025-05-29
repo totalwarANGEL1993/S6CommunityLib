@@ -1,0 +1,109 @@
+local htmlparser = require("htmlparser");
+
+LibScribe = {
+    DocDirectory = "var/doc",
+    HtmlDirectory = "var/doc/modules",
+};
+
+function LibScribe:UpdateDoc()
+    -- Update files
+    for _, File in pairs(self:ListFiles(self.HtmlDirectory)) do
+        self:ReplaceHtmlHead(File, "web/html/module.head.template.html");
+        self:ReplaceSimpleMarkdownWithHtml(File);
+    end
+
+    -- Copy prism library
+    os.execute("cp web/css/prism.min.css \"" ..self.DocDirectory.. "\"");
+    os.execute("cp web/js/prism.min.js \"" ..self.DocDirectory.. "\"");
+    os.execute("cp web/js/prism-lua.min.js \"" ..self.DocDirectory.. "\"");
+end
+
+function LibScribe:ReplaceSimpleMarkdownWithHtml(_File)
+    local fh, FileContent;
+
+    -- Get file content
+    fh = io.open(_File, "r");
+    assert(fh ~= nil, "Could not find file: " ..tostring(_File));
+    FileContent = fh:read("*all");
+    fh:close();
+    -- Replace markdown
+    local NewFileContent;
+    NewFileContent = FileContent:gsub("\r", "");
+    NewFileContent = NewFileContent:gsub("####%s*(.-)%s*\n", "<h3>%1</h3>");
+    NewFileContent = NewFileContent:gsub("```lua\n", "<pre><code class=\"language-lua\">");
+    NewFileContent = NewFileContent:gsub("%s+```\n", "</code></pre>");
+    -- Write file
+    os.remove(_File);
+    fh = io.open(_File, "w");
+    assert(fh ~= nil, "File not created: " ..tostring(_File));
+    fh:write(NewFileContent);
+    fh:close();
+end
+
+--- Replaces the head section of a doc file with a template.
+--- @param _File string Path to file
+--- @param _Tpl string Path to template
+function LibScribe:ReplaceHtmlHead(_File, _Tpl)
+    local fh, FileContent, TplContent;
+
+    -- Get template content
+    fh = io.open(_Tpl, "r");
+    assert(fh ~= nil, "Could not find template: " ..tostring(_Tpl));
+    TplContent = fh:read("*all");
+    fh:close();
+    -- Get file content
+    fh = io.open(_File, "r");
+    assert(fh ~= nil, "Could not find file: " ..tostring(_File));
+    FileContent = fh:read("*all");
+    fh:close();
+    -- Replace header
+    local NewFileContent, s1, e1, s2, e2;
+    s1,e1 = FileContent:find("<head>");
+    s2,e2 = FileContent:find("</head>");
+    NewFileContent = "";
+    NewFileContent = NewFileContent .. FileContent:sub(1, s1-1);
+    NewFileContent = NewFileContent .. TplContent;
+    NewFileContent = NewFileContent .. FileContent:sub(e2+1);
+    -- Write file
+    os.remove(_File);
+    fh = io.open(_File, "w");
+    assert(fh ~= nil, "File not created: " ..tostring(_File));
+    fh:write(NewFileContent);
+    fh:close();
+end
+
+--- Returns a list of all files in the directory.
+--- @param _Path string Path to directory
+--- @return table Files List of files
+function LibScribe:ListFiles(_Path)
+    os.execute("ls \"" .._Path.. "\" > files.tmp.txt");
+    local Paths = {};
+    for line in io.lines("files.tmp.txt") do
+        table.insert(Paths, _Path .. "/" ..line);
+    end
+    os.execute("rm files.tmp.txt");
+    return Paths;
+end
+
+--- Returns if the file is an directory.
+--- @param _File string Path to file
+--- @return boolean IsDir File is directory
+function LibScribe:IsDir(_File)
+    return self:FileExists(_File.. "/");
+end
+
+--- Checks if the file does exist.
+--- @param _File string Path to file
+--- @return boolean Exists File does exist
+--- @return string? Error Optional error text
+function LibScribe:FileExists(_File)
+    local ok, err, code = os.rename(_File, _File);
+    if not ok then
+        if code == 13 then
+            return true;
+        end
+    end
+    return ok, err;
+end
+
+LibScribe:UpdateDoc()
