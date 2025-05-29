@@ -8,7 +8,7 @@ LibScribe = {
 function LibScribe:UpdateDoc()
     -- Update files
     for _, File in pairs(self:ListFiles(self.HtmlDirectory)) do
-        self:ReplaceHtmlHead(File, "web/html/module.head.template.html");
+        self:ReplaceHtmlElements(File, "web/html/module.head.template.html");
         self:ReplaceSimpleMarkdownWithHtml(File);
     end
 
@@ -32,6 +32,45 @@ function LibScribe:ReplaceSimpleMarkdownWithHtml(_File)
     nfc = nfc:gsub("####%s*(.-)%s*\n", "<h3>%1</h3>");
     nfc = nfc:gsub("```lua\n", "<pre><code class=\"language-lua\">");
     nfc = nfc:gsub("%s+```\n", "</code></pre>");
+    nfc = nfc:gsub("`(.-)`", "<code>%1</code>");
+    -- Replace parameter types
+    nfc = nfc:gsub("</span>%s+any%s", "</span> <b>any</b> ");
+    nfc = nfc:gsub("</span>%s+?%sany%s", "</span> (optional) <b>any</b> ");
+    nfc = nfc:gsub("</span>%s+boolean%s", "</span> <b>boolean</b> ");
+    nfc = nfc:gsub("</span>%s+?%sboolean%s", "</span> (optional) <b>boolean</b> ");
+    nfc = nfc:gsub("</span>%s+number%s", "</span> <b>number</b> ");
+    nfc = nfc:gsub("</span>%s+?%snumber%s", "</span> (optional) <b>number</b> ");
+    nfc = nfc:gsub("</span>%s+float%s", "</span> <b>float</b> ");
+    nfc = nfc:gsub("</span>%s+?%sfloat%s", "</span> (optional) <b>float</b> ");
+    nfc = nfc:gsub("</span>%s+integer%s", "</span> <b>integer</b> ");
+    nfc = nfc:gsub("</span>%s+?%sinteger%s", "</span> (optional) <b>integer</b> ");
+    nfc = nfc:gsub("</span>%s+string%s", "</span> <b>string</b> ");
+    nfc = nfc:gsub("</span>%s+?%sstring%s", "</span> (optional) <b>string</b> ");
+    nfc = nfc:gsub("</span>%s+table%s", "</span> <b>table</b> ");
+    nfc = nfc:gsub("</span>%s+?%stable%s", "</span> (optional) <b>table</b> ");
+    nfc = nfc:gsub("</span>%s+function%s", "</span> <b>function</b> ");
+    nfc = nfc:gsub("</span>%s+?%sfunction%s", "</span> (optional) <b>function</b> ");
+    nfc = nfc:gsub("</span>%s+userdata%s", "</span> <b>userdata</b> ");
+    nfc = nfc:gsub("</span>%s+?%suserdata%s", "</span> (optional) <b>userdata</b> ");
+    -- Replace result types
+    nfc = nfc:gsub("<ol>%s+any%s", "<ol><b>any</b> ");
+    nfc = nfc:gsub("<li>%s+any%s", "<li><b>any</b> ");
+    nfc = nfc:gsub("<ol>%s+boolean%s", "<ol><b>boolean</b> ");
+    nfc = nfc:gsub("<li>%s+boolean%s", "<li><b>boolean</b> ");
+    nfc = nfc:gsub("<ol>%s+number%s", "<ol><b>number</b> ");
+    nfc = nfc:gsub("<li>%s+number%s", "<li><b>number</b> ");
+    nfc = nfc:gsub("<ol>%s+float%s", "<ol><b>float</b> ");
+    nfc = nfc:gsub("<li>%s+float%s", "<li><b>float</b> ");
+    nfc = nfc:gsub("<ol>%s+integer%s", "<ol><b>integer</b> ");
+    nfc = nfc:gsub("<li>%s+integer%s", "<li><b>integer</b> ");
+    nfc = nfc:gsub("<ol>%s+string%s", "<ol><b>string</b> ");
+    nfc = nfc:gsub("<li>%s+string%s", "<li><b>string</b> ");
+    nfc = nfc:gsub("<ol>%s+table%s", "<ol><b>table</b> ");
+    nfc = nfc:gsub("<li>%s+table%s", "<li><b>table</b> ");
+    nfc = nfc:gsub("<ol>%s+function%s", "<ol><b>function</b> ");
+    nfc = nfc:gsub("<li>%s+function%s", "<li><b>function</b> ");
+    nfc = nfc:gsub("<ol>%s+userdata%s", "<ol><b>userdata</b> ");
+    nfc = nfc:gsub("<li>%s+userdata%s", "<li><b>userdata</b> ");
     -- Write file
     os.remove(_File);
     fh = io.open(_File, "w");
@@ -43,7 +82,7 @@ end
 --- Replaces the head section of a doc file with a template.
 --- @param _File string Path to file
 --- @param _Tpl string Path to template
-function LibScribe:ReplaceHtmlHead(_File, _Tpl)
+function LibScribe:ReplaceHtmlElements(_File, _Tpl)
     local fh, FileContent, TplContent;
 
     -- Get template content
@@ -67,7 +106,6 @@ function LibScribe:ReplaceHtmlHead(_File, _Tpl)
     if _File:find("modules/comfort") then
         s1,e1 = nfc:find("<h2><a%shref=\"#Functions\">");
         s2,e2 = nfc:find("<h2 class=\"section-header", nil, true);
-        os.execute("echo \""..tostring(s1)..","..tostring(e1)..","..tostring(s2)..","..tostring(e2).."\" > foo.txt")
         tmp = nfc:sub(1, s1-1) .. nfc:sub(s2-1);
         nfc = tmp;
     end

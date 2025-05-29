@@ -43,10 +43,6 @@ comfort/setposition
 comfort/setpositionandlookat
 comfort/setpositionrelativeto
 comfort/setresourceamount
-comfort/toboolean
-comfort/isvalidposition
-comfort/isvalidquest
-comfort/isvalidquestname
 comfort/unlocktitleforplayer
 
 core/QSB
