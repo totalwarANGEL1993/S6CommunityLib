@@ -1,4 +1,5 @@
 --- Dieses Modul beinhalet die Kernkomponenten der Bibliothek.
+Lib.Core = Lib.Core or {};
 
 --- Schreibt eine Nachricht ins Log.
 --- @param _Text string Nachrichtentext

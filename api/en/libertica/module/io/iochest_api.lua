@@ -1,4 +1,14 @@
 --- Offers easy to use treasure chests.
+---
+--- #### Reports
+--- * `Report.InteractiveTreasureActivated` - The player activated a treasure.
+---
+--- #### Debug Functions
+--- * `Debug_GoldChest(Entity)   - Creates a random gold chest
+--- * `Debug_GoodChest(Entity)   - Creates a random resource chest
+--- * `Debug_LuxuryChest(Entity) - Creates a random luxury chest
+---
+Lib.IOChest = Lib.IOChest or {};
 
 
 

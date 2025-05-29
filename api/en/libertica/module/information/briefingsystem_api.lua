@@ -1,4 +1,4 @@
---- Enables the definition of introductions.
+--- Allows to define briefings.
 ---
 --- The pinnacle for scripting dialogues and simple camera animations.
 --- A versatile tool for scripting map presentations.

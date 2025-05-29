@@ -1,4 +1,5 @@
 --- This module contains the core components of the library.
+Lib.Core = Lib.Core or {};
 
 --- Writes a message to the log.
 --- @param _Text string Message text
