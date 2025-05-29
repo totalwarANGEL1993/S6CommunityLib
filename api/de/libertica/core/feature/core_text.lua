@@ -12,10 +12,10 @@ API.Localize = Localize;
 
 --- Ersetzt alle Platzhalter innerhalb des Strings durch ihre jeweiligen Werte.
 ---
---- * {n:xyz} Ersetzt einen Skriptnamen durch einen vordefinierten Wert
---- * {t:xyz} Ersetzt einen Typen durch einen vordefinierten Wert
---- * {v:xyz} Ersetzt eine Variable in _G durch ihren Wert.
---- * {color} Ersetzt den Namen der Farbe durch ihren Farbcode.
+--- <li><code>{n:xyz}</code> - Ersetzt einen Skriptnamen durch einen vordefinierten Wert>/li>
+--- <li><code>{t:xyz}</code> - Ersetzt einen Typen durch einen vordefinierten Wert>/li>
+--- <li><code>{v:xyz}</code> - Ersetzt eine Variable in _G durch ihren Wert.>/li>
+--- <li><code>{color}</code> - Ersetzt den Namen der Farbe durch ihren Farbcode.>/li>
 --- 
 --- Farben:
 --- red, blue, yellow, green, white, black, grey, azure, orange, amber, violet,
@@ -99,10 +99,10 @@ end
 --- Gibt die geschätzte Anzahl Zeilen zurück, die zur Anzeige benötigt wird.
 --- 
 --- #### Einordnung:
---- * Länge 4: ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ
---- * Länge 3: abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ
---- * Länge 2: \"#+*~_\\§$%&=?@fijlft
---- * Länge 1: !-/()?',.|[]{}
+--- <li>Länge 4: <code>ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ</code></li>
+--- <li>Länge 3: <code>abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ</code></li>
+--- <li>Länge 2: <code>\"#+*~_\\§$%&=?@fijlft</code></li>
+--- <li>Länge 1: <code>!-/()?',.|[]{}</code></li>
 --- 
 --- Alle nicht gelisteten Zeichen werden mit Länge 2 geschätzt.
 --- 

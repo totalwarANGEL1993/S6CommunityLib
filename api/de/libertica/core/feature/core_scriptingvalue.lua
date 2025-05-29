@@ -1,13 +1,13 @@
 --- Bietet Zugriff auf Skriptwerte - ungeschützter Zugriff auf den RAM.
 ---
 --- #### Bekannte Index:
---- * `CONST_SCRIPTING_VALUES.Destination.X` - X-Koordinate des Bewegungsziels
---- * `CONST_SCRIPTING_VALUES.Destination.Y` - Y-Koordinate des Bewegungsziels
---- * `CONST_SCRIPTING_VALUES.Health` - Gesundheit der Entität
---- * `CONST_SCRIPTING_VALUES.Player` - Spieler-ID der Entität
---- * `CONST_SCRIPTING_VALUES.Size` - Skalierung der Entität
---- * `CONST_SCRIPTING_VALUES.Visible` - Ist die Entität sichtbar (= 801280)
---- * `CONST_SCRIPTING_VALUES.NPC` - Art des NPCs (> 0)
+--- <li><code>CONST_SCRIPTING_VALUES.Destination.X</code> - X-Koordinate des Bewegungsziels</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Destination.Y</code> - Y-Koordinate des Bewegungsziels</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Health</code> - Gesundheit der Entität</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Player</code> - Spieler-ID der Entität</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Size</code> - Skalierung der Entität</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Visible</code> - Ist die Entität sichtbar (= 801280)</li>
+--- <li><code>CONST_SCRIPTING_VALUES.NPC</code> - Art des NPCs (> 0)</li>
 Lib.Core.ScriptingValue = {}
 
 

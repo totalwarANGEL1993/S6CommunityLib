@@ -1,4 +1,4 @@
---- Allows to define briefings
+--- Allows to define briefings.
 ---
 --- The apex for scripting dialogs and simple camera animations. A versatile
 --- tool to script the plot of the map.

@@ -1,10 +1,10 @@
 --- Erlaubt es Namen, Farben und Portraits von Spielern anzupassen.
 ---
 --- Folgende Dinge können angepasst werden:
---- * Spielerfarbe
---- * Spielername
---- * Spielerporträt
---- * Territoriumsname
+--- <li>Spielerfarbe</li>
+--- <li>Spielername</li>
+--- <li>Spielerporträt</li>
+--- <li>Territoriumsname</li>
 Lib.Core.Player = {}
 
 --- Gibt den Namen des Gebiets zurück.
