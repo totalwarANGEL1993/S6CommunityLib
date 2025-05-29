@@ -1,13 +1,13 @@
 --- Provides access to scripting values - unprotected access to the RAM.
 ---
 --- Working Scripting valkues:
---- * `CONST_SCRIPTING_VALUES.Destination.X` - X coordinate of movement target
---- * `CONST_SCRIPTING_VALUES.Destination.Y` - Y coordinate of movement target
---- * `CONST_SCRIPTING_VALUES.Health` - Health of entity
---- * `CONST_SCRIPTING_VALUES.Player` - Player ID of entity
---- * `CONST_SCRIPTING_VALUES.Size` - Scaling of entity
---- * `CONST_SCRIPTING_VALUES.Visible` - Is entity visible (= 801280)
---- * `CONST_SCRIPTING_VALUES.NPC` - Type of npc (> 0)
+--- <li><code>CONST_SCRIPTING_VALUES.Destination.X</code> - X coordinate of movement target</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Destination.Y</code> - Y coordinate of movement target</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Health</code> - Health of entity</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Player</code> - Player ID of entity</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Size</code> - Scaling of entity</li>
+--- <li><code>CONST_SCRIPTING_VALUES.Visible</code> - Is entity visible (= 801280)</li>
+--- <li><code>CONST_SCRIPTING_VALUES.NPC</code> - Type of npc (> 0)</li>
 Lib.Core.ScriptingValue = {}
 
 

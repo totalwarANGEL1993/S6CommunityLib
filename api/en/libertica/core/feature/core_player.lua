@@ -1,10 +1,10 @@
 --- Allows to change names, portraits and colors for players.
 ---
 --- The functionality includes:
---- * Player color
---- * Player name
---- * Player portrait
---- * Territory name
+--- <li>Player color</li>
+--- <li>Player name</li>
+--- <li>Player portrait</li>
+--- <li>Territory name</li>
 Lib.Core.Player = {}
 
 --- Returns the name of the territory.

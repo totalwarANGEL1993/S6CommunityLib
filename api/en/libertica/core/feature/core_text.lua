@@ -12,10 +12,10 @@ API.Localize = Localize;
 
 --- Replaces all placeholders inside the string with their respective values.
 ---
---- * {n:xyz} Replaces a scriptname with a predefined value
---- * {t:xyz} Replaces a type with a predefined value
---- * {v:xyz} Replaces a variable in _G with it's value.
---- * {color} Replaces the name of the color with it's color code.
+--- <li><code>{n:xyz}</code> Replaces a scriptname with a predefined value</li>
+--- <li><code>{t:xyz}</code> Replaces a type with a predefined value</li>
+--- <li><code>{v:xyz}</code> Replaces a variable in _G with it's value.</li>
+--- <li><code>{color}</code> Replaces the name of the color with it's color code.</li>
 --- 
 --- Colors:
 --- red, blue, yellow, green, white, black, grey, azure, orange, amber, violet,
@@ -99,10 +99,10 @@ end
 --- Returns the estimated amount of lines required to print the text.
 --- 
 --- #### Categories:
---- * Length 4: ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ
---- * Length 3: abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ
---- * Length 2: \"#+*~_\\§$%&=?@fijlft
---- * Length 1: !-/()?',.|[]{}
+--- <li>Length 4: <code>ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ</code></li>
+--- <li>Length 3: <code>abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ</code></li>
+--- <li>Length 2: <code>\"#+*~_\\§$%&=?@fijlft</code></li>
+--- <li>Length 1: <code>!-/()?',.|[]{}</code></li>
 --- 
 --- All not defined characters will have a estimate of 2.
 --- 
