@@ -46,6 +46,7 @@ comfort/sethealth
 comfort/setposition
 comfort/setpositionandlookat
 comfort/setpositionrelativeto
+comfort/setresourceamount
 comfort/unlocktitleforplayer
 
 core/QSB
