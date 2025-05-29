@@ -17,14 +17,11 @@
 --- * `HideNotes`               - Nachrichten nicht anzeigen
 ---
 --- #### Example:
----
 --- ```lua
 --- function Cutscene1(_Name, _PlayerID)
 ---     local Cutscene = {};
 ---     local AP = API.AddCutscenePages(Cutscene);
----
----     -- Seiten ...
----
+---     -- Seiten
 ---     Cutscene.Starting = function(_Data)
 ---     end
 ---     Cutscene.Finished = function(_Data)

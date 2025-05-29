@@ -1,14 +1,93 @@
 --- Ermöglicht das Definieren von Einleitungen.
 ---
---- Der Höhepunkt für die Skripting-Dialoge und einfachen Kameraanimationen. Ein vielseitiges
---- Werkzeug, um die Handlung der Karte zu skripten.
+--- Der Höhepunkt für das Skripten von Dialogen und einfachen Kameraanimationen.
+--- Ein vielseitiges Tool zum Skripten der Kartendarstellung.
+--- 
+--- #### Optionen für Briefings
+--- 
+--- <p><b><u>Standard</u></b></p>
+--- <p>
+--- Briefings bestehen aus Seiten, die Text anzeigen und mit einem 
+--- Bildausschnitt szenerisch in Szene setzen. Eine Seite wird mit der Funktion
+--- AP angelegt.
+--- ```lua
+--- AP {
+---    Title        = "Marcus",
+---    Text         = "Dies ist eine einfache Seite.",
+---    Position     = "Marcus",
+---    Rotation     = 30,
+---    DialogCamera = true,
+--- };
+--- ```
+---
+--- <p><b><u>Vereinfacht</u></b></p>
+--- <p>
+--- Mit der Funktion ASP können vereifachte Seiten geschrieben werden.
+--- ```lua
+--- ASP("Titel", "Text der Seite", false, "HQ");
+--- ```
+--- 
+--- <p><b><u>Parallax</u></b></p>
+--- <p>
+--- Eine Seite kann bis zu 6 animierte Parallaxen anzeigen - bildschirmfüllende
+--- Grafiken. Mit UV-Koordinaten können Ausschnitte der Grafiken gezeigt werden.
+--- Das ermöglicht rudimentär animierte Szenen zu erstellen.
+--- ```lua
+--- Briefing.PageParallax = {
+---     ["Seite1"] = {
+---         {"maps/externalmap/mapname/graphics/sea.png", 60,
+---          {0, 0, 0.8, 1, 255},
+---          {0.2, 0, 1, 1, 255}},
+---     },
+--- };
+--- ```
+--- 
+--- Der Definition der Parallaxen können mehrere Switches hinzugefügt werden,
+--- die das Verhalten der Parallaxen beeinflussen.
+--- * `Clear`  - Alle laufenden Parallaxen werden gelöscht. Dann werden die neuen Parallaxen gestartet.
+--- * `Repeat` - Die Parallaxen begingen nach dem Ende von vorn.
+--- 
+--- <p><b><u>Animiert</u></b></p>
+--- <p>
+--- Es ist möglich, die Kameraanimationen von den Pages zu trennen. Dadurch
+--- lassen sich nicht nur die Texte flüssiger schreiben, es können auch mehr
+--- komplexere Bewegungen umgesetzt werden.
+--- 
+--- Animationen werden in der Tabelle `Briefing.PageAnimation` definiert. Eine
+--- Seite kann mehrere Animationssets aufnehmen. Ein Animationsset besteht aus
+--- 2 oder 4 Richtungsvektoren. Ein Richtungsvektor besteht aus der Position
+--- und der Blickrichtung. Vektoren werden mit `GetFrameVector` erstellt.
+--- ```lua
+--- Briefing.PageAnimation = {
+---     ["Seite1"] = {
+---         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
+---              {GetFrameVector("pos3", 500, "pos4", -3000)},
+---              {GetFrameVector("pos7", 500, "pos8", -3000)},
+---              {GetFrameVector("pos5", 500, "pos6", -3000)}},
+---     },
+--- };
+--- ```
+--- 
+--- Mit der Funktion ASP können Seiten ohne Kameradefinition erzeugt werden.
+--- Wichtig ist, dass der Name der Seite im Briefing eindeutig sein muss. Wenn
+--- die Seite erreicht wird, werden die Animationssets gestartet.
+--- ```lua
+--- ASP("Seite1", "Titel", "Diese Seite ist animaiert.");
+--- ```
+--- 
+--- Der Definition der Animationen können mehrere Switches hinzugefügt werden,
+--- die das Verhalten der Animationen beeinflussen.
+--- * `Clear`    - Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
+--- * `Repeat`   - Die Animationssets begingen nach dem Ende von vorn.
+--- * `Postpone` - Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
+--- * `Local`    - Die Animationssets werden nur auf dieser Seite abgespielt.
 ---
 
 
 
---- Startet eine Einleitung.
----
---- Mögliche Felder für die Einleitungstabelle:
+--- Startet eine Briefing.
+--- 
+--- Das Briefing selbst kann verschiedene Attribute bekommen.
 --- * `Starting`                - Funktion, die beim Starten der Einleitung aufgerufen wird              
 --- * `Finished`                - Funktion, die beim Beenden der Einleitung aufgerufen wird             
 --- * `RestoreCamera`           - Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
@@ -20,167 +99,18 @@
 --- * `PreloadAssets`           - Erlaubt weites Sichtfeld in Briefings
 --- * `HideNotes`               - Nachrichten nicht anzeigen
 ---
---- *→ Beispiel #1*
----
---- #### Animationen
---- Die Kameraeinstellungen können vom Text der Seite getrennt werden. Dies ermöglicht nicht nur
---- das flüssige Schreiben von Dialogen, sondern auch weitere Möglichkeiten werden freigeschaltet
---- bei Verwendung der Notation. Um eine Animation zu erstellen, darf die Seite keine
---- Position haben. Andernfalls werden Standardwerte verwendet.
----
---- Die Frames der Animation sollten als Tabelle bereitgestellt werden. Der Weg
---- der Kamera wird über Bézirkurven bestimmt. Das bedeutet 2 Frames werden zu
---- einer geraden, 3 erzeugen eine Parabel und ab 4 Frames entsteht eine Kurve.
----
---- *→ Beispiel #2*
----
---- *→ Beispiel #3*
----
---- *→ Beispiel #4*
----
---- Die aktuelle Animation kann auch zwischengespeichert werden, um für eine
---- Page eine neue Animation zu starten, nach deren Abschluss die vorherige
---- fortgeführt wird. Die Animation kann ebenfalls so eingestellt werden, dass
---- sie nur für ihre Aktuelle Page gültig ist und danach gelöscht wird.
----
---- *→ Beispiel #5*
----
---- #### Parallax
---- Im Kontext eines Videospiels sind Parallaxen scrollbare Hintergründe. Dies
---- Technik wurde von Side-Scrollers verwendet. Während einer Einleitungsseite bis zu 4 Ebenen
---- von Grafiken angezeigt und animiert werden. Parallaxen werden ähnlich notiert wie
---- Kameraanimationen. Das Scrollen erfolgt durch Einstellen der UV-Koordinaten.
----
---- Grafiken müssen immer im Format 16:9 vorliegen. Wenn ein Spieler eine 4:3-Auflösung hat
---- wird das Bild links und rechts beschnitten, um in den Rahmen zu passen. Koordinaten - solange
---- als relative Koordinaten bereitgestellt - werden angepasst.
----
---- Es ist auch möglich, eine Tabelle von Animationsrahmen für das Bild bereitzustellen.
---- Die Rahmen werden linear interpoliert, wenn es mindestens 2 Einträge gibt und
---- kubisch interpoliert, wenn es mindestens 4 Einträge gibt.
----
---- *→ Beispiel #6*
----
---- *→ Beispiel #7*
----
---- *→ Beispiel #8*
----
 --- #### Example:
----
---- * Beispiel #1: Grundlegende Struktur
 --- ```lua
 --- function Briefing1(_Name, _PlayerID)
 ---     local Briefing = {};
 ---     local AP, ASP = AddBriefingPages(Briefing);
----
----     -- Seiten ...
----
+---     -- Seiten
 ---     Briefing.Starting = function(_Data)
 ---     end
 ---     Briefing.Finished = function(_Data)
 ---     end
 ---     StartBriefing(Briefing, _Name, _PlayerID);
 --- end
---- ```
----
---- * Beispiel #2: Notation für Animationen
---- ```lua
---- Briefing.PageAnimation = {
----     ["Seite1"] = {
----         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
----              {GetFrameVector("pos3", 500, "pos4", 1000)}},
----     },
----     ["Seite3"] = {
----         {30, {GetFrameVector("pos1", 500, "pos2", 1000)},
----              {GetFrameVector("pos3", 500, "pos4", 1000)},
----              {GetFrameVector("pos7", 500, "pos8", 1000)},
----              {GetFrameVector("pos5", 500, "pos6", 1000)}},
----     },
---- };
---- ```
----
---- * Beispiel #3: Ersetzen von Animationen
---- ```lua
---- Briefing.PageAnimation = {
----     ["Seite1"] = {
----         Clear = true,
----         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
----              {GetFrameVector("pos3", 500, "pos4", -3000)}},
----     },
---- };
---- ```
----
---- * Beispiel #4: Endlos wiederholte Animation
---- ```lua
---- Briefing.PageAnimation = {
----     ["Seite1"] = {
----         Repeat = true,
----         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
----              {GetFrameVector("pos3", 500, "pos4", -3000)},
----              {GetFrameVector("pos7", 500, "pos8", -3000)},
----              {GetFrameVector("pos5", 500, "pos6", -3000)}},
----     },
---- };
---- ```
----
---- * Beispiel #5: Animationen zwischenschieben
---- ```lua
---- Briefing.PageAnimation = {
----     ["Seite1"] = {
----         Postpone = true,
----         Local = true,
----         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
----              {GetFrameVector("pos3", 500, "pos4", -3000)},
----              {GetFrameVector("pos7", 500, "pos8", -3000)},
----              {GetFrameVector("pos5", 500, "pos6", -3000)}},
----     },
---- };
---- ```
----
---- * Beispiel #6: Notation von Parallaxen
---- ```lua
---- Briefing.PageParallax = {
----     ["Seite1"] = {
----         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
----          {0, 0, 0.8, 1, 255},
----          {0.2, 0, 1, 1, 255}},
----     },
----     ["Seite3"] = {
----         {"maps/externalmap/mapname/graphics/Parallax1.png", 1,
----          {0, 0, 0.8, 1, 255},
----          {0.2, 0, 1, 1, 255},
----          {0, 0, 0.8, 1, 255},
----          {0.2, 0, 1, 1, 255}},
----     },
----     ["Seite7"] = {
----         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
----          {0, 0, 0.8, 1, 255}},
----     },
---- };
---- ```
----
---- * Beispiel #7: Parallaxen ersetzen
---- ```lua
---- Briefing.PageParallax = {
----     ["Seite1"] = {
----         Clear = true,
----         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
----          {0, 0, 0.8, 1, 255},
----          {0.2, 0, 1, 1, 255}},
----     },
---- };
---- ```
----
---- * Beispiel #8: Endlos wiederholte Parallaxe
---- ```lua
---- Briefing.PageParallax = {
----     ["Seite1"] = {
----         Repeat = true,
----         {"maps/externalmap/mapname/graphics/Parallax6.png", 60,
----          {0, 0, 0.8, 1, 255},
----          {0.2, 0, 1, 1, 255}},
----     },
---- };
 --- ```
 ---
 --- @param _Briefing table   Einleitungstabelle
@@ -207,7 +137,7 @@ API.IsBriefingActive = IsBriefingActive;
 
 --- Erstellt einen Punkt aus einer Position.
 --- @param _Entity any      Zielentität
---- @param _ZOffset integer Z-Offset (< 0 → Z überschreiben)
+--- @param _ZOffset integer Z-Offset (<> 0 → Z überschreiben)
 --- @return number X X-Koordinate
 --- @return number Y Y-Koordinate
 --- @return number Z Z-Koordinate
@@ -217,9 +147,9 @@ end
 
 --- Erstellt einen Vektor aus 2 Positionen.
 --- @param _Entity1 any      Zielpositions-Entität
---- @param _ZOffset1 integer Z-Offset der Position (< 0 → Z überschreiben)
+--- @param _ZOffset1 integer Z-Offset der Position (<> 0 → Z überschreiben)
 --- @param _Entity2 any      Ziel-LookAt-Entität
---- @param _ZOffset2 integer Z-Offset von LookAt (< 0 → Z überschreiben)
+--- @param _ZOffset2 integer Z-Offset von LookAt (<> 0 → Z überschreiben)
 --- @return number X1        X-Koordinate Position
 --- @return number Y1        Y-Koordinate Position
 --- @return number Z1        Z-Koordinate Position
@@ -243,8 +173,7 @@ API.AddBriefingPages = AddBriefingPages;
 
 --- Erstellt eine Seite.
 ---
---- Mögliche Felder für die Seite:
----
+--- Die Seite kann verschiedene Attribute bekommen.
 --- * `Title`           - Angezeigter Seitentitel
 --- * `Text`            - Angezeigter Seitentext
 --- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
@@ -266,45 +195,8 @@ API.AddBriefingPages = AddBriefingPages;
 --- * `Performance`     - (Optional) Grafiksettings für diese Seite herabsetzen
 --- * `MC`              - Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
 ---
---- *→ Beispiel #1*
----
---- #### Flusskontrolle
---- In einer Einleitung kann der Spieler gezwungen werden, eine Wahl zu treffen, die
---- verschiedene Ergebnisse haben wird. Das nennt man Multiple Choice. Optionen müssen bereitgestellt werden
---- in einer Tabelle. Die Zielseite kann mit ihrem Namen definiert werden oder eine Funktion kann
---- für mehr Kontrolle über den Ablauf bereitgestellt werden. Solche Funktionen müssen zurückgeben
---- ein Seitenname.
----
---- *→ Beispiel #2*
----
---- Zusätzlich kann jede Funktion markiert werden, um entfernt zu werden, wenn sie verwendet wird,
---- und nicht wieder angezeigt zu werden, wenn die Seite erneut betreten wird.
----
---- *→ Beispiel #3*
----
---- Auch Seiten können ausgeblendet werden, indem eine Funktion zum Überprüfen von Bedingungen bereitgestellt wird.
----
---- *→ Beispiel #4*
----
---- Wenn eine Einleitung verzweigt ist, muss sie manuell beendet werden, nachdem eine Verzweigung erfolgt ist
---- oder es zeigt einfach die nächste Seite an. Um eine Einleitung zu beenden, muss eine leere Seite hinzugefügt werden.
----
---- *→ Beispiel #5*
----
---- Alternativ kann die Einleitung an einer anderen Seite fortgesetzt werden. Dies ermöglicht es, zu erstellen
---- sich wiederholende Strukturen innerhalb einer Einleitung.
----
---- *→ Beispiel #6*
----
---- Um ausgewählte Antworten zu einem späteren Zeitpunkt zu erhalten, kann die Auswahl in einem
---- globalen Variablen entweder in einem Optionsrückruf oder in der fertigen Funktion gespeichert werden. Die
---- Die zurückgegebene Nummer ist die ID der Antwort.
----
---- *→ Beispiel #7*
----
 --- #### Example:
----
---- * Beispiel #1: Eine einfache Seite
+--- Eine einfache Seite erstellen.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -315,7 +207,8 @@ API.AddBriefingPages = AddBriefingPages;
 --- };
 --- ```
 ---
---- * Beispiel #2: Verwendung von mehreren Auswahlmöglichkeiten
+--- #### Example:
+--- Eine Multiple Choice Seite erstellen.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -324,43 +217,32 @@ API.AddBriefingPages = AddBriefingPages;
 ---    Rotation     = 30,
 ---    DialogCamera = true,
 ---    MC = {
----        {"Option 1", "ZielSeite"},
----        {"Option 2", Option2Geklickt},
+---        {"Option 1", "Option1"},
+---        {"Option 2", "Option2"},
 ---    },
 --- };
+--- 
+--- -- Die Verzweigungen in einem Briefing müssen mit einer leeren Seite
+--- -- getrennt werden, damit das Briefing weiß, dass es zier zuende ist.
+--- ASP("Option1", "Erste Option", "Dies ist die erste Option.", false, "Marcus");
+--- AP();
+--- ASP("Option2", "Zweite Option", "Dies ist die zweite Option.", false, "Marcus");
 --- ```
 ---
---- * Beispiel #3: Einmalige Verwendungsoption
+--- #### Example:
+--- Das Sprungziel einer Option kann durch eine Funktion bestimmt werden.
 --- ```lua
---- MC = {
----     ...
----     {"Option 3", "AndereSeite", Remove = true},
---- }
---- ```
----
---- * Beispiel #4: Option mit Bedingung
---- ```lua
---- MC = {
----     ...
----     {"Option 3", "AndereSeite", Disable = OptionIstDeaktiviert},
---- }
---- ```
----
---- * Beispiel #5: Briefing abbrechen
---- ```lua
---- AP()
---- ```
----
---- * Beispiel #6: Springen zu anderer Seite
---- ```lua
---- AP("EinigeSeitenName")
---- ```
----
---- * Beispiel #7: Ausgewählte Option abrufen
---- ```lua
---- Briefing.Finished = function(_Data)
----     MeineAusgewählteOption = _Data:GetPage("Auswahl"):GetSelected();
---- end
+--- AP {
+---    Title        = "Marcus",
+---    Text         = "Das ist keine so einfache Seite.",
+---    Position     = "Marcus",
+---    Rotation     = 30,
+---    DialogCamera = true,
+---    MC = {
+---        {"Option 1", "Option1"},
+---        {"Option 2", ForkingFunction},
+---    },
+--- };
 --- ```
 ---
 --- @param _Data table Seitendaten
@@ -375,7 +257,6 @@ end
 --- geklicht wird.
 ---
 --- Die Funktion erwartet die folgenden Parameter:
---- 
 --- * `Name`            - (Optional) Name der Seite
 --- * `Title`           - Angezeigter Seitentitel
 --- * `Text`            - Angezeigter Seitentext
