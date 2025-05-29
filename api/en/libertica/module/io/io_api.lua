@@ -87,8 +87,8 @@ API.ResetObject = ResetObject;
 --- });
 --- ```
 ---
---- @param _Key string        Key to add
---- @param _Text string|table Text or replacement text
+--- @param _Key string Key to add
+--- @param _Text any   Text or replacement text
 function InteractiveObjectAddCustomName(_Key, _Text)
 end
 API.InteractiveObjectSetQuestName = InteractiveObjectAddCustomName;
