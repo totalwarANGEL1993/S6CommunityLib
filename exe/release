@@ -20,4 +20,4 @@ cp readme_release.md release && mv release/readme_release.md release/readme.md
 cp instructions_de.md release
 cp instructions_en.md release
 
-exe/builddoc #&>/dev/null
+exe/builddoc &>/dev/null
