@@ -79,6 +79,7 @@ module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem
 module/city/LifestockSystem
+module/city/MilitiaSystem
 module/information/Requester
 module/entity/EntitySearch
 module/trade/Trade
