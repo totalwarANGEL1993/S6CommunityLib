@@ -34,12 +34,5 @@ Lib.SettlementSurvival.Text = {
             fr = "{scarlet}Vos colons succombent à la peste!",
         },
     },
-    Messages = {
-        BuildingMourning = {
-            de = "Keine Baumaßnahmen möglich, solange Siedler trauern.",
-            en = "No construction work possible as long as settlers mourn.",
-            fr = "Aucun travail de construction possible tant que les colons pleurent.",
-        },
-    }
 };
 
