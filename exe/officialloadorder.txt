@@ -69,6 +69,7 @@ module/balancing/Damage
 module/quest/Quest
 module/quest/QuestBehavior
 module/quest/QuestJornal
+module/faker/Permadeath
 module/faker/Technology
 module/trade/Warehouse
 module/settings/Camera
