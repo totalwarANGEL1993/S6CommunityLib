@@ -936,13 +936,8 @@ function Lib.SettlementSurvival.Local:Initialize()
         Report.SettlerDiedFromStarvation = CreateReport("Event_SettlerDiedFromStarvation");
         Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
 
-        for PlayerID = 1, 8 do
-            self.DeadSettlers[PlayerID] = {};
-        end
-
-        self:OverrideGameCallbacks();
+        self:OverrideSelectionChanged();
         self:OverwriteUpdateNeeds();
-        self:OverwriteUpgradeButton();
 
         -- Garbage collection
         Lib.SettlementSurvival.Global = nil;
@@ -958,12 +953,6 @@ end
 function Lib.SettlementSurvival.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
-    elseif _ID == Report.SettlerSuspensionElapsed then
-        -- Delete the dead settler
-        local PlayerID = Logic.EntityGetPlayer(arg[1]);
-        if self.DeadSettlers[PlayerID] then
-            self.DeadSettlers[PlayerID][arg[1]] = nil;
-        end
     end
 end
 

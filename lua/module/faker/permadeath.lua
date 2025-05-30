@@ -11,6 +11,7 @@ Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Permadeath_API");
+Lib.Require("module/faker/Permadeath_Text");
 Lib.Register("module/faker/Permadeath");
 
 -- -------------------------------------------------------------------------- --
@@ -19,7 +20,6 @@ Lib.Register("module/faker/Permadeath");
 -- Global initalizer method
 function Lib.Permadeath.Global:Initialize()
     if not self.IsInstalled then
-        Report.SettlerSuspensionElapsed = CreateReport("Event_SettlerSuspensionElapsed");
         Report.FireAlarmDeactivated_Internal = CreateReport("Event_FireAlarmDeactivated_Internal");
         Report.FireAlarmActivated_Internal = CreateReport("Event_FireAlarmActivated_Internal");
         Report.RepairAlarmDeactivated_Internal = CreateReport("Event_RepairAlarmFeactivated");
@@ -79,11 +79,8 @@ function Lib.Permadeath.Global:ResumeSettler(_Entity)
     and Logic.IsEntityInCategory(EntityID, EntityCategories.Worker) == 0 then
         return;
     end
-    -- Resume settler
-    local x, y = Logic.GetBuildingApproachPosition(StoreHouseID);
-    Logic.DEBUG_SetSettlerPosition(EntityID, x, y);
-    Logic.SetVisible(EntityID, true);
-    Logic.SetTaskList(EntityID, TaskLists.TL_WORKER_IDLE);
+    -- "Resume" settler
+    DestroyEntity(EntityID);
     -- Remove from suspension list
     if self.SuspendedSettlers[PlayerID][EntityID] then
         ExecuteLocal("Lib.Permadeath.Local.SuspendedSettlers[%d][%d] = nil", PlayerID, EntityID);
@@ -205,8 +202,6 @@ function Lib.Permadeath.Global:ResumeSettlersAfterSuspension(_Turn)
         for k,v in pairs(self.SuspendedSettlers[PlayerID]) do
             if v[2] > -1 and v[1] + v[2] < CurrentTime then
                 self:ResumeSettler(k);
-                SendReportToLocal(Report.SettlerSuspensionElapsed, k);
-                SendReport(Report.SettlerSuspensionElapsed, k);
             end
         end
     end
@@ -231,7 +226,6 @@ end
 -- Local initalizer method
 function Lib.Permadeath.Local:Initialize()
     if not self.IsInstalled then
-        Report.SettlerSuspensionElapsed = CreateReport("Event_SettlerSuspensionElapsed");
         Report.FireAlarmDeactivated_Internal = CreateReport("Event_FireAlarmDeactivated_Internal");
         Report.FireAlarmActivated_Internal = CreateReport("Event_FireAlarmActivated_Internal");
         Report.RepairAlarmDeactivated_Internal = CreateReport("Event_RepairAlarmFeactivated");
@@ -373,6 +367,16 @@ function Lib.Permadeath.Local:OverwriteGameCallbacks()
     GameCallback_Feedback_OnBuildingBurning = function(_PlayerID, _EntityID)
         Lib.Permadeath.Local.Orig_GameCallback_Feedback_OnBuildingBurning(_PlayerID, _EntityID);
         SendReportToGlobal(Report.FireAlarmActivated_Internal, _EntityID);
+    end
+
+    self.Orig_GameCallback_GUI_DeleteEntityStateBuilding = GameCallback_GUI_DeleteEntityStateBuilding;
+    GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
+        if Lib.Permadeath.Local:HasSuspendedInhabitants(_BuildingID) then
+            Message(Localize(Lib.Permadeath.Text.Messages.BuildingMourning));
+            GUI.CancelBuildingKnockDown(_BuildingID);
+            return;
+        end
+        Lib.Permadeath.Local.Orig_GameCallback_GUI_DeleteEntityStateBuilding(_BuildingID, _State);
     end
 end
 
