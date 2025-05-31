@@ -3,7 +3,7 @@
 --- Das Territorium unter der interaktiven Baustelle muss dem Spieler gehören,
 --- der das Gebäude errichten wird.
 ---
---- #### Parameters:
+--- #### Fields `_Data`:
 --- * `ScriptName`            - Skriptname der Position
 --- * `PlayerID`              - Besitzer des Gebäudes
 --- * `Type`                  - Typ des Gebäudes

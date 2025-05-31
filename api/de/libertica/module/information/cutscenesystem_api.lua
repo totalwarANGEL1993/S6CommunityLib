@@ -7,14 +7,14 @@
 
 --- Startet eine Zwischensequenz.
 ---
---- Mögliche Felder für die Zwischensequenz-Tabelle:
---- * `Starting`                - Funktion, die beim Starten der Zwischensequenz aufgerufen wird              
---- * `Finished`                - Funktion, die beim Beenden der Zwischensequenz aufgerufen wird                 
---- * `EnableGlobalImmortality` - Während der Zwischensequenz sind alle Entitäten unverwundbar        
---- * `EnableSky`               - Anzeigen des Himmels während der Zwischensequenz                   
---- * `EnableFoW`               - Anzeigen des Nebels des Krieges während der Zwischensequenz           
---- * `EnableBorderPins`        - Anzeigen der Grenzstifte während der Zwischensequenz
---- * `HideNotes`               - Nachrichten nicht anzeigen
+--- #### Fields `_Cutscene`:
+--- * `Starting`:                (optional) <b>function</b> Funktion, die beim Starten der Einleitung aufgerufen wird              
+--- * `Finished`:                (optional) <b>function</b> Funktion, die beim Beenden der Einleitung aufgerufen wird                
+--- * `EnableGlobalImmortality`: (optional) <b>boolean</b> Während Einleitungen sind alle Entitäten unverwundbar        
+--- * `EnableSky`:               (optional) <b>boolean</b> Zeigt den Himmel während der Einleitung an                   
+--- * `EnableFoW`:               (optional) <b>boolean</b> Zeigt den Nebel des Krieges während der Einleitung an 
+--- * `EnableBorderPins`:        (optional) <b>boolean</b> Zeigt die Randnadeln während der Einleitung an     
+--- * `HideNotes`:               (optional) <b>boolean</b> Nachrichten nicht anzeigen
 ---
 --- #### Example:
 --- ```lua
@@ -67,21 +67,19 @@ API.AddCutscenePages = AddCutscenePages;
 
 --- Erstellt eine Seite.
 ---
---- #### Zwischensequenzseite
---- Mögliche Felder für die Seite:
----
---- * `Flight`          - Name der Flug-XML (ohne .cs)
---- * `Title`           - Angezeigter Seitentitel
---- * `Text`            - Angezeigter Seitentext
---- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
---- * `Action`          - Funktion, die beim Anzeigen der Seite aufgerufen wird
---- * `FarClipPlane`    - Render-Entfernung
---- * `FadeIn`          - Dauer des Einblendens aus Schwarz
---- * `FadeOut`         - Dauer des Ausblendens nach Schwarz
---- * `FaderAlpha`      - Maskenalpha
---- * `DisableSkipping` - Erlauben/Verbieten des Überspringens von Seiten
---- * `BarOpacity`      - Deckkraft der Leisten
---- * `BigBars`         - Verwendung großer Leisten
+--- #### Fields `_Data`:
+--- * `Flight`:          <b>string</b> Name der Flug-XML (ohne .cs)
+--- * `Title`:           (optional) <b>any</b> Angezeigter Seitentitel (String oder Language Table)
+--- * `Text`:            (optional) <b>any</b> Angezeigter Seitentext (String oder Language Table)
+--- * `Speech`:          (optional) <b>string</b> Pfad zum Voiceover (MP3-Datei)
+--- * `Action`:          (optional) <b>function</b> Funktion, die beim Anzeigen der Seite aufgerufen wird
+--- * `FarClipPlane`:    (optional) <b>boolean</b> Render-Entfernung
+--- * `FadeIn`:          (optional) <b>float</b> Dauer des Einblendens aus Schwarz
+--- * `FadeOut`:         (optional) <b>float</b> Dauer des Ausblendens nach Schwarz
+--- * `FaderAlpha`:      (optional) <b>float</b> Maskenalpha
+--- * `DisableSkipping`: (optional) <b>boolean</b> Erlauben/Verbieten des Überspringens von Seiten
+--- * `BarOpacity`:      (optional) <b>float</b> Deckkraft der Leisten
+--- * `BigBars`:         (optional) <b>boolean</b> Verwendung großer Leisten
 ---
 --- #### Example:
 ---
@@ -95,7 +93,8 @@ API.AddCutscenePages = AddCutscenePages;
 --- ```
 ---
 --- @param _Data table Seitendaten
+--- @return table Page Erzeugte Seite
 function AP(_Data)
-    assert(false);
+    return {};
 end
 

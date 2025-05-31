@@ -7,7 +7,7 @@
 --- Fast alle Entitäten können als interaktives Objekt verwendet werden, nicht nur die, die dafür vorgesehen sind.
 --- Ein Objekt wird durch eine Tabelle beschrieben und (fast) alle Schlüssel sind optional.
 ---
---- #### Felder der Tabelle
+--- #### Fields `_Description`:
 --- * `ScriptName`             - Skriptname des Objekts
 --- * `Texture`                - (Optional) Tabelle mit Koordinaten
 --- * `Title`                  - (Optional) Titel des Tooltipps

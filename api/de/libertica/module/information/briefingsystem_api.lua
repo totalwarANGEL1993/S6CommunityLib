@@ -77,27 +77,27 @@
 --- 
 --- Der Definition der Animationen können mehrere Switches hinzugefügt werden,
 --- die das Verhalten der Animationen beeinflussen.
---- * `Clear`    - Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
---- * `Repeat`   - Die Animationssets begingen nach dem Ende von vorn.
---- * `Postpone` - Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
---- * `Local`    - Die Animationssets werden nur auf dieser Seite abgespielt.
+--- * `Clear`:    (optional) <b>boolean</b> Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
+--- * `Repeat`:   (optional) <b>boolean</b> Die Animationssets begingen nach dem Ende von vorn.
+--- * `Postpone`: (optional) <b>boolean</b> Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
+--- * `Local`:    (optional) <b>boolean</b> Die Animationssets werden nur auf dieser Seite abgespielt.
 ---
 
 
 
 --- Startet eine Briefing.
 --- 
---- Das Briefing selbst kann verschiedene Attribute bekommen.
---- * `Starting`                - Funktion, die beim Starten der Einleitung aufgerufen wird              
---- * `Finished`                - Funktion, die beim Beenden der Einleitung aufgerufen wird             
---- * `RestoreCamera`           - Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
---- * `RestoreGameSpeed`        - Spielgeschwindigkeit wird am Ende der Einleitung gespeichert und wiederhergestellt      
---- * `EnableGlobalImmortality` - Während Einleitungen sind alle Entitäten unverwundbar        
---- * `EnableSky`               - Zeigt den Himmel während der Einleitung an                   
---- * `EnableFoW`               - Zeigt den Nebel des Krieges während der Einleitung an 
---- * `EnableBorderPins`        - Zeigt die Randnadeln während der Einleitung an     
---- * `PreloadAssets`           - Erlaubt weites Sichtfeld in Briefings
---- * `HideNotes`               - Nachrichten nicht anzeigen
+--- #### Fields `_Briefing`:
+--- * `Starting`:                (optional) <b>function</b> Funktion, die beim Starten der Einleitung aufgerufen wird              
+--- * `Finished`:                (optional) <b>function</b> Funktion, die beim Beenden der Einleitung aufgerufen wird             
+--- * `RestoreCamera`:           (optional) <b>boolean</b> Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
+--- * `RestoreGameSpeed`:        (optional) <b>boolean</b> Spielgeschwindigkeit wird am Ende der Einleitung gespeichert und wiederhergestellt      
+--- * `EnableGlobalImmortality`: (optional) <b>boolean</b> Während Einleitungen sind alle Entitäten unverwundbar        
+--- * `EnableSky`:               (optional) <b>boolean</b> Zeigt den Himmel während der Einleitung an                   
+--- * `EnableFoW`:               (optional) <b>boolean</b> Zeigt den Nebel des Krieges während der Einleitung an 
+--- * `EnableBorderPins`:        (optional) <b>boolean</b> Zeigt die Randnadeln während der Einleitung an     
+--- * `PreloadAssets`:           (optional) <b>boolean</b> Erlaubt weites Sichtfeld in Briefings
+--- * `HideNotes`:               (optional) <b>boolean</b> Nachrichten nicht anzeigen
 ---
 --- #### Example:
 --- ```lua
@@ -173,27 +173,39 @@ API.AddBriefingPages = AddBriefingPages;
 
 --- Erstellt eine Seite.
 ---
---- Die Seite kann verschiedene Attribute bekommen.
---- * `Title`           - Angezeigter Seitentitel
---- * `Text`            - Angezeigter Seitentext
---- * `Speech`          - Pfad zum Voiceover (MP3-Datei)
---- * `Position`        - Skriptname der Position
---- * `Duration`        - Zeit bis zum automatischen Überspringen
---- * `DialogCamera`    - Verwendung der Nahaufnahmekamera
---- * `DisableSkipping` - Erlauben/Verbieten des Überspringens von Seiten
---- * `Action`          - Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
---- * `FarClipPlane`    - Renderabstand
---- * `Rotation`        - Kamerarotation
---- * `Zoom`            - Kamerazoom
---- * `Angle`           - Kamerawinkel
---- * `FadeIn`          - Dauer des Einblendens aus Schwarz
---- * `FadeOut`         - Dauer des Ausblendens in Schwarz
---- * `FaderAlpha`      - Maskenalpha
---- * `BarOpacity`      - Deckkraft der Balken
---- * `BigBars`         - Verwende große Balken
---- * `FlyTo`           - Tabelle mit zweitem Satz von Kamerakonfigurationen, wobei die Kamera zufliegt
---- * `Performance`     - (Optional) Grafiksettings für diese Seite herabsetzen
---- * `MC`              - Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
+--- #### Fields `_Data`:
+--- * `Title`:           <b>any</b> Angezeigter Seitentitel (String oder Language Table)
+--- * `Text`:            <b>any</b> Angezeigter Seitentext (String oder Language Table)
+--- * `Speech`:          <b>string</b> Pfad zum Voiceover (MP3-Datei)
+--- * `Position`:        (Optional) <b>string</b> Skriptname der Position
+--- * `Duration`:        (Optional) <b>integer</b> Zeit bis zum automatischen Überspringen und Kameraanimation
+--- * `DialogCamera`:    (Optional) <b>boolean</b> Verwendung der Nahaufnahmekamera
+--- * `DisableSkipping`: (Optional) <b>boolean</b> Erlauben/Verbieten des Überspringens von Seiten
+--- * `Action`:          (Optional) <b>function</b> Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
+--- * `FarClipPlane`:    (Optional) <b>integer</b> Renderabstand
+--- * `Rotation`:        (Optional) <b>float</b> Kamerarotation
+--- * `Zoom`:            (Optional) <b>float</b> Kamerazoom
+--- * `Angle`:           (Optional) <b>float</b> Kamerawinkel
+--- * `FadeIn`:          (Optional) <b>float</b> Dauer des Einblendens aus Schwarz
+--- * `FadeOut`:         (Optional) <b>float</b> Dauer des Ausblendens in Schwarz
+--- * `FaderAlpha`:      (Optional) <b>float</b> Maskenalpha
+--- * `BarOpacity`:      (Optional) <b>float</b> Deckkraft der Balken
+--- * `BigBars`:         (Optional) <b>boolean</b> Verwende große Balken
+--- * `FlyTo`:           (Optional) <b>table</b> Tabelle mit zweitem Satz von Kamerakonfigurationen, wobei die Kamera zufliegt
+--- * `Performance`:     (Optional) <b>boolean</b> Grafiksettings für diese Seite herabsetzen
+--- * `MC`:              (Optional) <b>table</b> Tabelle mit Auswahlmöglichkeiten zum Abzweigen in Dialogen
+--- 
+--- #### Fields `_Data.FlyTo`:
+--- * `Position`:     <b>string</b> Skriptname der Position
+--- * `Action`:       <b>function</b> Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
+--- * `FarClipPlane`: <b>integer</b> Renderabstand
+--- * `Rotation`:     <b>float</b> Kamerarotation
+--- * `Zoom`:         <b>float</b> Kamerazoom
+--- * `Angle`:        <b>float</b> Kamerawinkel
+--- 
+--- #### Fields `_Data.MC`:
+--- * `[1]`: <b>any</b> Angezeigter Text (String oder Language Table)
+--- * `[2]`: <b>any</b> Sprungziel (String oder Funktion)
 ---
 --- #### Example:
 --- Eine einfache Seite erstellen.
@@ -230,7 +242,8 @@ API.AddBriefingPages = AddBriefingPages;
 --- ```
 ---
 --- #### Example:
---- Das Sprungziel einer Option kann durch eine Funktion bestimmt werden.
+--- Das Sprungziel einer Option kann durch eine Funktion bestimmt werden. Die
+--- Funktion muss den Namen der Zielseite zurückgeben.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -246,7 +259,9 @@ API.AddBriefingPages = AddBriefingPages;
 --- ```
 ---
 --- @param _Data table Seitendaten
+--- @return table Page Erzeugte Seite
 function AP(_Data)
+    return {};
 end
 
 --- Erstellt eine Seite auf vereinfachte Weise.
@@ -255,14 +270,6 @@ end
 --- Seitenindex erstellen. Ein Name kann ein optionales Parameter am 
 --- Anfang sein. Die Seite wird nicht weiter springen, bis der Skip-Button 
 --- geklicht wird.
----
---- Die Funktion erwartet die folgenden Parameter:
---- * `Name`            - (Optional) Name der Seite
---- * `Title`           - Angezeigter Seitentitel
---- * `Text`            - Angezeigter Seitentext
---- * `DialogCamera`    - Verwendung der Nahaufnahmekamera
---- * `Position`        - (Optional) Skriptname der fokussierten Entität
---- * `Action`          - (Optional) Aktion, wenn die Seite angezeigt wird
 ---
 --- #### Example:
 ---
@@ -275,9 +282,18 @@ end
 --- ASP("Titel", "Einige wichtige Texte.", true, "Marcus");
 --- -- Aktion aufrufen
 --- ASP("Titel", "Einige wichtige Texte.", true, "Marcus", MyFunction);
+--- -- Seite ohne Positionsangabe
+--- ASP("Seite1", "Titel", "Einige wichtige Texte.");
 --- ```
 ---
---- @param ... any Liste der Seitendaten
+--- @param _Name? string Name der Seite
+--- @param _Title string Angezeigter Seitentitel
+--- @param _Text string Angezeigter Seitentext
+--- @param _DialogCamera boolean Verwendung der Nahaufnahmekamera
+--- @param _Position? string Skriptname der fokussierten Entität
+--- @param _Action? function Aktion bei Anzeige
+--- @return table Page Erzeugte Seite
 function ASP(...)
+    return {};
 end
 

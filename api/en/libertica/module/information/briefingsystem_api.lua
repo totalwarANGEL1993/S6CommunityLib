@@ -75,26 +75,26 @@
 --- 
 --- Several switches can be added to the animation definition that affect
 --- the behavior of the animations.
---- * `Clear`    - All running animation sets are cleared. Then the new sets are started.
---- * `Repeat`   - The animation sets start over after finishing.
---- * `Postpone` - The running animation sets are postponed, and the sets of the page are started.
---- * `Local`    - The animation sets are played only on this page.
+--- * `Clear`:    (optional) <b>boolean</b> All running animation sets are cleared. Then the new sets are started.
+--- * `Repeat`:   (optional) <b>boolean</b> The animation sets start over after finishing.
+--- * `Postpone`: (optional) <b>boolean</b> The running animation sets are postponed, and the sets of the page are started.
+--- * `Local`:    (optional) <b>boolean</b> The animation sets are played only on this page.
 
 
 
 --- Starts a briefing.
 --- 
---- The briefing itself can have various attributes:
---- * `Starting`                - Function called when the introduction starts              
---- * `Finished`                - Function called when the introduction ends             
---- * `RestoreCamera`           - Camera position is saved and restored after the introduction
---- * `RestoreGameSpeed`        - Game speed is saved and restored after the introduction      
---- * `EnableGlobalImmortality` - All entities are invulnerable during the introduction        
---- * `EnableSky`               - Shows the sky during the introduction                   
---- * `EnableFoW`               - Shows the fog of war during the introduction 
---- * `EnableBorderPins`        - Shows border pins during the introduction     
---- * `PreloadAssets`           - Allows a wide field of view during briefings
---- * `HideNotes`               - Hides messages
+--- #### Fields `_Briefing`:
+--- * `Starting`:                (optional) <b>function</b> Function called when the introduction starts              
+--- * `Finished`:                (optional) <b>function</b> Function called when the introduction ends             
+--- * `RestoreCamera`:           (optional) <b>boolean</b> Camera position is saved and restored after the introduction
+--- * `RestoreGameSpeed`:        (optional) <b>boolean</b> Game speed is saved and restored after the introduction      
+--- * `EnableGlobalImmortality`: (optional) <b>boolean</b> All entities are invulnerable during the introduction        
+--- * `EnableSky`:               (optional) <b>boolean</b> Shows the sky during the introduction                   
+--- * `EnableFoW`:               (optional) <b>boolean</b> Shows the fog of war during the introduction 
+--- * `EnableBorderPins`:        (optional) <b>boolean</b> Shows border pins during the introduction     
+--- * `PreloadAssets`:           (optional) <b>boolean</b> Allows a wide field of view during briefings
+--- * `HideNotes`:               (optional) <b>boolean</b> Hides messages
 ---
 --- #### Example:
 --- ```lua
@@ -170,27 +170,39 @@ API.AddBriefingPages = AddBriefingPages;
 
 --- Creates a page.
 ---
---- The page can have various attributes:
---- * `Title`           - Displayed page title
---- * `Text`            - Displayed page text
---- * `Speech`          - Path to voiceover (MP3 file)
---- * `Position`        - Script name of the position
---- * `Duration`        - Time until auto-skip
---- * `DialogCamera`    - Use close-up camera
---- * `DisableSkipping` - Allow/forbid skipping the page
---- * `Action`          - Function called when the page is shown
---- * `FarClipPlane`    - Render distance
---- * `Rotation`        - Camera rotation
---- * `Zoom`            - Camera zoom
---- * `Angle`           - Camera angle
---- * `FadeIn`          - Duration of fade-in from black
---- * `FadeOut`         - Duration of fade-out to black
---- * `FaderAlpha`      - Mask alpha
---- * `BarOpacity`      - Opacity of black bars
---- * `BigBars`         - Use large bars
---- * `FlyTo`           - Table with second camera configuration for fly-in
---- * `Performance`     - (Optional) Lower graphics settings for this page
---- * `MC`              - Table with choices for branching dialogues
+--- #### Fields `_Data`:
+--- * `Title`:           <b>any</b> Displayed page title
+--- * `Text`:            <b>any</b> Displayed page text
+--- * `Speech`:          <b>string</b> Path to voiceover (MP3 file)
+--- * `Position`:        (Optional) <b>string</b> Script name of the position
+--- * `Duration`:        (Optional) <b>integer</b> Time until auto-skip
+--- * `DialogCamera`:    (Optional) <b>boolean</b> Use close-up camera
+--- * `DisableSkipping`: (Optional) <b>boolean</b> Allow/forbid skipping the page
+--- * `Action`:          (Optional) <b>function</b> Function called when the page is shown
+--- * `FarClipPlane`:    (Optional) <b>integer</b> Render distance
+--- * `Rotation`:        (Optional) <b>float</b> Camera rotation
+--- * `Zoom`:            (Optional) <b>float</b> Camera zoom
+--- * `Angle`:           (Optional) <b>float</b> Camera angle
+--- * `FadeIn`:          (Optional) <b>float</b> Duration of fade-in from black
+--- * `FadeOut`:         (Optional) <b>float</b> Duration of fade-out to black
+--- * `FaderAlpha`:      (Optional) <b>float</b> Mask alpha
+--- * `BarOpacity`:      (Optional) <b>float</b> Opacity of black bars
+--- * `BigBars`:         (Optional) <b>boolean</b> Use large bars
+--- * `FlyTo`:           (Optional) <b>table</b> Table with second camera configuration for fly-in
+--- * `Performance`:     (Optional) <b>boolean</b> Lower graphics settings for this page
+--- * `MC`:              (Optional) <b>table</b> Table with choices for branching dialogues
+--- 
+--- #### Fields `_Data.FlyTo`:
+--- * `Position`:     <b>string</b> Skriptname der Position
+--- * `Action`:       <b>function</b> Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
+--- * `FarClipPlane`: <b>integer</b> Renderabstand
+--- * `Rotation`:     <b>float</b> Kamerarotation
+--- * `Zoom`:         <b>float</b> Kamerazoom
+--- * `Angle`:        <b>float</b> Kamerawinkel
+--- 
+--- #### Fields `_Data.MC`:
+--- * `[1]`: <b>any</b> Angezeigter Text (String oder Language Table)
+--- * `[2]`: <b>any</b> Sprungziel (String oder Funktion)
 ---
 --- #### Example:
 --- Create a simple page.
@@ -227,7 +239,8 @@ API.AddBriefingPages = AddBriefingPages;
 --- ```
 ---
 --- #### Example:
---- The target of an option can be determined by a function.
+--- The target of an option can be determined by a function. The function must
+--- return the name pf the target page.
 --- ```lua
 --- AP {
 ---    Title        = "Marcus",
@@ -243,7 +256,9 @@ API.AddBriefingPages = AddBriefingPages;
 --- ```
 ---
 --- @param _Data table Page data
+--- @return table Page Created page
 function AP(_Data)
+    return {};
 end
 
 --- Creates a simplified page.
@@ -251,14 +266,6 @@ end
 --- The function can create an automatic page name based on the page index.
 --- A name can be provided optionally as the first parameter.
 --- The page won't proceed until the skip button is clicked.
----
---- Parameters expected:
---- * `Name`            - (Optional) Name of the page
---- * `Title`           - Displayed page title
---- * `Text`            - Displayed page text
---- * `DialogCamera`    - Use close-up camera
---- * `Position`        - (Optional) Script name of focused entity
---- * `Action`          - (Optional) Action called when the page is shown
 ---
 --- #### Example:
 ---
@@ -271,9 +278,18 @@ end
 --- ASP("Title", "Some important text.", true, "Marcus");
 --- -- Call action
 --- ASP("Title", "Some important text.", true, "Marcus", MyFunction);
+--- -- Page without position
+--- ASP("Seite1", "Titel", "Einige wichtige Texte.");
 --- ```
 ---
---- @param ... any List of page parameters
+--- @param _Name? string Name of page
+--- @param _Title string Displayed title
+--- @param _Text string Displayed text
+--- @param _DialogCamera boolean Use dialog camera
+--- @param _Position? string Scriptname of position
+--- @param _Action? function Action function
+--- @return table Page Created page
 function ASP(...)
+    return {};
 end
 
