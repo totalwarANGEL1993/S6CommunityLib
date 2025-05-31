@@ -48,7 +48,7 @@ API.CreateRandomLuxuryChest = CreateRandomLuxuryChest;
 
 --- The player activated a treasure
 --- 
---- #### Parameters:s
+--- #### Parameters:
 --- * `ScriptName` - Scriptname of entity
 --- * `KnightID`   - ID of activating hero
 --- * `PlayerID`   - ID of activating player

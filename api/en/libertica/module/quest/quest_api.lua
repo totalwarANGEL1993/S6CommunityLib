@@ -12,7 +12,7 @@ Lib.Quest = Lib.Quest or {};
 
 --- Creates a normal quest.
 ---
---- #### Fields of table
+--- #### Fields `_Data`:
 --- * `Name`        - A unique name for the quest
 --- * `Sender`      - Quest giver player ID
 --- * `Receiver`    - Quest receiver player ID

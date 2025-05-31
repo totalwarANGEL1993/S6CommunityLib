@@ -6,14 +6,14 @@
 
 --- Starts a cutscene.
 ---
---- Possible fields for the cutscene table:
---- * `Starting`                - Function called at the start of the cutscene              
---- * `Finished`                - Function called at the end of the cutscene                 
---- * `EnableGlobalImmortality` - All entities are invulnerable during the cutscene        
---- * `EnableSky`               - Show sky during the cutscene                   
---- * `EnableFoW`               - Show fog of war during the cutscene           
---- * `EnableBorderPins`        - Show border pins during the cutscene
---- * `HideNotes`               - Do not display messages
+--- #### Fields `_Cutscene`:
+--- * `Starting`:                (optional) <b>function</b> Function called when the introduction starts              
+--- * `Finished`:                (optional) <b>function</b> Function called when the introduction ends             
+--- * `EnableGlobalImmortality`: (optional) <b>boolean</b> All entities are invulnerable during the introduction        
+--- * `EnableSky`:               (optional) <b>boolean</b> Shows the sky during the introduction                   
+--- * `EnableFoW`:               (optional) <b>boolean</b> Shows the fog of war during the introduction 
+--- * `EnableBorderPins`:        (optional) <b>boolean</b> Shows border pins during the introduction     
+--- * `HideNotes`:               (optional) <b>boolean</b> Hides messages
 ---
 --- #### Example:
 --- ```lua
@@ -65,21 +65,19 @@ API.AddCutscenePages = AddCutscenePages;
 
 --- Creates a page.
 ---
---- #### Cutscene Page
---- Possible fields for the page:
----
---- * `Flight`          - Name of the flight XML (without .cs)
---- * `Title`           - Displayed page title
---- * `Text`            - Displayed page text
---- * `Speech`          - Path to the voiceover (MP3 file)
---- * `Action`          - Function called when the page is shown
---- * `FarClipPlane`    - Rendering distance
---- * `FadeIn`          - Duration of fade-in from black
---- * `FadeOut`         - Duration of fade-out to black
---- * `FaderAlpha`      - Mask alpha
---- * `DisableSkipping` - Allow/disallow skipping of pages
---- * `BarOpacity`      - Opacity of the bars
---- * `BigBars`         - Use large cinematic bars
+--- #### Fields `_Data`:
+--- * `Flight`          <b>string</b> Name of the flight XML (without .cs)
+--- * `Title`           (optional) <b>any</b> Displayed page title
+--- * `Text`            (optional) <b>any</b> Displayed page text
+--- * `Speech`          (optional) <b>string</b> Path to the voiceover (MP3 file)
+--- * `Action`          (optional) <b>function</b> Function called when the page is shown
+--- * `FarClipPlane`    (optional) <b>boolean</b>Rendering distance
+--- * `FadeIn`          (optional) <b>float</b> Duration of fade-in from black
+--- * `FadeOut`         (optional) <b>float</b> Duration of fade-out to black
+--- * `FaderAlpha`      (optional) <b>float</b> Mask alpha
+--- * `DisableSkipping` (optional) <b>boolean</b> Allow/disallow skipping of pages
+--- * `BarOpacity`      (optional) <b>float</b> Opacity of the bars
+--- * `BigBars`         (optional) <b>boolean</b> Use large cinematic bars
 ---
 --- #### Example:
 ---
@@ -93,7 +91,8 @@ API.AddCutscenePages = AddCutscenePages;
 --- ```
 ---
 --- @param _Data table Page data
+--- @return table Page Created page
 function AP(_Data)
-    assert(false);
+    return {};
 end
 

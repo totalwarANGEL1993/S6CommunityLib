@@ -10,7 +10,7 @@ Lib.IO = Lib.IO or {};
 --- that are supposed to. An object is described by a table and (almost) all
 --- keys are optional.
 ---
---- #### Fields of table
+--- #### Fields `_Description`:
 --- * `ScriptName`             - Scriptname of object
 --- * `Texture`                - (Optional) table with coordinates
 --- * `Title`                  - (Optional) Title of tooltip
@@ -174,7 +174,7 @@ API.InteractiveObjectDeactivate = InteractiveObjectDeactivate;
 
 --- The player clicked the interaction button.
 --- 
---- #### Parameters:s
+--- #### Parameters:
 --- * `ScriptName` - Scriptname of entity
 --- * `KnightID`   - ID of activating hero
 --- * `PlayerID`   - ID of activating player
@@ -183,7 +183,7 @@ Report.ObjectClicked = anyInteger;
 --- The interaction with the object was successfull.
 --- If the object has costs the activation concludes when the costs arrive.
 --- 
---- #### Parameters:s
+--- #### Parameters:
 --- * `ScriptName` - Scriptname of entity
 --- * `KnightID`   - ID of activating hero
 --- * `PlayerID`   - ID of activating player
@@ -191,13 +191,13 @@ Report.ObjectInteraction = anyInteger;
 
 --- The interaction is deleted from the object.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `ScriptName` - Scriptname of entity
 Report.ObjectReset = anyInteger;
 
 --- The state of an object has been reset.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `ScriptName` - Scriptname of entity
 Report.ObjectDelete = anyInteger;
 
