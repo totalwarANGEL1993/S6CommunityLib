@@ -936,6 +936,10 @@ function Lib.SettlementSurvival.Local:Initialize()
         Report.SettlerDiedFromStarvation = CreateReport("Event_SettlerDiedFromStarvation");
         Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
 
+        for PlayerID = 1, 8 do
+            self.DeadSettlers[PlayerID] = {};
+        end
+
         self:OverrideGameCallbacks();
         self:OverwriteUpdateNeeds();
         self:OverwriteUpgradeButton();
@@ -954,6 +958,12 @@ end
 function Lib.SettlementSurvival.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    elseif _ID == Report.SettlerSuspensionElapsed then
+        -- Delete the dead settler
+        local PlayerID = Logic.EntityGetPlayer(arg[1]);
+        if self.DeadSettlers[PlayerID] then
+            self.DeadSettlers[PlayerID][arg[1]] = nil;
+        end
     end
 end
 
@@ -1029,8 +1039,7 @@ function Lib.SettlementSurvival.Local:OverrideGameCallbacks()
 
     self.Orig_GameCallback_GUI_DeleteEntityStateBuilding = GameCallback_GUI_DeleteEntityStateBuilding;
     GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
-        -- FIXME: Will get confused whith militia
-        if HasBuildingSuspendedInhabitants(_BuildingID) then
+        if Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(_BuildingID) then
             Message(Localize(Lib.Permadeath.Text.Messages.BuildingMourning));
             GUI.CancelBuildingKnockDown(_BuildingID);
             return;
@@ -1045,14 +1054,28 @@ function Lib.SettlementSurvival.Local:OverwriteUpgradeButton()
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeClicked = function()
         local BuildingID = GUI.GetSelectedEntity();
-        -- FIXME: Will get confused whith militia
-        if HasBuildingSuspendedInhabitants(BuildingID) then
+        if Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(BuildingID) then
             Message(Localize(Lib.SettlementSurvival.Text.Messages.BuildingMourning));
             GUI.CancelBuildingKnockDown(BuildingID);
             return;
         end
         Lib.SettlementSurvival.Local.Orig_GUI_BuildingButtons_UpgradeClicked();
     end
+end
+
+-- We can not just check for suspended settler. We must check if the settler
+-- was "killed" by this module.
+function Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(_BuildingID)
+    local PlayerID = Logic.EntityGetPlayer(_BuildingID);
+    if self.DeadSettlers[PlayerID] then
+        local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(_BuildingID)};
+        for i= 1, #AttachedSettlers do
+            if AttachedSettlers[i] > 0 and self.DeadSettlers[PlayerID][AttachedSettlers[i]] then
+                return true;
+            end
+        end
+    end
+    return false;
 end
 
 function Lib.SettlementSurvival.Local:OnBuildingSelected()
