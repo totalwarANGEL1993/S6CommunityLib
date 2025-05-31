@@ -936,8 +936,9 @@ function Lib.SettlementSurvival.Local:Initialize()
         Report.SettlerDiedFromStarvation = CreateReport("Event_SettlerDiedFromStarvation");
         Report.SettlerDiedFromIllness = CreateReport("Event_SettlerDiedFromIllness");
 
-        self:OverrideSelectionChanged();
+        self:OverrideGameCallbacks();
         self:OverwriteUpdateNeeds();
+        self:OverwriteUpgradeButton();
 
         -- Garbage collection
         Lib.SettlementSurvival.Global = nil;
@@ -1028,7 +1029,8 @@ function Lib.SettlementSurvival.Local:OverrideGameCallbacks()
 
     self.Orig_GameCallback_GUI_DeleteEntityStateBuilding = GameCallback_GUI_DeleteEntityStateBuilding;
     GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
-        if Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(_BuildingID) then
+        -- FIXME: Will get confused whith militia
+        if HasBuildingSuspendedInhabitants(_BuildingID) then
             Message(Localize(Lib.Permadeath.Text.Messages.BuildingMourning));
             GUI.CancelBuildingKnockDown(_BuildingID);
             return;
@@ -1043,28 +1045,14 @@ function Lib.SettlementSurvival.Local:OverwriteUpgradeButton()
     --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeClicked = function()
         local BuildingID = GUI.GetSelectedEntity();
-        if Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(BuildingID) then
+        -- FIXME: Will get confused whith militia
+        if HasBuildingSuspendedInhabitants(BuildingID) then
             Message(Localize(Lib.SettlementSurvival.Text.Messages.BuildingMourning));
             GUI.CancelBuildingKnockDown(BuildingID);
             return;
         end
         Lib.SettlementSurvival.Local.Orig_GUI_BuildingButtons_UpgradeClicked();
     end
-end
-
--- We can not just check for suspended settler. We must check if the settler
--- was "killed" by this module.
-function Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(_BuildingID)
-    local PlayerID = Logic.EntityGetPlayer(_BuildingID);
-    if self.DeadSettlers[PlayerID] then
-        local AttachedSettlers = {Logic.GetWorkersAndSpousesForBuilding(_BuildingID)};
-        for i= 1, #AttachedSettlers do
-            if AttachedSettlers[i] > 0 and self.DeadSettlers[PlayerID][AttachedSettlers[i]] then
-                return true;
-            end
-        end
-    end
-    return false;
 end
 
 function Lib.SettlementSurvival.Local:OnBuildingSelected()

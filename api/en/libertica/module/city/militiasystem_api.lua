@@ -18,8 +18,6 @@
 --- changes to distinguish militia units with special abilities from normal 
 --- mercenaries.
 
-
-
 --- Activates the conscription of workers into the military.
 function ActivateMilitia()
 end
