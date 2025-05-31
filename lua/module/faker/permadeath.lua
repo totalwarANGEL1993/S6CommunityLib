@@ -11,7 +11,6 @@ Lib.Require("core/Core");
 Lib.Require("module/city/Construction");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Permadeath_API");
-Lib.Require("module/faker/Permadeath_Text");
 Lib.Register("module/faker/Permadeath");
 
 -- -------------------------------------------------------------------------- --
@@ -370,16 +369,6 @@ function Lib.Permadeath.Local:OverwriteGameCallbacks()
     GameCallback_Feedback_OnBuildingBurning = function(_PlayerID, _EntityID)
         Lib.Permadeath.Local.Orig_GameCallback_Feedback_OnBuildingBurning(_PlayerID, _EntityID);
         SendReportToGlobal(Report.FireAlarmActivated_Internal, _EntityID);
-    end
-
-    self.Orig_GameCallback_GUI_DeleteEntityStateBuilding = GameCallback_GUI_DeleteEntityStateBuilding;
-    GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
-        if Lib.Permadeath.Local:HasSuspendedInhabitants(_BuildingID) then
-            Message(Localize(Lib.Permadeath.Text.Messages.BuildingMourning));
-            GUI.CancelBuildingKnockDown(_BuildingID);
-            return;
-        end
-        Lib.Permadeath.Local.Orig_GameCallback_GUI_DeleteEntityStateBuilding(_BuildingID, _State);
     end
 end
 
