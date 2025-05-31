@@ -2,10 +2,13 @@ Lib.MilitiaSystem = Lib.MilitiaSystem or {};
 Lib.MilitiaSystem.Name = "MilitiaSystem";
 Lib.MilitiaSystem.Global = {
     MilitiaAllocation = {},
+    ConscriptMapping = {},
     TypeSkills = {},
 };
 Lib.MilitiaSystem.Local  = {
+    Buttons = {},
     MilitiaAllocation = {},
+    ConscriptCount = {},
     TypeSkills = {},
 };
 Lib.MilitiaSystem.Shared = {};
@@ -33,8 +36,10 @@ function Lib.MilitiaSystem.Global:Initialize()
 
         self:InitDamageCalculationCallback();
         self:InitUnitTypeSkills();
+        self:InitUnitDestroyedCallback();
 
         for PlayerID = 1, 8 do
+            self.ConscriptMapping[PlayerID] = {};
             self:SetDefaultUnitTypeAllocation(PlayerID);
         end
 
@@ -78,18 +83,27 @@ function Lib.MilitiaSystem.Global:BuyMilitia(_PlayerID, _Type)
     if CastleID == 0 then
         return false;
     end
-    -- TODO: check recruits (suspend settlers)
-
+    -- Check constrips
+    local Conscripts = self:GetConscripts(_PlayerID);
+    if #Conscripts < GetBattalionSizeBySoldierType(_Type) then
+        return;
+    end
     -- Create unit
     local x, y = Logic.GetBuildingApproachPosition(CastleID);
     local Orientation = Logic.GetEntityOrientation(CastleID);
-    Logic.CreateBattalion(_Type, x, y, Orientation - 90, _PlayerID);
+    local UnitID = Logic.CreateBattalion(_Type, x, y, Orientation - 90, _PlayerID);
+    local Soldiers = {Logic.GetSoldiersAttachedToLeader(UnitID)};
     if Costs[1] then AddGood(Costs[1], (-1) * Costs[2], _PlayerID); end
     if Costs[3] then AddGood(Costs[3], (-1) * Costs[4], _PlayerID); end
-    -- TODO: suspend settlers
+    -- Suspend settlers
+    for i= 1, GetBattalionSizeBySoldierType(_Type) do
+        local ID = table.remove(Conscripts, math.random(1, #Conscripts));
+        x,y,_ = Logic.EntityGetPos(ID);
+        Logic.DEBUG_SetSettlerPosition(Soldiers[i+1], x, y);
+        self.ConscriptMapping[_PlayerID][Soldiers[i+1]] = ID;
+        SuspendSettler(ID);
+    end
 end
-
--- -------------------------------------------------------------------------- --
 
 function Lib.MilitiaSystem.Global:SetDefaultUnitTypeAllocation(_PlayerID)
     local Melee, Ranged = self:GetDefaultMilitiaUnitTypes();
@@ -111,6 +125,10 @@ function Lib.MilitiaSystem.Global:GetDefaultMilitiaUnitTypes()
     return Lib.MilitiaSystem.Shared:GetDefaultMilitiaUnitTypes();
 end
 
+function Lib.MilitiaSystem.Global:GetConscripts(_PlayerID)
+    return Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID);
+end
+
 function Lib.MilitiaSystem.Global:SetRequiredRank(_Title, _Tech)
     ExecuteLocal(string.format([[
         table.insert(NeedsAndRightsByKnightTitle[%d][4], 1, %d)
@@ -122,8 +140,6 @@ function Lib.MilitiaSystem.Global:SetRequiredRank(_Title, _Tech)
         Logic.TechnologySetState(playerID, _Tech, 0);
     end
 end
-
--- -------------------------------------------------------------------------- --
 
 function Lib.MilitiaSystem.Global:InitUnitTypeSkills()
     self.TypeSkills["U_MilitaryBandit_Melee_AS"] = MilitiaSkill.Execution;
@@ -165,6 +181,29 @@ function Lib.MilitiaSystem.Global:CalculateBattleDamage(_AttackerID, _TargetID, 
 end
 
 -- -------------------------------------------------------------------------- --
+
+function Lib.MilitiaSystem.Global:InitUnitDestroyedCallback()
+    RequestJobByEventType(
+        Events.LOGIC_EVENT_ENTITY_DESTROYED,
+        function()
+            local EntityID = Event.GetEntityID();
+            local PlayerID = Logic.EntityGetPlayer(EntityID);
+            local Health = Logic.GetEntityHealth(EntityID);
+            if self.ConscriptMapping[PlayerID] then
+                if self.ConscriptMapping[PlayerID][EntityID] then
+                    local ID = self.ConscriptMapping[PlayerID][EntityID];
+                    if Health == 0 then
+                        DestroyEntity(ID);
+                    else
+                        ResumeSettler(ID);
+                    end
+                end
+            end
+        end
+    );
+end
+
+-- -------------------------------------------------------------------------- --
 -- Local
 
 -- Local initalizer method
@@ -174,15 +213,12 @@ function Lib.MilitiaSystem.Local:Initialize()
 
         Lib.MilitiaSystem.Shared:CreateTechnologies();
 
-        self:InitUnitTypeSkills();
-
-        self:InitMilitiaButtons(Entities.B_Castle_ME);
-        self:InitMilitiaButtons(Entities.B_Castle_NA);
-        self:InitMilitiaButtons(Entities.B_Castle_NE);
-        self:InitMilitiaButtons(Entities.B_Castle_SE);
-        if Entities.B_Castle_AS ~= nil then
-            self:InitMilitiaButtons(Entities.B_Castle_AS);
+        for PlayerID = 1, 8 do
+            self.ConscriptCount[PlayerID] = 0;
         end
+
+        self:InitUnitTypeSkills();
+        self:InitConscriptUpdate();
 
         for k, v in pairs(Lib.MilitiaSystem.Text.Unit) do
             AddStringText("UI_ObjectNames/" ..k, v.Title);
@@ -208,6 +244,113 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.MilitiaSystem.Local:ActivateMilitia()
+    self:AddMilitiaButtons(Entities.B_Castle_ME);
+    self:AddMilitiaButtons(Entities.B_Castle_NA);
+    self:AddMilitiaButtons(Entities.B_Castle_NE);
+    self:AddMilitiaButtons(Entities.B_Castle_SE);
+    if Entities.B_Castle_AS ~= nil then
+        self:AddMilitiaButtons(Entities.B_Castle_AS);
+    end
+end
+
+function Lib.MilitiaSystem.Local:DeactivateMilitia()
+    self:RemoveMilitiaButtons(Entities.B_Castle_ME);
+    self:RemoveMilitiaButtons(Entities.B_Castle_NA);
+    self:RemoveMilitiaButtons(Entities.B_Castle_NE);
+    self:RemoveMilitiaButtons(Entities.B_Castle_SE);
+    if Entities.B_Castle_AS ~= nil then
+        self:RemoveMilitiaButtons(Entities.B_Castle_AS);
+    end
+end
+
+function Lib.MilitiaSystem.Local:AddMilitiaButtons(_Type)
+    self.Buttons[_Type] = self.Buttons[_Type] or {};
+
+    -- Button 1
+    if self.Buttons[_Type].Melee == nil then
+        self.Buttons[_Type].Melee = AddBuildingButtonByEntity(
+            _Type,
+            function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(1, _WidgetID, _EntityID) end,
+            function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(1, _WidgetID, _EntityID) end,
+            function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(1, _WidgetID, _EntityID) end
+        );
+    end
+    -- Button 2
+    if self.Buttons[_Type].Ranged == nil then
+        self.Buttons[_Type].Ranged = AddBuildingButtonByEntity(
+            _Type,
+            function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(2, _WidgetID, _EntityID) end,
+            function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(2, _WidgetID, _EntityID) end,
+            function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(2, _WidgetID, _EntityID) end
+        );
+    end
+end
+
+function Lib.MilitiaSystem.Local:RemoveMilitiaButtons(_Type)
+    if self.Buttons[_Type] then
+        DropBuildingButtonFromType(_Type, self.Buttons[_Type].Melee);
+        self.Buttons[_Type].Melee = nil;
+        DropBuildingButtonFromType(_Type, self.Buttons[_Type].Ranged);
+        self.Buttons[_Type].Ranged = nil;
+    end
+end
+
+function Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(_Index, _WidgetID, _EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
+    local UnitTypeName = Logic.GetEntityTypeName(UnitType);
+    local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
+    local MilitaryLimit = Logic.GetCurrentSoldierLimit(PlayerID);
+    local MilitaryUsage = Logic.GetCurrentSoldierCount(PlayerID);
+    if GetBattalionSizeBySoldierType(UnitType) >= MilitaryLimit - MilitaryUsage then
+        AddMessage("Feedback_TextLines/TextLine_SoldierLimitReached");
+        return;
+    end
+    if (Costs[1] and GetPlayerResources(Costs[1], PlayerID) < Costs[2])
+    or (Costs[3] and GetPlayerResources(Costs[3], PlayerID) < Costs[4]) then
+        return;
+    end
+    if self.ConscriptCount[PlayerID] < GetBattalionSizeBySoldierType(UnitType) then
+        AddMessage(Lib.MilitiaSystem.Text.Message.NoConscripts);
+        return;
+    end
+    SendReportToGlobal(Report.BuyMilitia, PlayerID, UnitType);
+end
+
+function Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(_Index, _WidgetID, _EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
+    local UnitTypeName = Logic.GetEntityTypeName(UnitType);
+    local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
+    local Data = Lib.MilitiaSystem.Config.UnitData[UnitTypeName];
+    local Title = self:GetUnitScreenName(UnitType);
+    local Text = self:GetUnitScreenDescription(UnitType);
+    local DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies[Data[2]]);
+    local UnitSize = GetBattalionSizeBySoldierType(UnitType);
+    local Conscripts = self.ConscriptCount[PlayerID];
+    local AmountString = " (" ..Conscripts.. "/" ..UnitSize.. ")";
+    if DisabledKey and XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
+        local DisabledText = GetStringText("UI_ButtonDisabled/" ..DisabledKey);
+        Text = Text.. "{cr}{@color:210,20,30,255}" ..DisabledText;
+    end
+    SetTooltipCosts(Title .. AmountString, Text, nil, Costs, true);
+end
+
+function Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(_Index, _WidgetID, _EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
+    local UnitTypeName = Logic.GetEntityTypeName(UnitType);
+    local Data = Lib.MilitiaSystem.Config.UnitData[UnitTypeName];
+    ChangeIcon(_WidgetID, Data[3]);
+    if Logic.TechnologyGetState(PlayerID, Technologies[Data[1]]) ~= TechnologyStates.Researched
+    or Logic.TechnologyGetState(PlayerID, Technologies[Data[2]]) ~= TechnologyStates.Researched then
+        XGUIEng.DisableButton(_WidgetID, 1);
+    else
+        XGUIEng.DisableButton(_WidgetID, 0);
+    end
+end
+
 function Lib.MilitiaSystem.Local:InitUnitTypeSkills()
     self.TypeSkills["U_MilitaryBandit_Melee_AS"] = MilitiaSkill.Execution;
     self.TypeSkills["U_MilitaryBandit_Ranged_AS"] = MilitiaSkill.Critical;
@@ -227,75 +370,6 @@ function Lib.MilitiaSystem.Local:GetUnitTypeSkill(_Entity)
     local TypeName = Logic.GetEntityTypeName(Type);
     return self.TypeSkills[TypeName];
 end
-
--- -------------------------------------------------------------------------- --
-
-function Lib.MilitiaSystem.Local:InitMilitiaButtons(_Type)
-    -- Button 1
-    AddBuildingButtonByEntity(
-        _Type,
-        function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(1, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(1, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(1, _WidgetID, _EntityID) end
-    );
-    -- Button 2
-    AddBuildingButtonByEntity(
-        _Type,
-        function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(2, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(2, _WidgetID, _EntityID) end,
-        function(_WidgetID, _EntityID) Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(2, _WidgetID, _EntityID) end
-    );
-end
-
-function Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(_Index, _WidgetID, _EntityID)
-    local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
-    local UnitTypeName = Logic.GetEntityTypeName(UnitType);
-    local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
-    local MilitaryLimit = Logic.GetCurrentSoldierLimit(PlayerID);
-    local MilitaryUsage = Logic.GetCurrentSoldierCount(PlayerID);
-    if GetBattalionSizeBySoldierType(UnitType) >= MilitaryLimit - MilitaryUsage then
-        AddMessage("Feedback_TextLines/TextLine_SoldierLimitReached");
-        return;
-    end
-    if (Costs[1] and GetPlayerResources(Costs[1], PlayerID) < Costs[2])
-    or (Costs[3] and GetPlayerResources(Costs[3], PlayerID) < Costs[4]) then
-        return;
-    end
-    SendReportToGlobal(Report.BuyMilitia, PlayerID, UnitType);
-end
-
-function Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(_Index, _WidgetID, _EntityID)
-    local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
-    local UnitTypeName = Logic.GetEntityTypeName(UnitType);
-    local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
-    local Data = Lib.MilitiaSystem.Config.UnitData[UnitTypeName];
-    local Title = self:GetUnitScreenName(UnitType);
-    local Text = self:GetUnitScreenDescription(UnitType);
-    local DisabledKey = GUI_Tooltip.GetDisabledKeyForTechnologyType(Technologies[Data[2]]);
-    if DisabledKey and XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-        local DisabledText = GetStringText("UI_ButtonDisabled/" ..DisabledKey);
-        Text = Text.. "{cr}{@color:210,20,30,255}" ..DisabledText;
-    end
-    SetTooltipCosts(Title, Text, nil, Costs, true);
-end
-
-function Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(_Index, _WidgetID, _EntityID)
-    local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
-    local UnitTypeName = Logic.GetEntityTypeName(UnitType);
-    local Data = Lib.MilitiaSystem.Config.UnitData[UnitTypeName];
-    ChangeIcon(_WidgetID, Data[3]);
-    if Logic.TechnologyGetState(PlayerID, Technologies[Data[1]]) ~= TechnologyStates.Researched
-    or Logic.TechnologyGetState(PlayerID, Technologies[Data[2]]) ~= TechnologyStates.Researched then
-        XGUIEng.DisableButton(_WidgetID, 1);
-    else
-        XGUIEng.DisableButton(_WidgetID, 0);
-    end
-end
-
--- -------------------------------------------------------------------------- --
 
 function Lib.MilitiaSystem.Local:GetUnitScreenName(_Type)
     local TypeName = Logic.GetEntityTypeName(_Type);
@@ -319,6 +393,25 @@ end
 
 function Lib.MilitiaSystem.Local:GetDefaultMilitiaUnitTypes()
     return Lib.MilitiaSystem.Shared:GetDefaultMilitiaUnitTypes();
+end
+
+function Lib.MilitiaSystem.Local:GetConscripts(_PlayerID)
+    return Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID);
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.MilitiaSystem.Local:InitConscriptUpdate()
+    RequestJobByEventType(
+        Events.LOGIC_EVENT_EVERY_TURN,
+        function()
+            local PlayerID = (Logic.GetCurrentTurn() % 10) +1;
+            if self.ConscriptCount[PlayerID] and Logic.PlayerGetIsHumanFlag(PlayerID) then
+                local Conscripts = self:GetConscripts(PlayerID);
+                self.ConscriptCount[PlayerID] = #Conscripts;
+            end
+        end
+    );
 end
 
 -- -------------------------------------------------------------------------- --
@@ -373,6 +466,35 @@ function Lib.MilitiaSystem.Shared:GetRandomMilitiaUnitTypes(_PlayerID, _Allocati
     else
         return self:GetDefaultMilitiaUnitTypes();
     end
+end
+
+function Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID)
+    -- Check buildings
+    local Buildings = {};
+    for k,v in pairs({Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.OuterRimBuilding)}) do
+        if Logic.IsConstructionComplete(v) == 1 then
+            table.insert(Buildings, v);
+        end
+    end
+    for k,v in pairs({Logic.GetPlayerEntitiesInCategory(_PlayerID, EntityCategories.CityBuilding)}) do
+        if Logic.IsConstructionComplete(v) == 1 then
+            table.insert(Buildings, v);
+        end
+    end
+    -- Check settlers
+    local Conscripts = {};
+    for _, BuildingID in pairs(Buildings) do
+        for _, SettlerID in pairs({Logic.GetWorkersForBuilding(BuildingID)}) do
+            if SettlerID > 0 and not IsSettlerSuspended(SettlerID) then
+                local Task = Logic.GetCurrentTaskList(SettlerID);
+                if Lib.MilitiaSystem.Config.WorkerTasks[Task] then
+                    table.insert(Conscripts, SettlerID);
+                end
+            end
+        end
+    end
+    -- Return result
+    return Conscripts;
 end
 
 function Lib.MilitiaSystem.Shared:CreateTechnologies()

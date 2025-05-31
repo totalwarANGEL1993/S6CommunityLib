@@ -2,6 +2,12 @@ Lib.Register("module/city/MilitiaSystem_Text");
 
 Lib.MilitiaSystem = Lib.MilitiaSystem or {};
 Lib.MilitiaSystem.Text = {
+    Message = {
+        NoConscripts = {
+            de = "Nicht genügend Rekruten verfügbar!",
+            en = "Not enough conscripts available!",
+        },
+    },
     Unit = {
         ["U_MilitaryBandit_Melee_AS"] = {
             Title = {de = "Hindun Schwertkämpfer", en = "Hindun Swordmen"},

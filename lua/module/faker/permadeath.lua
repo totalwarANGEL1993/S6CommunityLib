@@ -79,8 +79,11 @@ function Lib.Permadeath.Global:ResumeSettler(_Entity)
     and Logic.IsEntityInCategory(EntityID, EntityCategories.Worker) == 0 then
         return;
     end
-    -- "Resume" settler
-    DestroyEntity(EntityID);
+    -- Resume settler
+    local x, y = Logic.GetBuildingApproachPosition(StoreHouseID);
+    Logic.DEBUG_SetSettlerPosition(EntityID, x, y);
+    Logic.SetVisible(EntityID, true);
+    Logic.SetTaskList(EntityID, TaskLists.TL_WORKER_IDLE);
     -- Remove from suspension list
     if self.SuspendedSettlers[PlayerID][EntityID] then
         ExecuteLocal("Lib.Permadeath.Local.SuspendedSettlers[%d][%d] = nil", PlayerID, EntityID);
