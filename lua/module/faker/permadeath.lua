@@ -19,6 +19,7 @@ Lib.Register("module/faker/Permadeath");
 -- Global initalizer method
 function Lib.Permadeath.Global:Initialize()
     if not self.IsInstalled then
+        Report.SettlerSuspensionElapsed = CreateReport("Event_SettlerSuspensionElapsed");
         Report.FireAlarmDeactivated_Internal = CreateReport("Event_FireAlarmDeactivated_Internal");
         Report.FireAlarmActivated_Internal = CreateReport("Event_FireAlarmActivated_Internal");
         Report.RepairAlarmDeactivated_Internal = CreateReport("Event_RepairAlarmFeactivated");
@@ -204,6 +205,8 @@ function Lib.Permadeath.Global:ResumeSettlersAfterSuspension(_Turn)
         for k,v in pairs(self.SuspendedSettlers[PlayerID]) do
             if v[2] > -1 and v[1] + v[2] < CurrentTime then
                 self:ResumeSettler(k);
+                SendReportToLocal(Report.SettlerSuspensionElapsed, k);
+                SendReport(Report.SettlerSuspensionElapsed, k);
             end
         end
     end
@@ -228,6 +231,7 @@ end
 -- Local initalizer method
 function Lib.Permadeath.Local:Initialize()
     if not self.IsInstalled then
+        Report.SettlerSuspensionElapsed = CreateReport("Event_SettlerSuspensionElapsed");
         Report.FireAlarmDeactivated_Internal = CreateReport("Event_FireAlarmDeactivated_Internal");
         Report.FireAlarmActivated_Internal = CreateReport("Event_FireAlarmActivated_Internal");
         Report.RepairAlarmDeactivated_Internal = CreateReport("Event_RepairAlarmFeactivated");
