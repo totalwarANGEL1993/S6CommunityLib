@@ -28,7 +28,7 @@ API.ThiefDisableCisternEffect = ThiefDisableCisternEffect;
 
 --- An entity has been spawned.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 --- * `PlayerID` - ID of player
 --- * `SpawnerID` - ID of Spawner
@@ -36,21 +36,21 @@ Report.EntitySpawned = anyInteger;
 
 --- A settler joined the settlement.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 --- * `PlayerID` - ID of player
 Report.SettlerAttracted = anyInteger;
 
 --- An entity has been destroyed by any means.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 --- * `PlayerID` - ID of player
 Report.EntityDestroyed = anyInteger;
 
 --- An entity has been hurt.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `AttackingEntityID` - ID of attacking entity
 --- * `AttackingPlayerID` - Owner of attacking entity
 --- * `AttackedEntityID` - ID of attacked entity
@@ -59,7 +59,7 @@ Report.EntityHurt = anyInteger;
 
 --- An entity has been killed.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `KilledEntityID` - ID of killed entity
 --- * `KilledPlayerID` - Owner of killed entity
 --- * `KillerEntityID` - ID of killing entity
@@ -68,7 +68,7 @@ Report.EntityKilled = anyInteger;
 
 --- The ownership of an entity has changed.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `OldIDList` - List of old entity IDs
 --- * `OldPlayer` - Previous owner
 --- * `NewIDList` - List of new entity IDs
@@ -77,7 +77,7 @@ Report.EntityOwnerChanged = anyInteger;
 
 --- The amound of resourced changed in the entity.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 --- * `GoodType` - Type of resource
 --- * `OldAmount` - Old amount
@@ -86,14 +86,14 @@ Report.EntityResourceChanged = anyInteger;
 
 --- A building construction has finished.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `BuildingID` - ID of building
 --- * `PlayerID` - ID of player
 Report.BuildingConstructed = anyInteger;
 
 --- A building upgrade has finished.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `BuildingID` - ID of building
 --- * `PlayerID` - ID of player
 --- * `NewUpgradeLevel` - 
@@ -101,7 +101,7 @@ Report.BuildingUpgraded = anyInteger;
 
 --- An upgrade level has collapsed.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `BuildingID` - ID of building
 --- * `PlayerID` - ID of player
 --- * `NewUpgradeLevel` - 
@@ -109,7 +109,7 @@ Report.BuildingUpgradeCollapsed = anyInteger;
 
 --- A building was infiltrated by a thief.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `ThiefID` - ID of thief
 --- * `PlayerID` - ID of player
 --- * `BuildingID` - ID of building
@@ -118,7 +118,7 @@ Report.ThiefInfiltratedBuilding = anyInteger;
 
 --- A thef has delivered earnings.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `ThiefID` - ID of thief
 --- * `PlayerID` - ID of player
 --- * `BuildingID` - ID of building

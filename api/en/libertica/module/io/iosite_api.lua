@@ -3,7 +3,7 @@
 --- The territorium where the construction site is located must be owned by
 --- the player who will construct the building.
 ---
---- #### Parameters:
+--- #### Fields `_Data`:
 --- * `ScriptName`            - Scriptname of location
 --- * `PlayerID`              - Constructing player
 --- * `Type`                  - Type of building

@@ -8,8 +8,7 @@
 
 --- Fügt einer Entität einen NPC hinzu.
 ---
---- #### Felder der Tabelle
---- 
+--- #### Fields `_Data`:
 --- * `ScriptName`        - Skriptname der Entität (obligatorisch)
 --- * `Active`            - NPC ist aktiv
 --- * `Callback`          - Funktion, die bei der Aktivierung aufgerufen wird
@@ -88,7 +87,7 @@ API.NpcDispose = NpcDispose;
 
 --- Aktualisiert den NPC mit der Datentabelle.
 ---
---- #### Felder der Tabelle
+--- #### Fields `_Data`:
 --- * `ScriptName`        - Skriptname der Entität (obligatorisch)
 --- * `Callback`          - Funktion, die bei der Aktivierung aufgerufen wird
 --- * `Condition`         - Bedingung, die vor der Aktivierung überprüft wird
