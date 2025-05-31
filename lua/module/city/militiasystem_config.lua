@@ -155,6 +155,10 @@ Lib.MilitiaSystem.Config = {
         {"R_Mercenary_Melee",          {de = "Miliz Nahkämpfer",        en = "Militia Infantry",},   {9,  9, 0}, 0},
         {"R_Mercenary_Ranged",         {de = "Miliz Fernkämpfer",       en = "Militia Archers",},    {9, 10, 0}, 0},
     },
+    WorkerTasks = {
+        ["TL_WORKER_IDLE"] = true,
+        ["TL_WORKER_IDLE_CHAT"] = true,
+    },
 };
 
 MilitiaSkill = Lib.MilitiaSystem.Config.Skills;
