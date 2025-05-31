@@ -89,7 +89,7 @@ API.IsCinematicEventActive = IsCinematicEventActive;
 --- und sofort angezeigt. Mehr als 1 Leerzeichen hintereinander werden automatisch auf 1 Leerzeichen
 --- abgeschnitten (durch den Spiel-Engine).
 ---
---- #### Felder der Tabelle
+--- #### Fields `_Data`:
 --- * `Text`         - Anzuzeigender Text
 --- * `Name`         - (Optional) Name für das Ereignis
 --- * `PlayerID`     - (Optional) Spieler, dessen Text angezeigt wird

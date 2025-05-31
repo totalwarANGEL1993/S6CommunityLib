@@ -24,7 +24,7 @@
 --- * `CostResourceCartType`   - (Optional) Typ des Kostenressourcenkarrens
 --- * `CostGoldCartType`       - (Optional) Typ des Kostengoldkarrens
 ---
---- #### Felder der Tabelle
+--- #### Fields `_Description`:
 --- * `ScriptName`             - Skriptname des Objekts
 --- * `Texture`                - (Optional) Tabelle mit Koordinaten
 --- * `Title`                  - (Optional) Titel des Tooltipps

@@ -4,7 +4,7 @@
 
 --- Erstellt eine vergrabene Eisenerzmine.
 ---
---- #### Parameters:
+--- #### Fields `_Data`:
 --- * `ScriptName`            - Skriptname der Position
 --- * `Title`                 - (Optional) Tooltip-Titel
 --- * `Text`                  - (Optional) Tooltip-Text
@@ -22,7 +22,7 @@ API.CreateIOIronMine = CreateIOIronMine;
 
 --- Erstellt eine vergrabene Steingrube.
 ---
---- #### Parameters:
+--- #### Fields `_Data`:
 --- * `ScriptName`            - Skriptname der Position
 --- * `Title`                 - (Optional) Tooltip-Titel
 --- * `Text`                  - (Optional) Tooltip-Text

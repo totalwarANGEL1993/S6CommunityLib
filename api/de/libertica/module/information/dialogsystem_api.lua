@@ -8,16 +8,16 @@
 
 --- Startet einen Dialog.
 ---
---- Der Dialog selbst kann verschiedene Attribute bekommen.
---- * `Starting`                - Funktion, die aufgerufen wird, wenn der Dialog gestartet wird              
---- * `Finished`                - Funktion, die aufgerufen wird, wenn der Dialog beendet ist             
---- * `RestoreCamera`           - Kameraposition wird am Ende des Dialogs gespeichert und wiederhergestellt 
---- * `RestoreGameSpeed`        - Spielgeschwindigkeit wird am Ende des Dialogs gespeichert und wiederhergestellt      
---- * `EnableGlobalImmortality` - Während der Dialoge sind alle Einheiten unverwundbar        
---- * `EnableSky`               - Anzeige des Himmels während des Dialogs                   
---- * `EnableFoW`               - Anzeige des Nebels des Krieges während des Dialogs           
---- * `EnableBorderPins`        - Anzeige der Grenznadeln während des Dialogs
---- * `HideNotes`               - Nachrichten nicht anzeigen
+--- #### Fields `_Dialog`:
+--- * `Starting`:                (optional) <b>function</b> Funktion, die beim Starten der Einleitung aufgerufen wird              
+--- * `Finished`:                (optional) <b>function</b> Funktion, die beim Beenden der Einleitung aufgerufen wird    
+--- * `RestoreCamera`:           (optional) <b>boolean</b> Kameraposition wird am Ende der Einleitung gespeichert und wiederhergestellt 
+--- * `RestoreGameSpeed`:        (optional) <b>boolean</b> Spielgeschwindigkeit wird am Ende der Einleitung gespeichert und wiederhergestellt      
+--- * `EnableGlobalImmortality`: (optional) <b>boolean</b> Während Einleitungen sind alle Entitäten unverwundbar     
+--- * `EnableSky`:               (optional) <b>boolean</b> Zeigt den Himmel während der Einleitung an                   
+--- * `EnableFoW`:               (optional) <b>boolean</b> Zeigt den Nebel des Krieges während der Einleitung an 
+--- * `EnableBorderPins`:        (optional) <b>boolean</b> Zeigt die Randnadeln während der Einleitung an     
+--- * `HideNotes`:               (optional) <b>boolean</b> Nachrichten nicht anzeigen
 ---
 --- #### Example
 ---
@@ -74,19 +74,23 @@ API.AddDialogPages = AddDialogPages;
 
 --- Erstellt eine Seite.
 ---
---- Die Seite kann verschiedene Attribute bekommen.
---- * `Actor`      - (optional) Spieler-ID des Sprechers
---- * `Title`      - (optional) Name des Akteurs (nur mit Akteur)
---- * `Text`       - (optional) Angezeigter Seitentext
---- * `Speech`     - Pfad zum Voiceover (MP3-Datei)
---- * `Position`   - Position der Kamera (nicht mit Ziel)
---- * `Target`     - Einheit, der die Kamera folgt (nicht mit Position)
---- * `Distance`   - (optional) Entfernung der Kamera
---- * `Action`     - (optional) Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
---- * `FadeIn`     - (optional) Dauer des Einblendens aus Schwarz
---- * `FadeOut`    - (optional) Dauer des Ausblendens zu Schwarz
---- * `FaderAlpha` - (optional) Maskenalpha
---- * `MC`         - (optional) Tabelle mit Auswahlmöglichkeiten zum Verzweigen in Dialogen
+--- #### Fields `_Data`:
+--- * `Actor`:      (optional) <b>integer</b> Spieler-ID des Sprechers
+--- * `Title`:      (optional) <b>any</b> Name des Akteurs (nur mit Akteur)
+--- * `Text`:       (optional) <b>any</b> Angezeigter Seitentext
+--- * `Speech`:     <b>string</b> Pfad zum Voiceover (MP3-Datei)
+--- * `Position`:   <b>string</b> Position der Kamera (nicht mit Ziel)
+--- * `Target`:     <b>string</b> Einheit, der die Kamera folgt (nicht mit Position)
+--- * `Distance`:   (optional) <b>float</b> Entfernung der Kamera
+--- * `Action`:     (optional) <b>function</b> Funktion, die aufgerufen wird, wenn die Seite angezeigt wird
+--- * `FadeIn`:     (optional) <b>float</b> Dauer des Einblendens aus Schwarz
+--- * `FadeOut`:    (optional) <b>float</b> Dauer des Ausblendens zu Schwarz
+--- * `FaderAlpha`: (optional) <b>float</b> Maskenalpha
+--- * `MC`:         (optional) <b>table</b> Tabelle mit Auswahlmöglichkeiten zum Verzweigen in Dialogen
+--- 
+--- #### Fields `_Data.MC`:
+--- * `[1]`: <b>any</b> Angezeigter Text (String oder Language Table)
+--- * `[2]`: <b>any</b> Sprungziel (String oder Funktion)
 ---
 --- #### Example:
 --- Eine einfache Seite erstellen.
@@ -144,6 +148,8 @@ API.AddDialogPages = AddDialogPages;
 --- };
 --- ```
 ---
+---@param _Data table Seitendaten
+---@return table Erzeugte Seite
 function AP(_Data)
     return {};
 end
@@ -153,19 +159,7 @@ end
 --- Die Funktion kann einen automatischen Seitennamen basierend auf dem Seitenindex erstellen. Ein
 --- Name kann ein optionales Parameter am Anfang sein.
 ---
---- #### Einstellungen
---- Die Funktion erwartet die folgenden Parameter:
---- 
---- * `Name`         - (Optional) Name der Seite
---- * `Sender`       - Spieler-ID des Akteurs
---- * `Target`       - Einheit, auf die die Kamera schaut
---- * `Title`        - Angezeigter Seitentitel
---- * `Text`         - Angezeigter Seitentext
---- * `DialogCamera` - Verwendung der Nahkamera
---- * `Action`       - (Optional) Aktion, wenn die Seite angezeigt wird
----
 --- #### Example:
----
 --- ```lua
 --- -- Totalaufnahme
 --- ASP("Titel", "Einige wichtige Texte.", false, "HQ");

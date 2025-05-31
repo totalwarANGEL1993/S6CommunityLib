@@ -13,7 +13,7 @@ Lib.Quest = Lib.Quest or {};
 
 --- Erstellt eine normale Quest.
 ---
---- #### Felder der Tabelle
+--- #### Fields `_Data`:
 --- * `Name`        - Eindeutiger Name für die Quest
 --- * `Sender`      - Spieler-ID des Quest-Gebers
 --- * `Receiver`    - Spieler-ID des Quest-Empfängers

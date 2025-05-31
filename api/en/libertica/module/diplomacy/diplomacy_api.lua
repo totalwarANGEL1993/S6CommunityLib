@@ -37,7 +37,7 @@ end
 
 --- The diplomatic relations between two players changed.
 ---
---- #### Parameters:s
+--- #### Parameters:
 --- * `PlayerID1` - Frist player ID
 --- * `PlayerID2` - Second player ID
 --- * `OldState`  - Previous diplomatic state
