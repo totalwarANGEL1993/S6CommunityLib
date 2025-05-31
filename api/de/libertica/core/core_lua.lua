@@ -1,4 +1,4 @@
---- Fügt zusätzliche Funktionalität zur Table-, String- und Math-API hinzu.
+--- Stellt erweitere Lua-Basisfunktionen bereit.
 
 --- Vergleicht zwei Tabellen mit einer Vergleichsfunktion.
 --- @param t1 table Erste Tabelle
