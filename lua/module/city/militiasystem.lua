@@ -1,17 +1,17 @@
 Lib.MilitiaSystem = Lib.MilitiaSystem or {};
 Lib.MilitiaSystem.Name = "MilitiaSystem";
 Lib.MilitiaSystem.Global = {
-    MilitiaAllocation = {},
     ConscriptMapping = {},
-    TypeSkills = {},
 };
 Lib.MilitiaSystem.Local  = {
     Buttons = {},
-    MilitiaAllocation = {},
     ConscriptCount = {},
+    MilitiaMapping = {},
+};
+Lib.MilitiaSystem.Shared = {
+    MilitiaAllocation = {},
     TypeSkills = {},
 };
-Lib.MilitiaSystem.Shared = {};
 
 Lib.Require("comfort/GetBattalionSizeBySoldierType");
 Lib.Require("core/Core");
@@ -35,12 +35,11 @@ function Lib.MilitiaSystem.Global:Initialize()
         Lib.MilitiaSystem.Shared:CreateTechnologies();
 
         self:InitDamageCalculationCallback();
-        self:InitUnitTypeSkills();
         self:InitUnitDestroyedCallback();
 
         for PlayerID = 1, 8 do
             self.ConscriptMapping[PlayerID] = {};
-            self:SetDefaultUnitTypeAllocation(PlayerID);
+            Lib.MilitiaSystem.Shared:SetDefaultUnitTypeAllocation(PlayerID);
         end
 
         -- Garbage collection
@@ -84,7 +83,7 @@ function Lib.MilitiaSystem.Global:BuyMilitia(_PlayerID, _Type)
         return false;
     end
     -- Check constrips
-    local Conscripts = self:GetConscripts(_PlayerID);
+    local Conscripts = Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID);
     if #Conscripts < GetBattalionSizeBySoldierType(_Type) then
         return;
     end
@@ -100,33 +99,10 @@ function Lib.MilitiaSystem.Global:BuyMilitia(_PlayerID, _Type)
         local ID = table.remove(Conscripts, math.random(1, #Conscripts));
         x,y,_ = Logic.EntityGetPos(ID);
         Logic.DEBUG_SetSettlerPosition(Soldiers[i+1], x, y);
+        ExecuteLocal("Lib.MilitiaSystem.Local.MilitiaMapping[%d][%d] = true", _PlayerID, UnitID);
         self.ConscriptMapping[_PlayerID][Soldiers[i+1]] = ID;
         SuspendSettler(ID);
     end
-end
-
-function Lib.MilitiaSystem.Global:SetDefaultUnitTypeAllocation(_PlayerID)
-    local Melee, Ranged = self:GetDefaultMilitiaUnitTypes();
-    ExecuteLocal("Lib.MilitiaSystem.Local.MilitiaAllocation[%d] = {%d, %d}", _PlayerID, Melee, Ranged);
-    self.MilitiaAllocation[_PlayerID] = {Melee, Ranged};
-end
-
-function Lib.MilitiaSystem.Global:SetRandomUnitTypeAllocation(_PlayerID)
-    local Melee, Ranged = self:GetRandomMilitiaUnitTypes(_PlayerID);
-    ExecuteLocal("Lib.MilitiaSystem.Local.MilitiaAllocation[%d] = {%d, %d}", _PlayerID, Melee, Ranged);
-    self.MilitiaAllocation[_PlayerID] = {Melee, Ranged};
-end
-
-function Lib.MilitiaSystem.Global:GetRandomMilitiaUnitTypes(_PlayerID)
-    return Lib.MilitiaSystem.Shared:GetRandomMilitiaUnitTypes(_PlayerID, self.MilitiaAllocation);
-end
-
-function Lib.MilitiaSystem.Global:GetDefaultMilitiaUnitTypes()
-    return Lib.MilitiaSystem.Shared:GetDefaultMilitiaUnitTypes();
-end
-
-function Lib.MilitiaSystem.Global:GetConscripts(_PlayerID)
-    return Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID);
 end
 
 function Lib.MilitiaSystem.Global:SetRequiredRank(_Title, _Tech)
@@ -141,41 +117,32 @@ function Lib.MilitiaSystem.Global:SetRequiredRank(_Title, _Tech)
     end
 end
 
-function Lib.MilitiaSystem.Global:InitUnitTypeSkills()
-    self.TypeSkills["U_MilitaryBandit_Melee_AS"] = MilitiaSkill.Execution;
-    self.TypeSkills["U_MilitaryBandit_Ranged_AS"] = MilitiaSkill.Critical;
-    self.TypeSkills["U_MilitaryBandit_Melee_ME"] = MilitiaSkill.Concussion;
-    self.TypeSkills["U_MilitaryBandit_Ranged_ME"] = MilitiaSkill.BraveStand;
-    self.TypeSkills["U_MilitaryBandit_Melee_NA"] = MilitiaSkill.BraveStand;
-    self.TypeSkills["U_MilitaryBandit_Ranged_NA"] = MilitiaSkill.Doge;
-    self.TypeSkills["U_MilitaryBandit_Melee_NE"] = MilitiaSkill.Bleeding;
-    self.TypeSkills["U_MilitaryBandit_Ranged_NE"] = MilitiaSkill.Bleeding;
-    self.TypeSkills["U_MilitaryBandit_Melee_SE"] = MilitiaSkill.Doge;
-    self.TypeSkills["U_MilitaryBandit_Ranged_SE"] = MilitiaSkill.Critical;
-end
-
 function Lib.MilitiaSystem.Global:GetUnitTypeSkill(_Entity)
     local ID = GetID(_Entity)
     local Type = Logic.GetEntityType(ID);
     local TypeName = Logic.GetEntityTypeName(Type);
-    return self.TypeSkills[TypeName];
+    return Lib.MilitiaSystem.Shared.TypeSkills[TypeName];
 end
 
 function Lib.MilitiaSystem.Global:InitDamageCalculationCallback()
     GameCallback_Lib_CalculateBattleDamage = function(_AttackerID, _AttackerPlayer, _TargetID, _TargetPlayer, _Damage)
-        return Lib.MilitiaSystem.Global:CalculateBattleDamage(_AttackerID, _TargetID, _Damage);
+        return Lib.MilitiaSystem.Global:CalculateBattleDamage(_AttackerID, _AttackerPlayer, _TargetID, _TargetPlayer, _Damage);
     end
 end
 
-function Lib.MilitiaSystem.Global:CalculateBattleDamage(_AttackerID, _TargetID, _Damage)
+function Lib.MilitiaSystem.Global:CalculateBattleDamage(_AttackerID, _AttackerPlayer, _TargetID, _TargetPlayer, _Damage)
     local Damage = _Damage;
-    local AttackerSkill = self:GetUnitTypeSkill(_AttackerID);
-    if AttackerSkill then
-        Damage = AttackerSkill:InvokeSkill(_AttackerID, _AttackerID, _TargetID, _Damage);
+    if self.ConscriptMapping[_AttackerPlayer] then
+        local AttackerSkill = self:GetUnitTypeSkill(_AttackerID);
+        if AttackerSkill and self.ConscriptMapping[_AttackerPlayer][_AttackerID] then
+            Damage = AttackerSkill:InvokeSkill(_AttackerID, _AttackerID, _TargetID, _Damage);
+        end
     end
-    local TargetSkill = self:GetUnitTypeSkill(_AttackerID);
-    if TargetSkill then
-        Damage = TargetSkill:InvokeSkill(_TargetID, _AttackerID, _TargetID, _Damage);
+    if self.ConscriptMapping[_TargetPlayer] then
+        local TargetSkill = self:GetUnitTypeSkill(_TargetID);
+        if TargetSkill and self.ConscriptMapping[_TargetPlayer][_TargetID] then
+            Damage = TargetSkill:InvokeSkill(_TargetID, _AttackerID, _TargetID, _Damage);
+        end
     end
     return Damage;
 end
@@ -189,6 +156,7 @@ function Lib.MilitiaSystem.Global:InitUnitDestroyedCallback()
             local EntityID = Event.GetEntityID();
             local PlayerID = Logic.EntityGetPlayer(EntityID);
             local Health = Logic.GetEntityHealth(EntityID);
+            local UnitID = Logic.SoldierGetLeaderEntityID(EntityID);
             if self.ConscriptMapping[PlayerID] then
                 if self.ConscriptMapping[PlayerID][EntityID] then
                     local ID = self.ConscriptMapping[PlayerID][EntityID];
@@ -197,6 +165,9 @@ function Lib.MilitiaSystem.Global:InitUnitDestroyedCallback()
                     else
                         ResumeSettler(ID);
                     end
+
+                    ExecuteLocal("Lib.MilitiaSystem.Local.MilitiaMapping[%d][%d] = nil", PlayerID, UnitID);
+                    self.ConscriptMapping[PlayerID][EntityID] = nil;
                 end
             end
         end
@@ -215,10 +186,12 @@ function Lib.MilitiaSystem.Local:Initialize()
 
         for PlayerID = 1, 8 do
             self.ConscriptCount[PlayerID] = 0;
+            self.MilitiaMapping[PlayerID] = {};
+            Lib.MilitiaSystem.Shared:SetDefaultUnitTypeAllocation(PlayerID);
         end
 
-        self:InitUnitTypeSkills();
         self:InitConscriptUpdate();
+        self:InitOverwriteMultiselection();
 
         for k, v in pairs(Lib.MilitiaSystem.Text.Unit) do
             AddStringText("UI_ObjectNames/" ..k, v.Title);
@@ -298,7 +271,7 @@ end
 
 function Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(_Index, _WidgetID, _EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
+    local UnitType = Lib.MilitiaSystem.Shared.MilitiaAllocation[PlayerID][_Index];
     local UnitTypeName = Logic.GetEntityTypeName(UnitType);
     local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
     local MilitaryLimit = Logic.GetCurrentSoldierLimit(PlayerID);
@@ -320,7 +293,7 @@ end
 
 function Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(_Index, _WidgetID, _EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
+    local UnitType = Lib.MilitiaSystem.Shared.MilitiaAllocation[PlayerID][_Index];
     local UnitTypeName = Logic.GetEntityTypeName(UnitType);
     local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
     local Data = Lib.MilitiaSystem.Config.UnitData[UnitTypeName];
@@ -339,10 +312,15 @@ end
 
 function Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(_Index, _WidgetID, _EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    local UnitType = Lib.MilitiaSystem.Local.MilitiaAllocation[PlayerID][_Index];
+    local UnitType = Lib.MilitiaSystem.Shared.MilitiaAllocation[PlayerID][_Index];
     local UnitTypeName = Logic.GetEntityTypeName(UnitType);
     local Data = Lib.MilitiaSystem.Config.UnitData[UnitTypeName];
     ChangeIcon(_WidgetID, Data[3]);
+    if Lib.MilitiaSystem.Shared.TypeSkills[UnitTypeName] then
+        XGUIEng.SetMaterialColor(_WidgetID, 7, 55, 255, 0, 255);
+    else
+        XGUIEng.SetMaterialColor(_WidgetID, 7, 255, 255, 255, 255);
+    end
     if Logic.TechnologyGetState(PlayerID, Technologies[Data[1]]) ~= TechnologyStates.Researched
     or Logic.TechnologyGetState(PlayerID, Technologies[Data[2]]) ~= TechnologyStates.Researched then
         XGUIEng.DisableButton(_WidgetID, 1);
@@ -351,24 +329,11 @@ function Lib.MilitiaSystem.Local:CastleMilitiaButtonUpdate(_Index, _WidgetID, _E
     end
 end
 
-function Lib.MilitiaSystem.Local:InitUnitTypeSkills()
-    self.TypeSkills["U_MilitaryBandit_Melee_AS"] = MilitiaSkill.Execution;
-    self.TypeSkills["U_MilitaryBandit_Ranged_AS"] = MilitiaSkill.Critical;
-    self.TypeSkills["U_MilitaryBandit_Melee_ME"] = MilitiaSkill.Concussion;
-    self.TypeSkills["U_MilitaryBandit_Ranged_ME"] = MilitiaSkill.BraveStand;
-    self.TypeSkills["U_MilitaryBandit_Melee_NA"] = MilitiaSkill.BraveStand;
-    self.TypeSkills["U_MilitaryBandit_Ranged_NA"] = MilitiaSkill.Doge;
-    self.TypeSkills["U_MilitaryBandit_Melee_NE"] = MilitiaSkill.Bleeding;
-    self.TypeSkills["U_MilitaryBandit_Ranged_NE"] = MilitiaSkill.Bleeding;
-    self.TypeSkills["U_MilitaryBandit_Melee_SE"] = MilitiaSkill.Doge;
-    self.TypeSkills["U_MilitaryBandit_Ranged_SE"] = MilitiaSkill.Critical;
-end
-
 function Lib.MilitiaSystem.Local:GetUnitTypeSkill(_Entity)
     local ID = GetID(_Entity)
     local Type = Logic.GetEntityType(ID);
     local TypeName = Logic.GetEntityTypeName(Type);
-    return self.TypeSkills[TypeName];
+    return Lib.MilitiaSystem.Shared.TypeSkills[TypeName];
 end
 
 function Lib.MilitiaSystem.Local:GetUnitScreenName(_Type)
@@ -379,24 +344,53 @@ end
 function Lib.MilitiaSystem.Local:GetUnitScreenDescription(_Type)
     local TypeName = Logic.GetEntityTypeName(_Type);
     local Text = GetStringText("UI_ObjectDescription/Abilities_" ..TypeName);
-    if self.TypeSkills[TypeName] then
-        local SkillName = self.TypeSkills[TypeName].Name;
+    if Lib.MilitiaSystem.Shared.TypeSkills[TypeName] then
+        local SkillName = Lib.MilitiaSystem.Shared.TypeSkills[TypeName].Name;
         local SkillText = Lib.MilitiaSystem.Text.Skills[SkillName];
         Text = Text.. "{cr}" .. Localize(SkillText);
     end
     return Text;
 end
 
-function Lib.MilitiaSystem.Local:GetRandomMilitiaUnitTypes(_PlayerID)
-    return Lib.MilitiaSystem.Shared:GetRandomMilitiaUnitTypes(_PlayerID, self.MilitiaAllocation);
-end
+function Lib.MilitiaSystem.Local:InitOverwriteMultiselection()
+    self.Orig_GUI_MultiSelection_IconMouseOver = GUI_MultiSelection.IconMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_MultiSelection.IconMouseOver = function()
+        local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
+        local CurrentMotherID = XGUIEng.GetWidgetsMotherID(CurrentWidgetID);
+        local CurrentMotherName = XGUIEng.GetWidgetNameByID(CurrentMotherID);
+        local Index = tonumber(CurrentMotherName);
+        local EntityID = g_MultiSelection.EntityList[Index];
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
+        if Lib.MilitiaSystem.Local.MilitiaMapping[PlayerID] then
+            if Lib.MilitiaSystem.Local.MilitiaMapping[PlayerID][EntityID] then
+                local EntityType = Logic.LeaderGetSoldiersType(EntityID);
+                local Title = self:GetUnitScreenName(EntityType);
+                local Text = self:GetUnitScreenDescription(EntityType);
+                SetTooltipNormal(Title, Text);
+                return;
+            end
+        end
+        Lib.MilitiaSystem.Local.Orig_GUI_MultiSelection_IconMouseOver();
+    end
 
-function Lib.MilitiaSystem.Local:GetDefaultMilitiaUnitTypes()
-    return Lib.MilitiaSystem.Shared:GetDefaultMilitiaUnitTypes();
-end
-
-function Lib.MilitiaSystem.Local:GetConscripts(_PlayerID)
-    return Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID);
+    self.Orig_GUI_MultiSelection_IconUpdate = GUI_MultiSelection.IconUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
+    GUI_MultiSelection.IconUpdate = function()
+        Lib.MilitiaSystem.Local.Orig_GUI_MultiSelection_IconUpdate();
+        local CurrentWidgetID = XGUIEng.GetCurrentWidgetID();
+        local CurrentMotherID = XGUIEng.GetWidgetsMotherID(CurrentWidgetID);
+        local CurrentMotherName = XGUIEng.GetWidgetNameByID(CurrentMotherID);
+        local Index = CurrentMotherName + 0;
+        local EntityID = g_MultiSelection.EntityList[Index];
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
+        if not Lib.MilitiaSystem.Local.MilitiaMapping[PlayerID]
+        or not Lib.MilitiaSystem.Local.MilitiaMapping[PlayerID][EntityID] then
+            XGUIEng.SetMaterialColor(CurrentWidgetID, 7, 255, 255, 255, 255);
+        else
+            XGUIEng.SetMaterialColor(CurrentWidgetID, 7, 55, 255, 0, 255);
+        end
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -407,7 +401,7 @@ function Lib.MilitiaSystem.Local:InitConscriptUpdate()
         function()
             local PlayerID = (Logic.GetCurrentTurn() % 10) +1;
             if self.ConscriptCount[PlayerID] and Logic.PlayerGetIsHumanFlag(PlayerID) then
-                local Conscripts = self:GetConscripts(PlayerID);
+                local Conscripts = Lib.MilitiaSystem.Shared:GetConscripts(PlayerID);
                 self.ConscriptCount[PlayerID] = #Conscripts;
             end
         end
@@ -511,6 +505,42 @@ function Lib.MilitiaSystem.Shared:CreateTechnologies()
             end
         end
     end
+end
+
+function Lib.MilitiaSystem.Shared:ActivateUnitTypeSkills()
+    self.TypeSkills["U_MilitaryBandit_Melee_AS"] = MilitiaSkill.Execution;
+    self.TypeSkills["U_MilitaryBandit_Ranged_AS"] = MilitiaSkill.Critical;
+    self.TypeSkills["U_MilitaryBandit_Melee_ME"] = MilitiaSkill.Concussion;
+    self.TypeSkills["U_MilitaryBandit_Ranged_ME"] = MilitiaSkill.BraveStand;
+    self.TypeSkills["U_MilitaryBandit_Melee_NA"] = MilitiaSkill.BraveStand;
+    self.TypeSkills["U_MilitaryBandit_Ranged_NA"] = MilitiaSkill.Doge;
+    self.TypeSkills["U_MilitaryBandit_Melee_NE"] = MilitiaSkill.Bleeding;
+    self.TypeSkills["U_MilitaryBandit_Ranged_NE"] = MilitiaSkill.Bleeding;
+    self.TypeSkills["U_MilitaryBandit_Melee_SE"] = MilitiaSkill.Doge;
+    self.TypeSkills["U_MilitaryBandit_Ranged_SE"] = MilitiaSkill.Critical;
+end
+
+function Lib.MilitiaSystem.Shared:DeactivateUnitTypeSkills()
+    self.TypeSkills["U_MilitaryBandit_Melee_AS"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Ranged_AS"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Melee_ME"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Ranged_ME"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Melee_NA"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Ranged_NA"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Melee_NE"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Ranged_NE"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Melee_SE"] = nil;
+    self.TypeSkills["U_MilitaryBandit_Ranged_SE"] = nil;
+end
+
+function Lib.MilitiaSystem.Shared:SetDefaultUnitTypeAllocation(_PlayerID)
+    local Melee, Ranged = self:GetDefaultMilitiaUnitTypes();
+    self.MilitiaAllocation[_PlayerID] = {Melee, Ranged};
+end
+
+function Lib.MilitiaSystem.Shared:SetRandomUnitTypeAllocation(_PlayerID)
+    local Melee, Ranged = self:GetRandomMilitiaUnitTypes(_PlayerID);
+    self.MilitiaAllocation[_PlayerID] = {Melee, Ranged};
 end
 
 -- -------------------------------------------------------------------------- --
