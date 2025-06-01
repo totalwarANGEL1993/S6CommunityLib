@@ -1,28 +1,12 @@
 --- Improves on interactive objects.
+---
+--- (Almost) All entities can be used as interactive object not just those
+--- that are supposed to. An object is described by a table and (almost) all
+--- keys are optional.
 
 
 
 --- Adds an interaction to a object.
----
---- #### Fields `_Description`:
---- * `ScriptName`             - Scriptname of object
---- * `Texture`                - (Optional) table with coordinates
---- * `Title`                  - (Optional) Title of tooltip
---- * `Text`                   - (Optional) Text of tooltip
---- * `Distance`               - (Optional) Activation distance
---- * `Player`                 - (optional) List of players
---- * `Waittime`               - (optional) Activation waittime
---- * `Replacement`            - (Optional) Type to replace with
---- * `Costs`                  - (Optional) Activation cost table
---- * `Reward`                 - (Optional) Activation reward table
---- * `State`                  - (Optional) Actvation behavior
---- * `Condition`              - (Optional) Activation condition function
---- * `ConditionInfo`          - (Optional) Condition failure text
---- * `Action`                 - (Optional) Activation callback function
---- * `RewardResourceCartType` - (Optional) Type of reward resource cart
---- * `RewardGoldCartType`     - (Optional) Type of reward gold cart
---- * `CostResourceCartType`   - (Optional) Type of cost resource cart
---- * `CostGoldCartType`       - (Optional) Type of cost gold cart
 ---
 --- #### Fields `_Description`:
 --- * `ScriptName`             - Scriptname of object
@@ -189,29 +173,29 @@ API.InteractiveObjectDeactivate = InteractiveObjectDeactivate;
 --- The player clicked the interaction button.
 --- 
 --- #### Parameters:
---- * `ScriptName` - Scriptname of entity
---- * `KnightID`   - ID of activating hero
---- * `PlayerID`   - ID of activating player
+--- * `ScriptName`: <b>string</b> Scriptname of entity
+--- * `KnightID`:   <b>integer</b> ID of activating hero
+--- * `PlayerID`:   <b>integer</b> ID of activating player
 Report.ObjectClicked = anyInteger;
 
 --- The interaction with the object was successfull.
 --- If the object has costs the activation concludes when the costs arrive.
 --- 
 --- #### Parameters:
---- * `ScriptName` - Scriptname of entity
---- * `KnightID`   - ID of activating hero
---- * `PlayerID`   - ID of activating player
+--- * `ScriptName`: <b>string</b> Scriptname of entity
+--- * `KnightID`:   <b>integer</b> ID of activating hero
+--- * `PlayerID`:   <b>integer</b> ID of activating player
 Report.ObjectInteraction = anyInteger;
 
 --- The interaction is deleted from the object.
 ---
 --- #### Parameters:
---- * `ScriptName` - Scriptname of entity
+--- * `ScriptName`: <b>string</b> Scriptname of entity
 Report.ObjectReset = anyInteger;
 
 --- The state of an object has been reset.
 ---
 --- #### Parameters:
---- * `ScriptName` - Scriptname of entity
+--- * `ScriptName`: <b>string</b> Scriptname of entity
 Report.ObjectDelete = anyInteger;
 

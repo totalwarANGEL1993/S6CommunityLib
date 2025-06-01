@@ -1,8 +1,8 @@
 --- Allows the creation of warehouses.
 ---
---- Warehouses are modified tradeposts where the player can buy goods without
---- an AI player involved. But goods can not be sold to the warehouse. Payment
---- can be set to any type of resource.
+--- Warehouses are modified trade posts where the player can buy goods without
+--- involving an AI player. However, goods cannot be sold to the warehouse.
+--- Payment can be set to any resource type.
 
 --- Defines a construction site for a trade post as a warehouse.
 ---
@@ -110,7 +110,7 @@ API.SetWarehouseInflation = SetWarehouseInflation;
 --- @return table Offer data of the offer
 --- @return integer Index in the array
 function GetWarehouseOfferByID(_Name, _ID)
-    return {}, 0;
+    return {},0;
 end
 API.GetWarehouseOfferByID = GetWarehouseOfferByID;
 
@@ -126,24 +126,24 @@ API.GetActivWarehouseOffers = GetActivWarehouseOffers;
 --- The player clicked on an offer.
 ---
 --- #### Parameters:
---- * `PlayerID`      - ID of player
---- * `ScriptName`    - Scriptname of warehouse
---- * `Inflation`     - Calculated inflation
---- * `OfferIndex`    - Index of offer
---- * `OfferGood`     - Good or entity type purchased
---- * `GoodAmount`    - Amount of goods
---- * `PaymentType`   - Money good
---- * `BasePrice`     - Base price
+--- * `PlayerID`:      <b>integer</b> ID of the player
+--- * `ScriptName`:    <b>string</b> Script name of the warehouse
+--- * `Inflation`:     <b>integer</b> Calculated inflation
+--- * `OfferIndex`:    <b>integer</b> Index of the offer
+--- * `OfferGood`:     <b>integer</b> Purchased good or entity type
+--- * `GoodAmount`:    <b>integer</b> Quantity of goods
+--- * `PaymentType`:   <b>integer</b> Type of payment
+--- * `BasePrice`:     <b>integer</b> Base price
 Report.WarehouseOfferClicked = anyInteger;
 
 --- The player bought an offer.
 ---
 --- #### Parameters:
---- * `PlayerID`      - ID of player
---- * `ScriptName`    - Scriptname of warehouse
---- * `OfferGood`     - Good or entity type purchased
---- * `GoodAmount`    - Amount of goods
---- * `PaymentGood`   - Good of payment
---- * `PaymentAmount` - Amount of payment
+--- * `PlayerID`:      <b>integer</b> ID of the player
+--- * `ScriptName`:    <b>string</b> Script name of the warehouse
+--- * `OfferGood`:     <b>integer</b> Purchased good or entity type
+--- * `GoodAmount`:    <b>integer</b> Quantity of goods
+--- * `PaymentGood`:   <b>integer</b> Type of payment
+--- * `PaymentAmount`: <b>integer</b> Amount paid
 Report.WarehouseOfferBought = anyInteger;
 

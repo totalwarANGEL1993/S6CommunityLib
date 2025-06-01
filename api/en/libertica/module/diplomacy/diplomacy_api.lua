@@ -40,9 +40,9 @@ end
 --- The diplomatic relations between two players changed.
 ---
 --- #### Parameters:
---- * `PlayerID1` - Frist player ID
---- * `PlayerID2` - Second player ID
---- * `OldState`  - Previous diplomatic state
---- * `NewState`  - New diplomatic state
+--- * `PlayerID1`: <b>integer</b> Frist player ID
+--- * `PlayerID2`: <b>integer</b> Second player ID
+--- * `OldState`:  <b>integer</b> Previous diplomatic state
+--- * `NewState`:  <b>integer</b> New diplomatic state
 Report.DiplomacyChanged = anyInteger
 

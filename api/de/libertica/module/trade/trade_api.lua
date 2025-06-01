@@ -1,4 +1,10 @@
---- Es kann in den Ablauf von Kauf und Verkauf eingegriffen werden.
+--- Dieses Modul erlaubt Kauf und Verkauf zu manipulieren.
+--- 
+--- Der Aufbau von Angeboten kann untersucht und manipuliert werden. Du kannst
+--- Einzelne Angebote löschen oder die Menge bearbeiten.
+--- 
+--- Die Berechnung von Kauf- und Verkaufspreise kann angepasst werden. So kannst
+--- du auch Elias Fähigkeit verstärken oder abschwächen.
 
 
 
@@ -318,23 +324,23 @@ API.ModifyTradeOffer = ModifyTradeOffer;
 --- Ein Spieler hat ein Angebot in einem Lagerhaus gekauft
 ---
 --- #### Parameters:
---- * `_OfferIndex` - Index des Angebot
---- * `_MerchantType` - Typ des Händlers
---- * `_Type` - Typ des Angebot
---- * `_Amount` - Gekaufte Menge
---- * `_Price` - Bezahlter Preis
---- * `_PlayerID` - ID des Spielers
---- * `_PartnerID` - ID des Partners
+--- * `_OfferIndex`: <b>intege</b> Index des Angebot
+--- * `_MerchantType`: <b>intege</b> Typ des Händlers
+--- * `_Type`: <b>intege</b> Typ des Angebot
+--- * `_Amount`: <b>intege</b> Gekaufte Menge
+--- * `_Price`: <b>intege</b> Bezahlter Preis
+--- * `_PlayerID`: <b>intege</b> ID des Spielers
+--- * `_PartnerID`: <b>intege</b> ID des Partners
 Report.Purchased = anyInteger;
 
 --- A player has sold goods to another player.
 ---
 --- #### Parameters:
---- * `_MerchantType` - Typ des Händlers
---- * `_GoodType` - Typ des Angebot
---- * `_GoodAmount` - Verkaufte Menge
---- * `_Price` - Erhaltenes Geld
---- * `_PlayerID` - ID des Spielers
---- * `_PartnerID` - ID des Partners
+--- * `_MerchantType`: <b>intege</b> Typ des Händlers
+--- * `_GoodType`: <b>intege</b> Typ des Angebot
+--- * `_GoodAmount`: <b>intege</b> Verkaufte Menge
+--- * `_Price`: <b>intege</b> Erhaltenes Geld
+--- * `_PlayerID`: <b>intege</b> ID des Spielers
+--- * `_PartnerID`: <b>intege</b> ID des Partners
 Report.GoodsSold = anyInteger;
 

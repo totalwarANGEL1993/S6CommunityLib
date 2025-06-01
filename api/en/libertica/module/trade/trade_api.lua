@@ -1,4 +1,10 @@
---- Allows to manipulate buying and selling of goods and units.
+--- This module allows manipulation of buying and selling.
+---
+--- The structure of offers can be inspected and modified. You can delete
+--- individual offers or adjust their quantities.
+---
+--- The calculation of buying and selling prices can be customized.
+--- This allows you to strengthen or weaken Elias' ability as well.
 
 
 
@@ -316,23 +322,23 @@ API.ModifyTradeOffer = ModifyTradeOffer;
 --- A player has purchased an offer at a warehouse.
 ---
 --- #### Parameters:
---- * `_OfferIndex` - Index of offer
---- * `_MerchantType` - Type of merchant
---- * `_Type` - Type of offer
---- * `_Amount` - Amount of offer
---- * `_Price` - price payed
---- * `_PlayerID` - PlayerID des Hafens
---- * `_PartnerID` - ID of partner
+--- * `_OfferIndex`: <b>integer</b> Offer index
+--- * `_MerchantType`: <b>integer</b> Type of vendor
+--- * `_Type`: <b>integer</b> Type of offer
+--- * `_Amount`: <b>integer</b> Quantity purchased
+--- * `_Price`: <b>integer</b> Price paid
+--- * `_PlayerID`: <b>integer</b> Player ID
+--- * `_PartnerID`: <b>integer</b> Partner ID
 Report.Purchased = anyInteger;
 
 --- A player has sold goods to another player.
 ---
 --- #### Parameters:
---- * `_MerchantType` - Type of merchant
---- * `_GoodType` - Type of good
---- * `_GoodAmount` - Amount of good
---- * `_Price` - selling price
---- * `_PlayerID` - ID of player
---- * `_TargetID` - ID of partner
+--- * `_MerchantType`: <b>integer</b> Type of vendor
+--- * `_GoodType`: <b>integer</b> Type of offer
+--- * `_GoodAmount`: <b>integer</b> Quantity sold
+--- * `_Price`: <b>integer</b> Money received
+--- * `_PlayerID`: <b>integer</b> Player ID
+--- * `_PartnerID`: <b>integer</b> Partner ID
 Report.GoodsSold = anyInteger;
 

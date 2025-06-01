@@ -1,4 +1,13 @@
---- Ermöglicht das Hinzufügen von Notizen zu einer Quest.
+--- Ermöglicht das Hinzufügen von Notizen zu einem Quest.
+--- 
+--- Notizen zu einem Auftrag werden in einem Textfenster angezeigt. Für
+--- Quests mit Notizen wird ein neuer Button angezeigt, mit dem das Textfenster
+--- geöffnet werden kann. Notizen können in normale (blau) und erhöhte (rot)
+--- Wichtigkeit eingeteilt werden.
+--- 
+--- Zusätzlich kannst du dem Spieler erlauben, sich selbst Notizen zu machen.
+--- Die Notizen des Spielers haben eine höhere Priorität gegenüber allen anderen
+--- Notizen und sich violet hervorgehoben.
 
 
 
