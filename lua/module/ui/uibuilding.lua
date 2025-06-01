@@ -1,6 +1,5 @@
 Lib.UIBuilding = Lib.UIBuilding or {};
 Lib.UIBuilding.Name = "UIBuilding";
-Lib.UIBuilding.CinematicEvents = {};
 Lib.UIBuilding.Global = {};
 Lib.UIBuilding.Local = {
     BuildingButtons = {
