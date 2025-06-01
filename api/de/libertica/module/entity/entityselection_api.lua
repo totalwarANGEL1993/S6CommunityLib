@@ -1,20 +1,11 @@
 --- Fügt Funktionen zur Auswahl von Einheiten hinzu.
 ---
 --- Funktionen:
---- * Soldaten entlassen
---- * Kriegsmaschinen entlassen
---- * Diebe entlassen
---- * Auswahl von globalen Skripten abrufen
---- * Behebt die Auswahl von Triböcken
----
---- #### Reports
---- * `Report.ExpelSettler` - Eine Einheit wurde entlassen.
---- * `Report.SelectionChanged` - The selection has changed.
---- * `Report.ForceTrebuchetTasklis`t - A trebuchet was forced to stop.
---- * `Report.ErectTrebuche`t - A trebuchet has been erected.
---- * `Report.DisambleTrebuchet` - A trebuchet has been dismantled.
----
-Lib.EntitySelection = Lib.EntitySelection or {};
+--- <li>Soldaten entlassen</li>
+--- <li>Kriegsmaschinen entlassen</li>
+--- <li>Diebe entlassen</li>
+--- <li>Auswahl von globalen Skripten abrufen</li>
+--- <li>Behebt die Auswahl von Triböcken</li>
 
 
 
@@ -36,49 +27,17 @@ function DisableReleaseSoldiers(_Flag)
 end
 API.DisableReleaseSoldiers = DisableReleaseSoldiers;
 
---- Gibt zurück, ob die Einheit derzeit ausgewählt ist.
---- @param _Entity any        Zu prüfende Einheit
---- @param _PlayerID integer? Spieler-ID zur Überprüfung
---- @return boolean Ausgewählte Einheit ist ausgewählt
-function IsEntitySelected(_Entity, _PlayerID)
-    return false;
-end
-API.IsEntityInSelection = IsEntitySelected;
-
---- Gibt die erste ausgewählte Einheit zurück.
---- @param _PlayerID integer ID des Spielers
---- @return integer Einheit Erste ausgewählte Einheit
-function GetSelectedEntity(_PlayerID)
-    return 0;
-end
-API.GetSelectedEntity = GetSelectedEntity;
-
---- Gibt alle ausgewählten Einheiten des Spielers zurück.
---- @param _PlayerID integer ID des Spielers
---- @return table Liste Ausgewählte Einheiten des Spielers
-function GetSelectedEntities(_PlayerID)
-    return {};
-end
-API.GetSelectedEntities = GetSelectedEntities;
-
 
 
 --- Eine Einheit wurde entlassen.
 ---
---- #### Parameter
+--- #### Parameters:
 --- * `EntityID` - ID der Einheit
 Report.ExpelSettler = anyInteger;
 
---- Die Auswahl von Einheiten eines Spielers hat sich geändert.
----
---- #### Parameter
---- * `PlayerID` - ID des Spielers
---- * `...`      - Liste von Einheiten
-Report.SelectionChanged = anyInteger;
-
 --- Ein Trebuchet wird zum Anhalten gezwungen.
 ---
---- #### Parameter
+--- #### Parameters:
 --- * `EntityID` - ID der Einheit
 --- * `TaskList` - ID der Taskliste
 Report.ForceTrebuchetTasklist = anyInteger;
@@ -86,14 +45,14 @@ Report.ForceTrebuchetTasklist = anyInteger;
 --- Ein Trebuchet wird aus einem Belagerungsmaschinenwagen gebaut.
 --- (Derzeit nicht verwendet)
 ---
---- #### Parameter
+--- #### Parameters:
 --- * `EntityID` - ID der Einheit
 Report.ErectTrebuchet = anyInteger;
 
 --- Ein Trebuchet wird zu einem Belagerungsmaschinenwagen abgebaut.
 --- (Derzeit nicht verwendet)
 ---
---- #### Parameter
+--- #### Parameters:
 --- * `EntityID` - ID der Einheit
 Report.DisambleTrebuchet = anyInteger;
 

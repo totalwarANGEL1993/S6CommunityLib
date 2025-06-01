@@ -1,20 +1,12 @@
 --- Adds features for entity selection.
 ---
 --- Features:
---- * Fire soldiers
---- * Fire war machines
---- * Fire thieves
---- * Obtain selection from global script
---- * Fixes trebuchet selection
+--- <li>Fire soldiers</li>
+--- <li>Fire war machines</li>
+--- <li>Fire thieves</li>
+--- <li>Obtain selection from global script</li>
+--- <li>Fixes trebuchet selection</li>
 ---
---- #### Reports
---- * `Report.ExpelSettler` - A unit has been expelled.
---- * `Report.SelectionChanged` - Die Auswahl von Einheiten eines Spielers hat sich geändert.
---- * `Report.ForceTrebuchetTasklis`t - Ein Trebuchet wird zum Anhalten gezwungen.
---- * `Report.ErectTrebuche`t - Ein Trebuchet wird aus einem Belagerungsmaschinenwagen gebaut.
---- * `Report.DisambleTrebuchet` -Ein Trebuchet wird zu einem Belagerungsmaschinenwagen abgebaut.
----
-Lib.EntitySelection = Lib.EntitySelection or {};
 
 
 
@@ -36,49 +28,17 @@ function DisableReleaseSoldiers(_Flag)
 end
 API.DisableReleaseSoldiers = DisableReleaseSoldiers;
 
---- Returns true if the entity is currently selected.
---- @param _Entity any        Entity to check
---- @param _PlayerID integer? PlayerID to check
---- @return boolean Selected Entity is selectec
-function IsEntitySelected(_Entity, _PlayerID)
-    return false;
-end
-API.IsEntityInSelection = IsEntitySelected;
-
---- Returns the first selected entity.
---- @param _PlayerID integer ID of player
---- @return integer Entity First selected entity
-function GetSelectedEntity(_PlayerID)
-    return 0;
-end
-API.GetSelectedEntity = GetSelectedEntity;
-
---- Returns all selected entities of the player.
---- @param _PlayerID integer ID of player
---- @return table List Entities selected by the player
-function GetSelectedEntities(_PlayerID)
-    return {};
-end
-API.GetSelectedEntities = GetSelectedEntities;
-
 
 
 --- A entity has been expelled.
 ---
---- #### Parameters
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 Report.ExpelSettler = anyInteger;
 
---- The selection of entities of a player has changed.
----
---- #### Parameters
---- * `PlayerID` - ID of player
---- * `...`      - List of entities
-Report.SelectionChanged = anyInteger;
-
 --- A trebuchet is forced to stop.
 ---
---- #### Parameters
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 --- * `TaskList` - ID of Tasklist
 Report.ForceTrebuchetTasklist = anyInteger;
@@ -86,14 +46,14 @@ Report.ForceTrebuchetTasklist = anyInteger;
 --- A trebuchet is build from a siege engine cart.
 --- (Currently not used)
 ---
---- #### Parameters
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 Report.ErectTrebuchet = anyInteger;
 
 --- A trebuchet is broken down to a siege engine cart.
 --- (Currently not used)
 ---
---- #### Parameters
+--- #### Parameters:
 --- * `EntityID` - ID of entity
 Report.DisambleTrebuchet = anyInteger;
 

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+rm -rf var/doc
+rm -rf release/doc
+mkdir -p var/doc
+lua ./lua/tools/ldoc/ldoc.lua -d ./var/doc ./api/de/libertica
+lua ./docbuilder.lua
+cp -r var/doc release

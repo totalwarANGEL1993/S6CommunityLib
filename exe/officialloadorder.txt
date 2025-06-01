@@ -46,6 +46,7 @@ comfort/sethealth
 comfort/setposition
 comfort/setpositionandlookat
 comfort/setpositionrelativeto
+comfort/setresourceamount
 comfort/unlocktitleforplayer
 
 core/QSB
@@ -68,6 +69,7 @@ module/balancing/Damage
 module/quest/Quest
 module/quest/QuestBehavior
 module/quest/QuestJornal
+module/faker/Permadeath
 module/faker/Technology
 module/trade/Warehouse
 module/settings/Camera
@@ -77,6 +79,7 @@ module/information/BriefingSystem
 module/information/CutsceneSystem
 module/information/DialogSystem
 module/city/LifestockSystem
+module/city/MilitiaSystem
 module/information/Requester
 module/entity/EntitySearch
 module/trade/Trade

@@ -1,9 +1,13 @@
+--- Allows to create interactable resources.
+
+
+
 --- Creates an interactive construction site at the position.
 --- 
 --- The territorium where the construction site is located must be owned by
 --- the player who will construct the building.
 ---
---- #### Parameter
+--- #### Fields `_Data`:
 --- * `ScriptName`            - Scriptname of location
 --- * `PlayerID`              - Constructing player
 --- * `Type`                  - Type of building
@@ -23,7 +27,7 @@ API.CreateIOBuildingSite = CreateIOBuildingSite;
 
 --- A construction site was finished.
 ---
---- #### Parameter
+--- #### Parameters:
 --- - `ScriptName` - Scriptname of site
 --- * `PlayerID`   - ID of activating player
 --- * `BuildingID` - ID of constructed building
