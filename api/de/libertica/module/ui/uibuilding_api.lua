@@ -151,7 +151,7 @@ API.SetDowngradeCosts = SetDowngradeBuildingCost;
 API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
 
 --- Aktiviert das Reservieren von Waren am Gebäude.
---- 
+--- <p>
 --- <b>Achtung</b>: Waren können nicht für einzelne Gebäude reserviert werden.
 --- Die Waren werden in allen Gebäuden reserviert. Diese Funktion ist also
 --- identisch zum Produktionsmenü!

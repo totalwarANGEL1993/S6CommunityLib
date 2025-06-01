@@ -152,7 +152,7 @@ API.SetDowngradeCosts = SetDowngradeBuildingCost;
 API.SetDowngradeBuildingCost = SetDowngradeBuildingCost;
 
 --- Activates the reservation of goods direcrly at the building.
---- 
+--- <p>
 --- <b>Attention</b>: Goods can not be locked for a single building. Instead
 --- they will be locked in all buildings. This is virtually the same as the
 --- production menu can do!
