@@ -1,3 +1,4 @@
+comfort/AddWare
 comfort/copytable
 comfort/createstock
 comfort/dumptable
