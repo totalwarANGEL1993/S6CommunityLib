@@ -9,10 +9,12 @@ Lib.MilitiaSystem.Local  = {
     MilitiaMapping = {},
 };
 Lib.MilitiaSystem.Shared = {
+    ConscriptConfig = "Work",
     MilitiaAllocation = {},
     TypeSkills = {},
 };
 
+Lib.Require("comfort/AddWare");
 Lib.Require("comfort/GetBattalionSizeBySoldierType");
 Lib.Require("core/Core");
 Lib.Require("module/balancing/Damage");
@@ -73,8 +75,8 @@ function Lib.MilitiaSystem.Global:BuyMilitia(_PlayerID, _Type)
     -- Check costs
     local UnitTypeName = Logic.GetEntityTypeName(_Type);
     local Costs = Lib.MilitiaSystem.Config.UnitCosts[UnitTypeName];
-    if (Costs[1] and GetPlayerResources(Costs[1], _PlayerID) < Costs[2])
-    or (Costs[3] and GetPlayerResources(Costs[3], _PlayerID) < Costs[4]) then
+    if (Costs[1] and GetPlayerGoodsInSettlement(Costs[1], _PlayerID, true) < Costs[2])
+    or (Costs[3] and GetPlayerGoodsInSettlement(Costs[3], _PlayerID, true) < Costs[4]) then
         return false;
     end
     -- Check castle
@@ -93,8 +95,12 @@ function Lib.MilitiaSystem.Global:BuyMilitia(_PlayerID, _Type)
     local Orientation = Logic.GetEntityOrientation(CastleID);
     local UnitID = Logic.CreateBattalionOnUnblockedLand(_Type, x2, y2, Orientation - 90, _PlayerID);
     local Soldiers = {Logic.GetSoldiersAttachedToLeader(UnitID)};
-    if Costs[1] then AddGood(Costs[1], (-1) * Costs[2], _PlayerID); end
-    if Costs[3] then AddGood(Costs[3], (-1) * Costs[4], _PlayerID); end
+    if Costs[1] then
+        AddWare(Costs[1], (-1) * Costs[2], _PlayerID);
+    end
+    if Costs[3] then
+        AddWare(Costs[3], (-1) * Costs[4], _PlayerID);
+    end
     Logic.MoveSettler(UnitID, x1, y1);
     -- Suspend settlers
     for i= 1, GetBattalionSizeBySoldierType(_Type) do
@@ -281,8 +287,9 @@ function Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(_Index, _WidgetID, _E
         AddMessage("Feedback_TextLines/TextLine_SoldierLimitReached");
         return;
     end
-    if (Costs[1] and GetPlayerResources(Costs[1], PlayerID) < Costs[2])
-    or (Costs[3] and GetPlayerResources(Costs[3], PlayerID) < Costs[4]) then
+    if (Costs[1] and GetPlayerGoodsInSettlement(Costs[1], PlayerID, true) < Costs[2])
+    or (Costs[3] and GetPlayerGoodsInSettlement(Costs[3], PlayerID, true) < Costs[4]) then
+        AddMessage("Feedback_TextLines/TextLine_NotEnough_Goods");
         return;
     end
     if self.ConscriptCount[PlayerID] < GetBattalionSizeBySoldierType(UnitType) then
@@ -290,6 +297,7 @@ function Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(_Index, _WidgetID, _E
         return;
     end
     SendReportToGlobal(Report.BuyMilitia, PlayerID, UnitType);
+    Sound.FXPlay2DSound("ui\\menu_click");
 end
 
 function Lib.MilitiaSystem.Local:CastleMilitiaButtonTooltip(_Index, _WidgetID, _EntityID)
@@ -489,9 +497,13 @@ function Lib.MilitiaSystem.Shared:GetConscripts(_PlayerID)
     for _, BuildingID in pairs(Buildings) do
         for _, SettlerID in pairs({Logic.GetWorkersForBuilding(BuildingID)}) do
             if SettlerID > 0 and not IsSettlerSuspended(SettlerID) then
+                local Type = Logic.GetEntityType(SettlerID);
                 local Task = Logic.GetCurrentTaskList(SettlerID);
-                if Lib.MilitiaSystem.Config.ConscriptTasks.Work[Task] then
-                    table.insert(Conscripts, SettlerID);
+                local Grade = Lib.MilitiaSystem.Shared.ConscriptConfig;
+                if Type ~= Entities.U_Priest then
+                    if Lib.MilitiaSystem.Config.ConscriptTasks[Grade][Task] then
+                        table.insert(Conscripts, SettlerID);
+                    end
                 end
             end
         end

@@ -241,7 +241,6 @@ function Lib.Permadeath.Local:Initialize()
         self:OverwriteGameCallbacks();
         self:OverrideSelectionChanged();
         self:OverwriteAlarmButtons();
-        self:OverwriteUpgradeButton();
 
         for PlayerID = 1,8 do
             self.SuspendedSettlers[PlayerID] = {};
@@ -399,21 +398,6 @@ function Lib.Permadeath.Local:OverwriteAlarmButtons()
         else
             SendReportToGlobal(Report.RepairAlarmDeactivated_Internal, EntityID);
         end
-    end
-end
-
-function Lib.Permadeath.Local:OverwriteUpgradeButton()
-    -- This creates a dependency to module/ui/uibuilding
-    GUI_BuildingButtons.UpgradeClicked_Orig_Permadeath = GUI_BuildingButtons.UpgradeClicked;
-    --- @diagnostic disable-next-line: duplicate-set-field
-    GUI_BuildingButtons.UpgradeClicked = function()
-        local BuildingID = GUI.GetSelectedEntity();
-        if Lib.Permadeath.Local:HasSuspendedInhabitants(BuildingID) then
-            Message(Localize(Lib.Permadeath.Text.Messages.BuildingMourning));
-            GUI.CancelBuildingKnockDown(BuildingID);
-            return;
-        end
-        GUI_BuildingButtons.UpgradeClicked_Orig_Permadeath();
     end
 end
 

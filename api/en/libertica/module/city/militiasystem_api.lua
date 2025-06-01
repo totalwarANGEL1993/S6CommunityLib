@@ -65,6 +65,16 @@ function UseRandomMilitiaTypesForAllPlayers()
 end
 API.UseRandomMilitiaTypesForAllPlayers = UseRandomMilitiaTypesForAllPlayers;
 
+--- Allows only to enlist inactive workers for conscription.
+function UseOnlyIdlingWorkersForMilitia()
+end
+API.UseOnlyIdlingWorkersForMilitia = UseOnlyIdlingWorkersForMilitia;
+
+--- Allows to enlist all workers for conscription.
+function UseAllWorkersForMilitia()
+end
+API.UseAllWorkersForMilitia = UseAllWorkersForMilitia;
+
 --- Sets the required title for melee militia.
 --- @param _Title integer Required title
 function RequireTitleForMeleeMilitia(_Title)
