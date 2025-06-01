@@ -6,8 +6,6 @@
 ---
 --- Alle Texte eines Quest-Texte können auch String Tables sein. Das Format für
 --- diese Texte ist "FileName/StringName".
----
-Lib.Quest = Lib.Quest or {};
 
 
 

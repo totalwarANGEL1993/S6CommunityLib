@@ -4,7 +4,6 @@
 --- talk to them. Much like interactive objects an action can be called
 --- and some other adjustments can be made.
 ---
-Lib.NPC = Lib.NPC or {};
 
 
 

@@ -1,5 +1,7 @@
 --- Provides some diplomacy functions.
 
+
+
 --- Changes the diplomacy between the player and the listed players.
 ---
 --- The current diplomatic relations will be saved, if no backup exists.

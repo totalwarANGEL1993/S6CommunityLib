@@ -20,8 +20,8 @@
 ---
 --- Things that kills animals:
 --- <li>being sick (5% chance each period)</li>
----
-Lib.SettlementSurvival = Lib.SettlementSurvival or {};
+
+
 
 --- Activates or deactivates the mode.
 --- @param _Flag boolean Indicates whether the mode is active

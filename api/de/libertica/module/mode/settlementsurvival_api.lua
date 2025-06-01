@@ -21,6 +21,8 @@
 --- Dinge, die Tiere töten:
 --- <li>Krankheit (5%ige Chance pro Periode)</li>
 
+
+
 --- Aktiviert/deaktiviert den Modus.
 --- @param _Flag boolean Modus aktiv
 function SettlementSurvivalActivate(_Flag)

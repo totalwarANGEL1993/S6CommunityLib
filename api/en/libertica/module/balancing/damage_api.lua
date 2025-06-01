@@ -1,6 +1,6 @@
 --- Allows the modification of unit damage values.
 ---
---- <b>Attention</b>: The functions `MakeVulnerable` and `MakeInvulnerable` have
+--- <b>Achtung</b>: The functions `MakeVulnerable` and `MakeInvulnerable` have
 --- been overridden. The function `Logic.SetEntityInvulnerabilityFlag` is now
 --- used internally and should no longer be used!
 ---
@@ -11,6 +11,8 @@
 --- <li>Granting additional armor to units</li>
 --- <li>Adjusting the Own Territory bonus</li>
 --- <li>Adjusting the Height Modifier</li>
+---
+--- <b>Achtung</b>: This functionality will be active when the module is loaded.
 ---
 
 
