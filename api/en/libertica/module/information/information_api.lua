@@ -1,10 +1,8 @@
---- ...
----
---- #### Reports
---- `Report.CinematicActivated` - A cinematic event has started for the player.
---- `Report.CinematicConcluded` - A cinematic event has concluded for the player.
----
-Lib.Information = Lib.Information or {};
+--- This module manages the cinematic events.
+--- 
+--- Cinematic events are used by briefings, cutscenes and similar things to
+--- synchronize them. Onyl use this module if you are implementing a system
+--- similar to briefings that need synchronizing.
 
 
 
