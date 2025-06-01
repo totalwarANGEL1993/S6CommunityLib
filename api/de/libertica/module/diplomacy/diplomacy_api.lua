@@ -1,5 +1,7 @@
 --- Stellt einge Funktionen für Diplomatie bereit.
 
+
+
 --- Ändert die Diplomatie des Spielers zu den angegebenen Parteien.
 ---
 --- Die aktuellen diplomatischen Beziehungen werden zwischengespeichert, sofern

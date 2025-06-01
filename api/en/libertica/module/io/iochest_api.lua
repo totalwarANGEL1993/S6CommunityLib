@@ -1,6 +1,4 @@
 --- Offers easy to use treasure chests.
----
-Lib.IOChest = Lib.IOChest or {};
 
 
 

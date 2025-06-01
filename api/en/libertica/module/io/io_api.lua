@@ -1,6 +1,4 @@
 --- Improves on interactive objects.
----
-Lib.IO = Lib.IO or {};
 
 
 

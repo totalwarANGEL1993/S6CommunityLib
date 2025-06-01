@@ -1,6 +1,4 @@
---- Allows to create constructable resource sources.
----
-Lib.IOMine = Lib.IOMine or {};
+--- Allows to create interactive resources.
 
 
 
