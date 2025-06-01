@@ -28,8 +28,8 @@ API.CreateIOBuildingSite = CreateIOBuildingSite;
 --- Eine Baustelle wurde fertiggestellt.
 ---
 --- #### Parameters:
---- - `ScriptName` - Skriptname der Baustelle
---- * `PlayerID`   - ID des aktivierenden Spielers
---- * `BuildingID` - ID des gebauten Gebäude
+--- - `ScriptName`: <b>string</b> Skriptname der Baustelle
+--- * `PlayerID`:   <b>integer</b> ID des aktivierenden Spielers
+--- * `BuildingID`: <b>integer</b> ID des gebauten Gebäude
 Report.InteractiveSiteBuild = anyInteger;
 

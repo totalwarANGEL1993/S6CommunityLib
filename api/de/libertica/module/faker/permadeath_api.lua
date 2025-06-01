@@ -62,6 +62,6 @@ API.CountInhabitantsInBuilding = CountInhabitantsInBuilding;
 --- Die Suspendierung eines Siedlers wurde automatisch aufgehoben.
 ---
 --- #### Parameters:
---- * `EntityID` - ID des Siedlers
+--- * `EntityID`: <b>integer</b> ID des Siedlers
 Report.SettlerSuspensionElapsed = anyInteger;
 
