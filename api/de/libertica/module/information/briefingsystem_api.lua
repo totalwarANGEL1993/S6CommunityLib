@@ -80,7 +80,7 @@
 --- * `Clear`:    (optional) <b>boolean</b> Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
 --- * `Repeat`:   (optional) <b>boolean</b> Die Animationssets begingen nach dem Ende von vorn.
 --- * `Postpone`: (optional) <b>boolean</b> Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
---- * `Local`:    (optional) <b>boolean</b> Die Animationssets werden nur auf dieser Seite abgespielt.
+--- * `PageTied`: (optional) <b>boolean</b> Die Animationssets werden nur auf dieser Seite abgespielt.
 ---
 
 
