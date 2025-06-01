@@ -65,6 +65,16 @@ function UseRandomMilitiaTypesForAllPlayers()
 end
 API.UseRandomMilitiaTypesForAllPlayers = UseRandomMilitiaTypesForAllPlayers;
 
+--- Erlaubt nur inaktive Arbeiter zum Kriegstdiens einzuziehen.
+function UseOnlyIdlingWorkersForMilitia()
+end
+API.UseOnlyIdlingWorkersForMilitia = UseOnlyIdlingWorkersForMilitia;
+
+--- Erlaubt Arbeiter immer zum Kriegsdienst einzuziehen.
+function UseAllWorkersForMilitia()
+end
+API.UseAllWorkersForMilitia = UseAllWorkersForMilitia;
+
 --- Setzt den benötigten Titel für Nahkampfmilizen.
 --- @param _Title integer Benötigter Titel
 function RequireTitleForMeleeMilitia(_Title)
