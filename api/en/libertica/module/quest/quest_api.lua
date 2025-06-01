@@ -6,7 +6,6 @@
 --- All texts inside a quest can be pulled out of string tables. The format for
 --- those texts will be "FileName/StringName".
 ---
-Lib.Quest = Lib.Quest or {};
 
 
 

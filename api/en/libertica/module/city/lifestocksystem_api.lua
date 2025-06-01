@@ -10,7 +10,6 @@
 --- * `Technologies.R_Cattle` - Allows to breed cows
 --- * `Technologies.R_Sheep`  - Allows to breed sheeps
 --- 
-Lib.LifestockSystem = Lib.LifestockSystem or {};
 
 
 

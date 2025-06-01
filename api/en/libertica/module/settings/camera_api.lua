@@ -1,5 +1,7 @@
 --- Functions to manipulate the RTS camera.
 
+
+
 --- Changes the max rendering distance until something is clipped.
 --- @param _View number Max randering distance
 function SetRenderDistance(_View)

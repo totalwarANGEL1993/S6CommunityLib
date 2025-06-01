@@ -1,3 +1,7 @@
+--- Allows to create interactable resources.
+
+
+
 --- Creates an interactive construction site at the position.
 --- 
 --- The territorium where the construction site is located must be owned by
