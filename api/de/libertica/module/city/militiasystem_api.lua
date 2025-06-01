@@ -18,6 +18,8 @@
 --- ändert sich die Farbe des Icons, um Militionäre mit Spezialfähigkeiten
 --- von normalen Söldnern zu unterscheiden.
 
+
+
 --- Aktiviert die Rekrutierung von Milizen.
 function ActivateMilitia()
 end

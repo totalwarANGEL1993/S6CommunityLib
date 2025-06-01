@@ -1,3 +1,7 @@
+--- Ermöglicht das Erstellen von aktivierbaren Baustellen.
+
+
+
 --- Erzeugt eine interaktive Baustelle an der Position.
 --- 
 --- Das Territorium unter der interaktiven Baustelle muss dem Spieler gehören,

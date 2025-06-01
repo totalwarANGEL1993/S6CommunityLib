@@ -1,6 +1,3 @@
-Lib.Require("comfort/IsLocalScript");
-Lib.Register("module/trade/TradeRoute_API");
-
 --- Allows to setup a AI player as a harbor more realisticly.
 --- 
 --- #### What a harbor does

@@ -1,5 +1,7 @@
 --- Funktionen zur Manipulation der RTS-Kamera.
 
+
+
 --- Ändert die maximale Darstellungsreichweite, bis etwas abgeschnitten wird.
 --- @param _View number Maximale Darstellungsreichweite
 function SetRenderDistance(_View)
