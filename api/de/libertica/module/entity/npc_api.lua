@@ -146,7 +146,7 @@ end
 --- Jemand spricht mit einem NPC.
 ---
 --- #### Parameters:
---- * `NpcEntityID`  - ID des NPCs
---- * `HeroEntityID` - ID des Helden
+--- * `NpcEntityID`:  <b>integer</b> ID des NPCs
+--- * `HeroEntityID`: <b>integer</b> ID des Helden
 Report.NpcInteraction = anyInteger;
 

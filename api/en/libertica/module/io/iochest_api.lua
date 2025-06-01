@@ -47,8 +47,8 @@ API.CreateRandomLuxuryChest = CreateRandomLuxuryChest;
 --- The player activated a treasure
 --- 
 --- #### Parameters:
---- * `ScriptName` - Scriptname of entity
---- * `KnightID`   - ID of activating hero
---- * `PlayerID`   - ID of activating player
+--- * `ScriptName`: <b>string</b> Scriptname of entity
+--- * `KnightID`:   <b>integer</b> ID of activating hero
+--- * `PlayerID`:   <b>integer</b> ID of activating player
 Report.InteractiveTreasureActivated = anyInteger;
 
