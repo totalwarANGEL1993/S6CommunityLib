@@ -56,11 +56,11 @@ end
 API.FinishCinematicEvent = FinishCinematicEvent;
 
 ---
---- Gibt den Zustand des Kinoevent zurück.
+--- Gibt den Zustand des Kino-Event zurück.
 ---
 --- @param _Identifier any Bezeichner oder ID
 --- @param _PlayerID integer ID des Spielers
---- @return integer State Zustand des Kinoevent
+--- @return integer State Zustand des Kino-Event
 ---
 function GetCinematicEvent(_Identifier, _PlayerID)
     return 0;
@@ -68,10 +68,10 @@ end
 API.GetCinematicEvent = GetCinematicEvent;
 
 ---
---- Prüft ob gerade ein Kinoevent für den Spieler aktiv ist.
+--- Prüft ob gerade ein Kino-Event für den Spieler aktiv ist.
 ---
 --- @param _PlayerID integer ID des Spielers
---- @return boolean Active Kinoevent ist aktiv
+--- @return boolean Active Kino-Event ist aktiv
 ---
 function IsCinematicEventActive(_PlayerID)
     return false;
@@ -81,7 +81,7 @@ API.IsCinematicEventActive = IsCinematicEventActive;
 --- Zeigt einen Text byte für byte an.
 ---
 --- Wenn bei Spielstart verwendet, beginnt der Text nach dem Laden der Karte. Wenn ein anderes
---- Kinoevent läuft, wartet der Typewriter auf Abschluss.
+--- Kino-Event läuft, wartet der Typewriter auf Abschluss.
 ---
 --- Kontrollzeichen wie {cr} werden als ein Token ausgewertet und als atomares Token behandelt
 --- und sofort angezeigt. Mehr als 1 Leerzeichen hintereinander werden automatisch auf 1 Leerzeichen
@@ -121,17 +121,17 @@ API.StartTypewriter = StartTypewriter;
 
 
 
---- Ein Kinoevent, empfangen von einem bestimmten Spieler, startet.
+--- Ein Kino-Event, empfangen von einem bestimmten Spieler, startet.
 ---
 --- #### Parameters:
---- * `EventID`  - ID des Kinoevent
+--- * `EventID`  - ID des Kino-Event
 --- * `PlayerID` - ID des Empfängers
 Report.CinematicActivated = anyInteger;
 
---- Ein Kinoevent, empfangen von einem bestimmten Spieler, endet.
+--- Ein Kino-Event, empfangen von einem bestimmten Spieler, endet.
 --- 
 --- #### Parameters:
---- * `EventID`  - ID des Kinoevent
+--- * `EventID`  - ID des Kino-Event
 --- * `PlayerID` - ID des Empfängers
 Report.CinematicConcluded = anyInteger;
 
