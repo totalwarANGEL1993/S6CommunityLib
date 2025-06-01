@@ -33,27 +33,27 @@ API.DisableReleaseSoldiers = DisableReleaseSoldiers;
 --- A entity has been expelled.
 ---
 --- #### Parameters:
---- * `EntityID` - ID of entity
+--- * `EntityID`: <b>integer</b> ID of entity
 Report.ExpelSettler = anyInteger;
 
 --- A trebuchet is forced to stop.
 ---
 --- #### Parameters:
---- * `EntityID` - ID of entity
---- * `TaskList` - ID of Tasklist
+--- * `EntityID`: <b>integer</b> ID of entity
+--- * `TaskList`: <b>integer</b> ID of Tasklist
 Report.ForceTrebuchetTasklist = anyInteger;
 
 --- A trebuchet is build from a siege engine cart.
 --- (Currently not used)
 ---
 --- #### Parameters:
---- * `EntityID` - ID of entity
+--- * `EntityID`: <b>integer</b> ID of entity
 Report.ErectTrebuchet = anyInteger;
 
 --- A trebuchet is broken down to a siege engine cart.
 --- (Currently not used)
 ---
 --- #### Parameters:
---- * `EntityID` - ID of entity
+--- * `EntityID`: <b>integer</b> ID of entity
 Report.DisambleTrebuchet = anyInteger;
 

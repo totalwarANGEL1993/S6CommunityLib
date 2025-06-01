@@ -28,8 +28,8 @@ API.CreateIOBuildingSite = CreateIOBuildingSite;
 --- A construction site was finished.
 ---
 --- #### Parameters:
---- - `ScriptName` - Scriptname of site
---- * `PlayerID`   - ID of activating player
---- * `BuildingID` - ID of constructed building
+--- - `ScriptName`: <b>string</b> Scriptname of site
+--- * `PlayerID`:   <b>integer</b> ID of activating player
+--- * `BuildingID`: <b>integer</b> ID of constructed building
 Report.InteractiveSiteBuild = anyInteger;
 

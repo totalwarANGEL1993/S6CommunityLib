@@ -228,18 +228,18 @@ API.BaseConsumptionActivateForAI = BaseConsumptionActivateForAI;
 --- Ein Tier ist an Krankheit gestorben.
 ---
 --- #### Parameters:
---- * `EntityID` - ID des Tieres
+--- * `EntityID`: <b>integer</b> ID des Tieres
 Report.AnimalDiedFromIllness = anyInteger;
 
 --- Ein Siedler ist verhungert.
 ---
 --- #### Parameters:
---- * `EntityID` - ID des Siedlers
+--- * `EntityID`: <b>integer</b> ID des Siedlers
 Report.SettlerDiedFromStarvation = anyInteger;
 
 --- Ein Siedler ist an Krankheit gestorben.
 ---
 --- #### Parameters:
---- * `EntityID` - ID des Siedlers
+--- * `EntityID`: <b>integer</b> ID des Siedlers
 Report.SettlerDiedFromIllness = anyInteger;
 
