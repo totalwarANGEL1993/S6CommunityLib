@@ -41,8 +41,8 @@ function BriefingTest1(_Name, _PlayerID)
     local AP, ASP, AAN = AddBriefingPages(Briefing);
 
     -- Animations are created automatically because a position is given.
-    ASP("Page 1", "This is a briefing with default animation.", true, "pos2");
-    ASP("Page 2", "It works just as you are used to it.", false, "pos2");
+    ASP("Page 1", "This is a briefing with default animation.", true, "npc1");
+    ASP("Page 2", "It works just as you are used to it.", false, "npc1");
     ASP("Page 3", "No fancy camera magic and everything in one line.", true, "pos4");
     ASP("Page 4", "Text is displayed until the player skips the page.", false, "pos4");
 
@@ -55,6 +55,7 @@ end
 
 -- > BriefingTest2([[foo]], 1)
 function BriefingTest2(_Name, _PlayerID)
+    assert(false, "This test is no longer supported.");
     local Briefing = {
         EnableBorderPins = false,
         EnableSky = true,
@@ -168,8 +169,9 @@ function BriefingTest5(_Name, _PlayerID)
     local Briefing = {
         HideBorderPins = true,
         ShowSky = true,
+        BigBars = true,
     }
-    local AP, ASP, AAN = AddBriefingPages(Briefing);
+    local AP, ASP = AddBriefingPages(Briefing);
 
     AP {
        Title        = "Page 1",
@@ -188,6 +190,116 @@ function BriefingTest5(_Name, _PlayerID)
     Briefing.Starting = function(_Data)
     end
     Briefing.Finished = function(_Data)
+    end
+    StartBriefing(Briefing, _Name, _PlayerID)
+end
+
+-- > BriefingTest6([[foo]], 1)
+function BriefingTest6(_Name, _PlayerID)
+    local Briefing = {
+        HideBorderPins = true,
+        BigBars = false,
+        ShowSky = true,
+    }
+    AddBriefingPages(Briefing);
+
+    Briefing:AddPage()
+        :SetName("Seite1")
+        :SetTitle("Bla Bla (1)")
+        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+        :BeginCamera()
+            :SetPosition("pos1")
+            :UseCloseUp(false)
+        :EndCamera();
+
+    Briefing:AddPage()
+        :SetName("Seite2")
+        :SetTitle("Bla Bla (2)")
+        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+        :SetAction(function() AddNote("It just work's!"); end)
+        :BeginCamera()
+            :SetPosition("pos1")
+            :UseCloseUp(true)
+        :EndCamera();
+
+    Briefing:AddPage()
+        :SetName("Seite3")
+        :SetTitle("Bla Bla (3)")
+        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+        :BeginCamera()
+            :SetPosition("pos1")
+            :SetRotation(90)
+            :SetAngle(50)
+            :SetZoom(3000)
+        :EndCamera();
+
+    Briefing:AddPage()
+        :SetName("Seite4")
+        :SetTitle("Bla Bla (4)")
+        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+        :SetDuration(10)
+        :BeginCamera()
+            :SetPosition("pos1")
+            :SetRotation(90)
+            :SetAngle(50)
+            :SetZoom(3000)
+            :BeginFlyTo()
+                :SetPosition("pos2")
+                :SetRotation(-90)
+                :SetAngle(20)
+                :SetZoom(3000)
+            :EndFlyTo()
+        :EndCamera();
+
+    Briefing:AddPage()
+        :SetName("Seite5")
+        :SetTitle("Bla Bla (5)")
+        :BeginChoice()
+            :Option("Noch mal", "Seite4")
+            :Option("Teste Cutscene", "Seite8")
+            :Option("Ende", "Seite6")
+        :EndChoice()
+        :BeginCamera()
+            :SetPosition("pos1")
+            :UseCloseUp(false)
+        :EndCamera();
+
+    Briefing:AddPage()
+        :SetName("Seite6")
+        :SetTitle("Bla Bla (6)")
+        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+        :SetDuration(6)
+        :SetFadeOut(3)
+        :BeginCamera()
+            :SetPosition("pos1")
+            :UseCloseUp(false)
+        :EndCamera();
+
+    Briefing:AddRedirect();
+
+    -- Diese Page wird nur über MC erreicht
+
+    Briefing:AddPage()
+        :SetName("Seite8")
+        :SetTitle("Bla Bla (8)")
+        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+        :BeginCameraAnimation()
+            :SetClear(true)
+            :BeginAnimationSet()
+                :SetDuration(30)
+                :SetLocal(true)
+                :Animation("Pos1", 1500, "npc1", 250)
+                :Animation("Pos2", 1500, "npc1", 0)
+            :EndAnimationSet()
+        :EndCameraAnimation();
+
+    Briefing:AddRedirect("Seite5");
+
+    Briefing.Starting = function(_Data)
+    end
+    Briefing.Finished = function(_Data)
+        local Selected1 = _Data:GetPage("Seite5"):GetSelected();
+        AddNote("Gewählte Antwort: " ..Selected1);
     end
     StartBriefing(Briefing, _Name, _PlayerID)
 end

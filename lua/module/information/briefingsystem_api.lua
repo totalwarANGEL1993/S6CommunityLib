@@ -78,16 +78,59 @@ end
 function AddBriefingPages(_Briefing)
     Lib.BriefingSystem.Global:CreateBriefingGetPage(_Briefing);
     Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing);
-    Lib.BriefingSystem.Global:CreateBriefingAddMCPage(_Briefing);
     Lib.BriefingSystem.Global:CreateBriefingAddRedirect(_Briefing);
 
     local AP = function(_Page)
-        local Page;
+        local Page, Camera, MC;
         if type(_Page) == "table" then
+            Page = _Briefing:AddPage()
+                :UseSkipping(_Page.DisableSkipping ~= true)
+                :SetName(_Page.Name)
+                :SetTitle(_Page.Title)
+                :SetText(_Page.Text)
+                :SetDuration(_Page.Duration)
+                :SetFadeIn(_Page.FadeIn)
+                :SetFadeOut(_Page.FadeOut)
+                :SetFaderAlpha(_Page.FaderAlpha)
+                :SetAction(_Page.Action);
+                if _Page.BigBars then
+                    Page:UseBigBars(_Page.BigBars);
+                end
+
+            -- MC
             if _Page.MC then
-                Page = _Briefing:AddMCPage(_Page);
-            else
-                Page = _Briefing:AddPage(_Page);
+                MC = Page:BeginChoice();
+                for i= 1, #_Page.MC do
+                    local Option = Array_Append({}, _Page.MC[i]);
+                    if _Page.MC[i].ID then
+                        table.insert(Option, 1, _Page.MC[i].ID);
+                    end
+                    MC:Option(unpack(Option));
+                end
+                MC:EndChoice();
+            end
+
+            -- Camera
+            if _Page.Position then
+                Camera = Page:BeginCamera()
+                    :SetPosition(_Page.Position)
+                    :UseCloseUp(_Page.DialogCamera)
+                    :SetAngle(_Page.Angle)
+                    :SetZoom(_Page.Zoom)
+                    :SetRotation(_Page.Rotation);
+
+                -- Camera.FlyTo
+                if _Page.FlyTo then
+                    Camera:BeginFlyTo()
+                        :SetPosition(_Page.FlyTo.Position)
+                        :SetAngle(_Page.FlyTo.Angle)
+                        :SetZoom(_Page.FlyTo.Zoom)
+                        :SetRotation(_Page.FlyTo.Rotation)
+                    -- /Camera.FlyTo
+                    :EndFlyTo();
+                end
+            -- /Camera
+                Camera:EndCamera();
             end
         else
             Page = _Briefing:AddRedirect(_Page);
@@ -129,16 +172,16 @@ function AddBriefingPages(_Briefing)
         end
 
         -- Create page
-        return _Briefing:AddPage {
+        return AP {
             Name            = Name,
             Title           = Title,
             Text            = Text,
             Action          = Action,
             Position        = Position,
-            DisableSkipping = false,
             Duration        = -1,
             DialogCamera    = DialogCam,
             Rotation        = Rotation,
+            DisableSkipping = false,
         };
     end
 
