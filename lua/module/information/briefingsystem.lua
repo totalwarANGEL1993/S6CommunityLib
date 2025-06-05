@@ -435,7 +435,7 @@ function Lib.BriefingSystem.Global:CreateBriefingPageSetParallaxAnimation(_Page)
             end
 
             Entry.Animation = function(_this, _u0, _v0, _u1, _v1, _a)
-                table.insert(_this.AnimData, {_u0, _v0, _u1, _v1, _a or 255});
+                table.insert(_this.AnimData, {_u0 or 0, _v0 or 0, _u1 or 1, _v1 or 1, _a or 255});
                 return _this;
             end
 
