@@ -156,6 +156,111 @@ function Lib.BriefingSystem.Global:BriefingExecutionController()
     end
 end
 
+function Lib.BriefingSystem.Global:ExpandBriefingTable(_Briefing)
+    assert(type(_Briefing) == "table");
+    Lib.BriefingSystem.Global:CreateBriefingProperties(_Briefing);
+    Lib.BriefingSystem.Global:CreateBriefingGetPage(_Briefing);
+    Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing);
+end
+
+function Lib.BriefingSystem.Global:CreateBriefingProperties(_Briefing)
+    _Briefing.BigBars = true;
+    _Briefing.RestoreCamera = true;
+    _Briefing.RestoreGameSpeed = true;
+    _Briefing.EnableGlobalImmortality = true;
+    _Briefing.PreloadAssets = false;
+    _Briefing.HideNotes = false;
+    _Briefing.EnableSky = true;
+    _Briefing.EnableFoW = false;
+    _Briefing.EnableBorderPins = true;
+
+    _Briefing.SetName = function(_self, _Name)
+        _self.Name = _Name;
+        return _self;
+    end
+
+    _Briefing.SetPlayer = function(_self, _Player)
+        _self.PlayerID = _Player;
+        return _self;
+    end
+
+    _Briefing.UseBigBars = function(_self, _BigBars)
+        _self.BigBars = _BigBars == true;
+        return _self;
+    end
+
+    _Briefing.UseRestoreCamera = function(_self, _RestoreCamera)
+        _self.RestoreCamera = _RestoreCamera == true;
+        return _self;
+    end
+
+    _Briefing.UseRestoreGameSpeed = function(_self, _RestoreGameSpeed)
+        _self.RestoreGameSpeed = _RestoreGameSpeed == true;
+        return _self;
+    end
+
+    _Briefing.UseGlobalImmortality = function(_self, _EnableGlobalImmortality)
+        _self.EnableGlobalImmortality = _EnableGlobalImmortality == true;
+        return _self;
+    end
+
+    _Briefing.UseFarClipping = function(_self, _PreloadAssets)
+        _self.PreloadAssets = _PreloadAssets == true;
+        return _self;
+    end
+
+    _Briefing.SetHideNotes = function(_self, _HideNotes)
+        _self.HideNotes = _HideNotes == true;
+        return _self;
+    end
+
+    _Briefing.SetEnableSky = function(_self, _EnableSky)
+        _self.EnableSky = _EnableSky == true;
+        return _self;
+    end
+
+    _Briefing.SetEnableFoW = function(_self, _EnableFoW)
+        _self.EnableFoW = _EnableFoW == true;
+        return _self;
+    end
+
+    _Briefing.SetEnableBorderPins = function(_self, _EnableBorderPins)
+        _self.EnableBorderPins = _EnableBorderPins == true;
+        return _self;
+    end
+
+    _Briefing.SetOnBegin = function(_self, _OnBegin)
+        _self.Starting = _OnBegin;
+        return _self;
+    end
+
+    _Briefing.SetOnFinish = function(_self, _OnFinish)
+        _self.Finished = _OnFinish;
+        return _self;
+    end
+
+    _Briefing.Start = function(_self)
+        assert(GUI == nil);
+
+        local Count = Lib.BriefingSystem.Global.BriefingCounter +1;
+        Lib.BriefingSystem.Global.BriefingCounter = Count;
+        _self.Name = _self.Name or ("BriefingSystem_Briefing_" .. Count);
+        _self.PlayerID = _self.PlayerID or 1;
+
+        assert(type(_self.Name) == "string");
+        assert(_self.PlayerID ~= nil);
+        assert(type(_self) == "table", "Briefing must be a table!");
+        assert(#_self > 0, "Briefing does not contain pages!");
+
+        Lib.BriefingSystem.Global:StartBriefing(
+            _self.Name,
+            _self.PlayerID,
+            _self
+        );
+        return _self.Name;
+    end
+end
+
 function Lib.BriefingSystem.Global:CreateBriefingGetPage(_Briefing)
     _Briefing.GetPage = _Briefing.GetPage or function(this, _NameOrID)
         local ID = Lib.BriefingSystem.Global:GetPageIDByName(_Briefing.PlayerID, _NameOrID);
@@ -164,11 +269,12 @@ function Lib.BriefingSystem.Global:CreateBriefingGetPage(_Briefing)
 end
 
 function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
-    _Briefing.AddPage = _Briefing.AddPage or function(Briefing)
-        Briefing.Length = (Briefing.Length or 0) +1;
-        Briefing.PageAnimation = Briefing.PageAnimation or {};
-        Briefing.PageParallax = Briefing.PageParallax or {};
+    local Briefing = _Briefing;
+    Briefing.PageAnimation = Briefing.PageAnimation or {};
+    Briefing.PageParallax = Briefing.PageParallax or {};
 
+    Briefing.BeginPage = Briefing.BeginPage or function(_self)
+        Briefing.Length = (Briefing.Length or 0) +1;
         local Page = {};
         Page.__Legit = true;
         Page.Name = "Page" ..(#Briefing +1);
@@ -178,91 +284,173 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
         end
         Page.DialogCamera = false;
 
-        Page.GetSelected = function(_self)
-            if _self.MC then
-                return _self.MC.Selected or 0;
+        Page.GetSelected = function(_Page)
+            if _Page.MC then
+                return _Page.MC.Selected or 0;
             end
             return 0;
         end
 
-        Page.UseBigBars = function(_self, _BigBars)
-            _self.BigBars = _BigBars == true;
-            return _self;
+        Page.UseBigBars = function(_Page, _BigBars)
+            _Page.BigBars = _BigBars == true;
+            return _Page;
         end
 
-        Page.UseSkipping = function(_self, _Skip)
-            _self.DisableSkipping = _Skip ~= true;
-            return _self;
+        Page.UsePerformanceMode = function(_Page, _Performance)
+            _Page.Performance = _Performance == true;
+            return _Page;
         end
 
-        Page.SetName = function(_self, _Name)
-            _self.Name = _Name;
-            return _self;
+        Page.UseSkipping = function(_Page, _Skip)
+            _Page.DisableSkipping = _Skip ~= true;
+            return _Page;
         end
 
-        Page.SetTitle = function(_self, _Title)
-            _self.Title = Localize(_Title or "");
-            return _self;
+        Page.SetName = function(_Page, _Name)
+            _Page.Name = _Name;
+            return _Page;
         end
 
-        Page.SetText = function(_self, _Text)
-            _self.Text = Localize(_Text or "");
-            return _self;
+        Page.SetTitle = function(_Page, _Title)
+            _Page.Title = Localize(_Title or "");
+            return _Page;
         end
 
-        Page.SetDuration = function(_self, _Duration)
-            _self.Duration = _Duration;
-            return _self;
+        Page.SetText = function(_Page, _Text)
+            _Page.Text = Localize(_Text or "");
+            return _Page;
         end
 
-        Page.SetAction = function(_self, _Action)
-            _self.Action = _Action;
-            return _self;
+        Page.SetDuration = function(_Page, _Duration)
+            _Page.Duration = _Duration;
+            return _Page;
         end
 
-        Page.SetFadeIn = function(_self, _FadeIn)
-            _self.FadeIn = _FadeIn;
-            return _self;
+        Page.SetAction = function(_Page, _Action)
+            _Page.Action = _Action;
+            return _Page;
         end
 
-        Page.SetFadeOut = function(_self, _FadeOut)
-            _self.FadeOut = _FadeOut;
-            return _self;
+        Page.SetFadeIn = function(_Page, _FadeIn)
+            _Page.FadeIn = _FadeIn;
+            return _Page;
         end
 
-        Page.SetFaderAlpha = function(_self, _FaderAlpha)
-            _self.FaderAlpha = _FaderAlpha;
-            return _self;
+        Page.SetFadeOut = function(_Page, _FadeOut)
+            _Page.FadeOut = _FadeOut;
+            return _Page;
         end
 
-        Page.BeginChoice = function(_self)
-            _self.MC = {};
-            _self.DisableSkipping = true;
-            _self.Duration = -1;
+        Page.SetFaderAlpha = function(_Page, _FaderAlpha)
+            _Page.FaderAlpha = _FaderAlpha;
+            return _Page;
+        end
 
-            _self.MC.Option = function(_this, ...)
+        Page.BeginChoice = function(_Page)
+            _Page.MC = {};
+            _Page.DisableSkipping = true;
+            _Page.Duration = -1;
+
+            _Page.MC.Option = function(_Option, ...)
                 local args = {...};
-                local Index = #_self.MC +1;
+                local Index = #_Page.MC +1;
                 local ID = Index;
                 if type(args[1]) == "number" then
                     ID = table.remove(args, 1);
                 end
-                _self.MC[Index] = {ID = ID, Localize(args[1]), args[2], args[3]};
+                _Page.MC[Index] = {ID = ID, Localize(args[1]), args[2], args[3]};
+                return _Option;
+            end
+
+            _Page.MC.EndChoice = function(_Choice)
+                assert(#_Page.MC > 0);
+                return _Page;
+            end
+            return _Page.MC;
+        end
+
+        Page.EndPage = function()
+            return Briefing;
+        end
+
+        self:CreateBriefingPageSetParallaxAnimation(Page);
+        self:CreateBriefingPageSetCamera(Page);
+        self:CreateBriefingPageSetCameraAnimation(Page);
+        table.insert(_self, Page);
+        return Page;
+    end
+
+    Briefing.Redirect = Briefing.Redirect or function(_self, _Target)
+        _self.Length = (_self.Length or 0) +1;
+        local Page = (_Target == nil and -1) or _Target;
+        table.insert(_self, Page);
+        return Briefing;
+    end
+end
+
+function Lib.BriefingSystem.Global:CreateBriefingPageSetParallaxAnimation(_Page)
+    _Page.BeginParallaxAnimation = _Page.BeginParallaxAnimation or function(Page, ...)
+        Page.Parallax = {};
+
+        Page.Parallax.SetRepeat = function(_self)
+            _self.Repeat = true;
+            return _self;
+        end
+
+        Page.Parallax.SetClear = function(_self)
+            _self.Clear = true;
+            return _self;
+        end
+
+        Page.Parallax.SetPostpone = function(_self)
+            _self.Postpone = true;
+            return _self;
+        end
+
+        Page.Parallax.BeginLayer = function(_self)
+            local Index = #_self +1;
+            local Entry = {};
+            Entry.AnimData = {};
+            Entry.Source = Page.Name;
+            Entry.Duration = 2 * 60;
+
+            Entry.SetDuration = function(_this, _Duration)
+                _this.Duration = _Duration;
                 return _this;
             end
 
-            _self.MC.EndChoice = function(_this)
-                assert(#_self.MC > 0);
+            Entry.SetImage = function(_this, _Image)
+                _this.Image = _Image;
+                return _this;
+            end
+
+            Entry.SetLocal = function(_this)
+                _this.PageTied = true;
+                return _this;
+            end
+
+            Entry.SetInterpolation = function(_this, _Interpolation)
+                _this.Interpolation = _Interpolation;
+                return _this;
+            end
+
+            Entry.Animation = function(_this, _u0, _v0, _u1, _v1, _a)
+                table.insert(_this.AnimData, {_u0, _v0, _u1, _v1, _a or 255});
+                return _this;
+            end
+
+            Entry.EndLayer = function(_this)
                 return _self;
             end
-            return _self.MC;
+
+            Page.Parallax[Index] = Entry;
+            return Entry;
         end
 
-        -- FIXME: Add to old factory methods for AP and ASP!
-        self:CreateBriefingPageSetCamera(Page);
-        self:CreateBriefingPageSetCameraAnimation(Page);
-        table.insert(_Briefing, Page);
-        return Page;
+        Page.Parallax.EndParallaxAnimation = function(_self)
+            return Page;
+        end
+        return Page.Parallax;
     end
 end
 
@@ -455,17 +643,6 @@ function Lib.BriefingSystem.Global:CreateBriefingPageSetCameraAnimation(_Page)
     end
 end
 
-function Lib.BriefingSystem.Global:CreateBriefingAddRedirect(_Briefing)
-    _Briefing.AddRedirect = _Briefing.AddRedirect or function(this, _Target)
-        -- Dialog length
-        this.Length = (this.Length or 0) +1;
-        -- Return page
-        local Page = (_Target == nil and -1) or _Target;
-        table.insert(this, Page);
-        return Page;
-    end
-end
-
 function Lib.BriefingSystem.Global:StartBriefing(_Name, _PlayerID, _Data)
     self.BriefingQueue[_PlayerID] = self.BriefingQueue[_PlayerID] or {};
     Lib.Information.Global:PushCinematicEventToQueue(
@@ -500,7 +677,7 @@ function Lib.BriefingSystem.Global:NextBriefing(_PlayerID)
         Briefing.CurrentPage = 0;
         self.Briefing[_PlayerID] = Briefing;
         self:SetDefaultAttributes(_PlayerID);
-        self:TransformParallaxes(_PlayerID);
+        -- self:TransformParallaxes(_PlayerID);
 
         if Briefing.EnableGlobalImmortality then
             Logic.SetGlobalInvulnerability(1);
@@ -1578,9 +1755,7 @@ function Lib.BriefingSystem.Local:ActivateCinematicMode(_PlayerID)
     if not self.Briefing[_PlayerID].EnableBorderPins then
         Display.SetRenderBorderPins(0);
     end
-    if self:IsChangingGraphicsPermited() then
-        Display.SetUserOptionOcclusionEffect(0);
-    end
+    Display.SetUserOptionOcclusionEffect(0);
     Camera.SwitchCameraBehaviour(5);
 
     InitializeFader();
@@ -1664,27 +1839,6 @@ function Lib.BriefingSystem.Local:DeactivateCinematicMode(_PlayerID)
         ShowScriptConsole();
     end
     self.CinematicActive = false;
-end
-
--- -------------------------------------------------------------------------- --
-
-function Lib.BriefingSystem.Local:IsChangingGraphicsPermited()
-    return self.Config.DoAlternateGraphics == true;
-end
-
-function Lib.BriefingSystem.Local:RequestAlternateGraphics()
-    if IsMultiplayer() then
-        return;
-    end
-    DialogRequestBox(
-        GUI.GetPlayerID(),
-        Lib.BriefingSystem.Text.Request.Title,
-        Lib.BriefingSystem.Text.Request.Text,
-        function(_Yes)
-            Lib.BriefingSystem.Local.Config.DoAlternateGraphics = _Yes == true;
-        end,
-        false
-    );
 end
 
 -- -------------------------------------------------------------------------- --

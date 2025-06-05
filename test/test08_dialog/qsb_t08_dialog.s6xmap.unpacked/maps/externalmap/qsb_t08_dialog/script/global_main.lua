@@ -38,7 +38,7 @@ function BriefingTest1(_Name, _PlayerID)
         HideBorderPins = true,
         ShowSky = true,
     }
-    local AP, ASP, AAN = AddBriefingPages(Briefing);
+    local AP, ASP = AddBriefingPages(Briefing);
 
     -- Animations are created automatically because a position is given.
     ASP("Page 1", "This is a briefing with default animation.", true, "npc1");
@@ -196,112 +196,116 @@ end
 
 -- > BriefingTest6([[foo]], 1)
 function BriefingTest6(_Name, _PlayerID)
-    local Briefing = {
-        HideBorderPins = true,
-        BigBars = false,
-        ShowSky = true,
-    }
-    AddBriefingPages(Briefing);
-
-    Briefing:AddPage()
-        :SetName("Seite1")
-        :SetTitle("Bla Bla (1)")
-        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
-        :BeginCamera()
-            :SetPosition("pos1")
-            :UseCloseUp(false)
-        :EndCamera();
-
-    Briefing:AddPage()
-        :SetName("Seite2")
-        :SetTitle("Bla Bla (2)")
-        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
-        :SetAction(function() AddNote("It just work's!"); end)
-        :BeginCamera()
-            :SetPosition("pos1")
-            :UseCloseUp(true)
-        :EndCamera();
-
-    Briefing:AddPage()
-        :SetName("Seite3")
-        :SetTitle("Bla Bla (3)")
-        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
-        :BeginCamera()
-            :SetPosition("pos1")
-            :SetRotation(90)
-            :SetAngle(50)
-            :SetZoom(3000)
-        :EndCamera();
-
-    Briefing:AddPage()
-        :SetName("Seite4")
-        :SetTitle("Bla Bla (4)")
-        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
-        :SetDuration(10)
-        :BeginCamera()
-            :SetPosition("pos1")
-            :SetRotation(90)
-            :SetAngle(50)
-            :SetZoom(3000)
-            :BeginFlyTo()
-                :SetPosition("pos2")
-                :SetRotation(-90)
-                :SetAngle(20)
+    NewBriefing(_Name, _PlayerID)
+        :SetEnableBorderPins(true)
+        :SetEnableSky(true)
+        :UseBigBars(true)
+        :BeginPage()
+            :SetName("Seite1")
+            :SetTitle("Bla Bla (1)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(false)
+            :EndCamera()
+            :BeginParallaxAnimation()
+                :SetClear(true)
+                :BeginLayer()
+                    :SetDuration(30)
+                    :SetImage("C:/IMG/Paralax66.png")
+                    :Animation(0, 0, 1, 1, 255)
+                    :Animation(0.5, 0.5, 1, 1, 255)
+                :EndLayer()
+            :EndParallaxAnimation()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite2")
+            :SetTitle("Bla Bla (2)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :SetAction(function() AddNote("It just work's!"); end)
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(true)
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite3")
+            :SetTitle("Bla Bla (3)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :BeginCamera()
+                :SetPosition("pos1")
+                :SetRotation(90)
+                :SetAngle(50)
                 :SetZoom(3000)
-            :EndFlyTo()
-        :EndCamera();
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite4")
+            :SetTitle("Bla Bla (4)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :SetDuration(10)
+            :BeginCamera()
+                :SetPosition("pos1")
+                :SetRotation(90)
+                :SetAngle(50)
+                :SetZoom(3000)
+                :BeginFlyTo()
+                    :SetPosition("pos2")
+                    :SetRotation(-90)
+                    :SetAngle(20)
+                    :SetZoom(3000)
+                :EndFlyTo()
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite5")
+            :SetTitle("Bla Bla (5)")
+            :BeginChoice()
+                :Option("Noch mal", "Seite4")
+                :Option("Teste Cutscene", "Seite8")
+                :Option("Ende", "Seite6")
+            :EndChoice()
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(false)
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite6")
+            :SetTitle("Bla Bla (6)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :SetDuration(6)
+            :SetFadeOut(3)
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(false)
+            :EndCamera()
+        :EndPage()
 
-    Briefing:AddPage()
-        :SetName("Seite5")
-        :SetTitle("Bla Bla (5)")
-        :BeginChoice()
-            :Option("Noch mal", "Seite4")
-            :Option("Teste Cutscene", "Seite8")
-            :Option("Ende", "Seite6")
-        :EndChoice()
-        :BeginCamera()
-            :SetPosition("pos1")
-            :UseCloseUp(false)
-        :EndCamera();
+        :Redirect()
 
-    Briefing:AddPage()
-        :SetName("Seite6")
-        :SetTitle("Bla Bla (6)")
-        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
-        :SetDuration(6)
-        :SetFadeOut(3)
-        :BeginCamera()
-            :SetPosition("pos1")
-            :UseCloseUp(false)
-        :EndCamera();
+        :BeginPage()
+            :SetName("Seite8")
+            :SetTitle("Bla Bla (8)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :BeginCameraAnimation()
+                :SetClear(true)
+                :BeginAnimationSet()
+                    :SetDuration(30)
+                    :SetLocal(true)
+                    :Animation("Pos1", 1500, "npc1", 250)
+                    :Animation("Pos2", 1500, "npc1", 0)
+                :EndAnimationSet()
+            :EndCameraAnimation()
+        :EndPage()
 
-    Briefing:AddRedirect();
+        :Redirect("Seite5")
 
-    -- Diese Page wird nur über MC erreicht
-
-    Briefing:AddPage()
-        :SetName("Seite8")
-        :SetTitle("Bla Bla (8)")
-        :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
-        :BeginCameraAnimation()
-            :SetClear(true)
-            :BeginAnimationSet()
-                :SetDuration(30)
-                :SetLocal(true)
-                :Animation("Pos1", 1500, "npc1", 250)
-                :Animation("Pos2", 1500, "npc1", 0)
-            :EndAnimationSet()
-        :EndCameraAnimation();
-
-    Briefing:AddRedirect("Seite5");
-
-    Briefing.Starting = function(_Data)
-    end
-    Briefing.Finished = function(_Data)
-        local Selected1 = _Data:GetPage("Seite5"):GetSelected();
-        AddNote("Gewählte Antwort: " ..Selected1);
-    end
-    StartBriefing(Briefing, _Name, _PlayerID)
+        :SetOnFinish(function(_Data)
+            local Selected1 = _Data:GetPage("Seite5"):GetSelected();
+            AddNote("Gewählte Antwort: " ..Selected1);
+        end)
+        :Start();
 end
 
 -- |||| CUTSCENE |||| --
