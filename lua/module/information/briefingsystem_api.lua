@@ -77,7 +77,7 @@ function NewBriefing(_Name, _PlayerID, _Briefing)
             end
 
             -- /Page
-            Page:EndPages()
+            Page:EndPage()
         else
             _Briefing:Redirect(_Page)
             Page = _Page or -1;
@@ -138,7 +138,7 @@ end
 API.NewBriefing = NewBriefing;
 
 function AddBriefingPages(_Briefing)
-    local Briefing = NewBriefing(_Briefing);
+    local Briefing = NewBriefing(nil, nil, _Briefing);
     return Briefing.AP, Briefing.ASP;
 end
 API.AddBriefingPages = AddBriefingPages;
