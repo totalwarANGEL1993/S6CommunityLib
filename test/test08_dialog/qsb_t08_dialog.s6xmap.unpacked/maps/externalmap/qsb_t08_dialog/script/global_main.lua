@@ -310,9 +310,11 @@ end
 
 -- |||| CUTSCENE |||| --
 
--- > CutsceneTest([[Foo]], 1)
-function CutsceneTest(_Name, _PlayerID)
-    local Cutscene = {};
+-- > CutsceneTest1([[Foo]], 1)
+function CutsceneTest1(_Name, _PlayerID)
+    local Cutscene = {
+        DisableSkipping = false,
+    };
     local AF = AddCutscenePages(Cutscene);
 
     AF {
@@ -335,45 +337,32 @@ function CutsceneTest(_Name, _PlayerID)
 
     Cutscene.Finished = function()
     end
-    StartCutscene(Cutscene, _Name, _PlayerID)
+    StartCutscene(Cutscene, _Name, _PlayerID);
 end
 
--- > CutsceneBriefingTest([[Foo]], 1)
-function CutsceneBriefingTest(_Name, _PlayerID)
-    local Briefing = {
-        EnableBorderPins = false,
-        EnableSky = true,
-        EnableFoW = false,
-    }
-    local AP, ASP = AddBriefingPages(Briefing);
-
-    Briefing.PageAnimation = {
-        ["Page1"] = {
-            {30, {GetFrameVector("cs1p01", 1500, "cs1l01", 500)},
-                 {GetFrameVector("cs1p02",  800, "cs1l02", 250)},
-                 {GetFrameVector("cs1p03", 1200, "cs1l03", 150)},
-                 {GetFrameVector("cs1p04",  100, "cs1l04",  50)},
-            },
-        },
-    };
-
-    AP {
-        Name = "Page1",
-        Title = "Page 1",
-        Text = "This is page 1 of the pseudo cutscene.",
-    }
-
-    AP {
-        Name = "Page2",
-        Title = "Page 2",
-        Text = "This is page 2 of the pseudo cutscene.",
-    }
-
-    Briefing.Starting = function(_Data)
-    end
-    Briefing.Finished = function(_Data)
-    end
-    StartBriefing(Briefing, _Name, _PlayerID)
+-- > CutsceneTest2([[Foo]], 1)
+function CutsceneTest2(_Name, _PlayerID)
+    NewCutscene(_Name, _PlayerID)
+        :SetEnableBorderPins(true)
+        :SetEnableSky(true)
+        :BeginFlight()
+            :SetFlight("c01")
+            :SetTitle("Flight 1")
+            :SetText("What is the first rule of a cutscene?")
+            :SetFadeIn(3)
+        :EndFlight()
+        :BeginFlight()
+            :SetFlight("c02")
+            :SetTitle("Flight 2")
+            :SetText("They are NOT supposed to display huge chuncks of text!")
+        :EndFlight()
+        :BeginFlight()
+            :SetFlight("c03")
+            :SetTitle("Flight 3")
+            :SetText("Keep the text small and simple, stupid!")
+            :SetFadeOut(3)
+        :EndFlight()
+        :Start();
 end
 
 -- |||| DIALOG |||| --

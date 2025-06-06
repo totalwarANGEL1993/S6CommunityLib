@@ -369,7 +369,7 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
             return _Page.MC;
         end
 
-        Page.EndPage = function()
+        Page.EndPage = function(_Page)
             return Briefing;
         end
 
@@ -677,7 +677,6 @@ function Lib.BriefingSystem.Global:NextBriefing(_PlayerID)
         Briefing.CurrentPage = 0;
         self.Briefing[_PlayerID] = Briefing;
         self:SetDefaultAttributes(_PlayerID);
-        -- self:TransformParallaxes(_PlayerID);
 
         if Briefing.EnableGlobalImmortality then
             Logic.SetGlobalInvulnerability(1);
@@ -688,7 +687,7 @@ function Lib.BriefingSystem.Global:NextBriefing(_PlayerID)
 
         -- This is an exception from the rule that the global event is send
         -- before the local event! For timing reasons...
-        SendReportToLocal(Report.BriefingStarted, _PlayerID, Briefing.Name, Briefing);
+        SendReportToLocal(Report.BriefingStarted, Briefing.PlayerID, Briefing.Name, Briefing);
     end
 end
 
@@ -725,36 +724,6 @@ function Lib.BriefingSystem.Global:SetDefaultAttributes(_PlayerID)
 
             self.Briefing[_PlayerID][i] = Page;
         end
-    end
-end
-
-function Lib.BriefingSystem.Global:TransformParallaxes(_PlayerID)
-    if self.Briefing[_PlayerID].PageParallax then
-        for Name, v in pairs(self.Briefing[_PlayerID].PageParallax) do
-            local PageID = self:GetPageIDByName(_PlayerID, Name);
-            if PageID ~= 0 then
-                local Page = self.Briefing[_PlayerID][PageID];
-                Page.Parallax = Page.Parallax or {};
-                Page.Parallax.Repeat = v.Repeat == true;
-                Page.Parallax.Clear = v.Clear == true;
-                for i= 1, 6, 1 do
-                    if v[i] then
-                        local Entry = {};
-                        Entry.Source = Name;
-                        Entry.PageTied = v.PageTied == true;
-                        Entry.Image = v[i][1];
-                        Entry.Interpolation = v[i].Interpolation;
-                        Entry.Duration = v[i][2] or (2 * 60);
-                        Entry.AnimData = {};
-                        for j= 3, #v[i] do
-                            table.insert(Entry.AnimData, v[i][j]);
-                        end
-                        Page.Parallax[i] = Entry;
-                    end
-                end
-            end
-        end
-        self.Briefing[_PlayerID].PageParallax = nil;
     end
 end
 
