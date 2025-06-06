@@ -199,10 +199,10 @@ function Lib.Information.Local:GetCinematicEventStatus(_InfoID)
 end
 
 function Lib.Information.Local:OverrideInterfaceUpdateForCinematicMode()
-    GameCallback_GameSpeedChanged_Orig_Information = GameCallback_GameSpeedChanged;
+    self.Orig_GameCallback_GameSpeedChanged = GameCallback_GameSpeedChanged;
     GameCallback_GameSpeedChanged = function(_Speed)
         if not Lib.Information.Local.PauseScreenShown then
-            GameCallback_GameSpeedChanged_Orig_Information(_Speed);
+            Lib.Information.Local.Orig_GameCallback_GameSpeedChanged(_Speed);
         end
     end
 

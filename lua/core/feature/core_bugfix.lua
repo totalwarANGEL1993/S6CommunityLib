@@ -34,6 +34,7 @@ function Lib.Core.Bugfix:Initialize()
         self:FixBigCathedralName();
         self:FixClimateZoneForHouseMenu();
         self:FixAbilityInfoWhenHomeless();
+        self:OverrideGameSpeedChanged();
     end
 end
 
@@ -460,6 +461,29 @@ function Lib.Core.Bugfix:OverrideSelection()
     GameCallback_GUI_SelectionChanged = function(_Source)
         Lib.Core.Bugfix.Orig_GameCallback_GUI_SelectionChanged(_Source);
         Lib.Core.Bugfix:OnSelectionCanged(_Source);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Pause messages
+
+function Lib.Core.Bugfix:OverrideGameSpeedChanged()
+    self.Orig_GameCallback_GameSpeedChanged = GameCallback_GameSpeedChanged;
+    GameCallback_GameSpeedChanged = function(_Speed)
+        if Logic.GetTime() >= 2 then
+            GUI_Minimap.ToggleGameSpeedUpdate(_Speed);
+            if _Speed == 0 then
+                if Debug_EnableDebugOutput or g_OnGameStartPresentationMode then
+                    return;
+                end
+                XGUIEng.ShowWidget("/InGame/Root/Normal/PauseScreen", 1);
+            else
+                if Debug_EnableDebugOutput or g_OnGameStartPresentationMode then
+                    return;
+                end
+                XGUIEng.ShowWidget("/InGame/Root/Normal/PauseScreen", 0);
+            end
+        end
     end
 end
 
