@@ -28,6 +28,7 @@
 ---
 --- A briefing can have unlimited pages.
 --- * `SetName(_Name)`:            Sets the name of the page.
+--- * `SetSpeech(_Speech)`:        Sets the path to the voice line.
 --- * `SetTitle(_Title)`:          Sets the title to be displayed on the page.
 --- * `SetText(_Text)`:            Sets the text to be displayed on the page.
 --- * `SetDuration(_Duration)`:    Sets how long the page is displayed.
@@ -166,7 +167,7 @@
 function NewBriefing(_Name, _PlayerID)
     return {};
 end
-API.IsBriefingActive = IsBriefingActive;
+API.NewBriefing = NewBriefing;
 
 --- Checks whether a briefing is active.
 --- @param _PlayerID integer Player ID of the receiver

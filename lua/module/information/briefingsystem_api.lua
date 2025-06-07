@@ -1,14 +1,6 @@
 Lib.Require("comfort/IsLocalScript");
 Lib.Register("module/information/BriefingSystem_API");
 
-function IsBriefingActive(_PlayerID)
-    if not IsLocalScript() then
-        return Lib.BriefingSystem.Global:GetCurrentBriefing(_PlayerID) ~= nil;
-    end
-    return Lib.BriefingSystem.Local:GetCurrentBriefing(_PlayerID) ~= nil;
-end
-API.IsBriefingActive = IsBriefingActive;
-
 function NewBriefing(_Name, _PlayerID, _Briefing)
     assert(GUI == nil);
     _Briefing = _Briefing or {};
@@ -27,6 +19,7 @@ function NewBriefing(_Name, _PlayerID, _Briefing)
             -- Properties
                 :UseSkipping(_Page.DisableSkipping ~= true)
                 :SetName(_Page.Name)
+                :SetSpeech(_Page.Speech)
                 :SetTitle(_Page.Title)
                 :SetText(_Page.Text)
                 :SetDuration(_Page.Duration)
@@ -77,7 +70,7 @@ function NewBriefing(_Name, _PlayerID, _Briefing)
             end
 
             -- /Page
-            Page:EndPage()
+            Page:EndPage();
         else
             _Briefing:Redirect(_Page)
             Page = _Page or -1;
@@ -142,6 +135,14 @@ function AddBriefingPages(_Briefing)
     return Briefing.AP, Briefing.ASP;
 end
 API.AddBriefingPages = AddBriefingPages;
+
+function IsBriefingActive(_PlayerID)
+    if not IsLocalScript() then
+        return Lib.BriefingSystem.Global:GetCurrentBriefing(_PlayerID) ~= nil;
+    end
+    return Lib.BriefingSystem.Local:GetCurrentBriefing(_PlayerID) ~= nil;
+end
+API.IsBriefingActive = IsBriefingActive;
 
 function StartBriefing(_Briefing, _Name, _PlayerID)
     assert(GUI == nil);

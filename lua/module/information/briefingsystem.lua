@@ -252,11 +252,7 @@ function Lib.BriefingSystem.Global:CreateBriefingProperties(_Briefing)
         assert(type(_self) == "table", "Briefing must be a table!");
         assert(#_self > 0, "Briefing does not contain pages!");
 
-        Lib.BriefingSystem.Global:StartBriefing(
-            _self.Name,
-            _self.PlayerID,
-            _self
-        );
+        Lib.BriefingSystem.Global:StartBriefing( _self.Name, _self.PlayerID, _self);
         return _self.Name;
     end
 end
@@ -308,6 +304,11 @@ function Lib.BriefingSystem.Global:CreateBriefingAddPage(_Briefing)
 
         Page.SetName = function(_Page, _Name)
             _Page.Name = _Name;
+            return _Page;
+        end
+
+        Page.SetSpeech = function(_Page, _Speech)
+            _Page.Speech = _Speech;
             return _Page;
         end
 

@@ -377,7 +377,7 @@ function CreateTestNPCDialogQuest()
         Receiver    = 1,
 
         Goal_NPC("npc1", "-"),
-        Reward_Dialog("TestDialog", "CreateTestNPCDialogBriefing"),
+        Reward_Dialog("TestDialog", "CreateTestNPCDialogBriefing1"),
         Trigger_Time(0),
     }
 
@@ -391,8 +391,76 @@ function CreateTestNPCDialogQuest()
     }
 end
 
--- > CreateTestNPCDialogBriefing([[Foo]], 1)
-function CreateTestNPCDialogBriefing(_Name, _PlayerID)
+-- > CreateTestNPCDialogBriefing1([[Foo]], 1)
+function CreateTestNPCDialogBriefing1(_Name, _PlayerID)
+    NewDialog(_Name, _PlayerID)
+        :SetEnableBorderPins(true)
+        :SetEnableFoW(false)
+        :UseRestoreCamera(true)
+        :UseRestoreGameSpeed(true)
+
+        :BeginPage()
+            :SetName("StartPage")
+            :SetText("This is a test!")
+            :SetActor(1)
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+            :BeginChoice()
+                :Option("Continue testing", "ContinuePage")
+                :Option("Remove answer",
+                        function()
+                            TestOptionVisibility = true;
+                            return "HidePage";
+                        end,
+                        function() return not TestOptionVisibility; end)
+                :Option("Stop testing", "EndPage")
+            :EndChoice()
+        :EndPage()
+
+        :BeginPage()
+            :SetName("HidePage")
+            :SetText("Splendit, it seems to work as intended.")
+            :SetActor(1)
+            :UseCloseUp(true)
+            :SetPosition("hero")
+        :EndPage()
+
+        :Redirect("StartPage")
+
+        :BeginPage()
+            :SetName("ContinuePage")
+            :SetText("We can show large texts with portrait... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            :SetActor(2)
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+        :BeginPage()
+            :SetText("... or without portrait... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+        :BeginPage()
+            :SetText("And with auto skip after some seconds... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            :SetActor(2)
+            :SetDuration(12)
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+
+        :Redirect("StartPage")
+
+        :BeginPage()
+            :SetName("EndPage")
+            :SetText("Well, then we end this mess!")
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+
+        :Start();
+end
+
+-- > CreateTestNPCDialogBriefing2([[Foo]], 1)
+function CreateTestNPCDialogBriefing2(_Name, _PlayerID)
     local Dialog = {
         DisableFow = true,
         DisableBoderPins = true,
@@ -414,22 +482,24 @@ function CreateTestNPCDialogBriefing(_Name, _PlayerID)
             {"Remove answer",
              function()
                 TestOptionVisibility = false;
-                return "ContinuePage";
+                return "HidePage";
              end,
-             function() return not TestOptionVisibility; end},
+             function() return TestOptionVisibility; end},
             {"Stop testing", "EndPage"}
         }
     }
 
     AP {
-        Name         = "ContinuePage",
+        Name         = "HidePage",
         Text         = "Splendit, it seems to work as intended.",
         Actor        = 1,
         Position     = "hero",
         DialogCamera = true,
     }
+    AP("StartPage");
 
     AP {
+        Name         = "ContinuePage",
         Text         = "We can show large texts with portrait... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
         Actor        = 2,
         Position     = "npc1",
