@@ -20,6 +20,7 @@ comfort/getquestid
 comfort/ishistoryedition
 comfort/isincone
 comfort/ismultiplayerready
+comfort/isunofficialpatch
 comfort/getlineposition
 comfort/getplayeratslot
 comfort/getposition

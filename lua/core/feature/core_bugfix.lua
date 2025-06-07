@@ -22,19 +22,23 @@ Lib.Register("core/feature/Core_Bugfix");
 
 function Lib.Core.Bugfix:Initialize()
     if not IsLocalScript() then
-        self:FixResourceSlotsInStorehouses();
-        self:FixMiddleEuropeNpcBarracks();
-        self:FixMerchantArrivedCheckpoints();
-        self:FixDestroyAllPlayerUnits();
-        self:FixBanditCampFireplace();
+        if not IsUnofficialPatch() then
+            self:FixResourceSlotsInStorehouses();
+            self:FixMiddleEuropeNpcBarracks();
+            self:FixMerchantArrivedCheckpoints();
+            self:FixDestroyAllPlayerUnits();
+            self:FixBanditCampFireplace();
+        end
     end
     if IsLocalScript() then
-        self:OverrideSelection();
-        self:FixInteractiveObjectClicked();
+        if not IsUnofficialPatch() then
+            self:OverrideSelection();
+            self:FixInteractiveObjectClicked();
+            self:FixClimateZoneForHouseMenu();
+            self:FixAbilityInfoWhenHomeless();
+            self:OverrideGameSpeedChanged();
+        end
         self:FixBigCathedralName();
-        self:FixClimateZoneForHouseMenu();
-        self:FixAbilityInfoWhenHomeless();
-        self:OverrideGameSpeedChanged();
     end
 end
 
@@ -165,10 +169,10 @@ function Lib.Core.Bugfix:FixInteractiveObjectClicked()
             Sound.FXPlay2DSound("ui\\menu_click");
         end
 
-        if not GUI_Interaction.InteractionSpeechFeedbackOverride 
+        if not GUI_Interaction.InteractionSpeechFeedbackOverride
         or not GUI_Interaction.InteractionSpeechFeedbackOverride(objectID) then
             GUI_FeedbackSpeech.Add(
-                "SpeechOnly_CartsSent", 
+                "SpeechOnly_CartsSent",
                 g_FeedbackSpeech.Categories.CartsUnderway,
                 nil,
                 nil
@@ -384,8 +388,8 @@ end
 
 function Lib.Core.Bugfix:FixBanditCampFireplace()
     g_Outlaws.ReplaceCampType = {};
-    g_Outlaws.ReplaceCampType[Entities.D_X_Fireplace01] = Entities.D_X_Fireplace01_Expired;
-    g_Outlaws.ReplaceCampType[Entities.D_X_Fireplace02] = Entities.D_X_Fireplace02_Expired;
+    g_Outlaws.ReplaceCampType["D_X_Fireplace01"] = "D_X_Fireplace01_Expired";
+    g_Outlaws.ReplaceCampType["D_X_Fireplace02"] = "D_X_Fireplace02_Expired";
 
     ActivateFireplaceforBanditPack = function(_CaMarketplaceID)
         local playerID = Logic.EntityGetPlayer(_CaMarketplaceID);
@@ -421,7 +425,9 @@ function Lib.Core.Bugfix:FixBanditCampFireplace()
             Logic.DestroyEntity(OldID);
 
             local CampfireType = g_Outlaws.Players[playerID][_CaMarketplaceID].CampFireType;
-            local FireplaceType = g_Outlaws.ReplaceCampType[CampfireType];
+            local CampfireTypeName = Logic.GetEntityTypeName(CampfireType);
+            local FireplaceTypeName = g_Outlaws.ReplaceCampType[CampfireTypeName];
+            local FireplaceType = Entities[FireplaceTypeName];
             local NewID = Logic.CreateEntityOnUnblockedLand(FireplaceType, x, y, 0, 0);
             g_Outlaws.Players[playerID][_CaMarketplaceID].ExtinguishedFire = NewID;
             g_Outlaws.Players[playerID][_CaMarketplaceID].CampFire = nil;
