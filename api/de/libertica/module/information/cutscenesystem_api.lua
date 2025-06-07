@@ -22,6 +22,7 @@
 --- * `Start()`:                     Startet die Cutscene.
 ---
 --- #### Functions `FlightBuilder`:
+--- * `SetSpeech(_Speech)`:         Setzt den Pfad zur Voice Line.
 --- * `SetTitle(_Title)`:           Setzt den anzuzeigenden Titel der Page.
 --- * `SetText(_Text)`:             Setzt den anzuzeigenden Text der Page.
 --- * `SetFadeIn(_Time)`:           Blendet von Schwarz ein.
@@ -60,10 +61,10 @@
 --- @param _Name string Name der Cutscene
 --- @param _PlayerID integer Spieler-ID des Empfängers
 --- @return table BriefingBuilder Builder der Cutscene
-function NewBriefing(_Name, _PlayerID)
+function NewCutscene(_Name, _PlayerID)
     return {};
 end
-API.IsBriefingActive = IsBriefingActive;
+API.NewCutscene = NewCutscene;
 
 --- Überprüft, ob eine Zwischensequenz aktiv ist.
 --- @param _PlayerID integer Spieler-ID des Empfängers

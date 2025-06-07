@@ -162,17 +162,13 @@ function Lib.CutsceneSystem.Global:CreateCutsceneProperties(_Cutscene)
         assert(type(_self) == "table", "Briefing must be a table!");
         assert(#_self > 0, "Cutscene does not contain flights!");
 
-        Lib.CutsceneSystem.Global:StartCutscene(
-            _self.Name,
-            _self.PlayerID,
-            _self
-        );
+        Lib.CutsceneSystem.Global:StartCutscene(_self.Name, _self.PlayerID, _self);
         return _self.Name;
     end
 end
 
 function Lib.CutsceneSystem.Global:CreateCutsceneGetPage(_Cutscene)
-    _Cutscene.GetPage = function(this, _NameOrID)
+    _Cutscene.GetPage = _Cutscene.GetPage or function(this, _NameOrID)
         local ID = Lib.CutsceneSystem.Global:GetPageIDByName(_Cutscene.PlayerID, _NameOrID);
         return Lib.CutsceneSystem.Global.Cutscene[_Cutscene.PlayerID][ID];
     end
