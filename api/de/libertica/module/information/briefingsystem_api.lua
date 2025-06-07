@@ -2,90 +2,187 @@
 ---
 --- Der Höhepunkt für das Skripten von Dialogen und einfachen Kameraanimationen.
 --- Ein vielseitiges Tool zum Skripten der Kartendarstellung.
---- 
---- #### Optionen für Briefings
---- 
---- <p><b><u>Standard</u></b></p>
---- <p>
---- Briefings bestehen aus Seiten, die Text anzeigen und mit einem 
---- Bildausschnitt szenerisch in Szene setzen. Eine Seite wird mit der Funktion
---- AP angelegt.
---- ```lua
---- AP {
----    Title        = "Marcus",
----    Text         = "Dies ist eine einfache Seite.",
----    Position     = "Marcus",
----    Rotation     = 30,
----    DialogCamera = true,
---- };
---- ```
----
---- <p><b><u>Vereinfacht</u></b></p>
---- <p>
---- Mit der Funktion ASP können vereifachte Seiten geschrieben werden.
---- ```lua
---- ASP("Titel", "Text der Seite", false, "HQ");
---- ```
---- 
---- <p><b><u>Parallax</u></b></p>
---- <p>
---- Eine Seite kann bis zu 6 animierte Parallaxen anzeigen - bildschirmfüllende
---- Grafiken. Mit UV-Koordinaten können Ausschnitte der Grafiken gezeigt werden.
---- Das ermöglicht rudimentär animierte Szenen zu erstellen.
---- ```lua
---- Briefing.PageParallax = {
----     ["Seite1"] = {
----         {"maps/externalmap/mapname/graphics/sea.png", 60,
----          {0, 0, 0.8, 1, 255},
----          {0.2, 0, 1, 1, 255}},
----     },
---- };
---- ```
---- 
---- Der Definition der Parallaxen können mehrere Switches hinzugefügt werden,
---- die das Verhalten der Parallaxen beeinflussen.
---- * `Clear`  - Alle laufenden Parallaxen werden gelöscht. Dann werden die neuen Parallaxen gestartet.
---- * `Repeat` - Die Parallaxen begingen nach dem Ende von vorn.
---- 
---- <p><b><u>Animiert</u></b></p>
---- <p>
---- Es ist möglich, die Kameraanimationen von den Pages zu trennen. Dadurch
---- lassen sich nicht nur die Texte flüssiger schreiben, es können auch mehr
---- komplexere Bewegungen umgesetzt werden.
---- 
---- Animationen werden in der Tabelle `Briefing.PageAnimation` definiert. Eine
---- Seite kann mehrere Animationssets aufnehmen. Ein Animationsset besteht aus
---- 2 oder 4 Richtungsvektoren. Ein Richtungsvektor besteht aus der Position
---- und der Blickrichtung. Vektoren werden mit `GetFrameVector` erstellt.
---- ```lua
---- Briefing.PageAnimation = {
----     ["Seite1"] = {
----         {30, {GetFrameVector("pos1", 500, "pos2", -3000)},
----              {GetFrameVector("pos3", 500, "pos4", -3000)},
----              {GetFrameVector("pos7", 500, "pos8", -3000)},
----              {GetFrameVector("pos5", 500, "pos6", -3000)}},
----     },
---- };
---- ```
---- 
---- Mit der Funktion ASP können Seiten ohne Kameradefinition erzeugt werden.
---- Wichtig ist, dass der Name der Seite im Briefing eindeutig sein muss. Wenn
---- die Seite erreicht wird, werden die Animationssets gestartet.
---- ```lua
---- ASP("Seite1", "Titel", "Diese Seite ist animaiert.");
---- ```
---- 
---- Der Definition der Animationen können mehrere Switches hinzugefügt werden,
---- die das Verhalten der Animationen beeinflussen.
---- * `Clear`:    (optional) <b>boolean</b> Alle laufenden Animationssets werden gelöscht. Dann werden die neuen Animationssets gestartet.
---- * `Repeat`:   (optional) <b>boolean</b> Die Animationssets begingen nach dem Ende von vorn.
---- * `Postpone`: (optional) <b>boolean</b> Die laufenden Animationssets werden zurückgestellt und die Animationssets der Seite werden gestartet.
---- * `PageTied`: (optional) <b>boolean</b> Die Animationssets werden nur auf dieser Seite abgespielt.
 ---
 
 
+
+--- Initialisiert den Builder für ein Briefing.
+--- 
+--- #### Functions `BriefingBuilder`:
+--- * `SetName(_Name)`:              Setzt den Namen des Briefings.
+--- * `SetPlayer(_Player)`:          Setzt den empfangenden Spieler des Briefings.
+--- * `UseBigBars(_Flag)`:           Verwendet die breiten Briefing Bars.
+--- * `UseRestoreCamera(_Flag)`:     Setzt die Kamera am Ende des Briefing zum Ausgang zurück.
+--- * `UseRestoreGameSpeed(_Flag)`:  Setzt die Spielgeschwindigkeit am Ende des Briefing zurück.
+--- * `UseGlobalImmortality(_Flag)`: Während des Briefings sind alle Entities unverwundbar.
+--- * `UseFarClipping(_Flag)`:       Verwendet ein weites Blickfeld. <b>Achtung</b>: Kann auf schwachen Systemen ruckeln.
+--- * `SetHideNotes(_Flag)`:         Versteckt das Notes Window wärhend des Briefing.
+--- * `SetEnableSky(_Flag)`:         Zeigt den Himmel während des Briefings an.
+--- * `SetEnableFoW(_Flag)`:         Zeigt den Nebel des Krieges während des Briefings an.
+--- * `SetEnableBorderPins(_Flag)`:  Zeigt die Grenzsteine während des Briefing an.
+--- * `SetOnBegin(_Function)`:       Funktion, die beim Start des Briefing ausgeführt wird.
+--- * `SetOnFinish(_Function)`:      Funktion, die beim Ende des Briefing ausgeführt wird.
+--- * `BeginPage()`:                 Eröffnet den `PageBuilder`.
+--- * `Redirect(_Target)`:           Springt zur Seite mit dem angegebenen Namen. Keine Angabe beendet das Briefing an dieser Stelle.
+--- * `Start()`:                     Startet das Briefing.
+--- 
+--- #### Functions `PageBuilder`:
+--- 
+--- Ein Briefing kann unbegrenzt viele Pages haben.
+--- * `SetName(_Name)`:            Setzt den Namen der Page.
+--- * `SetSpeech(_Speech)`:        Setzt den Pfad zur Voice Line.
+--- * `SetTitle(_Title)`:          Setzt den anzuzeigenden Titel der Page.
+--- * `SetText(_Text)`:            Setzt den anzuzeigenden Text der Page.
+--- * `SetDuration(_Duration)`:    Setzt die Anzeigedauer der Page.
+--- * `SetFadeIn(_Time)`:          Blendet von Schwarz ein.
+--- * `SetFadeOut(_Time)`:         Blendet zu Schwarz aus.
+--- * `SetFaderAlpha(_Opacity)`:   Setzt den Alphawert der Fadermaske.
+--- * `SetAction(_Action)`:        Funktion, die bei jedem Anzeigen der Seite ausgeführt wird.
+--- * `UseBigBars(_Flag)`:         Verwendet die breiten Briefing Bars auf dieser Seite.
+--- * `UsePerformanceMode(_Flag)`: Deaktiviert verschiedene Grafikeffekte um Performance zu verbessern.
+--- * `UseSkipping(_Flag)`:        Die Seite kann übersprungen werden.
+--- * `BeginCamera()`:             Eröffnet den `CameraBuilder`.
+--- * `BeginCameraAnimation()`:    Eröffnet den `CameraAnimationBuilder`.
+--- * `BeginParallaxAnimation()`:  Eröffnet den `ParallaxAnimationBuilder`.
+--- * `BeginChoice()`:             Eröffnet den `ChoiceBuilder`.
+--- * `EndPage()`:                 Beendet den `PageBuilder` und kehrt zum `BriefingBuilder` zurück.
+--- 
+--- #### Functions `CameraBuilder`:
+--- 
+--- * `UseCloseUp(_Flag)`:      Schaltet in die Nahsicht oder die Fernsicht.
+--- * `SetPosition(_Position)`: Setzt die Position der Kamera.
+--- * `SetAngle(_Angle)`:       Setzt den Höhenwinkel der Kamera.
+--- * `SetRotation(_Rotation)`: Setzt den Rotationswinkel der Kamera.
+--- * `SetZoom(_Zoom)`:         Setzt den Zoom der Kamera.
+--- * `BeginFlyTo()`:           Eröffnet den `FlyToBuilder`.
+--- * `EndCamera()`:            Beendet den `CameraBuilder` und kehrt zum `PageBuilder` zurück.
+--- 
+--- #### Functions `FlyToBuilder`:
+--- 
+--- * `SetPosition(_Position)`: Setzt die Position der Kamera.
+--- * `SetAngle(_Angle)`:       Setzt den Höhenwinkel der Kamera.
+--- * `SetRotation(_Rotation)`: Setzt den Rotationswinkel der Kamera.
+--- * `SetZoom(_Zoom)`:         Setzt den Zoom der Kamera.
+--- * `EndFlyTo()`:             Beendet den `FlyToBuilder` und kehrt zum `CameraBuilder` zurück.
+--- 
+--- #### Functions `ChoiceBuilder`:
+--- 
+--- * `Option(_ID?, _Text, _Target, _Condition?)`: Fügt eine neue Option hinzu. (Mit ? gekennzeichnete Parameter können weggelassen werden)
+--- * `EndChoice()`:                               Beendet den `ChoiceBuilder` und kehrt zum `PageBuilder` zurück.
+--- 
+--- #### Functions `CameraAnimationBuilder`:
+--- 
+--- * `SetRepeat(_Flag)`:          Die Animationen wiederholen sich nach ihrem Ende.
+--- * `SetClear(_Flag)`:           Alle laufenden Animationen werden aus der Queue entfernt.
+--- * `SetPostpone(_Flag)`:        Alle laufenden Animationen werden zurückgestellt.
+--- * `BeginAnimationSet()`:       Beginnt den `AnimationSetBuilder`.
+--- * `EndCameraAnimation()`:      Beendet den `CameraAnimationBuilder` und kehrt zum `PageBuilder` zurück.
+--- 
+--- #### Functions `AnimationSetBuilder`:
+--- 
+--- * `SetDuration(_Duration)`:                  Setzt die Dauer der Animation.
+--- * `SetLocal(_Flag)`:                         Die Animation ist an die Page gebunden.
+--- * `Animation(_px, _py, _pz, _lx, _ly, _lz)`: Koordinaten für Position und Blickziel der Kamera.
+--- * `EndAnimationSet()`:                       Beendet den `AnimationSetBuilder` und kehrt zum `CameraAnimationBuilder` zurück.
+--- 
+--- #### Functions `ParallaxAnimationBuilder`:
+--- 
+--- * `SetRepeat(_Flag)`:       Die Animationen wiederholen sich nach ihrem Ende.
+--- * `SetClear(_Flag)`:        Alle laufenden Animationen werden aus der Queue entfernt.
+--- * `SetPostpone(_Flag)`:     Alle laufenden Animationen werden zurückgestellt.
+--- * `BeginLayer()`:           Beginnt den `LayerBuilder`.
+--- * `EndParallaxAnimation()`: Beendet den `ParallaxAnimationBuilder` und kehrt zum `PageBuilder` zurück.
+--- 
+--- #### Functions `LayerBuilder`:
+--- 
+--- Es kann bis zu 6 verschiedene Layer geben.
+--- * `SetDuration(_Duration)`:            Setzt die Dauer der Animation.
+--- * `SetImage(_Image)`:                  Pfad zum angezeigten Bild.
+--- * `SetLocal(_Flag)`:                   Die Animation ist an die Page gebunden.
+--- * `Animation(_u0, _v0, _u1, _v1, _a)`: Koordinaten und Alphawert der angezeigten Teilgrafik (Koordinaten zwischen 0 und 1).
+--- * `EndLayer()`:                        Beendet den `LayerBuilder` und kehrt zum `ParallaxAnimationBuilder` zurück.
+--- 
+--- #### Example:
+--- Eine einfaches Briefing erzeugen, das die Dialogkamera benutzt.
+--- ```lua
+--- NewBriefing("TestBriefing", 1)
+---     :BeginPage()
+---         :SetTitle("Title")
+---         :SetText("This is a test page.")
+---         :BeginCamera()
+---             :SetPosition("Hakim")
+---             :UseCloseUp(true)
+---         :EndCamera()
+---     :EndPage()
+---     :Start();
+--- ```
+--- 
+--- #### Example:
+--- Eine einfaches Briefing erzeugen, das eine einfache Kamerabewegung macht.
+--- ```lua
+--- NewBriefing("TestBriefing", 1)
+---     :BeginPage()
+---         :SetTitle("Title")
+---         :SetText("This is a test page.")
+---         :BeginCamera()
+---             :SetPosition("Hakim")
+---             :SetRotation(90)
+---             :SetAngle(50)
+---             :SetZoom(3000)
+---             :BeginFlyTo()
+---                 :SetPosition("Saraya")
+---                 :SetRotation(-90)
+---                 :SetAngle(20)
+---                 :SetZoom(3000)
+---             :EndFlyTo()
+---         :EndCamera()
+---     :EndPage()
+---     :Start();
+--- ```
+--- 
+--- #### Example:
+--- Eine Briefing erzeugen, das komplexe Kameraanimationen nutzt. Die Funktion
+--- `Animation` kann mit direkten Koordinaten genutzt werden, oder hier die
+--- Koordinaten ermitteln. Die negative Zahl bedeutet eine direkte Höhenangabe.
+--- Eine positive Zahl wäre ein Offset zur Höhe der Entität.
+--- ```lua
+--- NewBriefing("TestBriefing", 1)
+---     :BeginPage()
+---         :SetTitle("Title")
+---         :SetText("This is a test page.")
+---         :BeginCameraAnimation()
+---             :SetClear(true)
+---             :BeginAnimationSet()
+---                 :SetDuration(30)
+---                 :SetLocal(true)
+---                 :Animation("Pos1", -2500, "npc1", -2200)
+---                 :Animation("Pos2", -2500, "npc1", -2000)
+---             :EndAnimationSet()
+---         :EndCameraAnimation()
+---     :EndPage()
+---     :Start();
+--- ```
+---  
+--- @param _Name string Name des Briefing
+--- @param _PlayerID integer Spieler-ID des Empfängers
+--- @return table BriefingBuilder Builder des Briefing
+function NewBriefing(_Name, _PlayerID)
+    return {};
+end
+API.NewBriefing = NewBriefing;
+
+--- Überprüft, ob eine Einleitung aktiv ist.
+--- @param _PlayerID integer Spieler-ID des Empfängers
+--- @return boolean IsActive Einleitung ist aktiv
+function IsBriefingActive(_PlayerID)
+    return true;
+end
+API.IsBriefingActive = IsBriefingActive;
 
 --- Startet eine Briefing.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 --- 
 --- #### Fields `_Briefing`:
 --- * `Starting`:                (optional) <b>function</b> Funktion, die beim Starten der Einleitung aufgerufen wird              
@@ -120,58 +217,25 @@ function StartBriefing(_Briefing, _Name, _PlayerID)
 end
 API.StartBriefing = StartBriefing;
 
---- Fragt den Spieler um Erlaubnis, Grafikeinstellungen zu ändern.
----
---- Diese Funktionalität ist im Multiplayer deaktiviert.
-function RequestBriefingAlternateGraphics()
-end
-API.RequestBriefingAlternateGraphics = RequestBriefingAlternateGraphics;
-
---- Überprüft, ob eine Einleitung aktiv ist.
---- @param _PlayerID integer Spieler-ID des Empfängers
---- @return boolean IsActive Einleitung ist aktiv
-function IsBriefingActive(_PlayerID)
-    return true;
-end
-API.IsBriefingActive = IsBriefingActive;
-
---- Erstellt einen Punkt aus einer Position.
---- @param _Entity any      Zielentität
---- @param _ZOffset integer Z-Offset (<> 0 → Z überschreiben)
---- @return number X X-Koordinate
---- @return number Y Y-Koordinate
---- @return number Z Z-Koordinate
-function GetFramePosition(_Entity, _ZOffset)
-    return 0, 0, 0;
-end
-
---- Erstellt einen Vektor aus 2 Positionen.
---- @param _Entity1 any      Zielpositions-Entität
---- @param _ZOffset1 integer Z-Offset der Position (<> 0 → Z überschreiben)
---- @param _Entity2 any      Ziel-LookAt-Entität
---- @param _ZOffset2 integer Z-Offset von LookAt (<> 0 → Z überschreiben)
---- @return number X1        X-Koordinate Position
---- @return number Y1        Y-Koordinate Position
---- @return number Z1        Z-Koordinate Position
---- @return number X2        X-Koordinate LookAt
---- @return number Y2        Y-Koordinate LookAt
---- @return number Z2        Z-Koordinate LookAt
-function GetFrameVector(_Entity1, _ZOffset1, _Entity2, _ZOffset2)
-    return 0, 0, 0, 0, 0, 0;
-end
-
 --- Bereitet die Einleitung vor und gibt die Seitenfunktionen zurück.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 ---
 --- Muss aufgerufen werden, bevor Seiten hinzugefügt werden.
+--- 
 --- @param _Briefing table Einleitungstabelle
---- @return function AP  Seitenfunktion
---- @return function ASP Kurze Seitenfunktion
+--- @return function AP  Funktion für Seiten
+--- @return function ASP Vereinfachte Funktion für Seiten
 function AddBriefingPages(_Briefing)
     return function() end, function() end;
 end
 API.AddBriefingPages = AddBriefingPages;
 
 --- Erstellt eine Seite.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 ---
 --- #### Fields `_Data`:
 --- * `Title`:           <b>any</b> Angezeigter Seitentitel (String oder Language Table)
@@ -265,6 +329,9 @@ function AP(_Data)
 end
 
 --- Erstellt eine Seite auf vereinfachte Weise.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 ---
 --- Die Funktion kann einen automatischen Seitennamen basierend auf dem 
 --- Seitenindex erstellen. Ein Name kann ein optionales Parameter am 

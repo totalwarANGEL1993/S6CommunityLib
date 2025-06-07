@@ -2,6 +2,7 @@ if CONST_IS_IN_DEV then
     Lib.Loader.PushPath("E:/Repositories/libertica/release/");
 end
 
+Lib.Require("comfort/AddWare");
 Lib.Require("comfort/KeyOf");
 Lib.Require("comfort/GetPredatorSpawnerTypes");
 Lib.Require("comfort/GetSiegeengineTypeByCartType");

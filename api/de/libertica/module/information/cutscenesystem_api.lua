@@ -5,7 +5,79 @@
 --- durch flüssige Kamerabewegungen aus.
 ---
 
+--- Initialisiert den Builder für eine Cutscene.
+--- 
+--- #### Functions `CutsceneBuilder`:
+--- * `SetName(_Name)`:              Setzt den Namen der Cutscene.
+--- * `SetPlayer(_Player)`:          Setzt den empfangenden Spieler der Cutscene.
+--- * `UseBigBars(_Flag)`:           Verwendet die breiten Briefing Bars. (Aus ästhetischen Gründen nicht zu empfehlen.)
+--- * `UseGlobalImmortality(_Flag)`: Während der Cutscene sind alle Entities unverwundbar.
+--- * `SetHideNotes(_Flag)`:         Versteckt das Notes Window wärhend der Cutscene.
+--- * `SetEnableSky(_Flag)`:         Zeigt den Himmel während der Cutscene an.
+--- * `SetEnableFoW(_Flag)`:         Zeigt den Nebel des Krieges während der Cutscene an.
+--- * `SetEnableBorderPins(_Flag)`:  Zeigt die Grenzsteine während der Cutscene an.
+--- * `SetOnBegin(_OnBegin)`:        Funktion, die beim Start der Cutscene ausgeführt wird.
+--- * `SetOnFinish(_OnFinish)`:      Funktion, die beim Ende der Cutscene ausgeführt wird.
+--- * `BeginFlight()`:               Eröffnet den `FlightBuilder`.
+--- * `Start()`:                     Startet die Cutscene.
+---
+--- #### Functions `FlightBuilder`:
+--- * `SetSpeech(_Speech)`:         Setzt den Pfad zur Voice Line.
+--- * `SetTitle(_Title)`:           Setzt den anzuzeigenden Titel der Page.
+--- * `SetText(_Text)`:             Setzt den anzuzeigenden Text der Page.
+--- * `SetFadeIn(_Time)`:           Blendet von Schwarz ein.
+--- * `SetFadeOut(_Time)`:          Blendet zu Schwarz aus.
+--- * `SetFaderAlpha(_Opacity)`:    Setzt den Alphawert der Fadermaske.
+--- * `UseBigBars(_Flag)`:          Verwendet die breiten Cutscene Bars auf dieser Seite. (Aus ästhetischen Gründen nicht zu empfehlen.)
+--- * `UseSkipping(_Flag)`:         Die Seite kann übersprungen werden.
+--- * `SetFarClipPlane(_Distance)`: Setzt die maximale Sichtweite. <b>Achtung</b>: Kann auf schwachen Systemen ruckeln.
+--- * `EndFlight()`:                Beendet den `FlightBuilder` und kehrt zum `CutsceneBuilder` zurück.
+--- 
+--- #### Example:
+--- ```lua
+--- NewCutscene("TestCutscene", 1)
+---     :SetEnableBorderPins(true)
+---     :SetEnableSky(true)
+---     :BeginFlight()
+---         :SetFlight("c01")
+---         :SetTitle("Flight 1")
+---         :SetText("This is the shown text.")
+---         :SetFadeIn(3)
+---     :EndFlight()
+---     :BeginFlight()
+---         :SetFlight("c02")
+---         :SetTitle("Flight 2")
+---         :SetText("This is the shown text.")
+---     :EndFlight()
+---     :BeginFlight()
+---         :SetFlight("c03")
+---         :SetTitle("Flight 3")
+---         :SetText("This is the shown text.")
+---         :SetFadeOut(3)
+---     :EndFlight()
+---     :Start();
+--- ```
+---  
+--- @param _Name string Name der Cutscene
+--- @param _PlayerID integer Spieler-ID des Empfängers
+--- @return table BriefingBuilder Builder der Cutscene
+function NewCutscene(_Name, _PlayerID)
+    return {};
+end
+API.NewCutscene = NewCutscene;
+
+--- Überprüft, ob eine Zwischensequenz aktiv ist.
+--- @param _PlayerID integer Spieler-ID des Empfängers
+--- @return boolean IsActive Zwischensequenz ist aktiv
+function IsCutsceneActive(_PlayerID)
+    return true;
+end
+API.IsCutsceneActive = IsCutsceneActive;
+
 --- Startet eine Zwischensequenz.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 ---
 --- #### Fields `_Cutscene`:
 --- * `Starting`:                (optional) <b>function</b> Funktion, die beim Starten der Einleitung aufgerufen wird              
@@ -37,25 +109,10 @@ function StartCutscene(_Cutscene, _Name, _PlayerID)
 end
 API.StartCutscene = StartCutscene;
 
---- Fragt den Spieler um Erlaubnis, Grafikeinstellungen zu ändern.
----
---- Ist das BriefingSystem oder das DialogSystem geladen, werden stattdessen
---- deren Funktionen verwendet.
----
---- Diese Funktionalität ist im Multiplayer deaktiviert.
-function RequestCutsceneAlternateGraphics()
-end
-API.RequestCutsceneAlternateGraphics = RequestCutsceneAlternateGraphics;
-
---- Überprüft, ob eine Zwischensequenz aktiv ist.
---- @param _PlayerID integer Spieler-ID des Empfängers
---- @return boolean IsActive Zwischensequenz ist aktiv
-function IsCutsceneActive(_PlayerID)
-    return true;
-end
-API.IsCutsceneActive = IsCutsceneActive;
-
 --- Bereitet die Zwischensequenz vor und gibt die Seitenfunktion zurück.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 ---
 --- Muss aufgerufen werden, bevor Seiten hinzugefügt werden.
 --- @param _Cutscene table Zwischensequenz-Tabelle
@@ -66,6 +123,9 @@ end
 API.AddCutscenePages = AddCutscenePages;
 
 --- Erstellt eine Seite.
+--- <p>
+--- <b>Achtung</b>: Diese Funktion ist veraltet und kann nur mit der
+--- deklarativen API benutzt werden.
 ---
 --- #### Fields `_Data`:
 --- * `Flight`:          <b>string</b> Name der Flug-XML (ohne .cs)

@@ -38,11 +38,11 @@ function BriefingTest1(_Name, _PlayerID)
         HideBorderPins = true,
         ShowSky = true,
     }
-    local AP, ASP, AAN = AddBriefingPages(Briefing);
+    local AP, ASP = AddBriefingPages(Briefing);
 
     -- Animations are created automatically because a position is given.
-    ASP("Page 1", "This is a briefing with default animation.", true, "pos2");
-    ASP("Page 2", "It works just as you are used to it.", false, "pos2");
+    ASP("Page 1", "This is a briefing with default animation.", true, "npc1");
+    ASP("Page 2", "It works just as you are used to it.", false, "npc1");
     ASP("Page 3", "No fancy camera magic and everything in one line.", true, "pos4");
     ASP("Page 4", "Text is displayed until the player skips the page.", false, "pos4");
 
@@ -55,6 +55,7 @@ end
 
 -- > BriefingTest2([[foo]], 1)
 function BriefingTest2(_Name, _PlayerID)
+    assert(false, "This test is no longer supported.");
     local Briefing = {
         EnableBorderPins = false,
         EnableSky = true,
@@ -168,8 +169,9 @@ function BriefingTest5(_Name, _PlayerID)
     local Briefing = {
         HideBorderPins = true,
         ShowSky = true,
+        BigBars = true,
     }
-    local AP, ASP, AAN = AddBriefingPages(Briefing);
+    local AP, ASP = AddBriefingPages(Briefing);
 
     AP {
        Title        = "Page 1",
@@ -192,11 +194,127 @@ function BriefingTest5(_Name, _PlayerID)
     StartBriefing(Briefing, _Name, _PlayerID)
 end
 
+-- > BriefingTest6([[foo]], 1)
+function BriefingTest6(_Name, _PlayerID)
+    NewBriefing(_Name, _PlayerID)
+        :SetEnableBorderPins(true)
+        :SetEnableSky(true)
+        :UseBigBars(true)
+        :BeginPage()
+            :SetName("Seite1")
+            :SetTitle("Bla Bla (1)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(false)
+            :EndCamera()
+            :BeginParallaxAnimation()
+                :SetClear(true)
+                :BeginLayer()
+                    :SetDuration(30)
+                    :SetImage("C:/IMG/Paralax66.png")
+                    :Animation(0, 0, 1, 1, 255)
+                    :Animation(0.5, 0.5, 1, 1, 255)
+                :EndLayer()
+            :EndParallaxAnimation()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite2")
+            :SetTitle("Bla Bla (2)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :SetAction(function() AddNote("It just work's!"); end)
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(true)
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite3")
+            :SetTitle("Bla Bla (3)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :BeginCamera()
+                :SetPosition("pos1")
+                :SetRotation(90)
+                :SetAngle(50)
+                :SetZoom(3000)
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite4")
+            :SetTitle("Bla Bla (4)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :SetDuration(10)
+            :BeginCamera()
+                :SetPosition("pos1")
+                :SetRotation(90)
+                :SetAngle(50)
+                :SetZoom(3000)
+                :BeginFlyTo()
+                    :SetPosition("pos2")
+                    :SetRotation(-90)
+                    :SetAngle(20)
+                    :SetZoom(3000)
+                :EndFlyTo()
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite5")
+            :SetTitle("Bla Bla (5)")
+            :BeginChoice()
+                :Option("Noch mal", "Seite4")
+                :Option("Teste Cutscene", "Seite8")
+                :Option("Ende", "Seite6")
+            :EndChoice()
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(false)
+            :EndCamera()
+        :EndPage()
+        :BeginPage()
+            :SetName("Seite6")
+            :SetTitle("Bla Bla (6)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :SetDuration(6)
+            :SetFadeOut(3)
+            :BeginCamera()
+                :SetPosition("pos1")
+                :UseCloseUp(false)
+            :EndCamera()
+        :EndPage()
+
+        :Redirect()
+
+        :BeginPage()
+            :SetName("Seite8")
+            :SetTitle("Bla Bla (8)")
+            :SetText("Bla Bla Bla Bla Bla Bla Bla Bla.")
+            :BeginCameraAnimation()
+                :SetClear(true)
+                :BeginAnimationSet()
+                    :SetDuration(30)
+                    :SetLocal(true)
+                    :Animation("Pos1", 1500, "npc1", 250)
+                    :Animation("Pos2", 1500, "npc1", 0)
+                :EndAnimationSet()
+            :EndCameraAnimation()
+        :EndPage()
+
+        :Redirect("Seite5")
+
+        :SetOnFinish(function(_Data)
+            local Selected1 = _Data:GetPage("Seite5"):GetSelected();
+            AddNote("Gewählte Antwort: " ..Selected1);
+        end)
+        :Start();
+end
+
 -- |||| CUTSCENE |||| --
 
--- > CutsceneTest([[Foo]], 1)
-function CutsceneTest(_Name, _PlayerID)
-    local Cutscene = {};
+-- > CutsceneTest1([[Foo]], 1)
+function CutsceneTest1(_Name, _PlayerID)
+    local Cutscene = {
+        DisableSkipping = false,
+    };
     local AF = AddCutscenePages(Cutscene);
 
     AF {
@@ -219,45 +337,32 @@ function CutsceneTest(_Name, _PlayerID)
 
     Cutscene.Finished = function()
     end
-    StartCutscene(Cutscene, _Name, _PlayerID)
+    StartCutscene(Cutscene, _Name, _PlayerID);
 end
 
--- > CutsceneBriefingTest([[Foo]], 1)
-function CutsceneBriefingTest(_Name, _PlayerID)
-    local Briefing = {
-        EnableBorderPins = false,
-        EnableSky = true,
-        EnableFoW = false,
-    }
-    local AP, ASP = AddBriefingPages(Briefing);
-
-    Briefing.PageAnimation = {
-        ["Page1"] = {
-            {30, {GetFrameVector("cs1p01", 1500, "cs1l01", 500)},
-                 {GetFrameVector("cs1p02",  800, "cs1l02", 250)},
-                 {GetFrameVector("cs1p03", 1200, "cs1l03", 150)},
-                 {GetFrameVector("cs1p04",  100, "cs1l04",  50)},
-            },
-        },
-    };
-
-    AP {
-        Name = "Page1",
-        Title = "Page 1",
-        Text = "This is page 1 of the pseudo cutscene.",
-    }
-
-    AP {
-        Name = "Page2",
-        Title = "Page 2",
-        Text = "This is page 2 of the pseudo cutscene.",
-    }
-
-    Briefing.Starting = function(_Data)
-    end
-    Briefing.Finished = function(_Data)
-    end
-    StartBriefing(Briefing, _Name, _PlayerID)
+-- > CutsceneTest2([[Foo]], 1)
+function CutsceneTest2(_Name, _PlayerID)
+    NewCutscene(_Name, _PlayerID)
+        :SetEnableBorderPins(true)
+        :SetEnableSky(true)
+        :BeginFlight()
+            :SetFlight("c01")
+            :SetTitle("Flight 1")
+            :SetText("What is the first rule of a cutscene?")
+            :SetFadeIn(3)
+        :EndFlight()
+        :BeginFlight()
+            :SetFlight("c02")
+            :SetTitle("Flight 2")
+            :SetText("They are NOT supposed to display huge chuncks of text!")
+        :EndFlight()
+        :BeginFlight()
+            :SetFlight("c03")
+            :SetTitle("Flight 3")
+            :SetText("Keep the text small and simple, stupid!")
+            :SetFadeOut(3)
+        :EndFlight()
+        :Start();
 end
 
 -- |||| DIALOG |||| --
@@ -272,7 +377,7 @@ function CreateTestNPCDialogQuest()
         Receiver    = 1,
 
         Goal_NPC("npc1", "-"),
-        Reward_Dialog("TestDialog", "CreateTestNPCDialogBriefing"),
+        Reward_Dialog("TestDialog", "CreateTestNPCDialogBriefing1"),
         Trigger_Time(0),
     }
 
@@ -286,8 +391,76 @@ function CreateTestNPCDialogQuest()
     }
 end
 
--- > CreateTestNPCDialogBriefing([[Foo]], 1)
-function CreateTestNPCDialogBriefing(_Name, _PlayerID)
+-- > CreateTestNPCDialogBriefing1([[Foo]], 1)
+function CreateTestNPCDialogBriefing1(_Name, _PlayerID)
+    NewDialog(_Name, _PlayerID)
+        :SetEnableBorderPins(true)
+        :SetEnableFoW(false)
+        :UseRestoreCamera(true)
+        :UseRestoreGameSpeed(true)
+
+        :BeginPage()
+            :SetName("StartPage")
+            :SetText("This is a test!")
+            :SetActor(1)
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+            :BeginChoice()
+                :Option("Continue testing", "ContinuePage")
+                :Option("Remove answer",
+                        function()
+                            TestOptionVisibility = true;
+                            return "HidePage";
+                        end,
+                        function() return not TestOptionVisibility; end)
+                :Option("Stop testing", "EndPage")
+            :EndChoice()
+        :EndPage()
+
+        :BeginPage()
+            :SetName("HidePage")
+            :SetText("Splendit, it seems to work as intended.")
+            :SetActor(1)
+            :UseCloseUp(true)
+            :SetPosition("hero")
+        :EndPage()
+
+        :Redirect("StartPage")
+
+        :BeginPage()
+            :SetName("ContinuePage")
+            :SetText("We can show large texts with portrait... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            :SetActor(2)
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+        :BeginPage()
+            :SetText("... or without portrait... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+        :BeginPage()
+            :SetText("And with auto skip after some seconds... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.")
+            :SetActor(2)
+            :SetDuration(12)
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+
+        :Redirect("StartPage")
+
+        :BeginPage()
+            :SetName("EndPage")
+            :SetText("Well, then we end this mess!")
+            :UseCloseUp(true)
+            :SetPosition("npc1")
+        :EndPage()
+
+        :Start();
+end
+
+-- > CreateTestNPCDialogBriefing2([[Foo]], 1)
+function CreateTestNPCDialogBriefing2(_Name, _PlayerID)
     local Dialog = {
         DisableFow = true,
         DisableBoderPins = true,
@@ -309,22 +482,24 @@ function CreateTestNPCDialogBriefing(_Name, _PlayerID)
             {"Remove answer",
              function()
                 TestOptionVisibility = false;
-                return "ContinuePage";
+                return "HidePage";
              end,
-             function() return not TestOptionVisibility; end},
+             function() return TestOptionVisibility; end},
             {"Stop testing", "EndPage"}
         }
     }
 
     AP {
-        Name         = "ContinuePage",
+        Name         = "HidePage",
         Text         = "Splendit, it seems to work as intended.",
         Actor        = 1,
         Position     = "hero",
         DialogCamera = true,
     }
+    AP("StartPage");
 
     AP {
+        Name         = "ContinuePage",
         Text         = "We can show large texts with portrait... {cr}{cr}Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
         Actor        = 2,
         Position     = "npc1",
