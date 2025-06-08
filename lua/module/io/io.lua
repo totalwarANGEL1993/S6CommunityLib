@@ -6,16 +6,7 @@ Lib.IO.Global = {
 Lib.IO.Local  = {
     Data = {},
 };
-Lib.IO.Shared = {
-    TechnologyConfig = {
-        -- Tech name, Description, Icon, Extra Number
-        {"R_CallGeologist", {de = "Geologen rufen", en = "Order geologist", fr = "Ordre géologue"}, {8, 1, 1}, 1},
-        {"R_RefillIronMine", {de = "Eisenmine auffüllen", en = "Refill mine", fr = "Recharger le mien"}, {8, 2, 1}, 1},
-        {"R_RefillStoneMine", {de = "Steinbruch auffüllen", en = "Refill quarry", fr = "Carrière de recharge"}, {8, 3, 1}, 1},
-        {"R_RefillCistern", {de = "Brunnen auffüllen", en = "Refill well", fr = "Bien remplir"}, {8, 4, 1}, 1},
-        {"R_Tradepost", {de = "Handelsposten bauen", en = "Build Tradepost", fr = "Route commerciale"}, {3, 1, 1}, 1},
-    }
-};
+Lib.IO.Shared = {};
 
 CONST_IO = {};
 CONST_IO_SLAVE_TO_MASTER = {};
@@ -32,6 +23,7 @@ Lib.Require("core/Core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/io/IO_API");
+Lib.Require("module/io/IO_Config");
 Lib.Require("module/io/IO_Behavior");
 Lib.Register("module/io/IO");
 
@@ -799,13 +791,14 @@ end
 -- Shared
 
 function Lib.IO.Shared:CreateTechnologies()
-    for i= 1, #self.TechnologyConfig do
-        if g_GameExtraNo >= self.TechnologyConfig[i][4] then
-            if not Technologies[self.TechnologyConfig[i][1]] then
-                AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
+    for i= 1, #Lib.IO.Config.Technology do
+        local Technology = Lib.IO.Config.Technology[i];
+        if g_GameExtraNo >= Technology[4] then
+            if not Technologies[Technology[1]] then
+                AddCustomTechnology(Technology[1], Technology[2], Technology[3]);
                 if not IsLocalScript() then
                     for j= 1, 8 do
-                        Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
+                        Logic.TechnologySetState(j, Technologies[Technology[1]], 3);
                     end
                 end
             end
