@@ -21,23 +21,22 @@ Lib.Require("core/feature/Core_Text");
 Lib.Register("core/feature/Core_Bugfix");
 
 function Lib.Core.Bugfix:Initialize()
+    if IsUnofficialPatch() then
+        return;
+    end
     if not IsLocalScript() then
-        if not IsUnofficialPatch() then
-            self:FixResourceSlotsInStorehouses();
-            self:FixMiddleEuropeNpcBarracks();
-            self:FixMerchantArrivedCheckpoints();
-            self:FixDestroyAllPlayerUnits();
-            self:FixBanditCampFireplace();
-        end
+        self:FixResourceSlotsInStorehouses();
+        self:FixMiddleEuropeNpcBarracks();
+        self:FixMerchantArrivedCheckpoints();
+        self:FixDestroyAllPlayerUnits();
+        self:FixBanditCampFireplace();
     end
     if IsLocalScript() then
-        if not IsUnofficialPatch() then
-            self:OverrideSelection();
-            self:FixInteractiveObjectClicked();
-            self:FixClimateZoneForHouseMenu();
-            self:FixAbilityInfoWhenHomeless();
-            self:OverrideGameSpeedChanged();
-        end
+        self:OverrideSelection();
+        self:FixInteractiveObjectClicked();
+        self:FixClimateZoneForHouseMenu();
+        self:FixAbilityInfoWhenHomeless();
+        self:OverrideGameSpeedChanged();
         self:FixBigCathedralName();
     end
 end
@@ -65,9 +64,9 @@ end
 -- Respawning for ME barracks
 
 function Lib.Core.Bugfix:FixMiddleEuropeNpcBarracks()
-    GameCallback_OnBuildingConstructionComplete_Orig_Core_Bugfix = GameCallback_OnBuildingConstructionComplete;
+    self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
     GameCallback_OnBuildingConstructionComplete = function(_PlayerID, _EntityID)
-        GameCallback_OnBuildingConstructionComplete_Orig_Core_Bugfix(_PlayerID, _EntityID);
+        Lib.Core.Bugfix.Orig_GameCallback_OnBuildingConstructionComplete(_PlayerID, _EntityID);
         local EntityType = Logic.GetEntityType(_EntityID);
         if EntityType == Entities.B_NPC_Barracks_ME then
             Logic.RespawnResourceSetMaxSpawn(_EntityID, 0.01);

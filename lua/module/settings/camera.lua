@@ -1,5 +1,3 @@
---- @diagnostic disable: duplicate-set-field
-
 Lib.Camera = Lib.Camera or {};
 Lib.Camera.Name = "Camera";
 Lib.Camera.Global = {};
@@ -33,29 +31,9 @@ Lib.Register("module/settings/Camera");
 -- Global initalizer method
 function Lib.Camera.Global:Initialize()
     if not self.IsInstalled then
-        --- Scrolling at the edge of the screen is deactivated for a player.
-        ---
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
-        --- - `Position` - ID of Entity camera is fixed on
         Report.BorderScrollLocked = CreateReport("Event_BorderScrollLocked");
-
-        --- Scrolling at the edge of the screen is activated for a player.
-        ---
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
         Report.BorderScrollReset = CreateReport("Event_BorderScrollReset");
-
-        --- Extended zoom distance is deactivated for the player.
-        --- 
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
         Report.ExtendedZoomDeactivated = CreateReport("Event_ExtendedZoomDeactivated");
-
-        --- Extended zoom distance is activated for the player.
-        --- 
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
         Report.ExtendedZoomActivated = CreateReport("Event_ExtendedZoomActivated");
 
         -- Garbage collection

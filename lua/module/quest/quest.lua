@@ -1,5 +1,3 @@
----@diagnostic disable: missing-return-value
-
 Lib.Quest = Lib.Quest or {};
 Lib.Quest.Name = "Quest";
 Lib.Quest.Global = {
