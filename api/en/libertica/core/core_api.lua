@@ -19,6 +19,17 @@
 --- * `CONST_SCRIPTING_VALUES.Size`: <b>integer</b> Scaling of entity
 --- * `CONST_SCRIPTING_VALUES.Visible`: <b>integer</b> Is entity visible (= 801280)
 --- * `CONST_SCRIPTING_VALUES.NPC`: <b>integer</b> Type of npc (> 0)
+--- 
+--- #### Console Commands:
+--- There are special commands that can be entered into the console. Things in
+--- brackets are optional.
+--- * `restartmap`:        Restarts the current map
+--- * `clear`:             Removes all messages from the screen
+--- * `version`:           Shows the current version of Libertica
+--- * `&gt; any code`:     Runs code inside the global environment
+--- * `&gt;&gt; any code`: Runs code inside the local environment
+--- * `&lt; path`:         Loads a file into the global environment
+--- * `&lt;&lt; path`:     Loads a file into the local environment
 
 --- Open the chat console.
 --- 

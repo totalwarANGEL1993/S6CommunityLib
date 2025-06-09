@@ -19,6 +19,17 @@
 --- * `CONST_SCRIPTING_VALUES.Size`: <b>integer</b> Skalierung der Entität
 --- * `CONST_SCRIPTING_VALUES.Visible`: <b>integer</b> Ist die Entität sichtbar (= 801280)
 --- * `CONST_SCRIPTING_VALUES.NPC`: <b>integer</b> Art des NPCs (> 0)
+--- 
+--- #### Console Commands:
+--- In der Konsole können spezielle Komandos eingegeben werden. Eingeklammerte
+--- Angaben sind dabei optional.
+--- * `restartmap`:        Startet die Map sofort neu
+--- * `clear`:             Entfernt alle Nachrichten vom Bildschirm
+--- * `version`:           Zeigt die aktuelle Version von Libertica an
+--- * `&gt; any code`:     Führt beliebigen Code in der globalen Umgebung aus
+--- * `&gt;&gt; any code`: Führt beliebigen Code in der lokalen Umgebung aus
+--- * `&lt; path`:         Läd ein Lua-File in die globale Umgebung
+--- * `&lt;&lt; path`:     Läd ein Lua-File in die lokale Umgebung
 
 --- Öffnet die Chat-Konsole.
 --- 
