@@ -257,7 +257,10 @@
         "GameCallback_Lib_CalculateRangedCloseCombatDamageFactor",
         "GameCallback_Lib_CalculateWallCatapultDamageFactor",
         "PlacementStates",
-        "this"
+        "this",
+        "SetCameraProperties",
+        "g_DefaultBorderScrollSize",
+        "g_DefaultZoomStateWheelSpeed"
     ],
     "Lua.workspace.ignoreDir": [
         "demo",
