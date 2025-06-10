@@ -22,4 +22,8 @@ cp instructions_de.md release
 cp instructions_en.md release
 cp loadersf.lua release/tools/builder
 
+mkdir -p release/tools/builder/config
+cp java/Librarian/target/Librarian.jar release/tools/builder
+cp -r java/Librarian/config/config.json release/tools/builder/config
+
 exe/builddoc #&>/dev/null
