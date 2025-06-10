@@ -15,17 +15,17 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.err.println("GUI mode not implemented!");
+            System.err.println("Window mode not implemented!");
             System.exit(1);
         }
 
         Main main = new Main();
-        if (args[0].equals("lib")) {
+        if (args[0].equals("lib") || args[0].equals("-l")) {
             String destination = args[1];
             String[] modules = Arrays.copyOfRange(args, 2, args.length);
             main.createLibrary(destination, modules);
         }
-        else if (args[0].equals("single")) {
+        else if (args[0].equals("single") || args[0].equals("-s")) {
             String destination = args[1];
             String[] modules = Arrays.copyOfRange(args, 2, args.length);
             main.createSingleFile(destination, modules);

@@ -24,6 +24,7 @@ cp loadersf.lua release/tools/builder
 
 mkdir -p release/tools/builder/config
 cp java/Librarian/target/Librarian.jar release/tools/builder
+cp java/Librarian/run/librarian-runner/librarian-runner release/tools/builder/librarian.exe
 cp -r java/Librarian/config/config.json release/tools/builder/config
 
 exe/builddoc #&>/dev/null
