@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcatinationManagerTest {
     @Test
-    public void testSaveSingleFile() {
+    public void testSaveSingleFile() throws Exception {
         ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
         DependencyManager dependencyManager = new DependencyManager(configurationManager);
         ConcatinationManager concatinationManager = new ConcatinationManager(configurationManager, dependencyManager);
@@ -35,7 +35,7 @@ public class ConcatinationManagerTest {
         assertTrue(new File("../../var/single/questsystembehavior.lua").exists());
     }
     @Test
-    public void testSaveLibrary() {
+    public void testSaveLibrary() throws Exception {
         ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
         DependencyManager dependencyManager = new DependencyManager(configurationManager);
         ConcatinationManager concatinationManager = new ConcatinationManager(configurationManager, dependencyManager);

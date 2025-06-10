@@ -47,7 +47,7 @@ public class ConcatinationManager {
         return dependency.getLoadOrder(nameList);
     }
 
-    public void saveSingleFile(List<String> nameList, File destination, String filename) {
+    public void saveSingleFile(List<String> nameList, File destination, String filename) throws Exception {
         Path location;
         String content;
         try {
@@ -77,10 +77,11 @@ public class ConcatinationManager {
         }
         catch (IOException e) {
             logger.error("QSB was not saved!", e);
+            throw new Exception("QSB was not saved!", e);
         }
     }
 
-    public void saveLibrary(List<String> nameList, File destination) {
+    public void saveLibrary(List<String> nameList, File destination) throws Exception {
         Path location;
         String content;
         try {
@@ -115,6 +116,7 @@ public class ConcatinationManager {
         }
         catch (IOException e) {
             logger.error("QSB was not saved!", e);
+            throw new Exception("QSB was not saved!", e);
         }
     }
 
