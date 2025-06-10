@@ -11,13 +11,15 @@ cp license.md release
 cp -r api release && mv release/api release/libertica_api
 
 lua manager.lua -b -s -o "exe/officialloadorder.txt"
-mkdir release/single
+mkdir -p release/single
 cp -r "var/qsb.lua" "release/single/qsb.lua"
 cp -r "var/localmapscript.lua" "release/single/localmapscript.lua"
 cp -r "var/mapscript.lua" "release/single/mapscript.lua"
 
+mkdir -p release/tools/builder
 cp readme_release.md release && mv release/readme_release.md release/readme.md
 cp instructions_de.md release
 cp instructions_en.md release
+cp loadersf.lua release/tools/builder
 
 exe/builddoc #&>/dev/null

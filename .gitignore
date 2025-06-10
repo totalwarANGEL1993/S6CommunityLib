@@ -1,3 +1,8 @@
 release/
 var/
 .*.min.lua
+
+java/Libarian/.idea
+java/Libarian/Libarian.iml
+java/Libarian/logs
+java/Libarian/target
