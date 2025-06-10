@@ -4,12 +4,12 @@
 int main(int argc, char** argv) {
 	// Start in GUI mode
 	if (argc == 1) {
-		system("start /b java -Dfile.encoding=UTF8 -jar \"%cd%\\Librarian.jar\"");
+		system("start /b %cd%\\..\\..\\jre\\bin\\java -Dfile.encoding=UTF8 -jar \"%cd%\\Librarian.jar\"");
 		return 0;
 	}
 	
 	// Start in console mode
-    std::string command = "java -Dfile.encoding=UTF8 -jar \"%cd%\\Librarian.jar\"";
+    std::string command = "%cd%\\..\\..\\jre\\bin\\java -Dfile.encoding=UTF8 -jar \"%cd%\\Librarian.jar\"";
     for (int i = 1; i < argc; ++i) {
         command += " \"";
         command += argv[i];

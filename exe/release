@@ -16,11 +16,14 @@ cp -r "var/qsb.lua" "release/single/qsb.lua"
 cp -r "var/localmapscript.lua" "release/single/localmapscript.lua"
 cp -r "var/mapscript.lua" "release/single/mapscript.lua"
 
-mkdir -p release/tools/builder
+mkdir -p release/tools/builder/lua
 cp readme_release.md release && mv release/readme_release.md release/readme.md
 cp instructions_de.md release
 cp instructions_en.md release
-cp loadersf.lua release/tools/builder
+cp loadersf.lua release/tools/builder/lua
+
+# FIXME: Maybe a better solution that will work for other devs?
+cp -r D:/Programme/BellSoft/jdk8u275-full release/jre
 
 mkdir -p release/tools/builder/config
 cp java/Librarian/target/Librarian.jar release/tools/builder

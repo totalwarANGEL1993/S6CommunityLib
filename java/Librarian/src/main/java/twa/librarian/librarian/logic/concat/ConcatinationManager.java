@@ -53,7 +53,7 @@ public class ConcatinationManager {
         try {
             cleanSourceFiles();
             readAllModuleFiles(nameList);
-            content = loadFile("../tools/builder/loadersf.lua");
+            content = loadFile("../tools/builder/lua/loadersf.lua");
             for (Map.Entry<String, String> entry : fileContent.entrySet()) {
                 content += entry.getValue();
             }
