@@ -157,9 +157,9 @@ function LibWriter:CreateSingleFile()
         fh:close();
     end
 
-    -- Read behaviors
-    behaviors = self:ConcatBehaviors(true);
-    code = code .. behaviors;
+    -- Read behaviors (obsolete)
+    -- behaviors = self:ConcatBehaviors(true);
+    -- code = code .. behaviors;
 
     -- Create file
     fh = assert(io.open("var/qsb.lua", "wb"));
