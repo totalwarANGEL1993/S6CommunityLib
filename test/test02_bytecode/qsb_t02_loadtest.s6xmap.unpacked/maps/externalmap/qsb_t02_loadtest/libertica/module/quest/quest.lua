@@ -1,5 +1,3 @@
----@diagnostic disable: missing-return-value
-
 Lib.Quest = Lib.Quest or {};
 Lib.Quest.Name = "Quest";
 Lib.Quest.Global = {
@@ -21,6 +19,7 @@ Lib.Require("comfort/IsValidQuest");
 Lib.Require("comfort/IsValidQuestName");
 Lib.Require("core/core");
 Lib.Require("module/quest/Quest_API");
+Lib.Require("module/quest/Quest_Behavior");
 Lib.Register("module/quest/Quest");
 
 -- -------------------------------------------------------------------------- --
@@ -46,7 +45,6 @@ end
 function Lib.Quest.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
-    elseif _ID == Report.ChatClosed then
     end
 end
 
@@ -60,7 +58,7 @@ function Lib.Quest.Global:CreateNestedQuest(_Data)
     table.insert(
         _Data,
         Goal_MapScriptFunction(self:GetCheckQuestSegmentsInlineGoal(), _Data.Name)
-    )
+    );
     -- Create quest
     local Name = self:CreateSimpleQuest(_Data);
     if Name ~= nil then
@@ -115,23 +113,27 @@ function Lib.Quest.Global:GetCheckQuestSegmentsInlineGoal()
             if not SegmentQuest then
                 return false;
             end
-            -- Not expectec result of segment fails quest
-            if SegmentQuest.State == QuestState.Over and SegmentQuest.Result ~= QuestResult.Interrupted then
-                if SegmentList[i].Result == SegmentResult.Success and SegmentQuest.Result ~= QuestResult.Success then
+            -- Not expected result of segment fails quest
+            if  SegmentQuest.State == QuestState.Over
+            and SegmentQuest.Result ~= QuestResult.Interrupted then
+                if  SegmentQuest.Outcome == SegmentResult.Success
+                and SegmentQuest.Result ~= QuestResult.Success then
                     Lib.Quest.Global:AbortAllQuestSegments(_QuestName);
                     return false;
                 end
-                if SegmentList[i].Result == SegmentResult.Failure and SegmentQuest.Result ~= QuestResult.Failure then
+                if  SegmentQuest.Outcome == SegmentResult.Failure
+                and SegmentQuest.Result ~= QuestResult.Failure then
                     Lib.Quest.Global:AbortAllQuestSegments(_QuestName);
                     return false;
                 end
             end
-            -- Check if segment is concluded
-            if SegmentQuest.State ~= QuestState.Over then
+            -- Check if segment is still running
+            if  SegmentQuest.Outcome ~= SegmentResult.Ignore
+            and SegmentQuest.State ~= QuestState.Over then
                 AllSegmentsConcluded = false;
             end
         end
-        -- Success after all segments have been completed
+        -- Success after all segments have been completed or are ignored
         if AllSegmentsConcluded then
             return true;
         end
@@ -141,7 +143,8 @@ end
 function Lib.Quest.Global:AbortAllQuestSegments(_QuestName)
     for i= 1, #self.SegmentsOfQuest[_QuestName], 1 do
         local SegmentName = self.SegmentsOfQuest[_QuestName][i].Name;
-        if IsValidQuest(_QuestName) and Quests[GetQuestID(SegmentName)].State ~= QuestState.Over then
+        local SegmentQuest = Quests[GetQuestID(SegmentName)];
+        if  SegmentQuest and SegmentQuest.State ~= QuestState.Over then
             StopQuest(SegmentName, true);
         end
     end
@@ -246,7 +249,6 @@ end
 -- lock the game if fully relying on this trigger without thinking! This is
 -- only here to ensure functionality in case of errors and NOT to support the
 -- sloth of mappers!
--- Also this technically is a bugfix but can not be put into the kernel.
 function Lib.Quest.Global:GetFreeSpaceInlineTrigger()
     return {
         Triggers.Custom2, {
@@ -255,7 +257,8 @@ function Lib.Quest.Global:GetFreeSpaceInlineTrigger()
                 local VisbleQuests = 0;
                 if Quests[0] > 0 then
                     for i= 1, Quests[0], 1 do
-                        if Quests[i].State == QuestState.Active and Quests[i].Visible == true then
+                        if  Quests[i].State == QuestState.Active
+                        and Quests[i].Visible == true then
                             VisbleQuests = VisbleQuests +1;
                         end
                     end
@@ -269,19 +272,8 @@ end
 -- -------------------------------------------------------------------------- --
 
 function Lib.Quest.Global:OverrideKernelQuestApi()
-    FailQuest_Orig_ModuleQuest = FailQuest;
-    FailQuest = function(_QuestName, _NoMessage)
-        -- Fail segments of quest fist
-        if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
-            for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
-                    FailQuest_Orig_ModuleQuest(v.Name, true);
-                end
-            end
-        end
-        -- Proceed with failing
-        FailQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
-    end
+    -- FIX: FailQuest wpn't be overwritten, because failing all segments
+    -- automatically might break quests.
 
     RestartQuest_Orig_ModuleQuest = RestartQuest;
     RestartQuest = function(_QuestName, _NoMessage)
@@ -298,26 +290,16 @@ function Lib.Quest.Global:OverrideKernelQuestApi()
         RestartQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
     end
 
-    StartQuest_Orig_ModuleQuest = StartQuest;
-    StartQuest = function(_QuestName, _NoMessage)
-        -- Start segments of quest first
-        if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
-            for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
-                    StartQuest_Orig_ModuleQuest(v.Name, true);
-                end
-            end
-        end
-        -- Proceed with starting
-        StartQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
-    end
+    -- FIX: StartQuest won't be overwritten, because all segments are
+    -- triggered automatically if no other triggers are present.
 
     StopQuest_Orig_ModuleQuest = StopQuest;
     StopQuest = function(_QuestName, _NoMessage)
         -- Stop segments of quest first
         if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
             for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
+                local Quest = Quests[GetQuestID(v.Name)];
+                if Quest and Quest.State ~= QuestState.Over then
                     StopQuest_Orig_ModuleQuest(v.Name, true);
                 end
             end
@@ -326,19 +308,8 @@ function Lib.Quest.Global:OverrideKernelQuestApi()
         StopQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
     end
 
-    WinQuest_Orig_ModuleQuest = WinQuest;
-    WinQuest = function(_QuestName, _NoMessage)
-        -- Stop segments of quest first
-        if Lib.Quest.Global.SegmentsOfQuest[_QuestName] then
-            for k, v in pairs(Lib.Quest.Global.SegmentsOfQuest[_QuestName]) do
-                if IsValidQuest(v.Name) and Quests[GetQuestID(v.Name)].State ~= QuestState.Over then
-                    StopQuest_Orig_ModuleQuest(v.Name, true);
-                end
-            end
-        end
-        -- Proceed with winning
-        WinQuest_Orig_ModuleQuest(_QuestName, _NoMessage);
-    end
+    -- FIX: WinQuest wpn't be overwritten, because winning all segments
+    -- automatically might break quests.
 end
 
 -- -------------------------------------------------------------------------- --
@@ -362,7 +333,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Triggers[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Triggers[i], Triggers.Custom2, 4);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Trigger
@@ -396,7 +367,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Objectives[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Objectives[i], Objective.Custom2, 1);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Check Goal
@@ -442,7 +413,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Rewards[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Rewards[i], Reward.Custom, 3);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
@@ -452,7 +423,7 @@ function Lib.Quest.Global.QuestLoop(_arguments)
             for i = 1, self.Reprisals[0] do
                 -- Write Trigger to Log
                 local Text = Lib.Quest.Global:SerializeBehavior(self.Reprisals[i], Reprisal.Custom, 3);
-                if Text then
+                if Text and Lib.Core.Debug.TraceQuests then
                     log("Quest '" ..self.Identifier.. "' " ..Text, true);
                 end
                 -- Add Reward
@@ -515,16 +486,67 @@ end
 -- -------------------------------------------------------------------------- --
 -- Chat Commands
 
-function Lib.Quest.Global:FindQuestNames(_Pattern, _ExactName)
-    local FoundQuests = FindQuestsByName(_Pattern, _ExactName);
-    if #FoundQuests == 0 then
-        return {};
+function Lib.Quest.Global:FindQuestsByAttribute(_MaxResults, ...)
+    _MaxResults = math.max(_MaxResults or 65565, 1);
+    local arg = {...};
+    local ResultCount = 0;
+    local MatchingQuests = {};
+    for i= 1, Quests[0], 1 do
+        if ResultCount >= _MaxResults then
+            break;
+        end
+        local IsMatching = true;
+        for j= 1, #arg, 2 do
+            if arg[j] == "Name" then
+                if not string.find(Quests[i].Identifier, "^" .. arg[j+1]) then
+                    IsMatching = false;
+                    break;
+                end
+            else
+                if Quests[i][arg[j]] ~= arg[j+1] then
+                    IsMatching = false;
+                    break;
+                end
+            end
+        end
+        if IsMatching then
+            ResultCount = ResultCount +1;
+            table.insert(MatchingQuests, Quests[i]);
+        end
     end
-    local NamesOfFoundQuests = {};
-    for i= 1, #FoundQuests, 1 do
-        table.insert(NamesOfFoundQuests, FoundQuests[i].Identifier);
+    return MatchingQuests;
+end
+
+function Lib.Quest.Global:FindQuestsByExactName(_QuestName, _MaxResults)
+    return self:FindQuestsByAttribute(_MaxResults, "Identifier", _QuestName);
+end
+
+function Lib.Quest.Global:ListQuestsByAttribute(_MaxResults, ...)
+    local MatchingQuests = self:FindQuestsByAttribute(65565, ...);
+    local QuestNames = "";
+    local ResultCount = 0;
+    for i= 1, #MatchingQuests, 1 do
+        if ResultCount >= _MaxResults then
+            QuestNames = QuestNames .. "... (" .. (#MatchingQuests - ResultCount) .. " more)";
+            break;
+        end
+        QuestNames = QuestNames .. "> " .. MatchingQuests[i].Identifier .. "{cr}";
+        ResultCount = ResultCount +1;
     end
-    return NamesOfFoundQuests;
+    return "Found quests:{cr}"..QuestNames;
+end
+
+function Lib.Quest.Global:ListQuestsByState(_QuestState, _MaxResults)
+    return self:ListQuestsByAttribute(_MaxResults, "State", _QuestState);
+end
+
+function Lib.Quest.Global:ListQuestsByResult(_QuestResult, _MaxResults)
+    return self:ListQuestsByAttribute(_MaxResults, "Result", _QuestResult);
+end
+
+function Lib.Quest.Global:ListQuestsByName(_QuestName, _MaxResults)
+    -- HACK: Name will be converted to Identifier but it's a like search.
+    return self:ListQuestsByAttribute(_MaxResults, "Name", _QuestName);
 end
 
 function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
@@ -536,24 +558,44 @@ function Lib.Quest.Global:ProcessChatInput(_Text, _PlayerID, _IsDebug)
             or Commands[i][1] == "restart"
             or Commands[i][1] == "stop"
             or Commands[i][1] == "win" then
-                local FoundQuests = self:FindQuestNames(Commands[i][2], true);
+                local FoundQuests = self:FindQuestsByExactName(Commands[i][2], 1);
                 error(#FoundQuests == 1, "Unable to find quest containing '" ..Commands[i][2].. "'");
                 if Commands[i][1] == "fail" then
-                    FailQuest(FoundQuests[1]);
-                    log("fail quest '" ..FoundQuests[1].. "'");
+                    FailQuest(FoundQuests[1].Identifier);
+                    log("forced quest to fail: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "restart" then
-                    RestartQuest(FoundQuests[1]);
-                    log("restart quest '" ..FoundQuests[1].. "'");
+                    RestartQuest(FoundQuests[1].Identifier);
+                    log("forced quest to restart: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "start" then
-                    StartQuest(FoundQuests[1]);
-                    log("trigger quest '" ..FoundQuests[1].. "'");
+                    StartQuest(FoundQuests[1].Identifier);
+                    log("forced quest to start: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "stop" then
-                    StopQuest(FoundQuests[1]);
-                    log("interrupt quest '" ..FoundQuests[1].. "'");
+                    StopQuest(FoundQuests[1].Identifier);
+                    log("forced quest to stop: '" ..FoundQuests[1].Identifier.. "'");
                 elseif Commands[i][1] == "win" then
-                    WinQuest(FoundQuests[1]);
-                    log("win quest '" ..FoundQuests[1].. "'");
+                    WinQuest(FoundQuests[1].Identifier);
+                    log("forced quest to succeed: '" ..FoundQuests[1].Identifier.. "'");
                 end
+            end
+
+            if Commands[i][1] == "stopped" then
+                AddNote(self:ListQuestsByResult(QuestResult.Interrupted, 15));
+                log(self:ListQuestsByResult(QuestResult.Interrupted));
+            elseif Commands[i][1] == "active" then
+                AddNote(self:ListQuestsByState(QuestState.Active, 15));
+                log(self:ListQuestsByState(QuestState.Active));
+            elseif Commands[i][1] == "won" then
+                AddNote(self:ListQuestsByResult(QuestResult.Success, 15));
+                log(self:ListQuestsByResult(QuestResult.Success));
+            elseif Commands[i][1] == "failed" then
+                AddNote(self:ListQuestsByResult(QuestResult.Failure, 15));
+                log(self:ListQuestsByResult(QuestResult.Failure));
+            elseif Commands[i][1] == "waiting" then
+                AddNote(self:ListQuestsByState(QuestState.NotTriggered, 15));
+                log(self:ListQuestsByState(QuestState.NotTriggered));
+            elseif Commands[i][1] == "find" then
+                AddNote(self:ListQuestsByName(Commands[i][2], 15));
+                log(self:ListQuestsByName(Commands[i][2]));
             end
         end
     end
@@ -565,6 +607,8 @@ end
 -- Local initalizer method
 function Lib.Quest.Local:Initialize()
     if not self.IsInstalled then
+        self:OverwriteQuestTexts();
+
         -- Garbage collection
         Lib.Quest.Global = nil;
     end
@@ -592,6 +636,134 @@ function Lib.Quest.Local:ProcessChatInput(_Text, _PlayerID, _IsDebug)
         [[Lib.Quest.Global:ProcessChatInput("%s", %d, %s)]],
         _Text, _PlayerID, tostring(_IsDebug == true)
     );
+end
+
+function Lib.Quest.Local:OverwriteQuestTexts()
+    self.Orig_QuestLog_GetQuestTypeCaption = QuestLog.GetQuestTypeCaption;
+    --- Returns the caption of the quest in the quest log.
+    ---
+    --- This overwrite allows to define custom string tables instead of the
+    --- scheme dictated by the game.
+    ---
+    --- @param _QuestType integer Type of quest
+    --- @param _Quest table Quest
+    --- @return string Text String table text 
+    ---
+    --- @diagnostic disable-next-line: duplicate-set-field
+    QuestLog.GetQuestTypeCaption = function(_QuestType, _Quest)
+        if _QuestType == Objective.Custom
+        or _QuestType == Objective.Custom2
+        or _QuestType == Objective.NoChange
+        or _QuestType == Objective.Dummy
+        or _QuestType == Objective.DummyFail then
+            local Text = _Quest.QuestDescription or "";
+            if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                return XGUIEng.GetStringTableText(Text);
+            end
+        end
+        return Lib.Quest.Local.Orig_QuestLog_GetQuestTypeCaption(_QuestType, _Quest);
+    end
+
+    --- Returns the string table text of the quest.
+    ---
+    --- This overwrite allows to define custom string tables instead of the
+    --- scheme dictated by the game.
+    ---
+    --- @param _QuestIndex integer Index of quest
+    --- @param _MessageKey string String table key of message
+    --- @return string Text String table text
+    Wrapped_GetStringTableText = function(_QuestIndex, _MessageKey)
+        local MessageText = XGUIEng.GetStringTableText(_MessageKey);
+        if MessageText ~= "" then
+            return MessageText;
+        end
+        if _QuestIndex == 0 then
+            return "";
+        end
+        local Quest = Quests[_QuestIndex];
+        if not Quest then
+            return "";
+        end
+        if string.find(_MessageKey, "speech") then
+            local MessageKeyPos = string.find(_MessageKey, "/");
+            if not MessageKeyPos then
+                return "";
+            end
+            local MessageKey = string.sub(_MessageKey, MessageKeyPos + 1)
+            if  Quest.Identifier == MessageKey
+            and Quest.QuestStartMsg
+            and not string.find(Quest.QuestStartMsg, g_OverrideTextKeyPattern) then
+                return Quest.QuestStartMsg;
+            end
+            if  Quest.Identifier .. "_Success" == MessageKey
+            and Quest.QuestSuccessMsg
+            and not string.find(Quest.QuestSuccessMsg, g_OverrideTextKeyPattern) then
+                return Quest.QuestSuccessMsg;
+            end
+            if Quest.Identifier .. "_Failure" == MessageKey
+            and Quest.QuestFailureMsg
+            and not string.find(Quest.QuestFailureMsg, g_OverrideTextKeyPattern) then
+                return Quest.QuestFailureMsg;
+            end
+        else
+            if Quest.QuestDescription then
+                local Text = Quest.QuestDescription or "";
+                if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                    Text = XGUIEng.GetStringTableText(Text);
+                end
+                return string.match(Text, "^[^~]+ ~ (.+)$") or Text;
+            end
+        end
+        return "";
+    end
+
+    --- Returns the quest text dependend on the state of the quest.
+    ---
+    --- This overwrite allows to define custom string tables instead of the
+    --- scheme dictated by the game.
+    --- 
+    --- * Quest triggered: Quest.QuestStartMsg
+    --- * Quest failed: Quest.QuestFailureMsg
+    --- * Quest succeed: Quest.QuestSuccessMsg
+    ---
+    --- @param _Quest table Quest
+    --- @return string Name Name of string
+    --- @return string? File Name of file
+    GetTextOverride = function(_Quest)
+        local Result;
+        if not _Quest then
+            return;
+        end
+        assert(type( _Quest ) == "table");
+        if _Quest.State == QuestState.Over then
+            if _Quest.Result == QuestResult.Success then
+                local Text = _Quest.QuestSuccessMsg or "";
+                if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                    Text = "KEY(" .._Quest.QuestSuccessMsg.. ")";
+                end
+                Result = string.match(Text, g_OverrideTextKeyPattern);
+            elseif _Quest.Result == QuestResult.Failure then
+                local Text = _Quest.QuestFailureMsg or "";
+                if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                    Text = "KEY(" .._Quest.QuestFailureMsg.. ")";
+                end
+                Result = string.match(Text, g_OverrideTextKeyPattern);
+            end
+        else
+            local Text = _Quest.QuestStartMsg or "";
+            if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                Text = "KEY(" .._Quest.QuestStartMsg.. ")";
+            end
+            Result = string.match(Text, g_OverrideTextKeyPattern);
+        end
+        if Result then
+            local OverrideTable, OverrideKey = string.match(Result, "^([^/]+)/([^/]+)$");
+            if OverrideTable and OverrideKey then
+                return OverrideKey, OverrideTable;
+            end
+        end
+        return Result;
+    end
 end
 
 -- -------------------------------------------------------------------------- --

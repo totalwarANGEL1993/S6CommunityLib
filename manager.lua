@@ -1,6 +1,4 @@
 LibWriter = {
-    -- Do not change the order of files because it may cause
-    -- "to many open files" error!
     ComponentList = {
         "core/QSB",
         "core/Core",
@@ -33,7 +31,8 @@ LibWriter = {
         "module/city/MilitiaSystem",
         "module/entity/EntityEvent",
         "module/entity/EntitySelection",
-        "module/balancing/Damage",
+        "module/fix/Damage",
+        "module/fix/Patch",
         "module/information/Requester",
         "module/entity/EntitySearch",
         "module/trade/Trade",

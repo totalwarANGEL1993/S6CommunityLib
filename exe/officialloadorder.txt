@@ -53,7 +53,8 @@ comfort/unlocktitleforplayer
 
 core/QSB
 core/Core
-module/balancing/Damage
+module/fix/Damage
+module/fix/Patch
 module/diplomacy/Diplomacy
 module/city/Construction
 module/city/LifestockSystem

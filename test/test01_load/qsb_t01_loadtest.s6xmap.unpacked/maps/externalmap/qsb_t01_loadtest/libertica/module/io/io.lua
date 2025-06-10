@@ -6,16 +6,7 @@ Lib.IO.Global = {
 Lib.IO.Local  = {
     Data = {},
 };
-Lib.IO.Shared = {
-    TechnologyConfig = {
-        -- Tech name, Description, Icon, Extra Number
-        {"R_CallGeologist", {de = "Geologen rufen", en = "Order geologist", fr = "Ordre géologue"}, {8, 1, 1}, 1},
-        {"R_RefillIronMine", {de = "Eisenmine auffüllen", en = "Refill mine", fr = "Recharger le mien"}, {8, 2, 1}, 1},
-        {"R_RefillStoneMine", {de = "Steinbruch auffüllen", en = "Refill quarry", fr = "Carrière de recharge"}, {8, 3, 1}, 1},
-        {"R_RefillCistern", {de = "Brunnen auffüllen", en = "Refill well", fr = "Bien remplir"}, {8, 4, 1}, 1},
-        {"R_Tradepost", {de = "Handelsposten bauen", en = "Build Tradepost", fr = "Route commerciale"}, {3, 1, 1}, 1},
-    }
-};
+Lib.IO.Shared = {};
 
 CONST_IO = {};
 CONST_IO_SLAVE_TO_MASTER = {};
@@ -26,11 +17,14 @@ CONST_IO_LAST_HERO = 0;
 
 Lib.Require("comfort/GetClosestToTarget");
 Lib.Require("comfort/IsLocalScript");
+Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/ReplaceEntity");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/io/IO_API");
+Lib.Require("module/io/IO_Config");
+Lib.Require("module/io/IO_Behavior");
 Lib.Register("module/io/IO");
 
 -- -------------------------------------------------------------------------- --
@@ -39,33 +33,8 @@ Lib.Register("module/io/IO");
 -- Global initalizer method
 function Lib.IO.Global:Initialize()
     if not self.IsInstalled then
-        --- The player clicked the interaction button.
-        --- 
-        --- #### Parameters
-        --- * `ScriptName` - Scriptname of entity
-        --- * `KnightID`   - ID of activating hero
-        --- * `PlayerID`   - ID of activating player
-        Report.ObjectClicked = CreateReport("Event_ObjectClicked");
-
-        --- The interaction of the object was successfull.
-        --- If the object has costs the activation concludes when the costs arrive.
-        --- 
-        --- #### Parameters
-        --- * `ScriptName` - Scriptname of entity
-        --- * `KnightID`   - ID of activating hero
-        --- * `PlayerID`   - ID of activating player
         Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
-
-        --- The interaction is deleted from the object.
-        ---
-        --- #### Parameters
-        --- * `ScriptName` - Scriptname of entity
         Report.ObjectReset = CreateReport("Event_ObjectReset");
-
-        --- The state of an object has been reset.
-        ---
-        --- #### Parameters
-        --- * `ScriptName` - Scriptname of entity
         Report.ObjectDelete = CreateReport("Event_ObjectDelete");
 
         Lib.IO.Shared:CreateTechnologies();
@@ -122,11 +91,11 @@ function Lib.IO.Global:OnObjectInteraction(_ScriptName, _KnightID, _PlayerID)
 end
 
 function Lib.IO.Global:CreateObject(_Description)
-    local ID = GetID(_Description.Name);
+    local ID = GetID(_Description.ScriptName);
     if ID == 0 then
         return;
     end
-    self:DestroyObject(_Description.Name);
+    self:DestroyObject(_Description.ScriptName);
 
     local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(ID));
     if TypeName and not TypeName:find("^I_X_") then
@@ -139,11 +108,11 @@ function Lib.IO.Global:CreateObject(_Description)
     _Description.State = _Description.State or 0;
     _Description.Waittime = _Description.Waittime or 5;
     _Description.Distance = _Description.Distance or 1000;
-    CONST_IO[_Description.Name] = _Description;
+    CONST_IO[_Description.ScriptName] = _Description;
     ExecuteLocal(
         [[CONST_IO["%s"] = %s]],
-        _Description.Name,
-        table.tostring(CONST_IO[_Description.Name])
+        _Description.ScriptName,
+        table.tostring(CONST_IO[_Description.ScriptName])
     );
     self:SetupObject(_Description);
     return _Description;
@@ -172,7 +141,7 @@ end
 function Lib.IO.Global:CreateSlaveObject(_Object)
     local Name;
     for k, v in pairs(CONST_IO_SLAVE_TO_MASTER) do
-        if v == _Object.Name and IsExisting(k) then
+        if v == _Object.ScriptName and IsExisting(k) then
             Name = k;
         end
     end
@@ -183,12 +152,12 @@ function Lib.IO.Global:CreateSlaveObject(_Object)
 
     local SlaveID = GetID(Name);
     if not IsExisting(Name) then
-        local x,y,z = Logic.EntityGetPos(GetID(_Object.Name));
+        local x,y,z = Logic.EntityGetPos(GetID(_Object.ScriptName));
         SlaveID = Logic.CreateEntity(Entities.I_X_DragonBoatWreckage, x, y, 0, 0);
         Logic.SetModel(SlaveID, Models.Effects_E_Mosquitos);
         Logic.SetEntityName(SlaveID, Name);
-        CONST_IO_SLAVE_TO_MASTER[Name] = _Object.Name;
-        ExecuteLocal([[CONST_IO_SLAVE_TO_MASTER["%s"] = "%s"]], Name, _Object.Name);
+        CONST_IO_SLAVE_TO_MASTER[Name] = _Object.ScriptName;
+        ExecuteLocal([[CONST_IO_SLAVE_TO_MASTER["%s"] = "%s"]], Name, _Object.ScriptName);
         _Object.Slave = Name;
     end
     CONST_IO_SLAVE_STATE[Name] = 1;
@@ -196,7 +165,7 @@ function Lib.IO.Global:CreateSlaveObject(_Object)
 end
 
 function Lib.IO.Global:SetupObject(_Object)
-    local ID = GetID((_Object.Slave and _Object.Slave) or _Object.Name);
+    local ID = GetID((_Object.Slave and _Object.Slave) or _Object.ScriptName);
     Logic.InteractiveObjectClearCosts(ID);
     Logic.InteractiveObjectClearRewards(ID);
     Logic.InteractiveObjectSetInteractionDistance(ID, _Object.Distance);
@@ -306,7 +275,7 @@ function Lib.IO.Global:ProcessChatInput(_Text)
             log("deactivated object " ..Commands[i][2].. ".");
         elseif Commands[i][1] == "initobject" then
             error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
-            API.SetupObject({
+            self:CreateObject({
                 Name     = Commands[i][2],
                 Waittime = 0,
                 State    = 0
@@ -367,7 +336,6 @@ end
 -- Local initalizer method
 function Lib.IO.Local:Initialize()
     if not self.IsInstalled then
-        Report.ObjectClicked = CreateReport("Event_ObjectClicked");
         Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
         Report.ObjectReset = CreateReport("Event_ObjectReset");
         Report.ObjectDelete = CreateReport("Event_ObjectDelete");
@@ -435,16 +403,6 @@ function Lib.IO.Local:OverrideGameFunctions()
             end
         end
         GUI_Interaction.InteractiveObjectClicked_Orig_Lib_IO();
-
-        -- Send additional click event
-        -- This is supposed to be used in singleplayer only!
-        if not Framework.IsNetworkGame() then
-            local KnightIDs = {};
-            Logic.GetKnights(PlayerID, KnightIDs);
-            local KnightID = GetClosestToTarget(EntityID, KnightIDs);
-            SendReportToGlobal(Report.ObjectClicked, ScriptName, KnightID, PlayerID);
-            SendReport(Report.ObjectClicked, ScriptName, KnightID, PlayerID);
-        end
     end
 
     --- @diagnostic disable-next-line: duplicate-set-field
@@ -770,13 +728,14 @@ end
 -- Shared
 
 function Lib.IO.Shared:CreateTechnologies()
-    for i= 1, #self.TechnologyConfig do
-        if g_GameExtraNo >= self.TechnologyConfig[i][4] then
-            if not Technologies[self.TechnologyConfig[i][1]] then
-                AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
+    for i= 1, #Lib.IO.Config.Technology do
+        local Technology = Lib.IO.Config.Technology[i];
+        if g_GameExtraNo >= Technology[4] then
+            if not Technologies[Technology[1]] then
+                AddCustomTechnology(Technology[1], Technology[2], Technology[3]);
                 if not IsLocalScript() then
                     for j= 1, 8 do
-                        Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
+                        Logic.TechnologySetState(j, Technologies[Technology[1]], 3);
                     end
                 end
             end

@@ -1,10 +1,11 @@
 Lib.Core = Lib.Core or {};
 Lib.Core.Debug = {
     DisplayScriptErrors = false;
-    CheckAtRun          = false;
-    TraceQuests         = false;
-    DevelopingCheats    = false;
-    DevelopingShell     = false;
+    CheckAtRun = false;
+    TraceQuests = false;
+    DevelopingCheats = false;
+    DevelopingShell = false;
+    LoadscreenClosed = false;
 }
 
 Lib.Require("comfort/IsLocalScript");
@@ -15,16 +16,10 @@ Lib.Register("core/feature/Core_Debug");
 function Lib.Core.Debug:Initialize()
     Report.DebugChatConfirmed = CreateReport("Event_DebugChatConfirmed");
     Report.DebugConfigChanged = CreateReport("Event_DebugConfigChanged");
+    Report.DebugCallGlobal = CreateReport("Event_DebugCallGlobal");
 
     if IsLocalScript() then
         self:InitializeQsbDebugHotkeys();
-
-        CreateReportReceiver(
-            Report.ChatClosed,
-            function(...)
-                Lib.Core.Debug:ProcessDebugInput(...);
-            end
-        );
     end
 end
 
@@ -36,6 +31,21 @@ function Lib.Core.Debug:OnSaveGameLoaded()
 end
 
 function Lib.Core.Debug:OnReportReceived(_ID, ...)
+    if _ID == Report.LoadingFinished then
+        self.LoadscreenClosed = true;
+    elseif _ID == Report.ChatClosed then
+        if IsLocalScript() then
+            Lib.Core.Debug:ProcessDebugInput(...);
+        end
+    elseif _ID == Report.DebugCallGlobal then
+        if not IsLocalScript() then
+            self:CallFunctionFromString(...);
+        end
+    end
+end
+
+function Lib.Core.Debug:Test(_Text)
+    AddNote(_Text)
 end
 
 function Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
@@ -48,6 +58,8 @@ function Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _De
     self.DevelopingCheats    = _DevelopingCheats == true;
     self.DevelopingShell     = _DevelopingShell == true;
     self.TraceQuests         = _TraceQuests == true;
+
+    g_DisplayScriptErrors = _DisplayScriptErrors == true;
 
     SendReport(
         Report.DebugConfigChanged,
@@ -75,12 +87,24 @@ function Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _De
                 Lib.Core.Debug.TraceQuests
             );
             Lib.Core.Debug:InitializeDebugWidgets();
+
+            g_DisplayScriptErrors = Lib.Core.Debug.DisplayScriptErrors;
         ]],
         tostring(self.DisplayScriptErrors),
         tostring(self.CheckAtRun),
         tostring(self.DevelopingCheats),
         tostring(self.DevelopingShell),
         tostring(self.TraceQuests)
+    );
+end
+
+function Lib.Core.Debug:LegacyToggleDisplayScriptErrors(_Active)
+    self:ActivateDebugMode(
+        _Active == true,
+        self.CheckAtRun,
+        self.DevelopingCheats,
+        self.DevelopingShell,
+        self.TraceQuests
     );
 end
 
@@ -121,11 +145,45 @@ function Lib.Core.Debug:InitializeQsbDebugHotkeys()
     );
 end
 
+function Lib.Core.Debug:CallFunctionFromString(...)
+    local FunctionRef = nil;
+    local FunctionNameParts = string.slice(table.remove(arg, 1), "%.");
+    for i= 1, #FunctionNameParts do
+        local FunctionName = string.slice(FunctionNameParts[i], ":");
+        if #FunctionName > 1 then
+            if FunctionRef == nil then
+                FunctionRef = _G[FunctionName[1]][FunctionName[2]];
+                if FunctionRef then
+                    FunctionRef(_G[FunctionName[1]], unpack(arg));
+                end
+            else
+                FunctionRef = FunctionRef[FunctionName[1]][FunctionName[2]];
+                if FunctionRef then
+                    FunctionRef(_G[FunctionName[1]], unpack(arg));
+                end
+            end
+            return;
+        else
+            if FunctionRef == nil then
+                FunctionRef = _G[FunctionName[1]];
+            else
+                FunctionRef = FunctionRef[FunctionName[1]];
+            end
+        end
+    end
+    if FunctionRef then
+        FunctionRef(unpack(arg));
+    end
+end
+
 function Lib.Core.Debug:ProcessDebugShortcut(_Type, _Params)
     if self.DevelopingCheats then
         if _Type == "RestartMap" then
             Framework.RestartMap();
-        elseif _Type == "Terminal" then
+        end
+    end
+    if self.DevelopingShell then
+        if _Type == "Terminal" then
             ShowTextInput(GUI.GetPlayerID(), true);
         end
     end
@@ -229,4 +287,9 @@ function ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats,
     Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests);
 end
 API.ActivateDebugMode = ActivateDebugMode;
+
+function ToggleDisplayScriptErrors(_active)
+    Lib.Core.Debug:LegacyToggleDisplayScriptErrors(_active);
+end
+API.ToggleDisplayScriptErrors = ToggleDisplayScriptErrors;
 

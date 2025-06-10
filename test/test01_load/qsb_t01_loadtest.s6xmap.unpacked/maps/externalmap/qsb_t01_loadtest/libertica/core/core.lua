@@ -9,21 +9,28 @@ Lib.Core.Local = {
     IsInstalled = false;
 };
 
+CONST_CURRENT_MODULE_CONTEXT = {};
+
 Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("comfort/IsLocalScript");
+Lib.Require("comfort/IsUnofficialPatch");
+Lib.Require("comfort/HexToColorString");
+
+Lib.Require("core/QSB");
 
 Lib.Require("core/feature/Core_Chat");
 Lib.Require("core/feature/Core_Debug");
 Lib.Require("core/feature/Core_LuaExtension");
-Lib.Require("core/feature/Core_Bugfix");
 Lib.Require("core/feature/Core_Report");
 Lib.Require("core/feature/Core_ScriptingValue");
 Lib.Require("core/feature/Core_Text");
 Lib.Require("core/feature/Core_Job");
 Lib.Require("core/feature/Core_Save");
 Lib.Require("core/feature/Core_Quest");
+Lib.Require("core/feature/Core_Player");
 
+Lib.Require("core/Core_Behavior");
 Lib.Register("core/Core");
 
 ---@diagnostic disable: deprecated
@@ -35,6 +42,7 @@ function log(_Text, ...)
     if #arg > 0 then
         Text = string.format(Text, unpack(arg));
     end
+    Text = string.gsub(Text, "{cr}", "\n");
     Framework.WriteToLog(Text);
     return Text;
 end
@@ -46,7 +54,7 @@ function warn(_Condition, _Text, ...)
         if GUI then
             GUI.AddNote(Text);
         else
-            Logic.DEBUG_Addnote(Text);
+            Logic.DEBUG_AddNote(Text);
         end
         return Text;
     end
@@ -55,7 +63,7 @@ end
 function error(_Condition, _Text, ...)
     if not _Condition then
         local Text = log(_Text, unpack(arg));
-        return assert(_Condition, Text);
+        return assert(false, Text);
     end
 end
 
@@ -65,7 +73,7 @@ function debug(_Condition, _Text, ...)
         if GUI then
             GUI.AddNote(Text);
         else
-            Logic.DEBUG_Addnote(Text);
+            Logic.DEBUG_AddNote(Text);
         end
     end
 end
@@ -87,7 +95,7 @@ function Lib.Core.Global:Initialize()
         Lib.Core.Quest:Initialize();
         Lib.Core.Chat:Initialize();
         Lib.Core.Debug:Initialize();
-        Lib.Core.Bugfix:Initialize();
+        Lib.Core.Player:Initialize();
 
         -- Load user files
         if Mission_LoadFiles then
@@ -102,9 +110,18 @@ function Lib.Core.Global:Initialize()
 
         -- Initialize modules
         for i= 1, #Lib.Core.ModuleList do
-            local Module = Lib[Lib.Core.ModuleList[i]];
-            if Module.Global and Module.Global.Initialize then
-                Module.Global:Initialize();
+            local Name = Lib.Core.ModuleList[i];
+            Lib[Name].Global.Name = Name;
+
+            Lib[Name].AquireContext = function()
+                return Lib.Core.Global:AquireContext(Lib[Name].Global);
+            end
+            Lib[Name].ReleaseContext = function()
+                return Lib.Core.Global:ReleaseContext(Lib[Name].Global);
+            end
+
+            if Lib[Name].Global and Lib[Name].Global.Initialize then
+                Lib[Name].Global:Initialize();
             end
         end
 
@@ -130,13 +147,21 @@ function Lib.Core.Global:OnSaveGameLoaded()
     Lib.Core.Quest:OnSaveGameLoaded();
     Lib.Core.Chat:OnSaveGameLoaded();
     Lib.Core.Debug:OnSaveGameLoaded();
-    Lib.Core.Bugfix:OnSaveGameLoaded();
+    Lib.Core.Player:OnSaveGameLoaded();
 
     -- Restore modules
     for i= 1, #Lib.Core.ModuleList do
-        local Module = Lib[Lib.Core.ModuleList[i]];
-        if Module.Global and Module.Global.OnSaveGameLoaded then
-            Module.Global:OnSaveGameLoaded();
+        local Name = Lib.Core.ModuleList[i];
+
+        Lib[Name].AquireContext = function()
+            return Lib.Core.Global:AquireContext(Lib[Name].Global);
+        end
+        Lib[Name].ReleaseContext = function()
+            return Lib.Core.Global:ReleaseContext(Lib[Name].Global);
+        end
+
+        if Lib[Name].Global and Lib[Name].Global.OnSaveGameLoaded then
+            Lib[Name].Global:OnSaveGameLoaded();
         end
     end
 end
@@ -151,30 +176,32 @@ end
 
 function Lib.Core.Global:InitReportListener()
     GameCallback_Lib_OnEventReceived = function(_ID, ...)
-        Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
-        Lib.Core.Report:OnReportReceived(_ID, ...);
-        Lib.Core.Text:OnReportReceived(_ID, ...);
-        Lib.Core.Job:OnReportReceived(_ID, ...);
-        Lib.Core.ScriptingValue:OnReportReceived(_ID, ...);
-        Lib.Core.Save:OnReportReceived(_ID, ...);
-        Lib.Core.Quest:OnReportReceived(_ID, ...);
-        Lib.Core.Chat:OnReportReceived(_ID, ...);
-        Lib.Core.Debug:OnReportReceived(_ID, ...);
-        Lib.Core.Bugfix:OnReportReceived(_ID, ...);
+        local arg = {...};
+
+        Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Report:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Text:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Job:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.ScriptingValue:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Save:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Quest:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Chat:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Debug:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Player:OnReportReceived(_ID, unpack(arg));
 
         -- Loadscreen
         if _ID == Report.LoadingFinished then
-            SendReportToLocal(Report.LoadingFinished, ...);
+            SendReportToLocal(Report.LoadingFinished, unpack(arg));
         end
         -- Escape
         if _ID == Report.EscapePressed then
-            SendReportToLocal(Report.EscapePressed, ...);
+            SendReportToLocal(Report.EscapePressed, unpack(arg));
         end
 
         for i= 1, #Lib.Core.ModuleList do
-            local Module = Lib[Lib.Core.ModuleList[i]];
-            if Module.Global and Module.Global.OnReportReceived then
-                Module.Global:OnReportReceived(_ID, ...);
+            local Name = Lib.Core.ModuleList[i];
+            if Lib[Name].Global and Lib[Name].Global.OnReportReceived then
+                Lib[Name].Global:OnReportReceived(_ID, unpack(arg));
             end
         end
 
@@ -193,6 +220,24 @@ function Lib.Core.Global:ExecuteLocal(_Command, ...)
         CommandString = CommandString:format(unpack(arg));
     end
     Logic.ExecuteInLuaLocalState(CommandString);
+end
+
+function Lib.Core.Global:AquireContext(_Module)
+    local Name = (type(_Module) == "table" and _Module.Name) or _Module;
+    assert(Lib[Name] ~= nil);
+    table.insert(CONST_CURRENT_MODULE_CONTEXT, Lib[Name].Global);
+    local Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
+end
+
+function Lib.Core.Global:ReleaseContext(_Module)
+    local Name = (type(_Module) == "table" and _Module.Name) or _Module;
+    assert(Lib[Name] ~= nil);
+    local Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    Lib[Name].Global = CONST_CURRENT_MODULE_CONTEXT[Frame];
+    table.remove(CONST_CURRENT_MODULE_CONTEXT);
+    Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
 end
 
 -- -------------------------------------------------------------------------- --
@@ -224,7 +269,7 @@ function Lib.Core.Local:Initialize()
         Lib.Core.Quest:Initialize();
         Lib.Core.Chat:Initialize();
         Lib.Core.Debug:Initialize();
-        Lib.Core.Bugfix:Initialize();
+        Lib.Core.Player:Initialize();
 
         -- Load user files
         if Mission_LoadFiles then
@@ -239,9 +284,18 @@ function Lib.Core.Local:Initialize()
 
         -- Initialize modules
         for i= 1, #Lib.Core.ModuleList do
-            local Module = Lib[Lib.Core.ModuleList[i]];
-            if Module.Local and Module.Local.Initialize then
-                Module.Local:Initialize();
+            local Name = Lib.Core.ModuleList[i];
+            Lib[Name].Local.Name = Name;
+
+            Lib[Name].AquireContext = function()
+                return Lib.Core.Local:AquireContext(Lib[Name].Local);
+            end
+            Lib[Name].ReleaseContext = function()
+                return Lib.Core.Local:ReleaseContext(Lib[Name].Local);
+            end
+
+            if Lib[Name].Local and Lib[Name].Local.Initialize then
+                Lib[Name].Local:Initialize();
             end
         end
 
@@ -265,13 +319,21 @@ function Lib.Core.Local:OnSaveGameLoaded()
     Lib.Core.Quest:OnSaveGameLoaded();
     Lib.Core.Chat:OnSaveGameLoaded();
     Lib.Core.Debug:OnSaveGameLoaded();
-    Lib.Core.Bugfix:OnSaveGameLoaded();
+    Lib.Core.Player:OnSaveGameLoaded();
 
     -- Restore modules
     for i= 1, #Lib.Core.ModuleList do
-        local Module = Lib[Lib.Core.ModuleList[i]];
-        if Module.Local and Module.Local.OnSaveGameLoaded then
-            Module.Local:OnSaveGameLoaded();
+        local Name = Lib.Core.ModuleList[i];
+
+        Lib[Name].AquireContext = function()
+            return Lib.Core.Local:AquireContext(Lib[Name].Local);
+        end
+        Lib[Name].ReleaseContext = function()
+            return Lib.Core.Local:ReleaseContext(Lib[Name].Local);
+        end
+
+        if Lib[Name].Local and Lib[Name].Local.OnSaveGameLoaded then
+            Lib[Name].Local:OnSaveGameLoaded();
         end
     end
 
@@ -282,16 +344,17 @@ end
 
 function Lib.Core.Local:InitReportListener()
     GameCallback_Lib_OnEventReceived = function(_ID, ...)
-        Lib.Core.LuaExtension:OnReportReceived(_ID, ...);
-        Lib.Core.Report:OnReportReceived(_ID, ...);
-        Lib.Core.Text:OnReportReceived(_ID, ...);
-        Lib.Core.Job:OnReportReceived(_ID, ...);
-        Lib.Core.ScriptingValue:OnReportReceived(_ID, ...);
-        Lib.Core.Save:OnReportReceived(_ID, ...);
-        Lib.Core.Quest:OnReportReceived(_ID, ...);
-        Lib.Core.Chat:OnReportReceived(_ID, ...);
-        Lib.Core.Debug:OnReportReceived(_ID, ...);
-        Lib.Core.Bugfix:OnReportReceived(_ID, ...);
+        local arg = {...};
+        Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Report:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Text:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Job:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.ScriptingValue:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Save:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Quest:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Chat:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Debug:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Player:OnReportReceived(_ID, unpack(arg));
 
         -- Loadscreen
         if _ID == Report.LoadingFinished then
@@ -299,9 +362,9 @@ function Lib.Core.Local:InitReportListener()
         end
 
         for i= 1, #Lib.Core.ModuleList do
-            local Module = Lib[Lib.Core.ModuleList[i]];
-            if Module.Local and Module.Local.OnReportReceived then
-                Module.Local:OnReportReceived(_ID, ...);
+            local Name = Lib.Core.ModuleList[i];
+            if Lib[Name].Local and Lib[Name].Local.OnReportReceived then
+                Lib[Name].Local:OnReportReceived(_ID, unpack(arg));
             end
         end
 
@@ -316,14 +379,32 @@ end
 
 function Lib.Core.Local:ExecuteGlobal(_Command, ...)
     local CommandString = _Command;
-    assert(
-        not (IsHistoryEdition() and IsMultiplayer()),
-        "Script command is not allowed in history edition multiplayer."
-    );
+    if IsHistoryEdition() and IsMultiplayer() then
+        warn(false, "Script command is not allowed in history edition multiplayer.");
+        return;
+    end
     if arg and #arg > 0 then
         CommandString = CommandString:format(unpack(arg));
     end
     GUI.SendScriptCommand(CommandString);
+end
+
+function Lib.Core.Local:AquireContext(_Module)
+    local Name = (type(_Module) == "table" and _Module.Name) or _Module;
+    assert(Lib[Name] ~= nil);
+    table.insert(CONST_CURRENT_MODULE_CONTEXT, Lib[Name].Local);
+    local Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
+end
+
+function Lib.Core.Local:ReleaseContext(_Module)
+    local Name = (type(_Module) == "table" and _Module.Name) or _Module;
+    assert(Lib[Name] ~= nil);
+    local Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    Lib[Name].Local = CONST_CURRENT_MODULE_CONTEXT[Frame];
+    table.remove(CONST_CURRENT_MODULE_CONTEXT);
+    Frame = #CONST_CURRENT_MODULE_CONTEXT;
+    this = CONST_CURRENT_MODULE_CONTEXT[Frame];
 end
 
 -- -------------------------------------------------------------------------- --
@@ -364,26 +445,55 @@ function Lib.Core.Local:InitLoadscreenHandler()
     end
 end
 
+function Lib.Core.Local:Preload_ViewWholeMap()
+    local WorldX, WorldY = Logic.WorldGetSize();
+    Display.SetFarClipPlaneMinAndMax(0, 0);
+    Camera.SwitchCameraBehaviour(0);
+    Camera.RTS_ToggleMapMode(1);
+    Camera.RTS_SetMapModeFOV(90);
+    Camera.RTS_SetMapModeZoomDistance(100000);
+    Camera.RTS_SetMapModeZoomAngle(90);
+    Camera.RTS_SetLookAtPosition(WorldX * 0.5, WorldY * 0.5);
+    Display.SetRenderFogOfWar(0);
+end
+
+function Lib.Core.Local:Preload_ResetView()
+    Camera.RTS_ToggleMapMode(0);
+    Display.SetRenderFogOfWar(1);
+end
+
 -- -------------------------------------------------------------------------- --
+
+function API.SetLogLevel(_ScreenLogLevel, _FileLogLevel)
+    -- Legacy support...
+    -- Log levels do not exist anymore.
+end
+API.SetLoggingLevel = API.SetLogLevel
 
 function PrepareLibrary()
     assert(not IsLocalScript(), "Must be called from global script!");
     Lib.Core.Global:Initialize();
     ExecuteLocal("Lib.Core.Local:Initialize()");
 end
+API.PrepareLibrary = PrepareLibrary;
 
 function RegisterModule(_Name)
     assert(Lib[_Name], "Module '" .._Name.. "' does not exist!");
     table.insert(Lib.Core.ModuleList, _Name);
 end
+API.RegisterModule = RegisterModule;
 
 function ExecuteLocal(_Command, ...)
-    assert(not IsLocalScript(), "Can not be used in local script.");
-    Lib.Core.Global:ExecuteLocal(_Command, ...);
+    if not IsLocalScript() then
+        Lib.Core.Global:ExecuteLocal(_Command, ...);
+    end
 end
+API.ExecuteLocal = ExecuteLocal;
 
 function ExecuteGlobal(_Command, ...)
-    assert(IsLocalScript(), "Can not be used in global script.");
-    Lib.Core.Local:ExecuteGlobal(_Command, ...);
+    if IsLocalScript() then
+        Lib.Core.Local:ExecuteGlobal(_Command, ...);
+    end
 end
+API.ExecuteGlobal = ExecuteGlobal;
 

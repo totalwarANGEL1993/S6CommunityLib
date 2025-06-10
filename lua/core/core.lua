@@ -22,7 +22,6 @@ Lib.Require("core/QSB");
 Lib.Require("core/feature/Core_Chat");
 Lib.Require("core/feature/Core_Debug");
 Lib.Require("core/feature/Core_LuaExtension");
-Lib.Require("core/feature/Core_Bugfix");
 Lib.Require("core/feature/Core_Report");
 Lib.Require("core/feature/Core_ScriptingValue");
 Lib.Require("core/feature/Core_Text");
@@ -96,7 +95,6 @@ function Lib.Core.Global:Initialize()
         Lib.Core.Quest:Initialize();
         Lib.Core.Chat:Initialize();
         Lib.Core.Debug:Initialize();
-        Lib.Core.Bugfix:Initialize();
         Lib.Core.Player:Initialize();
 
         -- Load user files
@@ -149,7 +147,6 @@ function Lib.Core.Global:OnSaveGameLoaded()
     Lib.Core.Quest:OnSaveGameLoaded();
     Lib.Core.Chat:OnSaveGameLoaded();
     Lib.Core.Debug:OnSaveGameLoaded();
-    Lib.Core.Bugfix:OnSaveGameLoaded();
     Lib.Core.Player:OnSaveGameLoaded();
 
     -- Restore modules
@@ -190,7 +187,6 @@ function Lib.Core.Global:InitReportListener()
         Lib.Core.Quest:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Chat:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Debug:OnReportReceived(_ID, unpack(arg));
-        Lib.Core.Bugfix:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Player:OnReportReceived(_ID, unpack(arg));
 
         -- Loadscreen
@@ -273,7 +269,6 @@ function Lib.Core.Local:Initialize()
         Lib.Core.Quest:Initialize();
         Lib.Core.Chat:Initialize();
         Lib.Core.Debug:Initialize();
-        Lib.Core.Bugfix:Initialize();
         Lib.Core.Player:Initialize();
 
         -- Load user files
@@ -324,7 +319,6 @@ function Lib.Core.Local:OnSaveGameLoaded()
     Lib.Core.Quest:OnSaveGameLoaded();
     Lib.Core.Chat:OnSaveGameLoaded();
     Lib.Core.Debug:OnSaveGameLoaded();
-    Lib.Core.Bugfix:OnSaveGameLoaded();
     Lib.Core.Player:OnSaveGameLoaded();
 
     -- Restore modules
@@ -360,7 +354,6 @@ function Lib.Core.Local:InitReportListener()
         Lib.Core.Quest:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Chat:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Debug:OnReportReceived(_ID, unpack(arg));
-        Lib.Core.Bugfix:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Player:OnReportReceived(_ID, unpack(arg));
 
         -- Loadscreen

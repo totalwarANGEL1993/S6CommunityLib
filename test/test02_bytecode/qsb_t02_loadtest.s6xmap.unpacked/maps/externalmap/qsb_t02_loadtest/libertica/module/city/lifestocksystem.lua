@@ -39,13 +39,7 @@ Lib.LifestockSystem.Local  = {
         SheepDisabled = "",
     }
 };
-Lib.LifestockSystem.Shared = {
-    TechnologyConfig = {
-        -- Tech name, Description, Icon, Extra Number
-        {"R_Cattle", {de = "Kühe züchten",   en = "Breeding Cows",   fr = "Vaches reproductrices"}, {3, 16, 0}, 0},
-        {"R_Sheep",  {de = "Schafe züchten", en = "Breeding Sheeps", fr = "Moutons reproducteurs"}, {4,  1, 0}, 0},
-    },
-};
+Lib.LifestockSystem.Shared = {};
 
 Lib.Require("comfort/SetHealth");
 Lib.Require("core/Core");
@@ -55,6 +49,7 @@ Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/city/Promotion");
 Lib.Require("module/city/LifestockSystem_API");
+Lib.Require("module/city/LifestockSystem_Config");
 Lib.Require("module/city/LifestockSystem_Text");
 Lib.Register("module/city/LifestockSystem");
 
@@ -64,42 +59,10 @@ Lib.Register("module/city/LifestockSystem");
 -- Global initalizer method
 function Lib.LifestockSystem.Global:Initialize()
     if not self.IsInstalled then
-        --- The player has clicked the buy animal button
-        --- 
-        --- #### Parameters
-        --- * `Index   `   - "Cattle" or "Sheep"
-        --- * `PlayerID`   - ID of player
-        --- * `EntityID`   - ID of pasture
         Report.BreedAnimalClicked = CreateReport("Event_BreedAnimalClicked");
-
-        --- The player has bought a cow.
-        --- 
-        --- #### Parameters
-        --- * `PlayerID`   - ID of player
-        --- * `EntityID`   - ID of created cow
-        --- * `BuildingID` - ID of pasture
         Report.CattleBought = CreateReport("Event_CattleBought");
-
-        --- The player has bought a sheep.
-        --- 
-        --- #### Parameters
-        --- * `PlayerID`   - ID of player
-        --- * `EntityID`   - ID of created sheep
-        --- * `BuildingID` - ID of pasture
         Report.SheepBought = CreateReport("Event_SheepBought");
-
-        --- A cow has starved.
-        --- 
-        --- #### Parameters
-        --- * `PlayerID`   - ID of player
-        --- * `EntityID`   - ID of created cow
         Report.CattleStarved = CreateReport("Event_CattleStarved");
-
-        --- A sheep has starved.
-        --- 
-        --- #### Parameters
-        --- * `PlayerID`   - ID of player
-        --- * `EntityID`   - ID of created cow
         Report.SheepStarved = CreateReport("Event_SheepStarved");
 
         -- Get texts
@@ -107,9 +70,9 @@ function Lib.LifestockSystem.Global:Initialize()
         self.Text.SheepStarved = Localize(Lib.LifestockSystem.Text.SheepStarved);
 
         -- Change base prices
-        MerchantSystem.BasePricesOrigModuleLifestockBreeding                = {};
-        MerchantSystem.BasePricesOrigModuleLifestockBreeding[Goods.G_Sheep] = MerchantSystem.BasePrices[Goods.G_Sheep];
-        MerchantSystem.BasePricesOrigModuleLifestockBreeding[Goods.G_Cow]   = MerchantSystem.BasePrices[Goods.G_Cow];
+        MerchantSystem.BasePricesOrigLifestockSystem                = {};
+        MerchantSystem.BasePricesOrigLifestockSystem[Goods.G_Sheep] = MerchantSystem.BasePrices[Goods.G_Sheep];
+        MerchantSystem.BasePricesOrigLifestockSystem[Goods.G_Cow]   = MerchantSystem.BasePrices[Goods.G_Cow];
 
         MerchantSystem.BasePrices[Goods.G_Sheep] = self.SheepBasePrice;
         MerchantSystem.BasePrices[Goods.G_Cow]   = self.CattleBasePrice;
@@ -145,7 +108,11 @@ function Lib.LifestockSystem.Global:OnReportReceived(_ID, ...)
 end
 
 function Lib.LifestockSystem.Global:BuyAnimal(_Index, _PlayerID, _BuildingID)
-    local AnimalType = (_Index == "Cattle" and Entities.A_X_Cow01) or Entities.A_X_Sheep01;
+    local AnimalType = Entities.A_X_Cow01;
+    if _Index == "Sheep" then
+        local Suffix = math.floor(Logic.GetTime() % 2) +1;
+        AnimalType = Entities["A_X_Sheep0" ..Suffix];
+    end
     local GrainCost = self[_Index.. "GrainCost"];
     if GetPlayerResources(Goods.G_Grain, _PlayerID) < GrainCost then
         return;
@@ -165,7 +132,7 @@ function Lib.LifestockSystem.Global:ControlFeeding()
             local CattleList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.CattlePasture)};
             if CattleTimer > 0 then
                 local FeedingTime = math.max(CattleTimer * (1 - (0.03 * #CattleList)), 15);
-                if #CattleList > 0 and Logic.GetTime() % math.floor(FeedingTime) == 0 then
+                if #CattleList > 0 and math.floor(Logic.GetTime()) % math.floor(FeedingTime) == 0 then
                     local Upkeep = self.CattleGrainUpkeep;
                     local GrainAmount = GetPlayerResources(Goods.G_Grain, PlayerID);
                     if GrainAmount < Upkeep then
@@ -198,7 +165,7 @@ function Lib.LifestockSystem.Global:ControlFeeding()
             local SheepList = {Logic.GetPlayerEntitiesInCategory(PlayerID, EntityCategories.SheepPasture)};
             if SheepTimer > 0 then
                 local FeedingTime = math.max(SheepTimer * (1 - (0.03 * #SheepList)), 15);
-                if #SheepList > 0 and Logic.GetTime() % math.floor(FeedingTime) == 0 then
+                if #SheepList > 0 and math.floor(Logic.GetTime()) % math.floor(FeedingTime) == 0 then
                     local Upkeep = self.SheepGrainUpkeep;
                     local GrainAmount = GetPlayerResources(Goods.G_Grain, PlayerID);
                     if GrainAmount < Upkeep then
@@ -230,7 +197,7 @@ function Lib.LifestockSystem.Global:ControlFeeding()
 end
 
 function Lib.LifestockSystem.Global:ControlDecay()
-    if Logic.GetTime() % 10 == 0 then
+    if math.floor(Logic.GetTime()) % 10 == 0 then
         -- Cattle
         local CattleCorpses = Logic.GetEntitiesOfType(Entities.R_DeadCow);
         for k,v in pairs(CattleCorpses) do
@@ -275,9 +242,9 @@ function Lib.LifestockSystem.Local:Initialize()
         self.Text.SheepDisabled = XGUIEng.GetStringTableText("UI_ButtonDisabled/PromoteKnight");
 
         -- Change base prices
-        MerchantSystem.BasePricesOrigModuleLifestockBreeding                = {};
-        MerchantSystem.BasePricesOrigModuleLifestockBreeding[Goods.G_Sheep] = MerchantSystem.BasePrices[Goods.G_Sheep];
-        MerchantSystem.BasePricesOrigModuleLifestockBreeding[Goods.G_Cow]   = MerchantSystem.BasePrices[Goods.G_Cow];
+        MerchantSystem.BasePricesOrigLifestockSystem                = {};
+        MerchantSystem.BasePricesOrigLifestockSystem[Goods.G_Sheep] = MerchantSystem.BasePrices[Goods.G_Sheep];
+        MerchantSystem.BasePricesOrigLifestockSystem[Goods.G_Cow]   = MerchantSystem.BasePrices[Goods.G_Cow];
 
         MerchantSystem.BasePrices[Goods.G_Sheep] = self.SheepBasePrice;
         MerchantSystem.BasePrices[Goods.G_Cow]   = self.CattleBasePrice;
@@ -365,7 +332,8 @@ function Lib.LifestockSystem.Local:BuyAnimalUpdate(_Index, _WidgetID, _EntityID)
 end
 
 function Lib.LifestockSystem.Local:InitBuyCowButton()
-    local Position = {XGUIEng.GetWidgetLocalPosition("/InGame/Root/Normal/BuildingButtons/BuyCatapultCart")};
+    local Widget = "/InGame/Root/Normal/BuildingButtons/BuyCatapultCart";
+    local Position = {XGUIEng.GetWidgetLocalPosition(Widget)};
     AddBuildingButtonByTypeAtPosition(
         Entities.B_CattlePasture,
         Position[1], Position[2],
@@ -382,7 +350,8 @@ function Lib.LifestockSystem.Local:InitBuyCowButton()
 end
 
 function Lib.LifestockSystem.Local:InitBuySheepButton()
-    local Position = {XGUIEng.GetWidgetLocalPosition("/InGame/Root/Normal/BuildingButtons/BuyCatapultCart")};
+    local Widget = "/InGame/Root/Normal/BuildingButtons/BuyCatapultCart";
+    local Position = {XGUIEng.GetWidgetLocalPosition(Widget)};
     AddBuildingButtonByTypeAtPosition(
         Entities.B_SheepPasture,
         Position[1], Position[2],
@@ -402,13 +371,14 @@ end
 -- Shared
 
 function Lib.LifestockSystem.Shared:CreateTechnologies()
-    for i= 1, #self.TechnologyConfig do
-        if g_GameExtraNo >= self.TechnologyConfig[i][4] then
-            if not Technologies[self.TechnologyConfig[i][1]] then
-                AddCustomTechnology(self.TechnologyConfig[i][1], self.TechnologyConfig[i][2], self.TechnologyConfig[i][3]);
+    for i= 1, #Lib.LifestockSystem.Config.Technology do
+        local Technology = Lib.LifestockSystem.Config.Technology[i];
+        if g_GameExtraNo >= Technology[4] then
+            if not Technologies[Technology[1]] then
+                AddCustomTechnology(Technology[1], Technology[2], Technology[3]);
                 if not IsLocalScript() then
                     for j= 1, 8 do
-                        Logic.TechnologySetState(j, Technologies[self.TechnologyConfig[i][1]], 3);
+                        Logic.TechnologySetState(j, Technologies[Technology[1]], 3);
                     end
                 end
             end
