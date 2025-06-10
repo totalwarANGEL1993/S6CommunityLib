@@ -1,0 +1,10 @@
+{
+  "LuaSourcePath": "../../release/libertica",
+  "ComfortRoot": "comfort",
+  "CoreRoot": "core",
+  "ModuleRoot": "module",
+  "ModuleNameBlacklist": [
+    "localmapscript",
+    "mapscript"
+  ]
+}
