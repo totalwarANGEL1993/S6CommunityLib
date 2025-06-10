@@ -1,6 +1,5 @@
 Lib.UIBuilding = Lib.UIBuilding or {};
 Lib.UIBuilding.Name = "UIBuilding";
-Lib.UIBuilding.CinematicEvents = {};
 Lib.UIBuilding.Global = {};
 Lib.UIBuilding.Local = {
     BuildingButtons = {
@@ -58,6 +57,8 @@ Lib.UIBuilding.Local = {
 
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIBuilding_API");
+Lib.Require("module/ui/UIBuilding_Text");
+Lib.Require("module/ui/UIBuilding_Buttons");
 Lib.Register("module/ui/UIBuilding");
 
 -- -------------------------------------------------------------------------- --
@@ -66,39 +67,15 @@ Lib.Register("module/ui/UIBuilding");
 -- Global initalizer method
 function Lib.UIBuilding.Global:Initialize()
     if not self.IsInstalled then
-        --- The player clicked the cancel upgrade button.
-        --- 
-        --- #### Parameter
-        --- * `EntityID` - ID of building
-        --- * `PlayerID` - ID of owner
         Report.CancelUpgradeClicked = CreateReport("Event_CancelUpgradeClicked");
-
-        --- The player clicked the start upgrade button.
-        --- 
-        --- #### Parameter
-        --- * `EntityID` - ID of building
-        --- * `PlayerID` - ID of owner
         Report.StartUpgradeClicked = CreateReport("Event_StartUpgradeClicked");
-
-        --- The player clicked the start festival button.
-        --- 
-        --- #### Parameter
-        --- * `PlayerID` - ID of player
-        --- * `Type`     - Type of festival
         Report.FestivalClicked = CreateReport("Event_FestivalClicked");
-
-        --- The player clicked the start sermon button.
-        --- 
-        --- #### Parameter
-        --- * `PlayerID` - ID of player
         Report.SermonClicked = CreateReport("Event_SermonClicked");
-
-        --- The player clicked the start theatre play button.
-        --- 
-        --- #### Parameter
-        --- * `EntityID` - ID of building
-        --- * `PlayerID` - ID of owner
         Report.TheatrePlayClicked = CreateReport("Event_TheatrePlayClicked");
+
+        self.ExtraButton.Downgrade:InitEvents();
+        self.ExtraButton.SingleReserve:InitEvents();
+        self.ExtraButton.SingleStop:InitEvents();
     end
     self.IsInstalled = true;
 end
@@ -112,16 +89,19 @@ function Lib.UIBuilding.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.StartUpgradeClicked then
-        SendReportToLocal(_ID, unpack(arg));
+        SendReportToLocal(_ID, ...);
     elseif _ID == Report.CancelUpgradeClicked then
-        SendReportToLocal(_ID, unpack(arg));
+        SendReportToLocal(_ID, ...);
     elseif _ID == Report.FestivalClicked then
-        SendReportToLocal(_ID, unpack(arg));
+        SendReportToLocal(_ID, ...);
     elseif _ID == Report.SermonClicked then
-        SendReportToLocal(_ID, unpack(arg));
+        SendReportToLocal(_ID, ...);
     elseif _ID == Report.TheatrePlayClicked then
-        SendReportToLocal(_ID, unpack(arg));
+        SendReportToLocal(_ID, ...);
     end
+    self.ExtraButton.Downgrade:ExtraButtonOnReportReceived(_ID, ...);
+    self.ExtraButton.SingleReserve:ExtraButtonOnReportReceived(_ID, ...);
+    self.ExtraButton.SingleStop:ExtraButtonOnReportReceived(_ID, ...);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -147,6 +127,10 @@ function Lib.UIBuilding.Local:Initialize()
         self:OverrideUpgradeTurret();
         self:OverrideUpgradeBuilding();
         self:OverrideStartSermon();
+
+        self.ExtraButton.Downgrade:InitEvents();
+        self.ExtraButton.SingleReserve:InitEvents();
+        self.ExtraButton.SingleStop:InitEvents();
     end
     self.IsInstalled = true;
 end
@@ -160,6 +144,9 @@ function Lib.UIBuilding.Local:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     end
+    self.ExtraButton.Downgrade:ExtraButtonOnReportReceived(_ID, ...);
+    self.ExtraButton.SingleReserve:ExtraButtonOnReportReceived(_ID, ...);
+    self.ExtraButton.SingleStop:ExtraButtonOnReportReceived(_ID, ...);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -175,6 +162,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
     self.Orig_BuyAmmunitionCartClicked = GUI_BuildingButtons.BuyAmmunitionCartClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyAmmunitionCartClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -187,11 +175,13 @@ function Lib.UIBuilding.Local:OverrideBuyAmmunitionCart()
     end
 
     Lib.UIBuilding.Local.Orig_BuyAmmunitionCartUpdate = GUI_BuildingButtons.BuyAmmunitionCartUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyAmmunitionCartUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             SetIcon(WidgetID, {10, 4});
             XGUIEng.ShowWidget(WidgetID, 1);
@@ -204,6 +194,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideBuyBattalion()
     self.Orig_BuyBattalionClicked = GUI_BuildingButtons.BuyBattalionClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyBattalionClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -216,6 +207,7 @@ function Lib.UIBuilding.Local:OverrideBuyBattalion()
     end
 
     self.Orig_BuyBattalionMouseOver = GUI_BuildingButtons.BuyBattalionMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyBattalionMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -231,11 +223,13 @@ function Lib.UIBuilding.Local:OverrideBuyBattalion()
     end
 
     self.Orig_BuyBattalionUpdate = GUI_BuildingButtons.BuyBattalionUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuyBattalionUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
@@ -260,6 +254,7 @@ function Lib.UIBuilding.Local:OverridePlaceField()
     end
 
     self.Orig_PlaceFieldMouseOver = GUI_BuildingButtons.PlaceFieldMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.PlaceFieldMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -272,11 +267,13 @@ function Lib.UIBuilding.Local:OverridePlaceField()
     end
 
     self.Orig_PlaceFieldUpdate = GUI_BuildingButtons.PlaceFieldUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.PlaceFieldUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
@@ -293,6 +290,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
         SendReportToGlobal(Report.FestivalClicked, _PlayerID, 1);
     end
 
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartFestivalClicked = function(_FestivalIndex)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -321,6 +319,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
     end
 
     self.Orig_StartFestivalMouseOver = GUI_BuildingButtons.StartFestivalMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartFestivalMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -333,11 +332,13 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
     end
 
     self.Orig_StartFestivalUpdate = GUI_BuildingButtons.StartFestivalUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartFestivalUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             SetIcon(WidgetID, {4, 15});
             XGUIEng.ShowWidget(WidgetID, 1);
@@ -349,6 +350,7 @@ function Lib.UIBuilding.Local:OverrideStartFestival()
 end
 
 function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartTheatrePlayClicked = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -373,6 +375,7 @@ function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
     end
 
     self.Orig_StartTheatrePlayMouseOver = GUI_BuildingButtons.StartTheatrePlayMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartTheatrePlayMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -385,11 +388,13 @@ function Lib.UIBuilding.Local:OverrideStartTheatrePlay()
     end
 
     self.Orig_StartTheatrePlayUpdate = GUI_BuildingButtons.StartTheatrePlayUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.StartTheatrePlayUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             SetIcon(WidgetID, {16, 2});
             XGUIEng.ShowWidget(WidgetID, 1);
@@ -415,6 +420,7 @@ function Lib.UIBuilding.Local:OverrideUpgradeTurret()
     end
 
     self.Orig_UpgradeTurretMouseOver = GUI_BuildingButtons.UpgradeTurretMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeTurretMouseOver = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -427,11 +433,13 @@ function Lib.UIBuilding.Local:OverrideUpgradeTurret()
     end
 
     self.Orig_UpgradeTurretUpdate = GUI_BuildingButtons.UpgradeTurretUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.UpgradeTurretUpdate = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
         local EntityID = GUI.GetSelectedEntity();
         local Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.DisableButton(WidgetID, 0);
@@ -443,6 +451,7 @@ end
 
 function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
     self.Orig_BuySiegeEngineCartClicked = GUI_BuildingButtons.BuySiegeEngineCartClicked;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuySiegeEngineCartClicked = function(_EntityType)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -460,6 +469,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
     end
 
     self.Orig_BuySiegeEngineCartMouseOver = GUI_BuildingButtons.BuySiegeEngineCartMouseOver;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuySiegeEngineCartMouseOver = function(_EntityType, _Right)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -477,6 +487,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
     end
 
     self.Orig_BuySiegeEngineCartUpdate = GUI_BuildingButtons.BuySiegeEngineCartUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_BuildingButtons.BuySiegeEngineCartUpdate = function(_EntityType)
         local WidgetID = XGUIEng.GetCurrentWidgetID();
         local WidgetName = XGUIEng.GetWidgetNameByID(WidgetID);
@@ -487,6 +498,7 @@ function Lib.UIBuilding.Local:OverrideBuySiegeEngineCart()
         or WidgetName == "BuyBatteringRamCart" then
             Button = Lib.UIBuilding.Local.BuildingButtons.Configuration[WidgetName].Bind;
         end
+        XGUIEng.SetMaterialColor(WidgetID, 7, 255, 255, 255, 255);
         if not Button then
             if WidgetName == "BuyBatteringRamCart" then
                 SetIcon(WidgetID, {9, 2});
@@ -512,7 +524,7 @@ function Lib.UIBuilding.Local:OverrideUpgradeBuilding()
             Sound.FXPlay2DSound("ui\\menu_click");
             GUI.CancelBuildingUpgrade(EntityID);
             XGUIEng.ShowAllSubWidgets("/InGame/Root/Normal/BuildingButtons", 1);
-            SendReportToGlobal(Report.CancelUpgradeClickede, EntityID, GUI.GetPlayerID());
+            SendReportToGlobal(Report.CancelUpgradeClicked, EntityID, GUI.GetPlayerID());
             return;
         end
         local Costs = GUI_BuildingButtons.GetUpgradeCosts();
@@ -532,6 +544,7 @@ function Lib.UIBuilding.Local:OverrideUpgradeBuilding()
 end
 
 function Lib.UIBuilding.Local:OverrideStartSermon()
+    --- @diagnostic disable-next-line: duplicate-set-field
     function GUI_BuildingButtons.StartSermonClicked()
         local PlayerID = GUI.GetPlayerID();
         if Logic.CanSermonBeActivated(PlayerID) then

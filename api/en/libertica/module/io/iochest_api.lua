@@ -1,4 +1,11 @@
 --- Offers easy to use treasure chests.
+--- 
+--- #### Console Commands:
+--- There are special commands that can be entered into the console. Things in
+--- brackets are optional.
+--- * `goldchest entity`:   Restarts the current map
+--- * `goodchest entity`:   Removes all messages from the screen
+--- * `luxurychest entity`: Shows the current version of Libertica
 
 
 

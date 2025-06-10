@@ -6,18 +6,21 @@ function ChangeIcon(_WidgetID, _Coordinates, _Size, _Name)
     _Coordinates = _Coordinates or {10, 14};
     Lib.UITools.Widget:SetIcon(_WidgetID, _Coordinates, _Size, _Name);
 end
+API.InterfaceSetIcon = ChangeIcon;
 API.SetIcon = ChangeIcon;
 
 function SetTooltipNormal(_Title, _Text, _DisabledText)
     error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipNormal(_Title, _Text, _DisabledText);
 end
+API.InterfaceSetTooltipNormal = SetTooltipNormal;
 API.SetTooltipNormal = SetTooltipNormal;
 
 function SetTooltipCosts(_Title, _Text, _DisabledText, _Costs, _InSettlement)
     error(IsLocalScript(), "Can only be done in local script!");
     Lib.UITools.Widget:TooltipCosts(_Title,_Text,_DisabledText,_Costs,_InSettlement);
 end
+API.InterfaceSetTooltipCosts = SetTooltipCosts;
 API.SetTooltipCosts = SetTooltipCosts;
 
 function HideMinimap(_Flag)
@@ -28,6 +31,7 @@ function HideMinimap(_Flag)
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/Minimap/MinimapOverlay",_Flag);
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/Minimap/MinimapTerrain",_Flag);
 end
+API.InterfaceHideMinimap = HideMinimap;
 API.HideMinimap = HideMinimap;
 
 function HideToggleMinimap(_Flag)
@@ -37,6 +41,7 @@ function HideToggleMinimap(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/MinimapButton",_Flag);
 end
+API.InterfaceHideToggleMinimap = HideToggleMinimap;
 API.HideToggleMinimap = HideToggleMinimap;
 
 function HideDiplomacyMenu(_Flag)
@@ -46,6 +51,7 @@ function HideDiplomacyMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/DiplomacyMenuButton",_Flag);
 end
+API.InterfaceHideDiplomacyMenu = HideDiplomacyMenu;
 API.HideDiplomacyMenu = HideDiplomacyMenu;
 
 function HideProductionMenu(_Flag)
@@ -55,6 +61,7 @@ function HideProductionMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/ProductionMenuButton",_Flag);
 end
+API.InterfaceHideProductionMenu = HideProductionMenu;
 API.HideProductionMenu = HideProductionMenu;
 
 function HideWeatherMenu(_Flag)
@@ -64,6 +71,7 @@ function HideWeatherMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/WeatherMenuButton",_Flag);
 end
+API.InterfaceHideWeatherMenu = HideWeatherMenu;
 API.HideWeatherMenu = HideWeatherMenu;
 
 function HideBuyTerritory(_Flag)
@@ -73,6 +81,7 @@ function HideBuyTerritory(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/ClaimTerritory",_Flag);
 end
+API.InterfaceHideBuyTerritory = HideBuyTerritory;
 API.HideBuyTerritory = HideBuyTerritory;
 
 function HideKnightAbility(_Flag)
@@ -83,6 +92,7 @@ function HideKnightAbility(_Flag)
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/StartAbilityProgress",_Flag);
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/DialogButtons/Knight/StartAbility",_Flag);
 end
+API.InterfaceHideKnightAbility = HideKnightAbility;
 API.HideKnightAbility = HideKnightAbility;
 
 function HideKnightButton(_Flag)
@@ -98,6 +108,7 @@ function HideKnightButton(_Flag)
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/KnightButtonProgress",_Flag);
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/KnightButton",_Flag);
 end
+API.InterfaceHideKnightButton = HideKnightButton;
 API.HideKnightButton = HideKnightButton;
 
 function HideSelectionButton(_Flag)
@@ -109,6 +120,7 @@ function HideSelectionButton(_Flag)
     GUI.ClearSelection();
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/MapFrame/BattalionButton",_Flag);
 end
+API.InterfaceHideSelectionButton = HideSelectionButton;
 API.HideSelectionButton = HideSelectionButton;
 
 function HideBuildMenu(_Flag)
@@ -118,6 +130,7 @@ function HideBuildMenu(_Flag)
     end
     Lib.UITools.Widget:DisplayInterfaceButton("/InGame/Root/Normal/AlignBottomRight/BuildMenu", _Flag);
 end
+API.InterfaceHideBuildMenu = HideBuildMenu;
 API.HideBuildMenu = HideBuildMenu;
 
 function AddShortcutDescription(_Key, _Description)
@@ -153,98 +166,19 @@ function SpeedLimitActivate(_Flag)
     if IsLocalScript() or Framework.IsNetworkGame() then
         return;
     end
-    return ExecuteLocal(
+    ExecuteLocal(
         "Lib.UITools.Speed:ActivateSpeedLimit(%s)",
         tostring(_Flag)
     );
 end
 API.SpeedLimitActivate = SpeedLimitActivate;
 
-function GetTerritoryName(_TerritoryID)
-    local Name = Logic.GetTerritoryName(_TerritoryID);
-    local MapType = Framework.GetCurrentMapTypeAndCampaignName();
-    if MapType == 1 or MapType == 3 then
-        return Name;
-    end
-
-    local MapName = Framework.GetCurrentMapName();
-    local StringTable = "Map_" .. MapName;
-    local TerritoryName = string.gsub(Name, " ","");
-    TerritoryName = XGUIEng.GetStringTableText(StringTable .. "/Territory_" .. TerritoryName);
-    if TerritoryName == "" then
-        TerritoryName = Name .. "(key?)";
-    end
-    return TerritoryName;
-end
-API.GetTerritoryName = GetTerritoryName;
-
-function GetPlayerName(_PlayerID)
-    local PlayerName = Logic.GetPlayerName(_PlayerID);
-    local name = CONST_PLAYER_NAMES[_PlayerID];
-    if name ~= nil and name ~= "" then
-        PlayerName = name;
-    end
-
-    local MapType = Framework.GetCurrentMapTypeAndCampaignName();
-    local MutliplayerMode = Framework.GetMultiplayerMapMode(Framework.GetCurrentMapName(), MapType);
-
-    if MutliplayerMode > 0 then
-        return PlayerName;
-    end
-    if MapType == 1 or MapType == 3 then
-        local PlayerNameTmp, PlayerHeadTmp, PlayerAITmp = Framework.GetPlayerInfo(_PlayerID);
-        if PlayerName ~= "" then
-            return PlayerName;
-        end
-        return PlayerNameTmp;
-    end
-    return PlayerName;
-end
-API.GetPlayerName = GetPlayerName;
-
-function SetPlayerName(_PlayerID, _Name)
-    assert(type(_PlayerID) == "number");
-    assert(type(_Name) == "string");
-    if not IsLocalScript() then
-        ExecuteLocal([[SetPlayerName(%d, "%s")]], _PlayerID, _Name);
+function SpeedLimitSetLimit(_Limit)
+    if IsLocalScript() or Framework.IsNetworkGame() then
         return;
     end
-    GUI_MissionStatistic.PlayerNames[_PlayerID] = _Name
-    CONST_PLAYER_NAMES[_PlayerID] = _Name;
+    ExecuteLocal("Lib.UITools.Speed:SetSpeedLimit(%f)",_Limit);
 end
-API.SetPlayerName = SetPlayerName;
-
-function SetPlayerColor(_PlayerID, _Color, _Logo, _Pattern)
-    error(not IsLocalScript(), "Player color must be set from logic!");
-    g_ColorIndex["ExtraColor1"] = g_ColorIndex["ExtraColor1"] or 16;
-    g_ColorIndex["ExtraColor2"] = g_ColorIndex["ExtraColor2"] or 17;
-
-    local Col     = (type(_Color) == "string" and g_ColorIndex[_Color]) or _Color;
-    local Logo    = _Logo or -1;
-    local Pattern = _Pattern or -1;
-    Logic.PlayerSetPlayerColor(_PlayerID, Col, Logo, Pattern);
-    ExecuteLocal([[
-        Display.UpdatePlayerColors()
-        GUI.RebuildMinimapTerrain()
-        GUI.RebuildMinimapTerritory()
-    ]]);
-end
-API.SetPlayerColor = SetPlayerColor;
-
-function SetPlayerPortrait(_PlayerID, _Portrait)
-    error(_PlayerID >= 1 and _PlayerID <= 8, "Invalid player ID!");
-    if not IsLocalScript() then
-        local Portrait = (_Portrait ~= nil and "'" .._Portrait.. "'") or "nil";
-        ExecuteLocal("SetPlayerPortrait(%d, %s)", _PlayerID, Portrait)
-        return;
-    end
-    if _Portrait == nil then
-        Lib.UITools.Player:SetPlayerPortraitByPrimaryKnight(_PlayerID);
-    elseif _Portrait ~= nil and IsExisting(_Portrait) then
-        Lib.UITools.Player:SetPlayerPortraitBySettler(_PlayerID, _Portrait);
-    else
-        Lib.UITools.Player:SetPlayerPortraitByModelName(_PlayerID, _Portrait);
-    end
-end
-API.SetPlayerPortrait = SetPlayerPortrait;
+API.SetSpeedLimit = SpeedLimitSetLimit;
+API.SpeedLimitSetLimit = SpeedLimitSetLimit;
 

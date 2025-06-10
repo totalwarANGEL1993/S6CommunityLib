@@ -7,6 +7,7 @@ function SetupObject(_Description)
     end
     return Lib.IO.Global:CreateObject(_Description);
 end
+API.SetupObject = SetupObject;
 API.CreateObject = SetupObject;
 
 function DisposeObject(_ScriptName)

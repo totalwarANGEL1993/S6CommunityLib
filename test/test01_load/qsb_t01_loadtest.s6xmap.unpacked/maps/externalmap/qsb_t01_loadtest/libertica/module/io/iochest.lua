@@ -3,6 +3,7 @@ Lib.IOChest.Name = "IOChest";
 Lib.IOChest.Global = {};
 Lib.IOChest.Local = {};
 
+Lib.Require("comfort/IsHistoryEdition");
 Lib.Require("core/Core");
 Lib.Require("module/io/IO");
 Lib.Require("module/io/IOChest_API");
@@ -14,12 +15,6 @@ Lib.Register("module/io/IOChest");
 -- Global initalizer method
 function Lib.IOChest.Global:Initialize()
     if not self.IsInstalled then
-        --- The player activated a treasure
-        --- 
-        --- #### Parameters
-        --- * `ScriptName` - Scriptname of entity
-        --- * `KnightID`   - ID of activating hero
-        --- * `PlayerID`   - ID of activating player
         Report.InteractiveTreasureActivated = CreateReport("Event_InteractiveTreasureActivated");
 
         -- Garbage collection
@@ -54,18 +49,15 @@ end
 function Lib.IOChest.Global:ProcessChatInput(_Text)
     local Commands = Lib.Core.Debug:CommandTokenizer(_Text);
     for i= 1, #Commands, 1 do
-        if Commands[i][1] == "spawncow" then
-            if not IsExisting(Commands[i][2]) then
-                CreateRandomGoldChest(Commands[i][2]);
-            end
-        elseif Commands[i][1] == "spawnsheep" then
-            if not IsExisting(Commands[i][2]) then
-                CreateRandomResourceChest(Commands[i][2]);
-            end
+        if Commands[i][1] == "goldchest" then
+            error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
+            CreateRandomGoldChest(Commands[i][2]);
+        elseif Commands[i][1] == "goodchest" then
+            error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
+            CreateRandomResourceChest(Commands[i][2]);
         elseif Commands[i][1] == "luxurychest" then
-            if not IsExisting(Commands[i][2]) then
-                CreateRandomLuxuryChest(Commands[i][2]);
-            end
+            error(IsExisting(Commands[i][2]), "object " ..Commands[i][2].. " does not exist!");
+            CreateRandomLuxuryChest(Commands[i][2]);
         end
     end
 end
@@ -129,7 +121,7 @@ function Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, _DirectP
         end,
         Action                  = function(_Data, _KnightID, _PlayerID)
             if not _Data.DoNotChangeModel then
-                Logic.SetModel(GetID(_Data.Name), Models.Doodads_D_X_ChestOpenEmpty);
+                Logic.SetModel(GetID(_Data.ScriptName), Models.Doodads_D_X_ChestOpenEmpty);
             end
             if _Data.DirectReward then
                 AddGood(_Data.DirectReward[1], _Data.DirectReward[2], _PlayerID);
@@ -138,8 +130,8 @@ function Lib.IOChest.Global:CreateRandomChest(_Name, _Good, _Min, _Max, _DirectP
                 _Data.ActivationAction(_Data, _KnightID, _PlayerID);
             end
 
-            SendReport(Report.InteractiveTreasureActivated, _Data.Name, _KnightID, _PlayerID);
-            SendReportToLocal(Report.InteractiveTreasureActivated, _Data.Name, _KnightID, _PlayerID);
+            SendReport(Report.InteractiveTreasureActivated, _Data.ScriptName, _KnightID, _PlayerID);
+            SendReportToLocal(Report.InteractiveTreasureActivated, _Data.ScriptName, _KnightID, _PlayerID);
         end,
     };
 end

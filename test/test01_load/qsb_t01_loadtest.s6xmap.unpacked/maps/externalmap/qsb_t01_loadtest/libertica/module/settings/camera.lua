@@ -1,5 +1,3 @@
---- @diagnostic disable: duplicate-set-field
-
 Lib.Camera = Lib.Camera or {};
 Lib.Camera.Name = "Camera";
 Lib.Camera.Global = {};
@@ -7,11 +5,26 @@ Lib.Camera.Local  = {
     BorderScrollDeactivated = false,
     ExtendedZoomHotKeyID = 0,
     ExtendedZoomAllowed = true,
+
+    AbsoluteCameraLimits = {
+        Min = 0.05,
+        Max = 0.85,
+    },
+
+    CameraExtendedZoom = {
+        [1] = {0.85, 0.85, 0.05},
+        [2] = {0.85, 0.85, 0.05},
+    },
+    CameraNormalZoom = {
+        [1] = {0.5, 0.5, 0.05},
+        [2] = {0.5, 0.5, 0.05},
+    },
 };
 
 CONST_FARCLIPPLANE = 45000;
 CONST_FARCLIPPLANE_DEFAULT = 0;
 
+Lib.Require("comfort/GetPosition");
 Lib.Require("core/Core");
 Lib.Require("module/settings/Camera_API");
 Lib.Require("module/settings/Camera_Text");
@@ -23,29 +36,9 @@ Lib.Register("module/settings/Camera");
 -- Global initalizer method
 function Lib.Camera.Global:Initialize()
     if not self.IsInstalled then
-        --- Scrolling at the edge of the screen is deactivated for a player.
-        ---
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
-        --- - `Position` - ID of Entity camera is fixed on
         Report.BorderScrollLocked = CreateReport("Event_BorderScrollLocked");
-
-        --- Scrolling at the edge of the screen is activated for a player.
-        ---
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
         Report.BorderScrollReset = CreateReport("Event_BorderScrollReset");
-
-        --- Extended zoom distance is deactivated for the player.
-        --- 
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
         Report.ExtendedZoomDeactivated = CreateReport("Event_ExtendedZoomDeactivated");
-
-        --- Extended zoom distance is activated for the player.
-        --- 
-        --- #### Parameter
-        --- - `PlayerID` - ID of Player
         Report.ExtendedZoomActivated = CreateReport("Event_ExtendedZoomActivated");
 
         -- Garbage collection
@@ -76,9 +69,15 @@ function Lib.Camera.Local:Initialize()
         Report.ExtendedZoomDeactivated = CreateReport("Event_ExtendedZoomDeactivated");
         Report.ExtendedZoomActivated = CreateReport("Event_ExtendedZoomActivated");
 
+        local ZoomMin = Camera.RTS_GetZoomFactorMin();
+        local ZoomMax = Camera.RTS_GetZoomFactorMax();
+        self.CameraNormalZoom[1][1] = ZoomMin;
+        self.CameraNormalZoom[1][3] = ZoomMax;
+        self.CameraNormalZoom[2][1] = ZoomMin;
+        self.CameraNormalZoom[2][3] = ZoomMax;
+
         self:ResetRenderDistance();
-        self:DescribeExtendedZoomShortcut();
-        self:InitExtendedZoomHotkey();
+        self:UpdateCamera(ZoomMin, ZoomMax);
 
         -- Garbage collection
         Lib.Camera.Global = nil;
@@ -98,7 +97,6 @@ function Lib.Camera.Local:OnReportReceived(_ID, ...)
         if self.ExtendedZoomActive then
             self:ActivateExtendedZoom(GUI.GetPlayerID());
         end
-        self:InitExtendedZoomHotkey();
         self:ResetRenderDistance();
     end
 end
@@ -134,10 +132,12 @@ function Lib.Camera.Local:ActivateBorderScroll(_PlayerID)
     or not self.BorderScrollDeactivated then
         return;
     end
-    self.BorderScrollDeactivated = false;
+    local BorderScrollSize = Options.GetFloatValue("Game", "BorderScrolling", g_DefaultBorderScrollSize);
+    local ZoomWheelSpeed = Options.GetFloatValue("Game", "ZoomSpeed", g_DefaultZoomStateWheelSpeed);
     Camera.RTS_FollowEntity(0);
-    Camera.RTS_SetBorderScrollSize(3.0);
-    Camera.RTS_SetZoomWheelSpeed(4.2);
+    Camera.RTS_SetBorderScrollSize(BorderScrollSize);
+    Camera.RTS_SetZoomWheelSpeed(ZoomWheelSpeed);
+    self.BorderScrollDeactivated = false;
 
     SendReportToGlobal(Report.BorderScrollReset, _PlayerID);
     SendReport(Report.BorderScrollReset, _PlayerID);
@@ -152,31 +152,6 @@ function Lib.Camera.Local:SetCameraToEntity(_Entity, _Rotation, _ZoomFactor)
     Camera.RTS_SetZoomFactor(zoomFactor);
 end
 
-function Lib.Camera.Local:DescribeExtendedZoomShortcut()
-    self:RemoveExtendedZoomShortcut();
-    if self.ExtendedZoomHotKeyID == 0 then
-        self.ExtendedZoomHotKeyID = AddShortcutDescription(
-            Localize(Lib.Camera.Text.Shortcut.Hotkey),
-            Localize(Lib.Camera.Text.Shortcut.Description)
-        );
-    end
-end
-
-function Lib.Camera.Local:RemoveExtendedZoomShortcut()
-    if self.ExtendedZoomHotKeyID ~= 0 then
-        RemoveShortcutDescription(self.ExtendedZoomHotKeyID);
-        self.ExtendedZoomHotKeyID = 0;
-    end
-end
-
-function Lib.Camera.Local:InitExtendedZoomHotkey()
-    Input.KeyBindDown(
-        Keys.ModifierControl + Keys.ModifierShift + Keys.K,
-        "Lib.Camera.Local:ToggleExtendedZoom(GUI.GetPlayerID())",
-        2
-    );
-end
-
 function Lib.Camera.Local:ToggleExtendedZoom(_PlayerID)
     if self.ExtendedZoomAllowed then
         if self.ExtendedZoomActive then
@@ -188,30 +163,66 @@ function Lib.Camera.Local:ToggleExtendedZoom(_PlayerID)
 end
 
 function Lib.Camera.Local:ActivateExtendedZoom(_PlayerID)
-    if _PlayerID~= -1 and _PlayerID ~= GUI.GetPlayerID() then
+    if _PlayerID ~= -1 and _PlayerID ~= GUI.GetPlayerID() then
         return;
     end
     if not self.ExtendedZoomActive then
         SendReportToGlobal(Report.ExtendedZoomDeactivated, _PlayerID);
     end
     self.ExtendedZoomActive = true;
-    Camera.RTS_SetZoomFactorMax(0.870001);
-    Camera.RTS_SetZoomFactor(0.870000);
-    Camera.RTS_SetZoomFactorMin(0.099999);
+    if SetCameraProperties then
+        SetCameraProperties(self.CameraExtendedZoom[1][1], self.CameraExtendedZoom[1][3]);
+    else
+        Camera.RTS_SetZoomFactorMax(self.CameraExtendedZoom[1][1]);
+        Camera.RTS_SetZoomFactorMin(self.CameraExtendedZoom[1][3]);
+        self:UpdateCamera(self.CameraExtendedZoom[1][1], self.CameraExtendedZoom[1][3]);
+    end
     SendReportToGlobal(Report.ExtendedZoomDeactivated, _PlayerID);
 end
 
 function Lib.Camera.Local:DeactivateExtendedZoom(_PlayerID)
-    if _PlayerID~= -1 and _PlayerID ~= GUI.GetPlayerID() then
+    if _PlayerID ~= -1 and _PlayerID ~= GUI.GetPlayerID() then
         return;
     end
     if self.ExtendedZoomActive then
         SendReportToGlobal(Report.ExtendedZoomActivated, _PlayerID);
     end
     self.ExtendedZoomActive = false;
-    Camera.RTS_SetZoomFactor(0.500000);
-    Camera.RTS_SetZoomFactorMax(0.500001);
-    Camera.RTS_SetZoomFactorMin(0.099999);
+    if SetCameraProperties then
+        SetCameraProperties(self.CameraNormalZoom[1][1], self.CameraNormalZoom[1][3]);
+    else
+        Camera.RTS_SetZoomFactorMax(self.CameraNormalZoom[1][1]);
+        Camera.RTS_SetZoomFactorMin(self.CameraNormalZoom[1][3]);
+        self:UpdateCamera(self.CameraNormalZoom[1][1], self.CameraNormalZoom[1][3]);
+    end
+end
+
+function Lib.Camera.Local:SetNormalZoomProps(_Limit)
+    local min = self.AbsoluteCameraLimits.Min;
+    local cur, max = _Limit, _Limit;
+    if max > self.AbsoluteCameraLimits.Max then
+        max = max;
+    end
+    self.CameraNormalZoom[1] = {max, cur, min}
+end
+
+function Lib.Camera.Local:SetExtendedZoomProps(_Limit)
+    local min = self.AbsoluteCameraLimits.Min;
+    local cur, max = _Limit, _Limit;
+    if max > self.AbsoluteCameraLimits.Max then
+        max = self.AbsoluteCameraLimits.Max;
+    end
+    self.CameraExtendedZoom[1] = {max, cur, min}
+end
+
+function Lib.Camera.Local:UpdateCamera(_Min, _Max)
+    local ZoomFactor = Camera.RTS_GetZoomFactor();
+    if ZoomFactor > _Max then
+        Camera.RTS_SetZoomFactor(_Max);
+    end
+    if ZoomFactor < _Min then
+        Camera.RTS_SetZoomFactor(_Min);
+    end
 end
 
 -- -------------------------------------------------------------------------- --

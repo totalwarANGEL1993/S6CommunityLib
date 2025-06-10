@@ -7,24 +7,31 @@ Lib.Core.Text = {
     },
 
     Colors = {
-        red     = "{@color:255,80,80,255}",
-        blue    = "{@color:104,104,232,255}",
-        yellow  = "{@color:255,255,80,255}",
-        green   = "{@color:80,180,0,255}",
-        white   = "{@color:255,255,255,255}",
-        black   = "{@color:0,0,0,255}",
-        grey    = "{@color:140,140,140,255}",
-        azure   = "{@color:0,160,190,255}",
-        orange  = "{@color:255,176,30,255}",
-        amber   = "{@color:224,197,117,255}",
-        violet  = "{@color:180,100,190,255}",
-        pink    = "{@color:255,170,200,255}",
-        scarlet = "{@color:190,0,0,255}",
-        magenta = "{@color:190,0,89,255}",
-        olive   = "{@color:74,120,0,255}",
-        celeste = "{@color:145,170,210,255}",
-        tooltip = "{@color:51,51,120,255}",
-        none    = "{@color:none}"
+        none    = "{@color:none}",
+        red     = "#ff5050",
+        blue    = "#6868e8",
+        yellow  = "#ffff50",
+        green   = "#50b400",
+        white   = "#ffffff",
+        black   = "#000000",
+        grey    = "#8c8c8c",
+        azure   = "#00a0be",
+        orange  = "#ffb01e",
+        amber   = "#e0c575",
+        violet  = "#b464be",
+        pink    = "#ffaac8",
+        scarlet = "#be0000",
+        magenta = "#be0059",
+        olive   = "#4a7800",
+        celeste = "#91aad2",
+        tooltip = "#333378",
+    },
+
+    Letters = {
+        [4] = "ABCDEFGHKLMNOPQRSTUVWXYZÄÖÜÁÂÃÅÇÈÉÊËÐÐÑÒÓÔÕÖØÙÚÛÜÝ",
+        [3] = "abcdeghkmnopqsuvwxyzäöüßIJÆÌÍÎÏÞàáâãåæçèéêëìíîïðñòóôõ÷øùúûüýþÿ",
+        [2] = "\"#+*~_\\§$%&=?@fijlft",
+        [1] = "!-/()?',.|[]{}",
     },
 
     StringTables = {},
@@ -93,7 +100,7 @@ function Lib.Core.Text:GetStringTableOverwrite(_Key)
     self.StringTables[File] = self.StringTables[File] or {};
     if self.StringTables[File][Key] then
         local Text = self.StringTables[File][Key];
-        if type(Text) == "string" and Text:find("^[A-Za-Z0-9_]+/[A-Za-Z0-9_]+$") then
+        if type(Text) == "string" and Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
             Text = XGUIEng.GetStringTableText_Orig_Core(Text);
         end
         return ConvertPlaceholders(Localize(Text));
@@ -158,6 +165,10 @@ function Lib.Core.Text:ConvertPlaceholders(_Text)
                 Before, Placeholder, After, s1, e1, s2, e2 = self:SplicePlaceholderText(_Text, "{v:");
                 Replacement = self:ReplaceValuePlaceholder(Placeholder);
                 _Text = Before .. self:Localize(Replacement or ("v:" ..tostring(Placeholder).. ": not found")) .. After;
+            elseif _Text:find("#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]") then
+                Before, Placeholder, After, s1, e1, s2, e2 = self:SpliceHexColors(_Text);
+                Replacement = HexToColorString(Placeholder);
+                _Text = Before .. self:Localize(Replacement or ("n:" ..tostring(Placeholder).. ": not found")) .. After;
             end
             if s1 == nil or e1 == nil or s2 == nil or e2 == nil then
                 break;
@@ -177,9 +188,27 @@ function Lib.Core.Text:SplicePlaceholderText(_Text, _Start)
     return Before, Placeholder, After, s1, e1, s2, e2;
 end
 
+function Lib.Core.Text:SpliceHexColors(_Text)
+    local hex3 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+    local hex4 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+    local hex6 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+    local hex8 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
+
+    local s,e = _Text:find(hex8);
+    if s == nil then s,e = _Text:find(hex6); end
+    if s == nil then s,e = _Text:find(hex4); end
+    if s == nil then s,e = _Text:find(hex3); end
+
+    local Before = _Text:sub(1, s-1);
+    local Placeholder = _Text:sub(s, e);
+    local After = _Text:sub(e+1);
+    return Before, Placeholder, After, s, s, e, e;
+end
+
 function Lib.Core.Text:ReplaceColorPlaceholders(_Text)
     for k, v in pairs(self.Colors) do
-        _Text = _Text:gsub("{" ..k.. "}", v);
+        local Color = (v:find("color") and v) or HexToColorString(v);
+        _Text = _Text:gsub("{" ..k.. "}", Color);
     end
     return _Text;
 end
@@ -203,6 +232,48 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.Core.Text:GetAmountOfLines(_Text, _LineLength)
+    local Lines = 0;
+    if type(_Text) == "string" then
+        local Text,cr = string.gsub(_Text, "{cr}", " ###CR### ");
+
+        local Words = {};
+        for Word in string.gmatch(Text, "%S+") do
+            table.insert(Words, Word)
+        end
+
+        local Counter = 0;
+        for _,Word in pairs(Words) do
+            if Word == "###CR###" then
+                Counter = 0;
+                Lines = Lines + 1;
+            else
+                for Char in string.gmatch(Word, ".") do
+                    local Size = self:GetLetterSize(Char);
+                    if Counter + Size <= _LineLength then
+                        Counter = Counter + Size;
+                    else
+                        Counter = 0;
+                        Lines = Lines + 1;
+                    end
+                end
+            end
+        end
+    end
+    return Lines;
+end
+
+function Lib.Core.Text:GetLetterSize(_Byte)
+    for Size, Letters in pairs(self.Letters) do
+        if string.find(Letters, _Byte, nil, true) then
+            return Size;
+        end
+    end
+    return 2;
+end
+
+-- -------------------------------------------------------------------------- --
+
 function Localize(_Text)
     return Lib.Core.Text:Localize(_Text);
 end
@@ -219,6 +290,9 @@ function AddNote(_Text)
         Logic.DEBUG_AddNote(_Text);
         return;
     end
+    if _Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+        _Text = GetStringText(_Text);
+    end
     GUI.AddNote(_Text);
 end
 API.Note = AddNote;
@@ -228,6 +302,9 @@ function AddStaticNote(_Text)
     if not IsLocalScript() then
         ExecuteLocal([[GUI.AddStaticNote("%s")]], _Text);
         return;
+    end
+    if _Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+        _Text = GetStringText(_Text);
     end
     GUI.AddStaticNote(_Text);
 end
@@ -239,9 +316,12 @@ function AddMessage(_Text, _Sound)
         ExecuteLocal([[AddMessage("%s", "%s")]], _Text, _Sound or "");
         return;
     end
-    _Text = ConvertPlaceholders(Localize(_Text));
+    if _Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+        _Text = GetStringText(_Text);
+    end
     Message(_Text, (_Sound and _Sound ~= "" and _Sound:gsub("/", "\\")) or nil);
 end
+API.Message = AddMessage;
 
 function ClearNotes()
     if not IsLocalScript() then
@@ -251,6 +331,24 @@ function ClearNotes()
     GUI.ClearNotes();
 end
 API.ClearNotes = ClearNotes;
+
+function AddNamePlaceholder(_Name, _Replacement)
+    error(
+        type(_Replacement) ~= "function" and type(_Replacement) ~= "thread",
+        "Only strings, numbers, or tables are allowed!"
+    );
+    Lib.Core.Text.Placeholders.Names[_Name] = _Replacement;
+end
+API.AddNamePlaceholder = AddNamePlaceholder;
+
+function AddEntityTypePlaceholder(_Type, _Replacement)
+    error(
+        Entities[_Type] == nil,
+        "EntityType does not exist!"
+    );
+    Lib.Core.Text.Placeholders.EntityTypes[_Type] = _Replacement;
+end
+API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
 
 function AddStringText(_Key, _Text)
     assert(IsLocalScript(), "Text can only be set in local script!");
@@ -284,5 +382,12 @@ function DefineLanguage(_Shortcut, _Name, _Fallback, _Index)
     ExecuteLocal([[
         table.insert(Lib.Core.Text.Languages, %d, {"%s", "%s", "%s"})
     ]], _Index, _Shortcut, _Name, _Fallback);
+end
+
+function CountTextLines(_Text, _LineLength)
+    assert(type(_Text) == "string");
+    assert(type(_LineLength) == "number");
+    assert(_LineLength > 0);
+    return Lib.Core.Text:GetAmountOfLines(_Text, _LineLength);
 end
 

@@ -33,7 +33,9 @@ Lib.Requester.Shared = {
 };
 
 Lib.Require("core/core");
+Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester_API");
+Lib.Require("module/information/Requester_Behavior");
 Lib.Register("module/information/Requester");
 
 -- -------------------------------------------------------------------------- --
@@ -59,6 +61,10 @@ end
 function Lib.Requester.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
+    elseif _ID == Report.RequesterClosed then
+        -- HACK: Make Goal_Decide more safe
+        g_GoalDecideDialogDisplayed = false;
+        g_DecisionWindowResult = arg[3] == true;
     elseif _ID == Report.LanguageSelectionClosed then
         Lib.Core.Text:ChangeSystemLanguage(arg[1], arg[2], arg[3]);
     end
@@ -125,9 +131,7 @@ function Lib.Requester.Local:DialogAltF4Action()
             if _Yes then
                 Framework.ExitGame();
             end
-            if not Framework.IsNetworkGame() then
-                Game.GameTimeSetFactor(GUI.GetPlayerID(), 1);
-            end
+            Lib.Requester.Local:ResumeGameSpeed();
             Lib.Requester.Local:DialogAltF4Hotkey();
         end
     );
@@ -137,25 +141,23 @@ function Lib.Requester.Local:Callback(_PlayerID)
     if self.Requester.ActionFunction then
         self.Requester.ActionFunction(CustomGame.Knight + 1, _PlayerID);
     end
-    self:OnDialogClosed();
+    self:OnDialogClosed(CustomGame.Knight + 1);
 end
 
 function Lib.Requester.Local:CallbackRequester(_yes, _PlayerID)
     if self.Requester.ActionRequester then
         self.Requester.ActionRequester(_yes, _PlayerID);
     end
-    self:OnDialogClosed();
+    self:OnDialogClosed(_yes);
 end
 
-function Lib.Requester.Local:OnDialogClosed()
-    if not self.SavingWasDisabled then
-        DisableSaving(false);
-    end
-    if not IsMultiplayer() then
-        Game.GameTimeSetFactor(GUI.GetPlayerID(), 1);
-    end
-    self.SavingWasDisabled = false;
-    self.DialogWindowShown = false;
+function Lib.Requester.Local:OnDialogClosed(_Selected)
+    self:ResumeSaveGame();
+    self:ResumeGameSpeed();
+    SendReportToGlobal(Report.RequesterClosed, GUI.GetPlayerID(), self.DialogWindowShown, _Selected);
+    SendReport(Report.RequesterClosed, GUI.GetPlayerID(), self.DialogWindowShown, _Selected);
+    self.SavingDisabled = false;
+    self.DialogWindowShown = nil;
     self:DialogQueueStartNext();
 end
 
@@ -186,9 +188,6 @@ function Lib.Requester.Local:OpenDialog(_PlayerID, _Title, _Text, _Action)
         assert(type(_Title) == "string");
         assert(type(_Text) == "string");
 
-        if not IsMultiplayer() then
-            Game.GameTimeSetFactor(GUI.GetPlayerID(), 0.0000001);
-        end
 
         _Title = "{center}" .. Lib.Core.Text:ConvertPlaceholders(_Title);
         _Text  = Lib.Core.Text:ConvertPlaceholders(_Text);
@@ -196,8 +195,7 @@ function Lib.Requester.Local:OpenDialog(_PlayerID, _Title, _Text, _Action)
             _Text = _Text .. "{cr}";
         end
 
-        g_MapAndHeroPreview.SelectKnight = function(_Knight)
-        end
+        g_MapAndHeroPreview.SelectKnight = function(_Knight) end
 
         XGUIEng.ShowAllSubWidgets("/InGame/Dialog/BG",1);
         XGUIEng.ShowWidget("/InGame/Dialog/Backdrop",0);
@@ -209,14 +207,14 @@ function Lib.Requester.Local:OpenDialog(_PlayerID, _Title, _Text, _Action)
         if type(_Action) == "function" then
             self.Requester.ActionFunction = _Action;
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
-            Action = Action .. "; if not Framework.IsNetworkGame() then Game.GameTimeSetFactor(GUI.GetPlayerID(), 1) end";
+            Action = Action .. "; Lib.Requester.Local:ResumeGameSpeed()";
             Action = Action .. "; XGUIEng.PopPage()";
             Action = Action .. "; Lib.Requester.Local.Callback(Lib.Requester.Local, GUI.GetPlayerID())";
             XGUIEng.SetActionFunction(RequesterDialog_Ok, Action);
         else
             self.Requester.ActionFunction = nil;
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
-            Action = Action .. "; if not Framework.IsNetworkGame() then Game.GameTimeSetFactor(GUI.GetPlayerID(), 1) end";
+            Action = Action .. "; Lib.Requester.Local:ResumeGameSpeed()";
             Action = Action .. "; XGUIEng.PopPage()";
             Action = Action .. "; Lib.Requester.Local.Callback(Lib.Requester.Local, GUI.GetPlayerID())";
             XGUIEng.SetActionFunction(RequesterDialog_Ok, Action);
@@ -227,11 +225,11 @@ function Lib.Requester.Local:OpenDialog(_PlayerID, _Title, _Text, _Action)
         XGUIEng.SetText(RequesterDialog_Title.."White", _Title);
         XGUIEng.PushPage(RequesterDialog,false);
 
-        if Lib.Core.Save.SavingDisabled then
-            self.SavingWasDisabled = true;
-        end
-        DisableSaving(true);
-        self.DialogWindowShown = true;
+        self:LockSaveGame();
+        self:LockGameSpeed();
+        self.DialogWindowShown = 1;
+        -- HACK: Ensure Goal_Decide work safety
+        ExecuteGlobal("g_GoalDecideDialogDisplayed = true");
     else
         self:DialogQueuePush("OpenDialog", {_PlayerID, _Title, _Text, _Action});
     end
@@ -265,15 +263,18 @@ function Lib.Requester.Local:OpenRequesterDialog(_PlayerID, _Title, _Text, _Acti
             self.Requester.ActionRequester = _Action;
         end
         local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
-        Action = Action .. "; if not Framework.IsNetworkGame() then Game.GameTimeSetFactor(GUI.GetPlayerID(), 1) end";
+        Action = Action .. "; Lib.Requester.Local:ResumeGameSpeed()";
         Action = Action .. "; XGUIEng.PopPage()";
         Action = Action .. "; Lib.Requester.Local.CallbackRequester(Lib.Requester.Local, true, GUI.GetPlayerID())"
         XGUIEng.SetActionFunction(RequesterDialog_Yes, Action);
         local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)"
-        Action = Action .. "; if not Framework.IsNetworkGame() then Game.GameTimeSetFactor(GUI.GetPlayerID(), 1) end";
+        Action = Action .. "; Lib.Requester.Local:ResumeGameSpeed()";
         Action = Action .. "; XGUIEng.PopPage()";
         Action = Action .. "; Lib.Requester.Local.CallbackRequester(Lib.Requester.Local, false, GUI.GetPlayerID())"
         XGUIEng.SetActionFunction(RequesterDialog_No, Action);
+        self.DialogWindowShown = 2;
+        -- HACK: Ensure Goal_Decide work safety
+        ExecuteGlobal("g_GoalDecideDialogDisplayed = true");
     else
         self:DialogQueuePush("OpenRequesterDialog", {_PlayerID, _Title, _Text, _Action, _OkCancel});
     end
@@ -295,7 +296,7 @@ function Lib.Requester.Local:OpenSelectionDialog(_PlayerID, _Title, _Text, _Acti
         CustomGame.Knight = 0;
 
         local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)"
-        Action = Action .. "; if not Framework.IsNetworkGame() then Game.GameTimeSetFactor(GUI.GetPlayerID(), 1) end";
+        Action = Action .. "; Lib.Requester.Local:ResumeGameSpeed()";
         Action = Action .. "; XGUIEng.PopPage()";
         Action = Action .. "; XGUIEng.PopPage()";
         Action = Action .. "; XGUIEng.PopPage()";
@@ -314,22 +315,25 @@ function Lib.Requester.Local:OpenSelectionDialog(_PlayerID, _Title, _Text, _Acti
         local x1, y1 = XGUIEng.GetWidgetScreenPosition(RequesterDialog_Ok);
         XGUIEng.SetWidgetScreenPosition(Container .. "HeroComboBoxMain", x1-25, y1-(90*(screen[2]/1080)));
         XGUIEng.SetWidgetScreenPosition(Container .. "HeroComboBoxContainer", x1-25, y1-(20*(screen[2]/1080)));
+        self.DialogWindowShown = 3;
+        -- HACK: Ensure Goal_Decide work safety
+        ExecuteGlobal("g_GoalDecideDialogDisplayed = true");
     else
         self:DialogQueuePush("OpenSelectionDialog", {_PlayerID, _Title, _Text, _Action, _List});
     end
 end
 
 function Lib.Requester.Local:DialogOverwriteOriginal()
-    OpenDialog_Orig_Windows = OpenDialog;
+    self.Orig_OpenDialog = OpenDialog;
     OpenDialog = function(_Message, _Title, _IsMPError)
         if XGUIEng.IsWidgetShown(RequesterDialog) == 0 then
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
             Action = Action .. "; XGUIEng.PopPage()";
-            OpenDialog_Orig_Windows(_Title, _Message);
+            Lib.Requester.Local.Orig_OpenDialog(_Message, _Title, _IsMPError);
         end
     end
 
-    OpenRequesterDialog_Orig_Windows = OpenRequesterDialog;
+    self.Orig_OpenRequesterDialog = OpenRequesterDialog;
     OpenRequesterDialog = function(_Message, _Title, action, _OkCancel, no_action)
         if XGUIEng.IsWidgetShown(RequesterDialog) == 0 then
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
@@ -338,7 +342,7 @@ function Lib.Requester.Local:DialogOverwriteOriginal()
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
             Action = Action .. "; XGUIEng.PopPage()";
             XGUIEng.SetActionFunction(RequesterDialog_No, Action);
-            OpenRequesterDialog_Orig_Windows(_Message, _Title, action, _OkCancel, no_action);
+            Lib.Requester.Local.Orig_OpenRequesterDialog(_Message, _Title, action, _OkCancel, no_action);
         end
     end
 end
@@ -357,17 +361,28 @@ function Lib.Requester.Local:ShowTextWindow(_Data)
         self:UpdateChatLogText(_Data);
         return;
     end
+    if self.DialogWindowShown ~= nil then
+        return;
+    end
     self.Chat.Data[PlayerID] = _Data;
     self:CloseTextWindow(PlayerID);
     self:AlterChatLog();
-
+    self:LockSaveGame();
+    self:LockGameSpeed();
     XGUIEng.SetText("/InGame/Root/Normal/ChatOptions/ChatLog", _Data.Content);
     XGUIEng.SetText("/InGame/Root/Normal/MessageLog/Name","{center}" .._Data.Caption);
     if _Data.DisableClose then
-        XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions/Exit",0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions/Exit", 0);
+    else
+        local Button = "/InGame/Root/Normal/ChatOptions/Exit";
+        local Action = "Lib.Requester.Local:CloseTextWindow(GUI.GetPlayerID())";
+        XGUIEng.ShowWidget(Button, 1);
+        XGUIEng.SetActionFunction(Button, Action);
     end
     self:ShouldShowSlider(_Data.Content);
+    XGUIEng.SliderSetValueAbs("/InGame/Root/Normal/ChatOptions/ChatLogSlider", 0);
     XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions",1);
+    self.DialogWindowShown = 4;
 end
 
 function Lib.Requester.Local:CloseTextWindow(_PlayerID)
@@ -376,6 +391,9 @@ function Lib.Requester.Local:CloseTextWindow(_PlayerID)
     if _PlayerID ~= PlayerID then
         return;
     end
+    self.DialogWindowShown = nil;
+    self:ResumeSaveGame();
+    self:ResumeGameSpeed();
     GUI_Chat.CloseChatMenu();
 end
 
@@ -423,79 +441,72 @@ function Lib.Requester.Local:UpdateToggleWhisperTarget()
 end
 
 function Lib.Requester.Local:ShouldShowSlider(_Text)
-    local stringlen = string.len(_Text);
-    local iterator  = 1;
-    local carreturn = 0;
-    while (true)
-    do
-        local s,e = string.find(_Text, "{cr}", iterator);
-        if not e then
-            break;
-        end
-        if e-iterator <= 58 then
-            stringlen = stringlen + 58-(e-iterator);
-        end
-        iterator = e+1;
-    end
-    if (stringlen + (carreturn*55)) > 1000 then
+    local Lines = CountTextLines(_Text, 170);
+    if Lines > 20 then
         XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions/ChatLogSlider",1);
     end
 end
 
 function Lib.Requester.Local:OverrideChatLog()
-    GUI_Chat.ChatlogAddMessage_Orig_Requester = GUI_Chat.ChatlogAddMessage;
+    self.Orig_GUI_Chat_ChatlogAddMessage = GUI_Chat.ChatlogAddMessage;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ChatlogAddMessage = function(_Message)
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.ChatlogAddMessage_Orig_Requester(_Message);
+            Lib.Requester.Local.Orig_GUI_Chat_ChatlogAddMessage(_Message);
             return;
         end
         table.insert(Lib.Requester.Local.Chat.History[PlayerID], _Message);
     end
 
-    GUI_Chat.DisplayChatLog_Orig_Requester = GUI_Chat.DisplayChatLog;
+    self.Orig_GUI_Chat_DisplayChatLog = GUI_Chat.DisplayChatLog;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.DisplayChatLog = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.DisplayChatLog_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_DisplayChatLog();
         end
     end
 
-    GUI_Chat.CloseChatMenu_Orig_Requester = GUI_Chat.CloseChatMenu;
+    self.Orig_GUI_Chat_CloseChatMenu = GUI_Chat.CloseChatMenu;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.CloseChatMenu = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.CloseChatMenu_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_CloseChatMenu();
             return;
         end
         Lib.Requester.Local:RestoreChatLog();
         XGUIEng.ShowWidget("/InGame/Root/Normal/ChatOptions",0);
     end
 
-    GUI_Chat.ToggleWhisperTargetUpdate_Orig_Requester = GUI_Chat.ToggleWhisperTargetUpdate;
+    self.Orig_GUI_Chat_ToggleWhisperTargetUpdate = GUI_Chat.ToggleWhisperTargetUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ToggleWhisperTargetUpdate = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.ToggleWhisperTargetUpdate_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_ToggleWhisperTargetUpdate();
             return;
         end
         Lib.Requester.Local:UpdateToggleWhisperTarget();
     end
 
-    GUI_Chat.CheckboxMessageTypeWhisperUpdate_Orig_Requester = GUI_Chat.CheckboxMessageTypeWhisperUpdate;
+    self.Orig_GUI_Chat_CheckboxMessageTypeWhisperUpdate = GUI_Chat.CheckboxMessageTypeWhisperUpdate;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.CheckboxMessageTypeWhisperUpdate = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.CheckboxMessageTypeWhisperUpdate_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_CheckboxMessageTypeWhisperUpdate();
             return;
         end
     end
 
-    GUI_Chat.ToggleWhisperTarget_Orig_Requester = GUI_Chat.ToggleWhisperTarget;
+    self.Orig_GUI_Chat_ToggleWhisperTarget = GUI_Chat.ToggleWhisperTarget;
+    --- @diagnostic disable-next-line: duplicate-set-field
     GUI_Chat.ToggleWhisperTarget = function()
         local PlayerID = GUI.GetPlayerID();
         if not Lib.Requester.Local.Chat.Visible[PlayerID] then
-            GUI_Chat.ToggleWhisperTarget_Orig_Requester();
+            Lib.Requester.Local.Orig_GUI_Chat_ToggleWhisperTarget();
             return;
         end
         if Lib.Requester.Local.Chat.Data[PlayerID].Button.Action then
@@ -584,6 +595,50 @@ function Lib.Requester.Local:RestoreChatLogDisplay()
     XGUIEng.ShowWidget(MotherWidget.. "ToggleWhisperTarget",1);
 
     XGUIEng.ShowWidget("/InGame/Root/Normal/MessageLog",0);
+end
+
+-- -----------
+-- Speed Limit
+
+function Lib.Requester.Local:LockGameSpeed()
+    local PlayerID = GUI.GetPlayerID();
+    local Limit = 0.0000001;
+    if not Framework.IsNetworkGame() then
+        Game.GameTimeSetFactor(PlayerID, Limit);
+        Lib.UITools.Speed:SetSpeedLimit(Limit);
+        Lib.UITools.Speed:ActivateSpeedLimit(true);
+    end
+end
+
+function Lib.Requester.Local:ResumeGameSpeed()
+    local PlayerID = GUI.GetPlayerID();
+    local Limit = 1;
+    if not Framework.IsNetworkGame() then
+        Lib.UITools.Speed:ActivateSpeedLimit(false);
+        Lib.UITools.Speed:SetSpeedLimit(Limit);
+        Game.GameTimeSetFactor(PlayerID, Limit);
+    end
+end
+
+-- ---------
+-- Save Lock
+
+function Lib.Requester.Local:LockSaveGame()
+    if not Framework.IsNetworkGame() then
+        if not self.SavingDisabled then
+            self.SavingDisabled = true;
+            Lib.Core.Save:DisableSaving(true);
+        end
+    end
+end
+
+function Lib.Requester.Local:ResumeSaveGame()
+    if not Framework.IsNetworkGame() then
+        if self.SavingDisabled then
+            Lib.Core.Save:DisableSaving(false);
+            self.SavingDisabled = nil;
+        end
+    end
 end
 
 -- -------------------------------------------------------------------------- --

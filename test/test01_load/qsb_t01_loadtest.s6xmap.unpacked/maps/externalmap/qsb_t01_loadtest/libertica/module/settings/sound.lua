@@ -1,16 +1,17 @@
---- @diagnostic disable: duplicate-set-field
-
 Lib.Sound = Lib.Sound or {};
 Lib.Sound.Name = "Sound";
 Lib.Sound.Global = {};
 Lib.Sound.Local = {
+    Config = {
+        DoAlternateSound = true,
+    },
     SoundBackup = {},
 };
 
-CONST_FARCLIPPLANE = 45000;
-CONST_FARCLIPPLANE_DEFAULT = 0;
-
+Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
+Lib.Require("module/information/Requester");
+Lib.Require("module/settings/Sound_Text");
 Lib.Require("module/settings/Sound_API");
 Lib.Register("module/settings/Sound");
 
@@ -20,7 +21,6 @@ Lib.Register("module/settings/Sound");
 -- Global initalizer method
 function Lib.Sound.Global:Initialize()
     if not self.IsInstalled then
-
         -- Garbage collection
         Lib.Sound.Local = nil;
     end
@@ -44,7 +44,6 @@ end
 -- Local initalizer method
 function Lib.Sound.Local:Initialize()
     if not self.IsInstalled then
-
         -- Garbage collection
         Lib.Sound.Global = nil;
     end
@@ -62,8 +61,31 @@ function Lib.Sound.Local:OnReportReceived(_ID, ...)
     end
 end
 
+function Lib.Sound.Local:RequestAlternateSound()
+    -- Request window won't show in Multiplayer
+    if IsMultiplayer() then
+        return;
+    end
+    -- Ask the player if they want to allow changing sound settings.
+    DialogRequestBox(
+        GUI.GetPlayerID(),
+        Lib.Sound.Text.Request.Title,
+        Lib.Sound.Text.Request.Text,
+        function(_Yes)
+            Lib.Sound.Local.Config.DoAlternateSound = _Yes == true;
+        end,
+        false
+    );
+end
+
 function Lib.Sound.Local:AdjustSound(_Global, _Music, _Voice, _Atmo, _UI)
+    -- Prevent changing sound altogether if player chosed to
+    if not self.Config.DoAlternateSound then
+        return;
+    end
+    -- Save sound backup
     self:SaveSound();
+    -- Make changes to the sound
     if _Global then
         Sound.SetGlobalVolume(_Global);
     end

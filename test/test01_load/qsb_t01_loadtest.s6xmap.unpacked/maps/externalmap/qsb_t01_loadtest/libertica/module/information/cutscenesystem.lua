@@ -6,18 +6,18 @@ Lib.CutsceneSystem.Global = {
     CutsceneCounter = 0;
 };
 Lib.CutsceneSystem.Local = {
+    Config = {
+        DoAlternateGraphics = true,
+    },
     Cutscene = {},
 };
-Lib.CutsceneSystem.Text = {
-    FastForwardActivate   = {de = "Beschleunigen",      en = "Fast Forward", fr = "Accélérer"},
-    FastForwardDeactivate = {de = "Zurücksetzen",       en = "Normal Speed", fr = "Réinitialiser"},
-    FastFormardMessage    = {de = "SCHNELLER VORLAUF",  en = "FAST FORWARD", fr = "AVANCÉ RAPIDE"},
-};
 
+Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
-Lib.Require("module/ui/UIEffects");
-Lib.Require("module/ui/UITools");
+Lib.Require("module/information/Information");
+Lib.Require("module/information/CutsceneSystem_Text");
 Lib.Require("module/information/CutsceneSystem_API");
+Lib.Require("module/information/CutsceneSystem_Behavior");
 Lib.Register("module/information/CutsceneSystem");
 
 CinematicEventTypes.Cutscene = 3;
@@ -69,14 +69,14 @@ function Lib.CutsceneSystem.Global:OnReportReceived(_ID, ...)
     elseif _ID == Report.CutsceneSkipButtonPressed then
         SendReportToLocal(Report.CutsceneSkipButtonPressed, arg[1]);
     elseif _ID == Report.CutscenePageShown then
-        SendReportToLocal(Report.CutscenePageShown, arg[1], arg[2], arg[3]);
+        self:DisplayPage(arg[1], arg[2], arg[3]);
     end
 end
 
 function Lib.CutsceneSystem.Global:UpdateQueue()
     for i= 1, 8 do
         if self:CanStartCutscene(i) then
-            local Next = Lib.UIEffects.Global:LookUpCinematicInQueue(i);
+            local Next = Lib.Information.Global:LookUpCinematicInQueue(i);
             if Next and Next[1] == CinematicEventTypes.Cutscene then
                 self:NextCutscene(i);
             end
@@ -84,46 +84,185 @@ function Lib.CutsceneSystem.Global:UpdateQueue()
     end
 end
 
+function Lib.CutsceneSystem.Global:ExpandCutsceneTable(_Cutscene)
+    assert(type(_Cutscene) == "table");
+    Lib.CutsceneSystem.Global:CreateCutsceneProperties(_Cutscene);
+    Lib.CutsceneSystem.Global:CreateCutsceneGetPage(_Cutscene);
+    Lib.CutsceneSystem.Global:CreateCutsceneAddPage(_Cutscene);
+end
+
+function Lib.CutsceneSystem.Global:CreateCutsceneProperties(_Cutscene)
+    _Cutscene.BigBars = false;
+    _Cutscene.EnableGlobalImmortality = true;
+    _Cutscene.EnableSky = true;
+    _Cutscene.EnableFoW = false;
+    _Cutscene.EnableBorderPins = false;
+    _Cutscene.HideNotes = false;
+
+    _Cutscene.SetName = function(_self, _Name)
+        _self.Name = _Name;
+        return _self;
+    end
+
+    _Cutscene.SetPlayer = function(_self, _Player)
+        _self.PlayerID = _Player;
+        return _self;
+    end
+
+    _Cutscene.UseBigBars = function(_self, _BigBars)
+        _self.BigBars = _BigBars == true;
+        return _self;
+    end
+
+    _Cutscene.UseGlobalImmortality = function(_self, _EnableGlobalImmortality)
+        _self.EnableGlobalImmortality = _EnableGlobalImmortality == true;
+        return _self;
+    end
+
+    _Cutscene.SetEnableSky = function(_self, _EnableSky)
+        _self.EnableSky = _EnableSky == true;
+        return _self;
+    end
+
+    _Cutscene.SetEnableFoW = function(_self, _EnableFoW)
+        _self.EnableFoW = _EnableFoW == true;
+        return _self;
+    end
+
+    _Cutscene.SetEnableBorderPins = function(_self, _EnableBorderPins)
+        _self.EnableBorderPins = _EnableBorderPins == true;
+        return _self;
+    end
+
+    _Cutscene.SetHideNotes = function(_self, _HideNotes)
+        _self.HideNotes = _HideNotes == true;
+        return _self;
+    end
+
+    _Cutscene.SetOnBegin = function(_self, _OnBegin)
+        _self.Starting = _OnBegin;
+        return _self;
+    end
+
+    _Cutscene.SetOnFinish = function(_self, _OnFinish)
+        _self.Finished = _OnFinish;
+        return _self;
+    end
+
+    _Cutscene.Start = function(_self)
+        assert(GUI == nil);
+
+        local Count = Lib.CutsceneSystem.Global.CutsceneCounter +1;
+        Lib.CutsceneSystem.Global.CutsceneCounter = Count;
+        _self.Name = _self.Name or ("CutsceneSystem_Briefing_" .. Count);
+        _self.PlayerID = _self.PlayerID or 1;
+
+        assert(type(_self.Name) == "string");
+        assert(_self.PlayerID ~= nil);
+        assert(type(_self) == "table", "Briefing must be a table!");
+        assert(#_self > 0, "Cutscene does not contain flights!");
+
+        Lib.CutsceneSystem.Global:StartCutscene(_self.Name, _self.PlayerID, _self);
+        return _self.Name;
+    end
+end
+
 function Lib.CutsceneSystem.Global:CreateCutsceneGetPage(_Cutscene)
-    _Cutscene.GetPage = function(self, _PlayerID, _NameOrID)
-        local ID = Lib.CutsceneSystem.Global:GetPageIDByName(_PlayerID, _NameOrID);
-        return Lib.CutsceneSystem.Global.Cutscene[_PlayerID][ID];
+    _Cutscene.GetPage = _Cutscene.GetPage or function(this, _NameOrID)
+        local ID = Lib.CutsceneSystem.Global:GetPageIDByName(_Cutscene.PlayerID, _NameOrID);
+        return Lib.CutsceneSystem.Global.Cutscene[_Cutscene.PlayerID][ID];
     end
 end
 
 function Lib.CutsceneSystem.Global:CreateCutsceneAddPage(_Cutscene)
-    _Cutscene.AddPage = function(self, _Page)
-        if type(_Page) == "table" then
-            -- Make page legit
-            _Page.__Legit = true;
+    local Cutscene = _Cutscene;
 
-            -- Translate text
-            _Page.Title = Localize(_Page.Title);
-            if _Page.Text then
-                _Page.Text = Localize(_Page.Text);
-            end
-            -- Translate text lines
-            if _Page.Lines then
-                _Page.Lines = Localize(_Page.Lines);
-            end
-            if not _Page.Lines and not _Page.Text then
-                assert(false, "Missing Lines or Text attribute!");
-                return;
-            end
-
-            -- Set bar default
-            if _Page.BigBars == nil then
-                _Page.BigBars = false;
-            end
+    Cutscene.BeginFlight = Cutscene.BeginFlight or function(_self)
+        Cutscene.Length = (Cutscene.Length or 0) +1;
+        local Page = {};
+        Page.__Legit = true;
+        Page.Name = "Page" ..(#Cutscene +1);
+        Page.Duration = -1;
+        if Page.DisableSkipping == nil then
+            Page.DisableSkipping = false;
         end
-        table.insert(_Cutscene, _Page);
-        return _Page;
+        if Page.BigBars == nil and Cutscene.BigBars ~= nil then
+            Page.BigBars = Cutscene.BigBars == true;
+        end
+
+        Page.UseBigBars = function(_Page, _BigBars)
+            _Page.BigBars = _BigBars == true;
+            return _Page;
+        end
+
+        Page.UseSkipping = function(_Page, _Skip)
+            _Page.DisableSkipping = _Skip ~= true;
+            return _Page;
+        end
+
+        Page.SetBarOpacity = function(_Page, _Opacity)
+            _Page.BarOpacity = _Opacity or 0;
+            return _Page;
+        end
+
+        Page.SetFlight = function(_Page, _Flight)
+            _Page.Flight = _Flight;
+            return _Page;
+        end
+
+        Page.SetFarClipPlane = function(_Page, _FarClipPlane)
+            _Page.FarClipPlane = _FarClipPlane;
+            return _Page;
+        end
+
+        Page.SetTitle = function(_Page, _Title)
+            _Page.Title = Localize(_Title or "");
+            return _Page;
+        end
+
+        Page.SetText = function(_Page, _Text)
+            _Page.Text = Localize(_Text or "");
+            return _Page;
+        end
+
+        Page.SetSpeech = function(_Page, _Speech)
+            _Page.Speech = _Speech;
+            return _Page;
+        end
+
+        Page.SetFadeIn = function(_Page, _FadeIn)
+            _Page.FadeIn = _FadeIn;
+            return _Page;
+        end
+
+        Page.SetFadeOut = function(_Page, _FadeOut)
+            _Page.FadeOut = _FadeOut;
+            return _Page;
+        end
+
+        Page.SetFaderAlpha = function(_Page, _FaderAlpha)
+            _Page.FaderAlpha = _FaderAlpha;
+            return _Page;
+        end
+
+        Page.SetAction = function(_Page, _Action)
+            _Page.Action = _Action;
+            return _Page;
+        end
+
+        Page.EndFlight = function(_Page)
+            assert(_Page.Flight ~= nil);
+            return Cutscene;
+        end
+
+        table.insert(_self, Page);
+        return Page;
     end
 end
 
 function Lib.CutsceneSystem.Global:StartCutscene(_Name, _PlayerID, _Data)
     self.CutsceneQueue[_PlayerID] = self.CutsceneQueue[_PlayerID] or {};
-    Lib.UIEffects.Global:PushCinematicEventToQueue(
+    Lib.Information.Global:PushCinematicEventToQueue(
         _PlayerID,
         CinematicEventTypes.Cutscene,
         _Name,
@@ -132,6 +271,7 @@ function Lib.CutsceneSystem.Global:StartCutscene(_Name, _PlayerID, _Data)
 end
 
 function Lib.CutsceneSystem.Global:EndCutscene(_PlayerID)
+    collectgarbage("collect");
     Logic.SetGlobalInvulnerability(0);
     SendReportToLocal(Report.CutsceneEnded, _PlayerID);
     if self.Cutscene[_PlayerID].Finished then
@@ -143,7 +283,7 @@ end
 
 function Lib.CutsceneSystem.Global:NextCutscene(_PlayerID)
     if self:CanStartCutscene(_PlayerID) then
-        local CutsceneData = Lib.UIEffects.Global:PopCinematicEventFromQueue(_PlayerID);
+        local CutsceneData = Lib.Information.Global:PopCinematicEventFromQueue(_PlayerID);
         assert(CutsceneData[1] == CinematicEventTypes.Cutscene);
         StartCinematicEvent(CutsceneData[2], _PlayerID);
 
@@ -161,8 +301,8 @@ function Lib.CutsceneSystem.Global:NextCutscene(_PlayerID)
             self.Cutscene[_PlayerID]:Starting();
         end
 
-        SendReportToLocal(Report.CutsceneStarted, _PlayerID, Cutscene.Name, Cutscene);
-        SendReport(Report.CutsceneStarted, _PlayerID, Cutscene.Name);
+        SendReportToLocal(Report.CutsceneStarted, Cutscene.PlayerID, Cutscene.Name, Cutscene);
+        SendReport(Report.CutsceneStarted, Cutscene.PlayerID, Cutscene.Name);
     end
 end
 
@@ -174,7 +314,6 @@ function Lib.CutsceneSystem.Global:StartCutsceneFlight(_PlayerID, _PageID, _Dura
     if self.Cutscene[_PlayerID][_PageID].Action then
         self.Cutscene[_PlayerID][_PageID]:Action();
     end
-
     SendReportToLocal(Report.CutsceneFlightStarted, _PlayerID, _PageID, _Duration);
 end
 
@@ -185,12 +324,11 @@ function Lib.CutsceneSystem.Global:EndCutsceneFlight(_PlayerID, _PageID)
     SendReportToLocal(Report.CutsceneFlightEnded, _PlayerID, _PageID);
 end
 
-function Lib.CutsceneSystem.Global:DisplayPage(_PlayerID, _PageID)
+function Lib.CutsceneSystem.Global:DisplayPage(_PlayerID, _PageID, _Duration)
     if self.Cutscene[_PlayerID] == nil then
         return;
     end
-    -- Nothing to do in global script so just propagete to local
-    SendReportToLocal(Report.CutscenePageShown, _PlayerID, _PageID);
+    SendReportToLocal(Report.CutscenePageShown, _PlayerID, _PageID, _Duration);
 end
 
 function Lib.CutsceneSystem.Global:GetCurrentCutscene(_PlayerID)
@@ -289,6 +427,7 @@ function Lib.CutsceneSystem.Local:StartCutscene(_PlayerID, _CutsceneName, _Cutsc
 end
 
 function Lib.CutsceneSystem.Local:EndCutscene(_PlayerID)
+    collectgarbage("collect");
     if GUI.GetPlayerID() ~= _PlayerID then
         return;
     end
@@ -296,6 +435,7 @@ function Lib.CutsceneSystem.Local:EndCutscene(_PlayerID)
     if not Framework.IsNetworkGame() then
         Game.GameTimeSetFactor(_PlayerID, 1);
     end
+    StopVoice("CutsceneSpeech");
     self:DeactivateCinematicMode(_PlayerID);
     ActivateNormalInterface(_PlayerID);
     ActivateBorderScroll(_PlayerID);
@@ -427,7 +567,7 @@ function Lib.CutsceneSystem.Local:DisplayPageTitle(_PlayerID, _PageID)
     XGUIEng.SetText(TitleWidget, "");
     if Page.Title then
         local Title = ConvertPlaceholders(Localize(Page.Title));
-        if Title:find("^[A-Za-Z0-9_]+/[A-Za-Z0-9_]+$") then
+        if Title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
             Title = XGUIEng.GetStringTableText(Title);
         end
         if Title:sub(1, 1) ~= "{" then
@@ -440,10 +580,10 @@ end
 function Lib.CutsceneSystem.Local:DisplayPageText(_PlayerID, _PageID)
     local Page = self.Cutscene[_PlayerID][_PageID];
     local TextWidget = "/InGame/ThroneRoom/Main/MissionBriefing/Text";
-    XGUIEng.SetText(TextWidget, "Bockwurst");
+    XGUIEng.SetText(TextWidget, "");
     if Page.Text then
         local Text = ConvertPlaceholders(Localize(Page.Text));
-        if Text:find("^[A-Za-Z0-9_]+/[A-Za-Z0-9_]+$") then
+        if Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
             Text = XGUIEng.GetStringTableText(Text);
         end
         if Text:sub(1, 1) ~= "{" then
@@ -453,6 +593,10 @@ function Lib.CutsceneSystem.Local:DisplayPageText(_PlayerID, _PageID)
             Text = "{cr}{cr}{cr}" .. Text;
         end
         XGUIEng.SetText(TextWidget, Text);
+    end
+    StopVoice("CutsceneSpeech");
+    if Page.Speech then
+        PlayVoice(Page.Speech, "CutsceneSpeech");
     end
 end
 
@@ -572,17 +716,17 @@ function Lib.CutsceneSystem.Local:GetPageIDByName(_PlayerID, _Name)
 end
 
 function Lib.CutsceneSystem.Local:OverrideThroneRoomFunctions()
-    self.Orig_GameCallback_Camera_SkipButtonPressed = GameCallback_Camera_SkipButtonPressed;
-    GameCallback_Camera_SkipButtonPressed = function(_PlayerID)
-        Lib.CutsceneSystem.Local.Orig_GameCallback_Camera_SkipButtonPressed(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_SkipButtonPressed = GameCallback_Lib_Camera_SkipButtonPressed;
+    GameCallback_Lib_Camera_SkipButtonPressed = function(_PlayerID)
+        Lib.CutsceneSystem.Local.Orig_GameCallback_Lib_Camera_SkipButtonPressed(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             SendReportToGlobal(Report.CutsceneSkipButtonPressed, _PlayerID);
         end
     end
 
-    self.Orig_GameCallback_Camera_ThroneroomCameraControl = GameCallback_Camera_ThroneroomCameraControl;
-    GameCallback_Camera_ThroneroomCameraControl = function(_PlayerID)
-        Lib.CutsceneSystem.Local.Orig_GameCallback_Camera_ThroneroomCameraControl(_PlayerID);
+    self.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl = GameCallback_Lib_Camera_ThroneroomCameraControl;
+    GameCallback_Lib_Camera_ThroneroomCameraControl = function(_PlayerID)
+        Lib.CutsceneSystem.Local.Orig_GameCallback_Lib_Camera_ThroneroomCameraControl(_PlayerID);
         if _PlayerID == GUI.GetPlayerID() then
             local Cutscene = Lib.CutsceneSystem.Local:GetCurrentCutscene(_PlayerID);
             if Cutscene ~= nil then
@@ -612,6 +756,7 @@ function Lib.CutsceneSystem.Local:ActivateCinematicMode(_PlayerID)
     if not self.LoadscreenClosed then
         XGUIEng.PopPage();
     end
+
     local ScreenX, ScreenY = GUI.GetScreenSize();
 
     XGUIEng.ShowWidget("/InGame/ThroneRoom", 1);
@@ -646,6 +791,10 @@ function Lib.CutsceneSystem.Local:ActivateCinematicMode(_PlayerID)
     -- Title and back button position
     local x,y = XGUIEng.GetWidgetScreenPosition("/InGame/ThroneRoom/Main/DialogTopChooseKnight/ChooseYourKnight");
     XGUIEng.SetWidgetScreenPosition("/InGame/ThroneRoom/Main/DialogTopChooseKnight/ChooseYourKnight", x, 65 * (ScreenY/1080));
+
+    if self.Cutscene[_PlayerID].HideNotes then
+        XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 0);
+    end
 
     self.SelectionBackup = {GUI.GetSelectedEntities()};
     GUI.ClearSelection();
@@ -713,6 +862,10 @@ function Lib.CutsceneSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_Dodge", 0);
     XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
     XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", " ");
+
+    if self.Cutscene[_PlayerID].HideNotes then
+        XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 1);
+    end
 
     ResetRenderDistance();
 end
