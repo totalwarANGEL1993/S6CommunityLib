@@ -306,7 +306,7 @@ B_Reward_JournaHighlight.GetRewardTable = function(self, _Quest)
     return { Reward.Custom, { self, self.CustomFunction } };
 end
 
-RegisterBehavior(B_Trigger_AmmunitionDepleted);
+RegisterBehavior(B_Reward_JournaHighlight);
 
 -- -------------------------------------------------------------------------- --
 
