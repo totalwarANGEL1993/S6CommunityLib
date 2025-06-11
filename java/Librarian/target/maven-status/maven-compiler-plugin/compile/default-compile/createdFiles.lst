@@ -1,9 +1,0 @@
-twa\librarian\librarian\logic\dependency\DependencyManager.class
-twa\librarian\librarian\logic\dependency\Module.class
-twa\librarian\librarian\logic\concat\ConcatinationManager.class
-twa\librarian\librarian\logic\config\ConfigurationManager.class
-twa\librarian\librarian\logic\dependency\ComfortModule.class
-twa\librarian\librarian\logic\dependency\CoreModule.class
-twa\librarian\librarian\logic\dependency\FeatureModule.class
-twa\librarian\librarian\logic\config\JsonConfig.class
-twa\librarian\librarian\Main.class
