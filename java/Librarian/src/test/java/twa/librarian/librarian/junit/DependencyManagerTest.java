@@ -3,7 +3,7 @@ package twa.librarian.librarian.junit;
 import org.junit.jupiter.api.Test;
 import twa.librarian.librarian.logic.config.ConfigurationManager;
 import twa.librarian.librarian.logic.dependency.DependencyManager;
-import twa.librarian.librarian.logic.dependency.Module;
+import twa.librarian.librarian.logic.dependency.model.Module;
 
 import java.util.Arrays;
 import java.util.List;

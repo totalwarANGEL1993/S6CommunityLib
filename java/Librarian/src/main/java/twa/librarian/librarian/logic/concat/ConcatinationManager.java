@@ -1,11 +1,10 @@
 package twa.librarian.librarian.logic.concat;
 
-import ch.qos.logback.core.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twa.librarian.librarian.logic.config.ConfigurationManager;
 import twa.librarian.librarian.logic.dependency.DependencyManager;
-import twa.librarian.librarian.logic.dependency.Module;
+import twa.librarian.librarian.logic.dependency.model.Module;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +13,6 @@ import java.nio.file.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiConsumer;
 
 public class ConcatinationManager {
     final static Logger logger = LoggerFactory.getLogger(ConcatinationManager.class);

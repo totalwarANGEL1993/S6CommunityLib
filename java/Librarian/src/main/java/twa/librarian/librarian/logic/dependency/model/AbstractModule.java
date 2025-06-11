@@ -1,24 +1,25 @@
-package twa.librarian.librarian.logic.dependency;
+package twa.librarian.librarian.logic.dependency.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class FeatureModule implements Module {
-    private String name;
-    private String canonicalName;
-    private String Path;
-    private String description;
-    private List<String> dependencies;
+public abstract class AbstractModule implements Module {
+    protected String name;
+    protected String canonicalName;
+    protected String path;
+    protected String description;
+    protected List<String> dependencies;
 
-    public FeatureModule(String name) {
+    public AbstractModule(String name, String description) {
         this.dependencies = new ArrayList<>();
         this.name = name;
+        this.description = description;
     }
 
-    public FeatureModule(String name, List<String> dependencies) {
+    public AbstractModule(String name, String description, List<String> dependencies) {
         this.dependencies = dependencies;
         this.name = name;
+        this.description = description;
     }
 
     @Override
@@ -41,12 +42,12 @@ public class FeatureModule implements Module {
 
     @Override
     public String getPath() {
-        return Path;
+        return path;
     }
 
     @Override
     public void setPath(String path) {
-        Path = path;
+        this.path = path;
     }
 
     @Override
@@ -62,19 +63,5 @@ public class FeatureModule implements Module {
     @Override
     public List<String> getDependencies() {
         return dependencies;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FeatureModule that = (FeatureModule) o;
-        return name.equals(that.name) &&
-               canonicalName.equals(that.canonicalName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, canonicalName);
     }
 }

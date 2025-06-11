@@ -1,7 +1,9 @@
-package twa.librarian.librarian.logic.config;
+package twa.librarian.librarian.logic.config.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JsonConfig {
     private String LuaSourcePath;
@@ -9,6 +11,7 @@ public class JsonConfig {
     private String coreRoot;
     private String moduleRoot;
     private List<String> nameBlacklist = new ArrayList<>();
+    private Map<String, String> moduleDescriptions = new LinkedHashMap<>();
 
     public String getLuaSourcePath() {
         return LuaSourcePath;
@@ -48,5 +51,13 @@ public class JsonConfig {
 
     public void setNameBlacklist(List<String> nameBlacklist) {
         this.nameBlacklist = nameBlacklist;
+    }
+
+    public Map<String, String> getModuleDescriptions() {
+        return moduleDescriptions;
+    }
+
+    public void setModuleDescriptions(Map<String, String> moduleDescriptions) {
+        this.moduleDescriptions = moduleDescriptions;
     }
 }

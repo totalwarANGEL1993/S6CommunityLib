@@ -3,6 +3,10 @@ package twa.librarian.librarian.logic.dependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import twa.librarian.librarian.logic.config.ConfigurationManager;
+import twa.librarian.librarian.logic.dependency.model.ComfortModule;
+import twa.librarian.librarian.logic.dependency.model.CoreModule;
+import twa.librarian.librarian.logic.dependency.model.FeatureModule;
+import twa.librarian.librarian.logic.dependency.model.Module;
 
 import java.io.File;
 import java.nio.file.Files;

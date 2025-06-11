@@ -1,4 +1,4 @@
-package twa.librarian.librarian.logic.dependency;
+package twa.librarian.librarian.logic.dependency.model;
 
 import java.util.List;
 

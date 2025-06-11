@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import twa.librarian.librarian.logic.config.model.JsonConfig;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
