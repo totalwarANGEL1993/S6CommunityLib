@@ -256,8 +256,10 @@ public class DependencyManager {
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.find()) {
                         int start = matcher.group(1).lastIndexOf("/") +1;
+                        String description = config.getConfig().getModuleDescriptions().get(matcher.group(1));
                         module.setName(matcher.group(1).substring(start));
                         module.setCanonicalName(matcher.group(1));
+                        module.setDescription(description);
                     }
                     break;
                 }

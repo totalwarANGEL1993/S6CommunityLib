@@ -44,6 +44,13 @@ public class ConfigurationManager {
             for (int i = 0; i < blacklist.length(); i++) {
                 config.getNameBlacklist().add(blacklist.getString(i));
             }
+            JSONArray descriptionList = jsonObject.getJSONArray("ModuleDescriptions");
+            for (int i = 0; i < descriptionList.length(); i++) {
+                JSONArray innerArray = descriptionList.getJSONArray(i);
+                String name = innerArray.getString(0);
+                String description = innerArray.getString(1);
+                config.getModuleDescriptions().put(name, description);
+            }
             this.config = config;
         }
         catch (Exception e) {

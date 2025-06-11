@@ -13,6 +13,7 @@ public interface Module {
     void setPath(String name);
 
     String getDescription();
+    void setDescription(String text);
 
     boolean isMandatory();
 
