@@ -1,4 +1,5 @@
 comfort/AddWare
+comfort/ColorToHex
 comfort/copytable
 comfort/createstock
 comfort/dumptable
@@ -19,16 +20,21 @@ comfort/gethealth
 comfort/getquestid
 comfort/ishistoryedition
 comfort/isincone
+comfort/IsInSight
 comfort/ismultiplayerready
 comfort/isunofficialpatch
 comfort/getlineposition
 comfort/getplayeratslot
+comfort/getplayername
+comfort/GetPredatorSpawnerTypes
 comfort/getposition
 comfort/getsiegeenginetypebycarttype
 comfort/getsiegecarttypebyenginetype
 comfort/getslotbyplayer
 comfort/getsoldiersofgroup
-comfort/getterritoryid
+comfort/GetTerritoryID
+comfort/HexToColor
+comfort/HexToColorString
 comfort/islocalscript
 comfort/ismultiplayer
 comfort/keyof
@@ -41,6 +47,7 @@ comfort/round
 comfort/sendcart
 comfort/serializetable
 comfort/sethealth
+comfort/SetPlayerName
 comfort/setposition
 comfort/setpositionandlookat
 comfort/setpositionrelativeto
