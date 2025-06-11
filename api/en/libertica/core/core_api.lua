@@ -297,14 +297,14 @@ API.SendScriptEventToLocal = SendReportToLocal;
 function CreateReportReceiver(_EventID, _Function)
     return 0;
 end
-API.CreateScriptEventReceiver = CreateReportReceiver;
+API.CreateReportReceiver = CreateReportReceiver;
 
 --- Deletes a report listener for the report type.
 --- @param _EventID integer ID of report
 --- @param _ID integer ID of listener
 function RemoveReportReceiver(_EventID, _ID)
 end
-API.RemoveScriptEventReceiver = RemoveReportReceiver;
+API.RemoveReportReceiver = RemoveReportReceiver;
 
 --- Deactivates the autosave of the History Edition.
 --- @param _Flag boolean Auto save is disabled

@@ -27,9 +27,9 @@ API.CreateRandomChest = CreateRandomChest;
 --- @param _Max integer? (Optional) Maximum amount
 --- @param _Condition function? (Optional) Condition function
 --- @param _Action function? (Optional) Action function
-function CreateRandomChest(_Name, _Good, _Min, _Max, _Condition, _Action)
+function CreateRandomTreasure(_Name, _Good, _Min, _Max, _Condition, _Action)
 end
-API.CreateRandomChest = CreateRandomChest;
+API.CreateRandomTreasure = CreateRandomTreasure;
 
 --- Creates a chest with random gold.
 --- @param _Name string Script name of entity

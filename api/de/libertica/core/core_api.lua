@@ -305,14 +305,14 @@ API.SendScriptEventToLocal = SendReportToLocal;
 function CreateReportReceiver(_EventID, _Function)
     return 0;
 end
-API.CreateScriptEventReceiver = CreateReportReceiver;
+API.CreateReportReceiver = CreateReportReceiver;
 
 --- Löscht einen Berichtslistener für den Berichtstyp.
 --- @param _EventID integer ID des Berichts
 --- @param _ID integer ID des Listeners
 function RemoveReportReceiver(_EventID, _ID)
 end
-API.RemoveScriptEventReceiver = RemoveReportReceiver;
+API.RemoveReportReceiver = RemoveReportReceiver;
 
 --- Deaktiviert das Autospeichern der History Edition.
 --- @param _Flag boolean Autospeichern ist deaktiviert

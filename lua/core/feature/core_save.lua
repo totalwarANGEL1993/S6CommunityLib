@@ -17,6 +17,7 @@ function DisableAutoSave(_Flag)
         ExecuteLocal([[Lib.Core.Save.AutoSaveDisabled = %s]], tostring(_Flag == true))
     end
 end
+API.DisableAutomaticQuickSave = DisableAutoSave;
 API.DisableAutoSave = DisableAutoSave;
 
 function DisableSaving(_Flag)

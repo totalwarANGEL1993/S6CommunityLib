@@ -175,7 +175,7 @@ function Lib.Core.Global:OverrideOnSaveGameLoaded()
 end
 
 function Lib.Core.Global:InitReportListener()
-    GameCallback_Lib_OnEventReceived = function(_ID, ...)
+    GameCallback_Lib_OnReportReceived = function(_ID, ...)
         local arg = {...};
 
         Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
@@ -343,7 +343,7 @@ function Lib.Core.Local:OnSaveGameLoaded()
 end
 
 function Lib.Core.Local:InitReportListener()
-    GameCallback_Lib_OnEventReceived = function(_ID, ...)
+    GameCallback_Lib_OnReportReceived = function(_ID, ...)
         local arg = {...};
         Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Report:OnReportReceived(_ID, unpack(arg));

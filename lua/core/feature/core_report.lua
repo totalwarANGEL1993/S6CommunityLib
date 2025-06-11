@@ -191,8 +191,8 @@ function Lib.Core.Report:SendReport(_ID, ...)
     local arg = {...};
     assert(self.ScriptEventRegister[_ID] ~= nil, "Report type does not exist.");
     ---@diagnostic disable-next-line: undefined-global
-    if GameCallback_Lib_OnEventReceived then
-        GameCallback_Lib_OnEventReceived(_ID, unpack(arg));
+    if GameCallback_Lib_OnReportReceived then
+        GameCallback_Lib_OnReportReceived(_ID, unpack(arg));
     end
     if self.ScriptEventListener[_ID] then
         for k, v in pairs(self.ScriptEventListener[_ID]) do
@@ -223,12 +223,15 @@ function CreateReport(_Name)
     return Lib.Core.Report:CreateReport(_Name);
 end
 API.CreateScriptEvent = CreateReport;
+API.RegisterScriptEvent = CreateReport;
+API.CreateReport = CreateReport;
 
 function SendReport(_ID, ...)
     local arg = {...};
     Lib.Core.Report:SendReport(_ID, unpack(arg));
 end
 API.SendScriptEvent = SendReport;
+API.SendReport = SendReport;
 
 function GetReportSender()
     return Lib.Core.Report:GetReportSourcePlayerID();
@@ -240,6 +243,7 @@ function SendReportToGlobal(_ID, ...)
     assert(IsLocalScript(), "Was called from global script.");
     Lib.Core.Report:SendScriptCommand(Command.SendReportToGlobal, _ID, ...);
 end
+API.SendReportToGlobal = SendReportToGlobal;
 API.SendScriptEventToGlobal = SendReportToGlobal;
 
 function SendReportToLocal(_ID, ...)
@@ -264,15 +268,18 @@ function SendReportToLocal(_ID, ...)
         ExecuteLocal([[SendReport(%d)]], _ID);
     end
 end
+API.SendReportToLocal = SendReportToLocal;
 API.SendScriptEventToLocal = SendReportToLocal;
 
 function CreateReportReceiver(_EventID, _Function)
     return Lib.Core.Report:CreateReportReceiver(_EventID, _Function);
 end
-API.CreateScriptEventReceiver = CreateReportReceiver;
+API.AddScriptEventListener = CreateReportReceiver;
+API.CreateReportReceiver = CreateReportReceiver;
 
 function RemoveReportReceiver(_EventID, _ID)
     Lib.Core.Report:RemoveReportReceiver(_EventID, _ID);
 end
-API.RemoveScriptEventReceiver = RemoveReportReceiver;
+API.RemoveScriptEventListener = RemoveReportReceiver;
+API.RemoveReportReceiver = RemoveReportReceiver;
 

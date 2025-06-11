@@ -191,8 +191,8 @@ function Lib.Core.Report:SendReport(_ID, ...)
     local arg = {...};
     assert(self.ScriptEventRegister[_ID] ~= nil, "Report type does not exist.");
     ---@diagnostic disable-next-line: undefined-global
-    if GameCallback_Lib_OnEventReceived then
-        GameCallback_Lib_OnEventReceived(_ID, unpack(arg));
+    if GameCallback_Lib_OnReportReceived then
+        GameCallback_Lib_OnReportReceived(_ID, unpack(arg));
     end
     if self.ScriptEventListener[_ID] then
         for k, v in pairs(self.ScriptEventListener[_ID]) do

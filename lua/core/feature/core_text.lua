@@ -383,6 +383,7 @@ function DefineLanguage(_Shortcut, _Name, _Fallback, _Index)
         table.insert(Lib.Core.Text.Languages, %d, {"%s", "%s", "%s"})
     ]], _Index, _Shortcut, _Name, _Fallback);
 end
+API.DefineLanguage = DefineLanguage;
 
 function CountTextLines(_Text, _LineLength)
     assert(type(_Text) == "string");
@@ -390,4 +391,5 @@ function CountTextLines(_Text, _LineLength)
     assert(_LineLength > 0);
     return Lib.Core.Text:GetAmountOfLines(_Text, _LineLength);
 end
+API.CountTextLines = CountTextLines;
 
