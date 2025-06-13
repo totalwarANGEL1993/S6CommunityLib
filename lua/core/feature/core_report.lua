@@ -42,10 +42,11 @@ function Lib.Core.Report:OnReportReceived(_ID, ...)
 end
 
 function Lib.Core.Report:OverrideSoldierPaymentGlobal()
-    GameCallback_SetSoldierPaymentLevel_Orig_Libertica = GameCallback_SetSoldierPaymentLevel;
+    self.Orig_GameCallback_SetSoldierPaymentLevel = GameCallback_SetSoldierPaymentLevel;
     GameCallback_SetSoldierPaymentLevel = function(_PlayerID, _Level)
-        if _Level <= 2 then
-            return GameCallback_SetSoldierPaymentLevel_Orig_Libertica(_PlayerID, _Level);
+        -- Unofficial Patch: If entity is passed as level, call original.
+        if _Level <= 2 or IsExisting(_Level) then
+            return Lib.Core.Report.Orig_GameCallback_SetSoldierPaymentLevel(_PlayerID, _Level);
         end
         Lib.Core.Report:ProcessScriptCommand(_PlayerID, _Level);
     end
@@ -147,7 +148,6 @@ function Lib.Core.Report:SendScriptCommand(_ID, ...)
         ExecuteGlobal([[Lib.Core.Report:ProcessScriptCommand(%d, %d)]], PlayerID, _ID);
     end
     GUI.SetPlayerName(NamePlayerID, PlayerName);
-    GUI.SetSoldierPaymentLevel(PlayerSoldierPaymentLevel[PlayerID]);
 end
 
 function Lib.Core.Report:EncodeScriptCommandParameters(...)
