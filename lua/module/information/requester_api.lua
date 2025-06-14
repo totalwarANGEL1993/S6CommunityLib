@@ -114,3 +114,14 @@ function DialogLanguageSelection(_PlayerID)
 end
 API.DialogLanguageSelection = DialogLanguageSelection;
 
+function SetUnofficialPatchRequired()
+    if not IsLocalScript() then
+        ExecuteLocal([[SetUnofficialPatchRequired()]]);
+        return;
+    end
+    Lib.Requester.AquireContext();
+    this:CloseGameIfNotPatched();
+    Lib.Requester.ReleaseContext();
+end
+API.SetUnofficialPatchRequired = SetUnofficialPatchRequired;
+

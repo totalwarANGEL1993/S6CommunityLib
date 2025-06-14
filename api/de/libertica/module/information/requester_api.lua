@@ -111,3 +111,12 @@ function DialogLanguageSelection(_PlayerID)
 end
 API.DialogLanguageSelection = DialogLanguageSelection;
 
+--- Setzt den inoffiziellen Patch als Bedingung.
+--- 
+--- Diese Funktion muss zu Spielbeginn aufgerufen werden! Ist der inoffizielle
+--- Patch nicht installiert, sieht der Spieler eine Information und wird ins 
+--- Hauptmenü zurück geschickt.
+function SetUnofficialPatchRequired()
+end
+API.SetUnofficialPatchRequired = SetUnofficialPatchRequired;
+

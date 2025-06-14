@@ -36,6 +36,7 @@ Lib.Require("core/core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester_API");
 Lib.Require("module/information/Requester_Behavior");
+Lib.Require("module/information/Requester_Text");
 Lib.Register("module/information/Requester");
 
 -- -------------------------------------------------------------------------- --
@@ -638,6 +639,41 @@ function Lib.Requester.Local:ResumeSaveGame()
             Lib.Core.Save:DisableSaving(false);
             self.SavingDisabled = nil;
         end
+    end
+end
+
+-- -------------
+-- Enforce Patch
+
+function Lib.Requester.Local:CloseGameIfNotPatched()
+    if not IsMultiplayer() and not IsUnofficialPatch() then
+        local PlayerID = GUI.GetPlayerID();
+        local Title = Lib.Requester.Text.PatchRequired.Title;
+        local Text = Lib.Requester.Text.PatchRequired.Text;
+        local Action = function()
+            Framework.CloseGame();
+        end
+
+        XGUIEng.ShowWidget("/InGame/Root/3dOnScreenDisplay", 0);
+        XGUIEng.ShowWidget("/InGame/Root/3dWorldView", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal", 1);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/TextMessages", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechStartAgainOrStop", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopRight", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/TopBar", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/TopBar/UpdateFunction", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/Buttons", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/QuestLogButton", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/QuestTimers", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/SubTitles", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/Selected_Merchant", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/MissionGoodOrEntityCounter", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/MissionTimer", 0);
+        self:OpenDialog(PlayerID, Localize(Title), Localize(Text), Action);
+        Game.GameTimeSetFactor(PlayerID, 0.0000001);
     end
 end
 
