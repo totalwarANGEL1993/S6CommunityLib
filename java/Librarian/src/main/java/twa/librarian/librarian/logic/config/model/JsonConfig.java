@@ -7,9 +7,11 @@ import java.util.Map;
 
 public class JsonConfig {
     private String LuaSourcePath;
+    private String ConfigPath;
     private String comfortRoot;
     private String coreRoot;
     private String moduleRoot;
+    private Map<String, Object> userConfig = new LinkedHashMap<>();
     private List<String> nameBlacklist = new ArrayList<>();
     private Map<String, String> moduleDescriptions = new LinkedHashMap<>();
 
@@ -59,5 +61,21 @@ public class JsonConfig {
 
     public void setModuleDescriptions(Map<String, String> moduleDescriptions) {
         this.moduleDescriptions = moduleDescriptions;
+    }
+
+    public Map<String, Object> getUserConfig() {
+        return userConfig;
+    }
+
+    public void setUserConfig(Map<String, Object> userConfig) {
+        this.userConfig = userConfig;
+    }
+
+    public String getConfigPath() {
+        return ConfigPath;
+    }
+
+    public void setConfigPath(String configPath) {
+        ConfigPath = configPath;
     }
 }

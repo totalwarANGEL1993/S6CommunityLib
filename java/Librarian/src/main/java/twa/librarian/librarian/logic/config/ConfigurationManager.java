@@ -36,6 +36,7 @@ public class ConfigurationManager {
             JSONObject jsonObject = new JSONObject(jsonString);
 
             JsonConfig config = new JsonConfig();
+            config.setConfigPath(Paths.get(path).toFile().getAbsolutePath());
             config.setLuaSourcePath(jsonObject.getString("LuaSourcePath"));
             config.setComfortRoot(jsonObject.getString("ComfortRoot"));
             config.setCoreRoot(jsonObject.getString("CoreRoot"));
@@ -51,6 +52,8 @@ public class ConfigurationManager {
                 String description = innerArray.getString(1);
                 config.getModuleDescriptions().put(name, description);
             }
+            JSONObject userConfig = jsonObject.getJSONObject("UserConfig");
+            config.getUserConfig().put("SavePath", userConfig.getString("SavePath"));
             this.config = config;
         }
         catch (Exception e) {

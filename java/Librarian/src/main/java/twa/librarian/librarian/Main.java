@@ -1,9 +1,12 @@
 package twa.librarian.librarian;
 
+import twa.librarian.librarian.logic.ProgramController;
 import twa.librarian.librarian.logic.concat.ConcatinationManager;
 import twa.librarian.librarian.logic.config.ConfigurationManager;
 import twa.librarian.librarian.logic.dependency.DependencyManager;
+import twa.librarian.librarian.ui.MainWindow;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,8 +18,15 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.err.println("Window mode not implemented!");
-            System.exit(1);
+            SwingUtilities.invokeLater(() -> {
+                ConfigurationManager configurer = new ConfigurationManager("config/config_test.json");
+                DependencyManager manager = new DependencyManager(configurer);
+                ConcatinationManager concatinater = new ConcatinationManager(configurer, manager);
+                ProgramController controller = new ProgramController(concatinater, configurer, manager);
+                MainWindow window = MainWindow.create(controller, "Helpful Librarian");
+                window.display();
+            });
+            return;
         }
 
         Main main = new Main();

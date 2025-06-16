@@ -4,5 +4,6 @@ var/
 
 java/Librarian/.idea
 java/Librarian/Librarian.iml
-java/Librarian/logs
+java/Librarian/logs/*
 java/Librarian/target
+java/Librarian/var/*
