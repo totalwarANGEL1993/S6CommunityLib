@@ -35,6 +35,6 @@ public class UpdatePanel extends JPanel {
     }
 
     private void onUpdateButtonClicked(ActionEvent e) {
-        System.out.println("Update was clicked!");
+        controller.updateProgram();
     }
 }

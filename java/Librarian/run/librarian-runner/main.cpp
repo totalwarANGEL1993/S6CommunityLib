@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     }
     int result = system(command.c_str());
     if (result != 0) {
-        std::cerr << "Fehler beim Ausführen der JAR-Datei: " << result << std::endl;
+        std::cerr << "Error runnung JAR file: " << result << std::endl;
         return 1;
     }
     return 0;

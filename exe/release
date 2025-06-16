@@ -27,7 +27,7 @@ cp -r D:/Programme/BellSoft/jdk8u275-full release/jre
 
 mkdir -p release/tools/builder/config
 cp java/Librarian/target/Librarian.jar release/tools/builder
-cp java/Librarian/run/librarian-runner/librarian-runner release/tools/builder/librarian.exe
+cp java/Librarian/run/librarian-runner/librarian-runner release/tools/builder/Librarian.exe
 cp -r java/Librarian/config/config.json release/tools/builder/config
 
 exe/builddoc #&>/dev/null
