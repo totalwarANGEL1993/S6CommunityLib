@@ -82,18 +82,21 @@ public class AssemblePanel extends JPanel {
         int xCenter = (int) ((getWidth() * 0.5) - 25);
         int YCenter = (int) (getHeight() * 0.5);
 
-        JButton deselectAllButton = new JButton("◀");
+        // <>≪≫
+        // ◀◁▷▶
+
+        JButton deselectAllButton = new JButton("≪");
         deselectAllButton.setSize(50, 50);
         deselectAllButton.setLocation(xCenter, YCenter - 140);
-        deselectAllButton.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
+        deselectAllButton.setFont(new Font("Segoe UI Symbol", Font.BOLD, 16));
         deselectAllButton.setToolTipText("Move all modules back.");
         deselectAllButton.addActionListener(e -> onModuleSelectButtonClicked(ModuleAction.DESELECT_ALL, e));
         add(deselectAllButton);
 
-        JButton deselectButton = new JButton("◁");
+        JButton deselectButton = new JButton("<");
         deselectButton.setSize(50, 50);
         deselectButton.setLocation(xCenter, YCenter - 85);
-        deselectButton.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
+        deselectButton.setFont(new Font("Segoe UI Symbol", Font.BOLD, 18));
         deselectButton.setToolTipText("Move selected module(s) back.");
         deselectButton.addActionListener(e -> onModuleSelectButtonClicked(ModuleAction.DESELECT, e));
         add(deselectButton);
@@ -106,18 +109,18 @@ public class AssemblePanel extends JPanel {
         resetButton.addActionListener(e -> onModuleSelectButtonClicked(ModuleAction.RESET, e));
         add(resetButton);
 
-        JButton selectButton = new JButton("▷");
+        JButton selectButton = new JButton(">");
         selectButton.setSize(50, 50);
         selectButton.setLocation(xCenter, YCenter + 25);
-        selectButton.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
+        selectButton.setFont(new Font("Segoe UI Symbol", Font.BOLD, 18));
         selectButton.setToolTipText("Move selected module(s) right.");
         selectButton.addActionListener(e -> onModuleSelectButtonClicked(ModuleAction.SELECT, e));
         add(selectButton);
 
-        JButton selectAllButton = new JButton("▶");
+        JButton selectAllButton = new JButton("≫");
         selectAllButton.setSize(50, 50);
         selectAllButton.setLocation(xCenter, YCenter + 80);
-        selectAllButton.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 16));
+        selectAllButton.setFont(new Font("Segoe UI Symbol", Font.BOLD, 16));
         selectAllButton.setToolTipText("Move all modules right.");
         selectAllButton.addActionListener(e -> onModuleSelectButtonClicked(ModuleAction.SELECT_ALL, e));
         add(selectAllButton);
