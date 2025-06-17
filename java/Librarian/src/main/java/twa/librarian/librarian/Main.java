@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {
             SwingUtilities.invokeLater(() -> {
-                ConfigurationManager configurer = new ConfigurationManager("config/config_test.json");
+                ConfigurationManager configurer = new ConfigurationManager("config/config.json");
                 DependencyManager manager = new DependencyManager(configurer);
                 ConcatinationManager concatinater = new ConcatinationManager(configurer, manager);
                 ProgramController controller = new ProgramController(concatinater, configurer, manager);
