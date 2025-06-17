@@ -6,6 +6,7 @@ import java.util.List;
 public abstract class AbstractModule implements Module {
     protected String name;
     protected String canonicalName;
+    protected boolean mandatory;
     protected String path;
     protected String description = "";
     protected List<String> dependencies;
@@ -62,11 +63,20 @@ public abstract class AbstractModule implements Module {
 
     @Override
     public boolean isMandatory() {
-        return false;
+        return mandatory;
+    }
+
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
     }
 
     @Override
     public List<String> getDependencies() {
         return dependencies;
+    }
+
+    @Override
+    public String toString() {
+        return canonicalName;
     }
 }

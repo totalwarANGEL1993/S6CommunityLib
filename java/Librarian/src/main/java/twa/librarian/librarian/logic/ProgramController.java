@@ -12,6 +12,7 @@ import twa.librarian.librarian.utils.GithubUtils;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,8 @@ public class ProgramController {
     private final ConcatinationManager concatinationManager;
     private final ConfigurationManager configurationManager;
     private final DependencyManager dependencyManager;
+
+    private final List<Module> selectedModules = new ArrayList<>();
 
     public ProgramController(
         ConcatinationManager concatinationManager,
@@ -105,17 +108,37 @@ public class ProgramController {
     }
 
     /**
+     * Returns the module list.
+     * @return List of modules
+     */
+    public List<Module> getModuleList() {
+        return dependencyManager.getModuleList();
+    }
+
+    /**
+     * Returns the module and all of its ancestors as a list.
+     * @param module Module
+     * @return List of modules
+     */
+    public List<Module> getModuleAncestry(Module module) {
+        return dependencyManager.getModuleAncestry(module);
+    }
+
+    /**
+     * Returns the module and all modules depending on it.
+     * @param module Module
+     * @return List of modules
+     */
+    public List<Module> getModuleHeredity(Module module) {
+        return dependencyManager.getModuleHeredity(module);
+    }
+
+    /**
      * Returns the selected modules.
      * @return Module List
      */
     public List<Module> getSelectedModules() {
-        // TODO: Get selected modules
-        List<String> canonicalNameList = Arrays.asList(
-            "core/Core",
-            "comfort/GetRandomSettlerType",
-            "module/faker/Permadeath"
-        );
-        return dependencyManager.getLoadOrder(canonicalNameList);
+        return this.selectedModules;
     }
 
     /**

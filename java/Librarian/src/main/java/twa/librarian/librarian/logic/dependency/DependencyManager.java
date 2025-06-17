@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 /**
  * This class manages dependencies of modules.
- *
+ * <p>
  * Pass a list of module names to this class to get a list of modules
  * required to run the specified modules.
  */
@@ -44,7 +44,6 @@ public class DependencyManager {
 
     /**
      * Returns a list of all required modules depending on the parameter list.
-     *
      * @param parameterList List with canonical names
      * @return List of modules
      */
@@ -61,7 +60,7 @@ public class DependencyManager {
         for (String canonicalName : canonicalNameList) {
             final Module module = getModuleByCanonicalName(canonicalName);
             if (null != module) {
-                for (Module dependency : getParentModules(module)) {
+                for (Module dependency : getModuleAncestry(module)) {
                     if (!moduleList.contains(dependency)) {
                         moduleList.add(dependency);
                     }
@@ -88,17 +87,6 @@ public class DependencyManager {
     }
 
     /**
-     * Reloads the internal module list.
-     */
-    public void updateModuleList() {
-        List<Module> moduleList = new ArrayList<>();
-        moduleList.addAll(getComfortModuleList());
-        moduleList.addAll(getCoreModuleList());
-        moduleList.addAll(getFeatureModuleList());
-        this.modules = moduleList;
-    }
-
-    /**
      * Returns the internal module list.
      * @return List of modules
      */
@@ -118,41 +106,78 @@ public class DependencyManager {
         return canonicalNameList;
     }
 
-    private List<Module> getParentModules(Module module) {
-        final List<Module> dependencyList = new ArrayList<>();
-        if (null != module.getDependencies()) {
-            for (String canonicalName : module.getDependencies()) {
-                final Module dependency = getModuleByCanonicalName(canonicalName);
-                if (null != dependency) {
-                    for (Module dependencyDependency : getParentModules(dependency)) {
-                        if (!dependencyList.contains(dependencyDependency)) {
-                            dependencyList.add(dependencyDependency);
+    /**
+     * Returns the module and all of its descendants.
+     * @param module Module to inspect
+     * @return Heredity, including inspected module
+     */
+    public List<Module> getModuleHeredity(Module module) {
+        final List<Module> dependingList = new ArrayList<>();
+        final String canonicalName = module.getCanonicalName();
+        for (Module child : this.modules) {
+            for (String dependency : child.getDependencies()) {
+                if (dependency.equals(canonicalName)) {
+                    for (Module grandchild : getModuleHeredity(child)) {
+                        if (!dependingList.contains(grandchild)) {
+                            dependingList.add(grandchild);
                         }
-                    }
-                    if (!dependencyList.contains(dependency)) {
-                        dependencyList.add(dependency);
                     }
                 }
             }
         }
-        dependencyList.add(module);
+        if (!dependingList.contains(module)) {
+            dependingList.add(module);
+        }
+        return dependingList;
+    }
+
+    /**
+     * Returns the module and all of its ancestors.
+     * @param module Module to inspect
+     * @return Ancestry, including inspected module
+     */
+    public List<Module> getModuleAncestry(Module module) {
+        final List<Module> dependencyList = new ArrayList<>();
+        if (null != module.getDependencies()) {
+            for (String canonicalName : module.getDependencies()) {
+                final Module child = getModuleByCanonicalName(canonicalName);
+                if (null != child) {
+                    for (Module grandchild : getModuleAncestry(child)) {
+                        if (!dependencyList.contains(grandchild)) {
+                            dependencyList.add(grandchild);
+                        }
+                    }
+                }
+            }
+        }
+        if (!dependencyList.contains(module)) {
+            dependencyList.add(module);
+        }
         return dependencyList;
     }
 
-    public Module getModuleByName(String name) {
-        return this.modules
-            .stream()
-            .filter((m) -> m.getName().equals(name))
-            .findFirst()
-            .orElse(null);
-    }
-
+    /**
+     * Returns the module by the given canonical name.
+     * @param canonicalName Name of module
+     * @return Module object
+     */
     public Module getModuleByCanonicalName(String canonicalName) {
         return this.modules
             .stream()
             .filter((m) -> m.getCanonicalName().equals(canonicalName))
             .findFirst()
             .orElse(null);
+    }
+
+    /**
+     * Reloads the internal module list.
+     */
+    public void updateModuleList() {
+        List<Module> moduleList = new ArrayList<>();
+        moduleList.addAll(getComfortModuleList());
+        moduleList.addAll(getCoreModuleList());
+        moduleList.addAll(getFeatureModuleList());
+        this.modules = moduleList;
     }
 
     private List<Module> getComfortModuleList() {

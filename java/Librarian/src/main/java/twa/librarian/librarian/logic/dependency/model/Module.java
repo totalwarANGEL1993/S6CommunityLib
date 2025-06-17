@@ -16,6 +16,7 @@ public interface Module {
     void setDescription(String text);
 
     boolean isMandatory();
+    void setMandatory(boolean mandatory);
 
     List<String> getDependencies();
 }

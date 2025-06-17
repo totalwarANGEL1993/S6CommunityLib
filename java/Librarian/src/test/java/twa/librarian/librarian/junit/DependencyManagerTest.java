@@ -14,7 +14,55 @@ public class DependencyManagerTest {
     private DependencyManager dependencyManager;
 
     @Test
-    public void testgetLoadOrder() {
+    public void testGetModuleAncestry() {
+        Module testModule;
+        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        dependencyManager = new DependencyManager(configurationManager);
+        List<Module> moduleList = dependencyManager.getModuleList();
+
+        testModule = moduleList
+            .stream()
+            .filter((m) -> m.getCanonicalName().equals("module/information/BriefingSystem"))
+            .findFirst()
+            .orElse(null);
+        assertNotNull(testModule);
+
+        List<Module> moduleAncestry = dependencyManager.getModuleAncestry(testModule);
+
+        testModule = moduleAncestry
+            .stream()
+            .filter((m) -> m.getCanonicalName().equals("module/information/Information"))
+            .findFirst()
+            .orElse(null);
+        assertNotNull(testModule);
+    }
+
+    @Test
+    public void testGetModuleHeredity() {
+        Module testModule;
+        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        dependencyManager = new DependencyManager(configurationManager);
+        List<Module> moduleList = dependencyManager.getModuleList();
+
+        testModule = moduleList
+            .stream()
+            .filter((m) -> m.getCanonicalName().equals("module/information/Information"))
+            .findFirst()
+            .orElse(null);
+        assertNotNull(testModule);
+
+        List<Module> moduleHeredity = dependencyManager.getModuleHeredity(testModule);
+
+        testModule = moduleHeredity
+            .stream()
+            .filter((m) -> m.getCanonicalName().equals("module/information/BriefingSystem"))
+            .findFirst()
+            .orElse(null);
+        assertNotNull(testModule);
+    }
+
+    @Test
+    public void testGetLoadOrder() {
         Module testModule;
         List<String> canonicalNameList = Arrays.asList(
             "core/Core",
