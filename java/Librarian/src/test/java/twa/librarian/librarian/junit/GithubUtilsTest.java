@@ -17,15 +17,15 @@ public class GithubUtilsTest {
 
     @Test
     public void testDownloadReleaseSource() {
-        String url = "https://github.com/totalwarANGEL1993/libertica_release/archive/refs/tags/Alpha.zip";
-        File destination = new File("var/Alpha.zip");
+        String url = "https://github.com/totalwarANGEL1993/libertica_release/archive/refs/tags/Beta.zip";
+        File destination = new File("var/update.zip");
         boolean success = GithubUtils.downloadReleaseSource(url, destination);
         assertTrue(success);
     }
 
     @Test
     public void testUpdateScript() throws Exception {
-        String url = "https://github.com/totalwarANGEL1993/libertica_release/archive/refs/tags/Alpha.zip";
+        String url = "https://github.com/totalwarANGEL1993/libertica_release/archive/refs/tags/Beta.zip";
         File destination = new File("var/update.zip");
         GithubUtils.downloadReleaseSource(url, destination);
         String scriptPath = "E:\\Repositories\\libertica\\java\\Librarian\\script\\update_test.bat";

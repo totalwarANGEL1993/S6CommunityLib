@@ -1,7 +1,7 @@
 [Project]
 FileName=librarian-runner.dev
 Name=librarian-runner
-Type=1
+Type=0
 Ver=2
 ObjFiles=
 Includes=
@@ -11,7 +11,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=
-Linker=
+Linker=-mwindows_@@_
 IsCpp=1
 Icon=librarian-runner.ico
 ExeOutput=
@@ -28,7 +28,7 @@ Folders=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000000000000000000000
+CompilerSettings=0000000000000000000010000
 UnitCount=1
 
 [VersionInfo]

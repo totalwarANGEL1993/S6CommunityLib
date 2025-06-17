@@ -5,24 +5,38 @@ set ZIPFILE=var\update.zip
 set DESTDIR=%CD%\var\update_test
 set TEMP_UNPACK=%TEMP%\update_unpack
 
-echo Unpack %ZIPFILE% to %TEMP_UNPACK%...
+echo "Unpack %ZIPFILE% to %TEMP_UNPACK%..."
 rmdir /s /q "%TEMP_UNPACK%" >nul 2>&1
-powershell -Command "Expand-Archive -Path '%ZIPFILE%' -DestinationPath '%TEMP_UNPACK%' -Force"
+powershell -ExecutionPolicy Bypass -Command "Expand-Archive -Path '%ZIPFILE%' -DestinationPath '%TEMP_UNPACK%' -Force"
 
 if errorlevel 1 (
-    echo Failed to unpack updade.
+    echo "Failed to unpack updade."
     goto end
 )
 
-echo Copy files and directory to %DESTDIR%...
-xcopy "%TEMP_UNPACK%\*" "%DESTDIR%\" /E /I /Y /Q
+echo "Detecting root folder inside ZIP..."
 
-echo Cleanup...
+set "SOURCE_SUBDIR="
+for /d %%D in ("%TEMP_UNPACK%\*") do (
+    set "SOURCE_SUBDIR=%%D"
+    goto found_dir
+)
+
+:found_dir
+if not defined SOURCE_SUBDIR (
+    echo "No folder found inside ZIP!"
+    goto end
+)
+
+echo "Copying from !SOURCE_SUBDIR! to %DESTDIR%..."
+xcopy "!SOURCE_SUBDIR!\*" "%DESTDIR%\" /E /I /Y /Q
+
+echo "Cleanup..."
 rmdir /s /q "%TEMP_UNPACK%" >nul 2>&1
 
 :end
-echo Done!
-echo Now app would start...
+echo "Done!"
 pause
+start /b %cd%\\Librarian.exe
 exit 0
 endlocal

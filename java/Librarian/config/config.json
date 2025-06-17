@@ -1,6 +1,6 @@
 {
   "ConfigPath": "",
-  "LuaSourcePath": "../../../release/libertica",
+  "LuaSourcePath": "../../libertica",
   "ComfortRoot": "comfort",
   "CoreRoot": "core",
   "ModuleRoot": "module",
