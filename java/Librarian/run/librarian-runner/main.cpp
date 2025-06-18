@@ -1,15 +1,49 @@
 #include <iostream>
 #include <cstdlib>
+#include <windows.h>
+
+int startCommandlineProcess(int argc, char** argv);
+int startInvisibleProcess(int argc, char** argv);
 
 int main(int argc, char** argv) {
-	// Start in GUI mode
 	if (argc == 1) {
-		system("start /b %cd%\\..\\..\\jre\\bin\\java -Dfile.encoding=UTF8 -jar \"%cd%\\Librarian.jar\"");
-		return 0;
+		return startInvisibleProcess(argc, argv);
 	}
-	
-	// Start in console mode
-    std::string command = "%cd%\\..\\..\\jre\\bin\\java -Dfile.encoding=UTF8 -jar \"%cd%\\Librarian.jar\"";
+    return startCommandlineProcess(argc, argv);
+}
+
+int startInvisibleProcess(int argc, char** argv) {
+    // Get PWD
+    char pwd[MAX_PATH];
+    GetCurrentDirectoryA(MAX_PATH, pwd);
+    // Make window invisible
+    STARTUPINFOA si = { sizeof(STARTUPINFOA) };
+    PROCESS_INFORMATION pi;
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+    // Create command string
+    std::string command;
+    // command += "cmd.exe /c \"";
+    command += "\"";
+    command += pwd;
+    command += "\\..\\..\\jre\\bin\\java\" -Dfile.encoding=UTF8 -jar \"";
+    command += pwd;
+    command += "\\Libertica.jar\"";
+    // Create process
+    char* cmdLine = _strdup(command.c_str());
+    if (CreateProcessA( NULL, cmdLine, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    }
+    else {
+        MessageBoxA(NULL, "Failed to create new process! Aborting...", "Error", MB_OK | MB_ICONERROR);
+    }
+    free(cmdLine);
+    return 0;
+}
+
+int startCommandlineProcess(int argc, char** argv) {
+    std::string command = "%cd%\\..\\..\\jre\\bin\\java -Dfile.encoding=UTF8 -jar \"%cd%\\Libertica.jar\"";
     for (int i = 1; i < argc; ++i) {
         command += " \"";
         command += argv[i];

@@ -26,8 +26,8 @@ cp -r D:/Programme/BellSoft/jdk8u275-full release/jre
 
 mkdir -p release/tools/builder/config
 mkdir -p release/tools/builder/script
-cp java/Librarian/target/Librarian.jar release/tools/builder
-cp java/Librarian/run/librarian-runner/librarian-runner release/tools/builder/Librarian.exe
+cp java/Librarian/target/Libertica.jar release/tools/builder
+cp java/Librarian/run/librarian-runner/librarian-runner release/tools/builder/Libertica.exe
 cp -r java/Librarian/config/config.json release/tools/builder/config
 cp -r java/Librarian/script/update.bat release/tools/builder/script
 
