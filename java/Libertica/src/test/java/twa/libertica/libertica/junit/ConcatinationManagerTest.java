@@ -15,7 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConcatinationManagerTest {
     @Test
     public void testSaveSingleFile() throws Exception {
-        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
         DependencyManager dependencyManager = new DependencyManager(configurationManager);
         ConcatinationManager concatinationManager = new ConcatinationManager(configurationManager, dependencyManager);
 
@@ -36,7 +38,9 @@ public class ConcatinationManagerTest {
     }
     @Test
     public void testSaveLibrary() throws Exception {
-        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
         DependencyManager dependencyManager = new DependencyManager(configurationManager);
         ConcatinationManager concatinationManager = new ConcatinationManager(configurationManager, dependencyManager);
 

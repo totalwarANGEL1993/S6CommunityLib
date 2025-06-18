@@ -11,6 +11,20 @@
   "UserConfig": {
     "SavePath": "E:\\Siedler\\Projekte\\QsbMakerTest\\out"
   },
+  "Languages": [
+    {
+      "ID": "de",
+      "Icon": "",
+      "FileExt": "_de",
+      "Name": "English"
+    },
+    {
+      "ID": "en",
+      "Icon": "",
+      "FileExt": "_en",
+      "Name": "English"
+    }
+  ],
   "ModuleDescriptions": [
     ["comfort/AddWare", "Ermöglicht es, Rohstoffe und Produkte zum Spieler hinzuzufügen."],
     ["comfort/ColorToHex", "Konvertiert Farbwerte in die Hexadezimaldarstellung"],

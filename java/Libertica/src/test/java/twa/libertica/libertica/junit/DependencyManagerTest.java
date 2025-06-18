@@ -16,7 +16,9 @@ public class DependencyManagerTest {
     @Test
     public void testGetModuleAncestry() {
         Module testModule;
-        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
         dependencyManager = new DependencyManager(configurationManager);
         List<Module> moduleList = dependencyManager.getModuleList();
 
@@ -40,7 +42,9 @@ public class DependencyManagerTest {
     @Test
     public void testGetModuleHeredity() {
         Module testModule;
-        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
         dependencyManager = new DependencyManager(configurationManager);
         List<Module> moduleList = dependencyManager.getModuleList();
 
@@ -70,7 +74,9 @@ public class DependencyManagerTest {
             "module/faker/Permadeath"
         );
 
-        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
         dependencyManager = new DependencyManager(configurationManager);
         List<Module> loadOrder = dependencyManager.getLoadOrder(canonicalNameList);
 
@@ -100,7 +106,9 @@ public class DependencyManagerTest {
     public void testUpdateModuleList() {
         Module testModule;
 
-        ConfigurationManager configurationManager = new ConfigurationManager("config/config_test.json");
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
         dependencyManager = new DependencyManager(configurationManager);
         dependencyManager.updateModuleList();
         List<Module> modules = dependencyManager.getModuleList();

@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JsonConfig {
+public class JsonApplicationConfig {
     private String LuaSourcePath;
     private String ConfigPath;
     private String comfortRoot;
@@ -14,6 +14,7 @@ public class JsonConfig {
     private Map<String, Object> userConfig = new LinkedHashMap<>();
     private List<String> nameBlacklist = new ArrayList<>();
     private Map<String, String> moduleDescriptions = new LinkedHashMap<>();
+    private Map<String, Language> languages = new LinkedHashMap<>();
 
     public String getLuaSourcePath() {
         return LuaSourcePath;
@@ -77,5 +78,13 @@ public class JsonConfig {
 
     public void setConfigPath(String configPath) {
         ConfigPath = configPath;
+    }
+
+    public Map<String, Language> getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Map<String, Language> languages) {
+        this.languages = languages;
     }
 }

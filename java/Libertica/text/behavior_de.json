@@ -1,31 +1,5 @@
 {
-  "ConfigPath": "",
-  "LuaSourcePath": "../../libertica",
-  "ComfortRoot": "comfort",
-  "CoreRoot": "core",
-  "ModuleRoot": "module",
-  "ModuleNameBlacklist": [
-    "localmapscript",
-    "mapscript"
-  ],
-  "UserConfig": {
-    "SavePath": ""
-  },
-  "Languages": [
-    {
-      "ID": "de",
-      "Icon": "",
-      "FileExt": "_de",
-      "Name": "English"
-    },
-    {
-      "ID": "en",
-      "Icon": "",
-      "FileExt": "_en",
-      "Name": "English"
-    }
-  ],
-  "ModuleDescriptions": [
+  "Strings": [
     ["comfort/AddWare", "Ermöglicht es, Rohstoffe und Produkte zum Spieler hinzuzufügen."],
     ["comfort/ColorToHex", "Konvertiert Farbwerte in die Hexadezimaldarstellung"],
     ["comfort/CopyTable", "Kopiert eine Tabelle."],

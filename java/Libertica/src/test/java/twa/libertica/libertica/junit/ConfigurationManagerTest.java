@@ -9,9 +9,10 @@ public class ConfigurationManagerTest {
     @Test
     public void testReadConfig() {
         ConfigurationManager configurationManager = new ConfigurationManager();
-        configurationManager.readJson("config/config_test.json");
+        configurationManager.readApplicationJson("config/config_test.json");
+        configurationManager.readUserJson("config/user_test.json");
 
-        String luaPath = configurationManager.getConfig().getLuaSourcePath();
+        String luaPath = configurationManager.getApplicationConfig().getLuaSourcePath();
         assertEquals("../../lua", luaPath);
     }
 }

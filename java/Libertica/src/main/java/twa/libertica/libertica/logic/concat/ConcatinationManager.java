@@ -120,7 +120,7 @@ public class ConcatinationManager {
     private String loadFile(String path) {
         String content = null;
         try {
-            String luaPath = config.getConfig().getLuaSourcePath();
+            String luaPath = config.getApplicationConfig().getLuaSourcePath();
             byte[] bytes = Files.readAllBytes(Paths.get(luaPath, path));
             content = new String(bytes, StandardCharsets.UTF_8);
         }

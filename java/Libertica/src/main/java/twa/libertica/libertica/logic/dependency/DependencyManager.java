@@ -183,8 +183,8 @@ public class DependencyManager {
     private List<Module> getComfortModuleList() {
         List<Module> moduleList = new ArrayList<>();
 
-        String luaRoot = config.getConfig().getLuaSourcePath();
-        String comfortRoot = config.getConfig().getComfortRoot();
+        String luaRoot = config.getApplicationConfig().getLuaSourcePath();
+        String comfortRoot = config.getApplicationConfig().getComfortRoot();
         File sourcePath = Paths.get(luaRoot, comfortRoot).toFile();
 
         File[] fileList = sourcePath.listFiles();
@@ -198,8 +198,8 @@ public class DependencyManager {
     private List<Module> getCoreModuleList() {
         List<Module> moduleList = new ArrayList<>();
 
-        String luaRoot = config.getConfig().getLuaSourcePath();
-        String coreRoot = config.getConfig().getCoreRoot();
+        String luaRoot = config.getApplicationConfig().getLuaSourcePath();
+        String coreRoot = config.getApplicationConfig().getCoreRoot();
         File sourcePath = Paths.get(luaRoot, coreRoot).toFile();
 
         File[] fileList = sourcePath.listFiles();
@@ -213,8 +213,8 @@ public class DependencyManager {
     private List<Module> getFeatureModuleList() {
         List<Module> moduleList = new ArrayList<>();
 
-        String luaRoot = config.getConfig().getLuaSourcePath();
-        String moduleRoot = config.getConfig().getModuleRoot();
+        String luaRoot = config.getApplicationConfig().getLuaSourcePath();
+        String moduleRoot = config.getApplicationConfig().getModuleRoot();
         File sourcePath = Paths.get(luaRoot, moduleRoot).toFile();
 
         File[] fileList = sourcePath.listFiles();
@@ -252,17 +252,17 @@ public class DependencyManager {
             return null;
         }
         String moduleName = file.getName().substring(0, lastDot);
-        if (config.getConfig().getNameBlacklist().contains(moduleName)) {
+        if (config.getApplicationConfig().getNameBlacklist().contains(moduleName)) {
             return null;
         }
 
-        if (file.getPath().contains(config.getConfig().getComfortRoot())) {
+        if (file.getPath().contains(config.getApplicationConfig().getComfortRoot())) {
             module = new ComfortModule(moduleName);
         }
-        else if (file.getPath().contains(config.getConfig().getCoreRoot())) {
+        else if (file.getPath().contains(config.getApplicationConfig().getCoreRoot())) {
             module = new CoreModule(moduleName);
         }
-        else if (file.getPath().contains(config.getConfig().getModuleRoot())) {
+        else if (file.getPath().contains(config.getApplicationConfig().getModuleRoot())) {
             module = new FeatureModule(moduleName);
         }
         else {
@@ -281,7 +281,7 @@ public class DependencyManager {
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.find()) {
                         int start = matcher.group(1).lastIndexOf("/") +1;
-                        String description = config.getConfig().getModuleDescriptions().get(matcher.group(1));
+                        String description = config.getApplicationConfig().getModuleDescriptions().get(matcher.group(1));
                         module.setName(matcher.group(1).substring(start));
                         module.setCanonicalName(matcher.group(1));
                         module.setDescription(description);

@@ -150,6 +150,6 @@ public class ProgramController {
      * @return Path
      */
     public String getSavePath() {
-        return (String) configurationManager.getConfig().getUserConfig().get("SavePath");
+        return (String) configurationManager.getApplicationConfig().getUserConfig().get("SavePath");
     }
 }

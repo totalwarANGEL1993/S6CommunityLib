@@ -19,7 +19,9 @@ public class Main {
     public static void main(String[] args) {
         if (args.length == 0) {
             SwingUtilities.invokeLater(() -> {
-                ConfigurationManager configurer = new ConfigurationManager("config/config.json");
+                ConfigurationManager configurer = new ConfigurationManager();
+                configurer.readApplicationJson("config/config_test.json");
+                configurer.readUserJson("config/user_test.json");
                 DependencyManager manager = new DependencyManager(configurer);
                 ConcatinationManager concatinater = new ConcatinationManager(configurer, manager);
                 ProgramController controller = new ProgramController(concatinater, configurer, manager);
@@ -61,7 +63,8 @@ public class Main {
 
     private void createLibrary(String destination, String... modules) {
         try {
-            ConfigurationManager configManager = new ConfigurationManager("config/config.json");
+            ConfigurationManager configManager = new ConfigurationManager();
+            configManager.readApplicationJson("config/config.json");
             DependencyManager dependencyManager = new DependencyManager(configManager);
             ConcatinationManager concatinationManager = new ConcatinationManager(configManager, dependencyManager);
 
@@ -75,7 +78,8 @@ public class Main {
 
     private void createSingleFile(String destination, String... modules) {
         try {
-            ConfigurationManager configManager = new ConfigurationManager("config/config.json");
+            ConfigurationManager configManager = new ConfigurationManager();
+            configManager.readApplicationJson("config/config.json");
             DependencyManager dependencyManager = new DependencyManager(configManager);
             ConcatinationManager concatinationManager = new ConcatinationManager(configManager, dependencyManager);
 
