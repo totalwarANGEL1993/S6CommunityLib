@@ -3,8 +3,8 @@ release/
 var/
 .*.min.lua
 
-java/Librarian/.idea
-java/Librarian/Librarian.iml
-java/Librarian/logs/*
-java/Librarian/target
-java/Librarian/var/*
+java/Libertica/.idea
+java/Libertica/Libertica.iml
+java/Libertica/logs/*
+java/Libertica/target
+java/Libertica/var/*
