@@ -3,6 +3,7 @@ package twa.libertica.libertica.ui;
 import twa.libertica.libertica.logic.ProgramController;
 import twa.libertica.libertica.ui.components.AssemblePanel;
 import twa.libertica.libertica.ui.components.ExportPanel;
+import twa.libertica.libertica.ui.components.ProcessPanel;
 import twa.libertica.libertica.ui.components.UpdatePanel;
 
 import javax.swing.*;
@@ -17,6 +18,7 @@ public class MainWindow extends JFrame {
     private final AssemblePanel assemblePanel;
     private final ExportPanel exportPanel;
     private final UpdatePanel updatePanel;
+    private final ProcessPanel processPanel;
 
     public AssemblePanel getAssemblePanel() {
         return assemblePanel;
@@ -28,6 +30,10 @@ public class MainWindow extends JFrame {
 
     public UpdatePanel getUpdatePanel() {
         return updatePanel;
+    }
+
+    public ProcessPanel getProcessPanel() {
+        return processPanel;
     }
 
     public JPanel getView() {
@@ -63,6 +69,7 @@ public class MainWindow extends JFrame {
         view.setVisible(true);
         add(view);
 
+        processPanel = new ProcessPanel(view, controller);
         assemblePanel = new AssemblePanel(view, controller);
         exportPanel = new ExportPanel(view, controller);
         updatePanel = new UpdatePanel(view, controller);
@@ -73,5 +80,19 @@ public class MainWindow extends JFrame {
             instance = new MainWindow(controller, title);
         }
         return instance;
+    }
+
+    public void showProcessRunning() {
+        processPanel.setVisible(true);
+        assemblePanel.setVisible(false);
+        exportPanel.setVisible(false);
+        updatePanel.setVisible(false);
+    }
+
+    public void hideProcessRunning() {
+        processPanel.setVisible(false);
+        assemblePanel.setVisible(true);
+        exportPanel.setVisible(true);
+        updatePanel.setVisible(true);
     }
 }

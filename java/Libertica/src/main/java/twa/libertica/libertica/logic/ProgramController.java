@@ -39,6 +39,7 @@ public class ProgramController {
      * @param destination Destination
      */
     public void exportQsb(ExportPanel.ExportType type, String destination) {
+        MainWindow.getInstance().showProcessRunning();
         Thread thread = new Thread(() -> {
             try {
                 List<Module> selectedModules = getSelectedModules();
@@ -54,6 +55,7 @@ public class ProgramController {
                 if (ExportPanel.ExportType.LIBRARY.equals(type)) {
                     concatinationManager.saveLibrary(moduleList, destinationFile);
                 }
+                MainWindow.getInstance().hideProcessRunning();
                 JOptionPane.showMessageDialog(
                     MainWindow.getInstance(),
                     "QSB has been saved successfully.",
@@ -62,6 +64,7 @@ public class ProgramController {
                 );
             }
             catch (Exception e) {
+                MainWindow.getInstance().hideProcessRunning();
                 JOptionPane.showMessageDialog(
                     MainWindow.getInstance(),
                     ExceptionUtils.getStackTrace(e),
@@ -77,6 +80,7 @@ public class ProgramController {
      * Downloads the update, runs the update script and then self-closes.
      */
     public void updateProgram() {
+        MainWindow.getInstance().showProcessRunning();
         Thread thread = new Thread(() -> {
             try {
                 String url = GithubUtils.getLatestRelease("totalwarANGEL1993", "libertica_release");
@@ -95,6 +99,7 @@ public class ProgramController {
                 System.exit(0);
             }
             catch (Exception e) {
+                MainWindow.getInstance().hideProcessRunning();
                 JOptionPane.showMessageDialog(
                     MainWindow.getInstance(),
                     ExceptionUtils.getStackTrace(e),
