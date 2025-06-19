@@ -9,6 +9,7 @@ comfort/getbattalionsizebysoldiertype
 comfort/getcategoriesofentity
 comfort/getcategoriesoftype
 comfort/getcircleposition
+comfort/GetCirclePositions
 comfort/getclosesttotarget
 comfort/getrandomsettlertype
 comfort/createcartbygoodtype
@@ -24,6 +25,7 @@ comfort/IsInSight
 comfort/ismultiplayerready
 comfort/isunofficialpatch
 comfort/getlineposition
+comfort/GetLinePositions
 comfort/getplayeratslot
 comfort/GetPredatorSpawnerTypes
 comfort/getposition

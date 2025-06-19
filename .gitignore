@@ -1,4 +1,6 @@
 bin/*.exe
+java
+
 release/
 var/
 .*.min.lua

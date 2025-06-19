@@ -297,14 +297,14 @@ API.SendScriptEventToLocal = SendReportToLocal;
 function CreateReportReceiver(_EventID, _Function)
     return 0;
 end
-API.CreateScriptEventReceiver = CreateReportReceiver;
+API.CreateReportReceiver = CreateReportReceiver;
 
 --- Deletes a report listener for the report type.
 --- @param _EventID integer ID of report
 --- @param _ID integer ID of listener
 function RemoveReportReceiver(_EventID, _ID)
 end
-API.RemoveScriptEventReceiver = RemoveReportReceiver;
+API.RemoveReportReceiver = RemoveReportReceiver;
 
 --- Deactivates the autosave of the History Edition.
 --- @param _Flag boolean Auto save is disabled
@@ -569,4 +569,13 @@ end
 function CountTextLines(_Text, _LineLength)
     return 0;
 end
+
+--- Sets the unofficial patch as required.
+--- 
+--- This function must be called on game start! If the inofficial patch is not
+--- installed the player is informed and send back to the main menu.
+--- @param _Version? string Patch version (Example: "UP 1.0.0")
+function SetUnofficialPatchRequired(_Version)
+end
+API.SetUnofficialPatchRequired = SetUnofficialPatchRequired;
 

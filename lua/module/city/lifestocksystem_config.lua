@@ -1,4 +1,4 @@
-Lib.Register("module/io/LifestockSystem_Config");
+Lib.Register("module/city/LifestockSystem_Config");
 
 Lib.LifestockSystem.Config = {
     Technology = {

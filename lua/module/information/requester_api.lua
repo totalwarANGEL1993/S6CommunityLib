@@ -106,8 +106,8 @@ function DialogLanguageSelection(_PlayerID)
     end
     DialogSelectBox(
         PlayerID,
-        Localize(Lib.Requester.Shared.Text.ChooseLanguage.Title),
-        Localize(Lib.Requester.Shared.Text.ChooseLanguage.Text),
+        Localize(Lib.Requester.Text.ChooseLanguage.Title),
+        Localize(Lib.Requester.Text.ChooseLanguage.Text),
         Action,
         DisplayedList
     );
