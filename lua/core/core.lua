@@ -31,6 +31,7 @@ Lib.Require("core/feature/Core_Quest");
 Lib.Require("core/feature/Core_Player");
 
 Lib.Require("core/Core_Behavior");
+Lib.Require("core/Core_Text");
 Lib.Register("core/Core");
 
 ---@diagnostic disable: deprecated
@@ -421,6 +422,70 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.Core.Local:CloseGameIfNotPatched(_Version)
+    local Required = _Version;
+    local Current = g_UnofficialPatchVersion;
+    Required = (Required:find("^UP") == nil and "UP " ..Required) or Required;
+    Current = (Current:find("^UP") == nil and "UP " ..Current) or Current;
+
+    if not IsMultiplayer() then
+        -- Check patch version
+        local Title = Localize(Lib.Core.Text.PatchRequired.Title);
+        local Text = Localize(Lib.Core.Text.PatchRequired.Text);
+        if IsUnofficialPatch() then
+            local Pattern = "^([a-zA-Z]+) (%d+)%.(%d+)%.(%d+)";
+            local _, mj1,mo1,bf1, _ = string.match(Required, Pattern);
+            local _, mj2,mo2,bf2, _ = string.match(Current, Pattern);
+            if mj1 == nil or mo1 == nil or bf1 == nil then
+                error(false, "Malformed version number: %s", Required);
+                Framework.CloseGame();
+            end
+            Text = Localize(Lib.Core.Text.PatchVersionRequired.Text);
+            Text = Text:format(Required, "UP "..mj2.."."..mo2.."."..bf2);
+            if Required == "UP 0.0.0" then
+                return;
+            else
+                if tonumber(mj1) >= tonumber(mj2) then
+                    if tonumber(mo1) >= tonumber(mo2) then
+                        if tonumber(bf1) >= tonumber(bf2) then
+                            return;
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Kick player out of map
+        local PlayerID = GUI.GetPlayerID();
+        XGUIEng.ShowWidget("/InGame/Root/3dOnScreenDisplay", 0);
+        XGUIEng.ShowWidget("/InGame/Root/3dWorldView", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal", 1);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/TextMessages", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechStartAgainOrStop", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopRight", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/TopBar", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/TopBar/UpdateFunction", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/Buttons", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/QuestLogButton", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/QuestTimers", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/SubTitles", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/Selected_Merchant", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/MissionGoodOrEntityCounter", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/MissionTimer", 0);
+        OpenDialog(Text, "{center}" ..Title, false);
+        local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
+        Action = Action .. "; XGUIEng.PopPage()";
+        Action = Action .. "; Framework.CloseGame()";
+        XGUIEng.SetActionFunction(RequesterDialog_Ok, Action);
+        Game.GameTimeSetFactor(PlayerID, 0.0000001);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
 function API.SetLogLevel(_ScreenLogLevel, _FileLogLevel)
     -- Legacy support...
     -- This is just for lazy as fuck people who never change their scripts.
@@ -455,4 +520,14 @@ function ExecuteGlobal(_Command, ...)
     end
 end
 API.ExecuteGlobal = ExecuteGlobal;
+
+function SetUnofficialPatchRequired(_Version)
+    if not IsLocalScript() then
+        local Version = (_Version ~= nil and "\"" .._Version.. "\"") or "UP 0.0.0";
+        ExecuteLocal([[SetUnofficialPatchRequired(%s)]], Version);
+        return;
+    end
+    Lib.Core.Local:CloseGameIfNotPatched(_Version);
+end
+API.SetUnofficialPatchRequired = SetUnofficialPatchRequired;
 

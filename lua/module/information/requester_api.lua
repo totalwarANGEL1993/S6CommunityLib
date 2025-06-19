@@ -106,23 +106,11 @@ function DialogLanguageSelection(_PlayerID)
     end
     DialogSelectBox(
         PlayerID,
-        Localize(Lib.Requester.Shared.Text.ChooseLanguage.Title),
-        Localize(Lib.Requester.Shared.Text.ChooseLanguage.Text),
+        Localize(Lib.Requester.Text.ChooseLanguage.Title),
+        Localize(Lib.Requester.Text.ChooseLanguage.Text),
         Action,
         DisplayedList
     );
 end
 API.DialogLanguageSelection = DialogLanguageSelection;
-
-function SetUnofficialPatchRequired(_Version)
-    if not IsLocalScript() then
-        local Version = (_Version ~= nil and "\"" .._Version.. "\"") or "UP 0.0.0";
-        ExecuteLocal([[SetUnofficialPatchRequired(%s)]], Version);
-        return;
-    end
-    Lib.Requester.AquireContext();
-    this:CloseGameIfNotPatched(_Version);
-    Lib.Requester.ReleaseContext();
-end
-API.SetUnofficialPatchRequired = SetUnofficialPatchRequired;
 
