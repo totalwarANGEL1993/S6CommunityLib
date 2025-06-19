@@ -13,5 +13,12 @@ Lib.Requester.Text = {
             fr = "Le patch non officiel est requis pour jouer à cette mission.",
         },
     },
+    PatchVersionRequired = {
+        Text = {
+            de = "Es wird mindestens die Version \"%s\" benötigt aber es wurde nur Version \"%s\" gefunden.",
+            en = "The version \"%s\" is required to play this map but only version \"%s\" was found.",
+            fr = "Au moins la version \"%s\" est requise mais seule la version \"%s\" a été trouvée.",
+        },
+    },
 };
 

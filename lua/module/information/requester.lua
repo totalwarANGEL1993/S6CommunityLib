@@ -645,15 +645,44 @@ end
 -- -------------
 -- Enforce Patch
 
-function Lib.Requester.Local:CloseGameIfNotPatched()
-    if not IsMultiplayer() and not IsUnofficialPatch() then
+function Lib.Requester.Local:CloseGameIfNotPatched(_Version)
+    local Required = _Version;
+    local Current = g_UnofficialPatchVersion;
+    Required = (Required:find("^UP") == nil and "UP " ..Required) or Required;
+    Current = (Current:find("^UP") == nil and "UP " ..Current) or Current;
+
+    if not IsMultiplayer() then
+        -- Check patch version
+        local Title = Localize(Lib.Requester.Text.PatchRequired.Title);
+        local Text = Localize(Lib.Requester.Text.PatchRequired.Text);
+        if IsUnofficialPatch() then
+            local Pattern = "^([a-zA-Z]+) (%d+)%.(%d+)%.(%d+)";
+            local _, mj1,mo1,bf1, _ = string.match(Required, Pattern);
+            local _, mj2,mo2,bf2, _ = string.match(Current, Pattern);
+            if mj1 == nil or mo1 == nil or bf1 == nil then
+                error(false, "Malformed version number: %s", Required);
+                Framework.CloseGame();
+            end
+            Text = Localize(Lib.Requester.Text.PatchVersionRequired.Text);
+            Text = Text:format(Required, "UP "..mj2.."."..mo2.."."..bf2);
+            if Required == "UP 0.0.0" then
+                return;
+            else
+                if tonumber(mj1) >= tonumber(mj2) then
+                    if tonumber(mo1) >= tonumber(mo2) then
+                        if tonumber(bf1) >= tonumber(bf2) then
+                            return;
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Kick player out of map
         local PlayerID = GUI.GetPlayerID();
-        local Title = Lib.Requester.Text.PatchRequired.Title;
-        local Text = Lib.Requester.Text.PatchRequired.Text;
         local Action = function()
             Framework.CloseGame();
         end
-
         XGUIEng.ShowWidget("/InGame/Root/3dOnScreenDisplay", 0);
         XGUIEng.ShowWidget("/InGame/Root/3dWorldView", 0);
         XGUIEng.ShowWidget("/InGame/Root/Normal", 1);
@@ -672,7 +701,7 @@ function Lib.Requester.Local:CloseGameIfNotPatched()
         XGUIEng.ShowWidget("/InGame/Root/Normal/Selected_Merchant", 0);
         XGUIEng.ShowWidget("/InGame/Root/Normal/MissionGoodOrEntityCounter", 0);
         XGUIEng.ShowWidget("/InGame/Root/Normal/MissionTimer", 0);
-        self:OpenDialog(PlayerID, Localize(Title), Localize(Text), Action);
+        self:OpenDialog(PlayerID, Title, Text, Action);
         Game.GameTimeSetFactor(PlayerID, 0.0000001);
     end
 end

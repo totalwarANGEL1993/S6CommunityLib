@@ -36,49 +36,6 @@ Lib.Register("core/Core");
 ---@diagnostic disable: deprecated
 
 -- -------------------------------------------------------------------------- --
-
-function log(_Text, ...)
-    local Text = _Text;
-    if #arg > 0 then
-        Text = string.format(Text, unpack(arg));
-    end
-    Text = string.gsub(Text, "{cr}", "\n");
-    Framework.WriteToLog(Text);
-    return Text;
-end
-
-function warn(_Condition, _Text, ...)
-    if not _Condition then
-        local Color = "{@color:255,0,0,255}";
-        local Text = Color .. log(_Text, unpack(arg));
-        if GUI then
-            GUI.AddNote(Text);
-        else
-            Logic.DEBUG_AddNote(Text);
-        end
-        return Text;
-    end
-end
-
-function error(_Condition, _Text, ...)
-    if not _Condition then
-        local Text = log(_Text, unpack(arg));
-        return assert(false, Text);
-    end
-end
-
-function debug(_Condition, _Text, ...)
-    if not _Condition then
-        local Text = log(_Text, unpack(arg));
-        if GUI then
-            GUI.AddNote(Text);
-        else
-            Logic.DEBUG_AddNote(Text);
-        end
-    end
-end
-
--- -------------------------------------------------------------------------- --
 -- Global
 
 function Lib.Core.Global:Initialize()
@@ -466,6 +423,7 @@ end
 
 function API.SetLogLevel(_ScreenLogLevel, _FileLogLevel)
     -- Legacy support...
+    -- This is just for lazy as fuck people who never change their scripts.
     -- Log levels do not exist anymore.
 end
 API.SetLoggingLevel = API.SetLogLevel

@@ -116,7 +116,8 @@ API.DialogLanguageSelection = DialogLanguageSelection;
 --- Diese Funktion muss zu Spielbeginn aufgerufen werden! Ist der inoffizielle
 --- Patch nicht installiert, sieht der Spieler eine Information und wird ins 
 --- Hauptmenü zurück geschickt.
-function SetUnofficialPatchRequired()
+--- @param _Version? string Patch version (Beispiel: "UP 1.0.0")
+function SetUnofficialPatchRequired(_Version)
 end
 API.SetUnofficialPatchRequired = SetUnofficialPatchRequired;
 

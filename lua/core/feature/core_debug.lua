@@ -283,6 +283,49 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function log(_Text, ...)
+    local Text = _Text;
+    if #arg > 0 then
+        Text = string.format(Text, unpack(arg));
+    end
+    Text = string.gsub(Text, "{cr}", "\n");
+    Framework.WriteToLog(Text);
+    return Text;
+end
+
+function warn(_Condition, _Text, ...)
+    if not _Condition then
+        local Color = "{@color:255,0,0,255}";
+        local Text = Color .. log(_Text, unpack(arg));
+        if GUI then
+            GUI.AddNote(Text);
+        else
+            Logic.DEBUG_AddNote(Text);
+        end
+        return Text;
+    end
+end
+
+function error(_Condition, _Text, ...)
+    if not _Condition then
+        local Text = log(_Text, unpack(arg));
+        return assert(false, Text);
+    end
+end
+
+function debug(_Condition, _Text, ...)
+    if not _Condition then
+        local Text = log(_Text, unpack(arg));
+        if GUI then
+            GUI.AddNote(Text);
+        else
+            Logic.DEBUG_AddNote(Text);
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+
 function ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
     Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests);
 end
