@@ -24,7 +24,7 @@ Lib.Require("core/feature/Core_Debug");
 Lib.Require("core/feature/Core_LuaExtension");
 Lib.Require("core/feature/Core_Report");
 Lib.Require("core/feature/Core_ScriptingValue");
-Lib.Require("core/feature/Core_Text");
+Lib.Require("core/feature/Core_Placeholder");
 Lib.Require("core/feature/Core_Job");
 Lib.Require("core/feature/Core_Save");
 Lib.Require("core/feature/Core_Quest");
@@ -45,7 +45,7 @@ function Lib.Core.Global:Initialize()
         -- Init base features
         Lib.Core.LuaExtension:Initialize();
         Lib.Core.Report:Initialize();
-        Lib.Core.Text:Initialize();
+        Lib.Core.Placeholder:Initialize();
         Lib.Core.Job:Initialize();
         Lib.Core.ScriptingValue:Initialize();
         Lib.Core.Save:Initialize();
@@ -97,7 +97,7 @@ end
 function Lib.Core.Global:OnSaveGameLoaded()
     Lib.Core.LuaExtension:OnSaveGameLoaded();
     Lib.Core.Report:OnSaveGameLoaded();
-    Lib.Core.Text:OnSaveGameLoaded();
+    Lib.Core.Placeholder:OnSaveGameLoaded();
     Lib.Core.Job:OnSaveGameLoaded();
     Lib.Core.ScriptingValue:OnSaveGameLoaded();
     Lib.Core.Save:OnSaveGameLoaded();
@@ -137,7 +137,7 @@ function Lib.Core.Global:InitReportListener()
 
         Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Report:OnReportReceived(_ID, unpack(arg));
-        Lib.Core.Text:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Placeholder:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Job:OnReportReceived(_ID, unpack(arg));
         Lib.Core.ScriptingValue:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Save:OnReportReceived(_ID, unpack(arg));
@@ -219,7 +219,7 @@ function Lib.Core.Local:Initialize()
         -- Init base features
         Lib.Core.LuaExtension:Initialize();
         Lib.Core.Report:Initialize();
-        Lib.Core.Text:Initialize();
+        Lib.Core.Placeholder:Initialize();
         Lib.Core.Job:Initialize();
         Lib.Core.ScriptingValue:Initialize();
         Lib.Core.Save:Initialize();
@@ -269,7 +269,7 @@ end
 function Lib.Core.Local:OnSaveGameLoaded()
     Lib.Core.LuaExtension:OnSaveGameLoaded();
     Lib.Core.Report:OnSaveGameLoaded();
-    Lib.Core.Text:OnSaveGameLoaded();
+    Lib.Core.Placeholder:OnSaveGameLoaded();
     Lib.Core.Job:OnSaveGameLoaded();
     Lib.Core.ScriptingValue:OnSaveGameLoaded();
     Lib.Core.Save:OnSaveGameLoaded();
@@ -304,7 +304,7 @@ function Lib.Core.Local:InitReportListener()
         local arg = {...};
         Lib.Core.LuaExtension:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Report:OnReportReceived(_ID, unpack(arg));
-        Lib.Core.Text:OnReportReceived(_ID, unpack(arg));
+        Lib.Core.Placeholder:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Job:OnReportReceived(_ID, unpack(arg));
         Lib.Core.ScriptingValue:OnReportReceived(_ID, unpack(arg));
         Lib.Core.Save:OnReportReceived(_ID, unpack(arg));

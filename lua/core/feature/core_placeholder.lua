@@ -1,5 +1,5 @@
 Lib.Core = Lib.Core or {};
-Lib.Core.Text = {
+Lib.Core.Placeholder = {
     Languages = {
         {"de", "Deutsch", "en"},
         {"en", "English", "en"},
@@ -44,13 +44,14 @@ Lib.Core.Text = {
 
 CONST_LANGUAGE = "de";
 
+Lib.Require("comfort/HexToColorString");
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("core/feature/Core_Report");
-Lib.Register("core/feature/Core_Text");
+Lib.Register("core/feature/Core_Placeholder");
 
 -- -------------------------------------------------------------------------- --
 
-function Lib.Core.Text:Initialize()
+function Lib.Core.Placeholder:Initialize()
     Report.LanguageChanged = CreateReport("Event_LanguageChanged");
 
     self:DetectLanguage();
@@ -59,25 +60,25 @@ function Lib.Core.Text:Initialize()
     end
 end
 
-function Lib.Core.Text:OnSaveGameLoaded()
+function Lib.Core.Placeholder:OnSaveGameLoaded()
     if IsLocalScript() then
         self:OverwriteGetStringTableText();
     end
 end
 
-function Lib.Core.Text:OnReportReceived(_ID, ...)
+function Lib.Core.Placeholder:OnReportReceived(_ID, ...)
 end
 
 -- -------------------------------------------------------------------------- --
 
-function Lib.Core.Text:OverwriteGetStringTableText()
+function Lib.Core.Placeholder:OverwriteGetStringTableText()
     XGUIEng.GetStringTableText_Orig_Core = XGUIEng.GetStringTableText;
     XGUIEng.GetStringTableText = function(_key)
-        return Lib.Core.Text:GetStringTableOverwrite(_key)
+        return Lib.Core.Placeholder:GetStringTableOverwrite(_key)
     end
 end
 
-function Lib.Core.Text:AddStringTableOverwrite(_Key, _Text)
+function Lib.Core.Placeholder:AddStringTableOverwrite(_Key, _Text)
     local i = string.find(_Key, "/[^/]*$");
     local File = _Key:sub(1, i-1):lower();
     local Key = _Key:sub(i+1):lower();
@@ -85,7 +86,7 @@ function Lib.Core.Text:AddStringTableOverwrite(_Key, _Text)
     self.StringTables[File][Key] = _Text;
 end
 
-function Lib.Core.Text:DeleteStringTableOverwrite(_Key)
+function Lib.Core.Placeholder:DeleteStringTableOverwrite(_Key)
     local i = string.find(_Key, "/[^/]*$");
     local File = _Key:sub(1, i-1):lower();
     local Key = _Key:sub(i+1):lower();
@@ -93,7 +94,7 @@ function Lib.Core.Text:DeleteStringTableOverwrite(_Key)
     self.StringTables[File][Key] = nil;
 end
 
-function Lib.Core.Text:GetStringTableOverwrite(_Key)
+function Lib.Core.Placeholder:GetStringTableOverwrite(_Key)
     local i = string.find(_Key, "/[^/]*$");
     local File = _Key:sub(1, i-1):lower();
     local Key = _Key:sub(i+1):lower();
@@ -110,7 +111,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function Lib.Core.Text:DetectLanguage()
+function Lib.Core.Placeholder:DetectLanguage()
     local DefaultLanguage = Network.GetDesiredLanguage();
     if DefaultLanguage ~= "de" and DefaultLanguage ~= "fr" then
         DefaultLanguage = "en";
@@ -118,7 +119,7 @@ function Lib.Core.Text:DetectLanguage()
     CONST_LANGUAGE = DefaultLanguage;
 end
 
-function Lib.Core.Text:ChangeSystemLanguage(_PlayerID, _IsGuiPlayer, _Language)
+function Lib.Core.Placeholder:ChangeSystemLanguage(_PlayerID, _IsGuiPlayer, _Language)
     local OldLanguage = CONST_LANGUAGE;
     local NewLanguage = _Language;
 
@@ -130,7 +131,7 @@ function Lib.Core.Text:ChangeSystemLanguage(_PlayerID, _IsGuiPlayer, _Language)
     end
 end
 
-function Lib.Core.Text:Localize(_Text)
+function Lib.Core.Placeholder:Localize(_Text)
     local LocalizedText = "ERROR_NO_TEXT";
     if type(_Text) == "table" then
         if _Text[CONST_LANGUAGE] then
@@ -149,7 +150,7 @@ function Lib.Core.Text:Localize(_Text)
     return LocalizedText;
 end
 
-function Lib.Core.Text:ConvertPlaceholders(_Text)
+function Lib.Core.Placeholder:ConvertPlaceholders(_Text)
     if type(_Text) == "string" then
         while true do
             local Before, Placeholder, After, Replacement, s1, e1, s2, e2;
@@ -179,7 +180,7 @@ function Lib.Core.Text:ConvertPlaceholders(_Text)
     return _Text;
 end
 
-function Lib.Core.Text:SplicePlaceholderText(_Text, _Start)
+function Lib.Core.Placeholder:SplicePlaceholderText(_Text, _Start)
     local s1, e1      = _Text:find(_Start);
     local s2, e2      = _Text:find("}", e1);
     local Before      = _Text:sub(1, s1-1);
@@ -188,7 +189,7 @@ function Lib.Core.Text:SplicePlaceholderText(_Text, _Start)
     return Before, Placeholder, After, s1, e1, s2, e2;
 end
 
-function Lib.Core.Text:SpliceHexColors(_Text)
+function Lib.Core.Placeholder:SpliceHexColors(_Text)
     local hex3 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
     local hex4 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
     local hex6 = "#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
@@ -205,7 +206,7 @@ function Lib.Core.Text:SpliceHexColors(_Text)
     return Before, Placeholder, After, s, s, e, e;
 end
 
-function Lib.Core.Text:ReplaceColorPlaceholders(_Text)
+function Lib.Core.Placeholder:ReplaceColorPlaceholders(_Text)
     for k, v in pairs(self.Colors) do
         local Color = (v:find("color") and v) or HexToColorString(v);
         _Text = _Text:gsub("{" ..k.. "}", Color);
@@ -213,7 +214,7 @@ function Lib.Core.Text:ReplaceColorPlaceholders(_Text)
     return _Text;
 end
 
-function Lib.Core.Text:ReplaceValuePlaceholder(_Text)
+function Lib.Core.Placeholder:ReplaceValuePlaceholder(_Text)
     local Ref = _G;
     local Slice = string.slice(_Text, "%.");
     for i= 1, #Slice do
@@ -232,7 +233,7 @@ end
 
 -- -------------------------------------------------------------------------- --
 
-function Lib.Core.Text:GetAmountOfLines(_Text, _LineLength)
+function Lib.Core.Placeholder:GetAmountOfLines(_Text, _LineLength)
     local Lines = 0;
     if type(_Text) == "string" then
         local Text,cr = string.gsub(_Text, "{cr}", " ###CR### ");
@@ -263,7 +264,7 @@ function Lib.Core.Text:GetAmountOfLines(_Text, _LineLength)
     return Lines;
 end
 
-function Lib.Core.Text:GetLetterSize(_Byte)
+function Lib.Core.Placeholder:GetLetterSize(_Byte)
     for Size, Letters in pairs(self.Letters) do
         if string.find(Letters, _Byte, nil, true) then
             return Size;
@@ -275,12 +276,12 @@ end
 -- -------------------------------------------------------------------------- --
 
 function Localize(_Text)
-    return Lib.Core.Text:Localize(_Text);
+    return Lib.Core.Placeholder:Localize(_Text);
 end
 API.Localize = Localize;
 
 function ConvertPlaceholders(_Text)
-    return Lib.Core.Text:ConvertPlaceholders(_Text);
+    return Lib.Core.Placeholder:ConvertPlaceholders(_Text);
 end
 API.ConvertPlaceholders = ConvertPlaceholders;
 
@@ -337,7 +338,7 @@ function AddNamePlaceholder(_Name, _Replacement)
         type(_Replacement) ~= "function" and type(_Replacement) ~= "thread",
         "Only strings, numbers, or tables are allowed!"
     );
-    Lib.Core.Text.Placeholders.Names[_Name] = _Replacement;
+    Lib.Core.Placeholder.Placeholders.Names[_Name] = _Replacement;
 end
 API.AddNamePlaceholder = AddNamePlaceholder;
 
@@ -346,25 +347,25 @@ function AddEntityTypePlaceholder(_Type, _Replacement)
         Entities[_Type] == nil,
         "EntityType does not exist!"
     );
-    Lib.Core.Text.Placeholders.EntityTypes[_Type] = _Replacement;
+    Lib.Core.Placeholder.Placeholders.EntityTypes[_Type] = _Replacement;
 end
 API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
 
 function AddStringText(_Key, _Text)
     assert(IsLocalScript(), "Text can only be set in local script!");
-    Lib.Core.Text:AddStringTableOverwrite(_Key, _Text)
+    Lib.Core.Placeholder:AddStringTableOverwrite(_Key, _Text)
 end
 API.AddStringText = AddStringText;
 
 function DeleteStringText(_Key)
     assert(IsLocalScript(), "Text can only be removed in local script!");
-    Lib.Core.Text:DeleteStringTableOverwrite(_Key);
+    Lib.Core.Placeholder:DeleteStringTableOverwrite(_Key);
 end
 API.DeleteStringText = DeleteStringText;
 
 function GetStringText(_Key)
     assert(IsLocalScript(), "Text can only be retrieved in local script!");
-    return Lib.Core.Text:GetStringTableOverwrite(_Key)
+    return Lib.Core.Placeholder:GetStringTableOverwrite(_Key)
 end
 API.GetStringText = GetStringText;
 
@@ -372,15 +373,15 @@ function DefineLanguage(_Shortcut, _Name, _Fallback, _Index)
     assert(type(_Shortcut) == "string");
     assert(type(_Name) == "string");
     assert(type(_Fallback) == "string");
-    for k, v in pairs(Lib.Core.Text.Languages) do
+    for k, v in pairs(Lib.Core.Placeholder.Languages) do
         if v[1] == _Shortcut then
             return;
         end
     end
-    _Index = _Index or #Lib.Core.Text.Languages +1
-    table.insert(Lib.Core.Text.Languages, _Index, {_Shortcut, _Name, _Fallback});
+    _Index = _Index or #Lib.Core.Placeholder.Languages +1
+    table.insert(Lib.Core.Placeholder.Languages, _Index, {_Shortcut, _Name, _Fallback});
     ExecuteLocal([[
-        table.insert(Lib.Core.Text.Languages, %d, {"%s", "%s", "%s"})
+        table.insert(Lib.Core.Placeholder.Languages, %d, {"%s", "%s", "%s"})
     ]], _Index, _Shortcut, _Name, _Fallback);
 end
 API.DefineLanguage = DefineLanguage;
@@ -389,7 +390,7 @@ function CountTextLines(_Text, _LineLength)
     assert(type(_Text) == "string");
     assert(type(_LineLength) == "number");
     assert(_LineLength > 0);
-    return Lib.Core.Text:GetAmountOfLines(_Text, _LineLength);
+    return Lib.Core.Placeholder:GetAmountOfLines(_Text, _LineLength);
 end
 API.CountTextLines = CountTextLines;
 
