@@ -1,24 +1,17 @@
 Lib.Register("module/information/Requester_Text");
 
 Lib.Requester.Text = {
-    PatchRequired = {
+    ChooseLanguage = {
         Title = {
-            de = "Inoffizieller Patch",
-            en = "Unofficial Patch",
-            fr = "Patch non officiel",
+            de = "Wählt die Sprache",
+            en = "Chose your Tongue",
+            fr = "Sélectionnez la langue",
         },
         Text = {
-            de = "Um diese Mission zu spielen wird der inoffizielle Patch benötigt.",
-            en = "Playing this mission requires the unofficial Patch.",
-            fr = "Le patch non officiel est requis pour jouer à cette mission.",
-        },
-    },
-    PatchVersionRequired = {
-        Text = {
-            de = "Es wird mindestens die Version \"%s\" benötigt aber es wurde nur Version \"%s\" gefunden.",
-            en = "The version \"%s\" is required to play this map but only version \"%s\" was found.",
-            fr = "Au moins la version \"%s\" est requise mais seule la version \"%s\" a été trouvée.",
-        },
-    },
+            de = "Wählt aus der Liste die Sprache aus, in die Handlungstexte übersetzt werden sollen.",
+            en = "Choose from the list below which language story texts shall be presented to you.",
+            fr = "Sélectionne dans la liste la langue dans laquelle les textes narratifs doivent être traduits.",
+        }
+    }
 };
 

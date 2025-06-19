@@ -15,22 +15,6 @@ Lib.Requester.Local = {
         Queue = {},
     },
 };
-Lib.Requester.Shared = {
-    Text = {
-        ChooseLanguage = {
-            Title = {
-                de = "Wählt die Sprache",
-                en = "Chose your Tongue",
-                fr = "Sélectionnez la langue",
-            },
-            Text = {
-                de = "Wählt aus der Liste die Sprache aus, in die Handlungstexte übersetzt werden sollen.",
-                en = "Choose from the list below which language story texts shall be presented to you.",
-                fr = "Sélectionne dans la liste la langue dans laquelle les textes narratifs doivent être traduits.",
-            }
-        }
-    },
-};
 
 Lib.Require("core/core");
 Lib.Require("module/ui/UITools");
@@ -67,7 +51,7 @@ function Lib.Requester.Global:OnReportReceived(_ID, ...)
         g_GoalDecideDialogDisplayed = false;
         g_DecisionWindowResult = arg[3] == true;
     elseif _ID == Report.LanguageSelectionClosed then
-        Lib.Core.Text:ChangeSystemLanguage(arg[1], arg[2], arg[3]);
+        Lib.Core.Placeholder:ChangeSystemLanguage(arg[1], arg[2], arg[3]);
     end
 end
 
@@ -190,8 +174,8 @@ function Lib.Requester.Local:OpenDialog(_PlayerID, _Title, _Text, _Action)
         assert(type(_Text) == "string");
 
 
-        _Title = "{center}" .. Lib.Core.Text:ConvertPlaceholders(_Title);
-        _Text  = Lib.Core.Text:ConvertPlaceholders(_Text);
+        _Title = "{center}" .. Lib.Core.Placeholder:ConvertPlaceholders(_Title);
+        _Text  = Lib.Core.Placeholder:ConvertPlaceholders(_Text);
         if string.len(_Text) < 35 then
             _Text = _Text .. "{cr}";
         end
@@ -330,6 +314,7 @@ function Lib.Requester.Local:DialogOverwriteOriginal()
         if XGUIEng.IsWidgetShown(RequesterDialog) == 0 then
             local Action = "XGUIEng.ShowWidget(RequesterDialog, 0)";
             Action = Action .. "; XGUIEng.PopPage()";
+            XGUIEng.SetActionFunction(RequesterDialog_Ok, Action);
             Lib.Requester.Local.Orig_OpenDialog(_Message, _Title, _IsMPError);
         end
     end
@@ -639,70 +624,6 @@ function Lib.Requester.Local:ResumeSaveGame()
             Lib.Core.Save:DisableSaving(false);
             self.SavingDisabled = nil;
         end
-    end
-end
-
--- -------------
--- Enforce Patch
-
-function Lib.Requester.Local:CloseGameIfNotPatched(_Version)
-    local Required = _Version;
-    local Current = g_UnofficialPatchVersion;
-    Required = (Required:find("^UP") == nil and "UP " ..Required) or Required;
-    Current = (Current:find("^UP") == nil and "UP " ..Current) or Current;
-
-    if not IsMultiplayer() then
-        -- Check patch version
-        local Title = Localize(Lib.Requester.Text.PatchRequired.Title);
-        local Text = Localize(Lib.Requester.Text.PatchRequired.Text);
-        if IsUnofficialPatch() then
-            local Pattern = "^([a-zA-Z]+) (%d+)%.(%d+)%.(%d+)";
-            local _, mj1,mo1,bf1, _ = string.match(Required, Pattern);
-            local _, mj2,mo2,bf2, _ = string.match(Current, Pattern);
-            if mj1 == nil or mo1 == nil or bf1 == nil then
-                error(false, "Malformed version number: %s", Required);
-                Framework.CloseGame();
-            end
-            Text = Localize(Lib.Requester.Text.PatchVersionRequired.Text);
-            Text = Text:format(Required, "UP "..mj2.."."..mo2.."."..bf2);
-            if Required == "UP 0.0.0" then
-                return;
-            else
-                if tonumber(mj1) >= tonumber(mj2) then
-                    if tonumber(mo1) >= tonumber(mo2) then
-                        if tonumber(bf1) >= tonumber(bf2) then
-                            return;
-                        end
-                    end
-                end
-            end
-        end
-
-        -- Kick player out of map
-        local PlayerID = GUI.GetPlayerID();
-        local Action = function()
-            Framework.CloseGame();
-        end
-        XGUIEng.ShowWidget("/InGame/Root/3dOnScreenDisplay", 0);
-        XGUIEng.ShowWidget("/InGame/Root/3dWorldView", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal", 1);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/TextMessages", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechStartAgainOrStop", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomRight", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopRight", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/TopBar", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/TopBar/UpdateFunction", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/Buttons", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/QuestLogButton", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignTopLeft/QuestTimers", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/SubTitles", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/Selected_Merchant", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/MissionGoodOrEntityCounter", 0);
-        XGUIEng.ShowWidget("/InGame/Root/Normal/MissionTimer", 0);
-        self:OpenDialog(PlayerID, Title, Text, Action);
-        Game.GameTimeSetFactor(PlayerID, 0.0000001);
     end
 end
 
