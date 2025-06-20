@@ -82,7 +82,3 @@ function RegisterBehavior(_Behavior)
     table.insert(g_QuestBehaviorTypes, _Behavior);
 end
 
-if not MapEditor and GUI then
-    return;
-end
-
