@@ -1,5 +1,6 @@
 Lib.Register("module/information/Requester_Text");
 
+Lib.Requester = Lib.Requester or {};
 Lib.Requester.Text = {
     ChooseLanguage = {
         Title = {
