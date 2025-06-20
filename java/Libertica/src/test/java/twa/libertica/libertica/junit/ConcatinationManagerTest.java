@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConcatinationManagerTest {
@@ -28,11 +27,11 @@ public class ConcatinationManagerTest {
 
         concatinationManager.saveSingleFile(
             canonicalNameList,
-            new File("../../var/single"),
+            new File("var/single"),
             "questsystembehavior.lua"
         );
 
-        assertTrue(new File("../../var/single/questsystembehavior.lua").exists());
+        assertTrue(new File("var/single/questsystembehavior.lua").exists());
     }
     @Test
     public void testSaveLibrary() throws Exception {
@@ -49,9 +48,9 @@ public class ConcatinationManagerTest {
 
         concatinationManager.saveLibrary(
             canonicalNameList,
-            new File("../../var/library")
+            new File("var/library")
         );
 
-        assertTrue(new File("../../var/library/librarian.lua").exists());
+        assertTrue(new File("var/library/librarian.lua").exists());
     }
 }

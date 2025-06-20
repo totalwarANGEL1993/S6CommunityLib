@@ -60,13 +60,13 @@ public class ConcatinationManager {
             Files.deleteIfExists(location);
             Files.write(location, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
             // Save global script
-            content = loadFile("mapscript.lua");
+            content = loadFile("mapscript.lua", config.getConfig().getLuaSourcePathSf());
             location = Paths.get(destination.getAbsolutePath(), "mapscript.lua");
             location.toFile().mkdirs();
             Files.deleteIfExists(location);
             Files.write(location, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
             // Save local script
-            content = loadFile("localmapscript.lua");
+            content = loadFile("localmapscript.lua", config.getConfig().getLuaSourcePathSf());
             location = Paths.get(destination.getAbsolutePath(), "localmapscript.lua");
             location.toFile().mkdirs();
             Files.deleteIfExists(location);
@@ -118,10 +118,13 @@ public class ConcatinationManager {
     }
 
     private String loadFile(String path) {
+        return loadFile(path, config.getConfig().getLuaSourcePath());
+    }
+
+    private String loadFile(String path, String source) {
         String content = null;
         try {
-            String luaPath = config.getConfig().getLuaSourcePath();
-            byte[] bytes = Files.readAllBytes(Paths.get(luaPath, path));
+            byte[] bytes = Files.readAllBytes(Paths.get(source, path));
             content = new String(bytes, StandardCharsets.UTF_8);
         }
         catch (IOException e) {

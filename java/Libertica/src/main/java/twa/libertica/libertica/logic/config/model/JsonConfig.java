@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class JsonConfig {
     private String LuaSourcePath;
+    private String LuaSourcePathSf;
     private String ConfigPath;
     private String comfortRoot;
     private String coreRoot;
@@ -21,6 +22,14 @@ public class JsonConfig {
 
     public void setLuaSourcePath(String luaSourcePath) {
         LuaSourcePath = luaSourcePath;
+    }
+
+    public String getLuaSourcePathSf() {
+        return LuaSourcePathSf;
+    }
+
+    public void setLuaSourcePathSf(String luaSourcePathSf) {
+        LuaSourcePathSf = luaSourcePathSf;
     }
 
     public String getComfortRoot() {

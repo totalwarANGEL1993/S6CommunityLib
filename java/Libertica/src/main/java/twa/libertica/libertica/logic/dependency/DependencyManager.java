@@ -60,7 +60,8 @@ public class DependencyManager {
         for (String canonicalName : canonicalNameList) {
             final Module module = getModuleByCanonicalName(canonicalName);
             if (null != module) {
-                for (Module dependency : getModuleAncestry(module)) {
+                final List<Module> ancestryList = getModuleAncestry(module);
+                for (Module dependency : ancestryList) {
                     if (!moduleList.contains(dependency)) {
                         moduleList.add(dependency);
                     }
@@ -70,10 +71,6 @@ public class DependencyManager {
                 }
             }
         }
-        // Sort list
-        moduleList.sort(Comparator
-            .comparingInt((ToIntFunction<Module>) v -> v.getCanonicalName().split("/").length)
-            .thenComparing(Module::getCanonicalName));
 
         // Set module/QSB first
         Module moduleQsb = moduleList

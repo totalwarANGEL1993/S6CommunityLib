@@ -245,7 +245,6 @@ function LibWriter:ReadFilesLoop()
             Paths[i] = {};
             ---@diagnostic disable-next-line: param-type-mismatch
             self:ReadFileAndDependencies(self.ComponentList[i], Paths[i]);
-            table.insert(Paths[i], self.ComponentList[i]:lower());
         end
     end
     for i= 1, #Paths do
@@ -268,13 +267,18 @@ end
 function LibWriter:ReadFileAndDependencies(_Path, _Paths)
     local Paths = {};
     if not self.FileReadLookup[_Path:lower()] then
+        table.insert(Paths, _Path);
         for line in io.lines("lua/" .._Path:lower() .. ".lua") do
             if line:find("Lib%.Register%(") then
                 break;
             end
             local s,e = line:find("Lib%.Require%(\".*\"");
             if s and s > 0 then
-                table.insert(Paths, 1, line:sub(s+13, e-1):lower());
+                if line:find("comfort/") then
+                    table.insert(Paths, 1, line:sub(s+13, e-1):lower());
+                else
+                    table.insert(Paths, line:sub(s+13, e-1):lower());
+                end
             end
         end
         self.FileReadLookup[_Path:lower()] = true;

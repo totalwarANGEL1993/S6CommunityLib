@@ -38,6 +38,7 @@ public class ConfigurationManager {
             JsonConfig config = new JsonConfig();
             config.setConfigPath(Paths.get(path).toFile().getAbsolutePath());
             config.setLuaSourcePath(jsonObject.getString("LuaSourcePath"));
+            config.setLuaSourcePathSf(jsonObject.getString("LuaSourcePathSf"));
             config.setComfortRoot(jsonObject.getString("ComfortRoot"));
             config.setCoreRoot(jsonObject.getString("CoreRoot"));
             config.setModuleRoot(jsonObject.getString("ModuleRoot"));
