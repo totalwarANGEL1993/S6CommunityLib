@@ -72,10 +72,10 @@ function LibWriter:Run(...)
             self:CreateQsb();
         end
     elseif Action == 2 then
-        print("Files loaded:");
         local Files = self:ReadFilesLoop();
+        print("Files loaded (" ..(#Files).. "):");
         for i= 1, #Files do
-            print("> " ..Files[i]:lower());
+            print("> (" ..i.. ") " ..Files[i]:lower());
         end
     end
 end
@@ -236,57 +236,53 @@ function LibWriter:ConcatBehaviors(_SingleFile)
     return behaviors;
 end
 
---- Reads all dependencies from all active modules and saves them
---- into the component
 function LibWriter:ReadFilesLoop()
-    local Paths = {Result = {}};
+    local TreeList = {};
     for i= 1, #self.ComponentList, 1 do
         if self.ComponentList[i]:len() > 0 then
-            Paths[i] = {};
-            ---@diagnostic disable-next-line: param-type-mismatch
-            self:ReadFileAndDependencies(self.ComponentList[i], Paths[i]);
+            self:CreateDependencyTree(self.ComponentList[i], TreeList);
         end
     end
-    for i= 1, #Paths do
-        if Paths[i] then
-            for j= 1, #Paths[i] do
-                if not self:InTable(Paths[i][j], Paths.Result) then
-                    table.insert(Paths.Result, Paths[i][j]);
-                end
-            end
+
+    local Tree = {"core/qsb", TreeList};
+    local NameList = {};
+    self:FlattenDependencyTree(Tree, NameList);
+    for i= #NameList, 1, -1 do
+        if NameList[i] == "core/qsb" then
+            table.remove(NameList, i);
         end
     end
-    return Paths.Result;
+    table.insert(NameList, 1, "core/qsb");
+    return NameList;
 end
 
---- Recursivly searches for the dependencies of the passed file and
---- writes them all into the passed array.
---- Each entry is only added once.
---- @param _Path string Path of file
---- @param _Paths table Dependency array
-function LibWriter:ReadFileAndDependencies(_Path, _Paths)
-    local Paths = {};
-    if not self.FileReadLookup[_Path:lower()] then
-        table.insert(Paths, _Path);
-        for line in io.lines("lua/" .._Path:lower() .. ".lua") do
+function LibWriter:FlattenDependencyTree(_Tree, _NameList)
+    for i= 1, #_Tree[2] do
+        self:FlattenDependencyTree(_Tree[2][i], _NameList);
+    end
+    if not self:InTable(_Tree[1]:lower(), _NameList) then
+        table.insert(_NameList, _Tree[1]:lower());
+    end
+end
+
+function LibWriter:CreateDependencyTree(_Name, _TreeList)
+    local Entry = {_Name, {}};
+    if not self.FileReadLookup[_Name:lower()] then
+        self.FileReadLookup[_Name:lower()] = true;
+        for line in io.lines("lua/" .._Name:lower().. ".lua") do
             if line:find("Lib%.Register%(") then
                 break;
             end
             local s,e = line:find("Lib%.Require%(\".*\"");
             if s and s > 0 then
-                if line:find("comfort/") then
-                    table.insert(Paths, 1, line:sub(s+13, e-1):lower());
-                else
-                    table.insert(Paths, line:sub(s+13, e-1):lower());
-                end
+                table.insert(Entry[2], {line:sub(s+13, e-1):lower(), {}});
             end
         end
-        self.FileReadLookup[_Path:lower()] = true;
     end
-    for i= 1, #Paths do
-        self:ReadFileAndDependencies(Paths[i], _Paths);
-        table.insert(_Paths, Paths[i]);
+    for i= 1, #Entry[2] do
+        self:CreateDependencyTree(Entry[2][i][1], _TreeList);
     end
+    table.insert(_TreeList, Entry);
 end
 
 function LibWriter:InTable(_Entry, _Table)

@@ -1,6 +1,6 @@
-Lib.Require("comfort/GetLinePosition");
+Lib.Require("comfort/GetCirclePosition");
 Lib.Require("comfort/Round");
-Lib.Register("comfort/GetLinePositions");
+Lib.Register("comfort/GetCirclePositions");
 
 function GetCirclePositions(_Target, _Distance, _Periode, _Offset)
     local Periode = Round(360 / _Periode);
