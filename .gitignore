@@ -1,12 +1,4 @@
-java
-
 bin/*.exe
 release/
 var/
 .*.min.lua
-
-java/Libertica/.idea
-java/Libertica/Libertica.iml
-java/Libertica/logs/*
-java/Libertica/target
-java/Libertica/var/*
