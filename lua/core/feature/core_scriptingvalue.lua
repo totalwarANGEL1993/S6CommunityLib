@@ -267,3 +267,8 @@ function ConvertFloatToInteger(_Value)
 end
 API.ConvertFloatToInteger = ConvertFloatToInteger;
 
+-- Legacy support
+function API.GetGroupLeader(_Entity)
+    return Logic.SoldierGetLeaderEntityID(GetID(_Entity));
+end
+

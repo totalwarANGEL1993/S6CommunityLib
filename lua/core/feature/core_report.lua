@@ -283,3 +283,6 @@ end
 API.RemoveScriptEventListener = RemoveReportReceiver;
 API.RemoveReportReceiver = RemoveReportReceiver;
 
+-- Legacy support
+function API.SendScriptCommand() end
+function API.RegisterScriptCommand() end

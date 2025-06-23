@@ -22,6 +22,8 @@ Lib.Promotion.Helper.OverwritePromotionHelper = function()
     DoesNeededNumberOfSettlersForKnightTitleExist = Lib.Promotion.Helper.DoesNeededNumberOfSettlersForKnightTitleExist;
     CanKnightBePromoted = Lib.Promotion.Helper.CanKnightBePromoted;
     VictroryBecauseOfTitle = Lib.Promotion.Helper.VictroryBecauseOfTitle;
+    -- Legacy support
+    API.CanKnightBePromoted = Lib.Promotion.Helper.CanKnightBePromoted;
 end
 
 Lib.Promotion.Helper.DoesNeededNumberOfEntitiesInCategoryForKnightTitleExist = function(_PlayerID, _KnightTitle, _i)

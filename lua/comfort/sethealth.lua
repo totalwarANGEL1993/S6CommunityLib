@@ -21,3 +21,5 @@ end
 API.ChangeEntityHealth = SetHealth;
 API.SetHealth = SetHealth;
 
+function API.GroupHeal() end
+function API.GroupHurt() end
