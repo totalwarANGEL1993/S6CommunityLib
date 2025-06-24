@@ -576,6 +576,33 @@ function CreateTestBackgroundDialogQuest()
     }
 end
 
+-- > CreateLegacyQuestDialogTest()
+function CreateLegacyQuestDialogTest()
+    SetupQuest {
+        Name        = "TestNpcQuest11",
+        Success     = "Dialog starts soon.",
+        Goal_InstantSuccess(),
+        Trigger_Time(Logic.GetTime() + 10),
+    }
+
+    API.CreateQuestDialog{
+        Name = "TestDialogName",
+        Ancestor = "TestNpcQuest11",
+        Delay = 5,
+
+        {"Hallo, wie geht es dir?", 4, 1, 8},
+        {"Mir geht es gut, wie immer!", 1, 1, 8},
+        {"Das ist doch schön.", 4, 1, 8},
+    };
+
+    SetupQuest {
+        Name        = "TestNpcQuest12",
+        Success     = "Dialog has ended",
+        Goal_InstantSuccess(),
+        Trigger_Dialog("TestDialogName", 1, 0),
+    }
+end
+
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()

@@ -169,6 +169,11 @@ function Lib.DialogSystem.Global:CreateDialogProperties(_Dialog)
         return _self;
     end
 
+    _Dialog.SetBackground = function(_self, _Background)
+        _self.Background = _Background == true;
+        return _self;
+    end
+
     _Dialog.SetOnBegin = function(_self, _OnBegin)
         _self.Starting = _OnBegin;
         return _self;
@@ -314,6 +319,9 @@ function Lib.DialogSystem.Global:CreateDialogAddPage(_Dialog)
         end
 
         Page.BeginChoice = function(_Page)
+            if Dialog.Background then
+                assert(false, "Can't use multiple choice in background dialog!");
+            end
             _Page.MC = {};
             _Page.AutoSkip = false;
 
@@ -647,13 +655,14 @@ function Lib.DialogSystem.Local:StartDialog(_PlayerID, _DialogName, _Dialog)
         Speed     = SpeedFactor,
     };
 
-    DeactivateNormalInterface(_PlayerID);
-    DeactivateBorderScroll(_PlayerID);
-
+    if not _Dialog.Background then
+        DeactivateNormalInterface(_PlayerID);
+        DeactivateBorderScroll(_PlayerID);
+    end
+    self:ActivateCinematicMode(_PlayerID);
     if not Framework.IsNetworkGame() then
         Game.GameTimeSetFactor(_PlayerID, 1);
     end
-    self:ActivateCinematicMode(_PlayerID);
 end
 
 function Lib.DialogSystem.Local:EndDialog(_PlayerID, _DialogName, _Dialog)
@@ -665,15 +674,20 @@ function Lib.DialogSystem.Local:EndDialog(_PlayerID, _DialogName, _Dialog)
         Game.GameTimeSetFactor(_PlayerID, self.Dialog[_PlayerID].Backup.Speed);
     end
     if self.Dialog[_PlayerID].RestoreCamera then
-        Camera.RTS_SetLookAtPosition(self.Dialog[_PlayerID].Backup.Camera[1], self.Dialog[_PlayerID].Backup.Camera[2]);
-        Camera.RTS_SetRotationAngle(self.Dialog[_PlayerID].Backup.Camera[3]);
-        Camera.RTS_SetZoomFactor(self.Dialog[_PlayerID].Backup.Camera[4]);
+        if self.Dialog[_PlayerID].Background then
+            local Cam = self.Dialog[_PlayerID].Backup.Camera;
+            Camera.RTS_SetLookAtPosition(Cam[1], Cam[2]);
+            Camera.RTS_SetRotationAngle(Cam[3]);
+            Camera.RTS_SetZoomFactor(Cam[4]);
+        end
     end
     StopVoice("DialogSpeech");
 
     self:DeactivateCinematicMode(_PlayerID);
-    ActivateNormalInterface(_PlayerID);
-    ActivateBorderScroll(_PlayerID);
+    if not _Dialog.Background then
+        ActivateNormalInterface(_PlayerID);
+        ActivateBorderScroll(_PlayerID);
+    end
     Lib.UITools.Widget:UpdateHiddenWidgets();
 
     self.Dialog[_PlayerID] = nil;
@@ -706,21 +720,20 @@ function Lib.DialogSystem.Local:DisplayPagePosition(_PlayerID, _PageID)
     local Page = self.Dialog[_PlayerID][_PageID];
     -- Camera
     Camera.RTS_FollowEntity(0);
-    if Page.Position then
-        local Position = Page.Position;
-        if type(Position) ~= "table" then
-            Position = GetPosition(Page.Position);
+    if Page.Target or Page.Position then
+        if Page.Position then
+            local Position = Page.Position;
+            if type(Position) ~= "table" then
+                Position = GetPosition(Page.Position);
+            end
+            Camera.RTS_SetLookAtPosition(Position.X, Position.Y);
+        elseif Page.Target then
+            Camera.RTS_FollowEntity(GetID(Page.Target));
         end
-        Camera.RTS_SetLookAtPosition(Position.X, Position.Y);
-    elseif Page.Target then
-        Camera.RTS_FollowEntity(GetID(Page.Target));
-    else
-        assert(false);
+        Camera.RTS_SetRotationAngle(Page.Rotation);
+        Camera.RTS_SetZoomFactor(Page.Distance / 18000);
+        Camera.RTS_SetZoomAngle(Page.Angle);
     end
-    Camera.RTS_SetRotationAngle(Page.Rotation);
-    Camera.RTS_SetZoomFactor(Page.Distance / 18000);
-    -- FIXME: This does not work?
-    Camera.RTS_SetZoomAngle(Page.Angle);
 end
 
 function Lib.DialogSystem.Local:DisplayPageFader(_PlayerID, _PageID)
@@ -1034,51 +1047,52 @@ function Lib.DialogSystem.Local:ActivateCinematicMode(_PlayerID)
         XGUIEng.PopPage();
     end
 
-    -- Show throneroom updater
-    XGUIEng.ShowWidget("/InGame/ThroneRoom", 1);
-    XGUIEng.PushPage("/InGame/ThroneRoom/Main", false);
-    XGUIEng.ShowWidget("/InGame/ThroneRoomBars", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoomBars_Dodge", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoom/KnightInfo", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoom/Main", 1);
-    XGUIEng.ShowAllSubWidgets("/InGame/ThroneRoom/Main", 0);
-    XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/updater", 1);
+    if not self.Dialog[_PlayerID].Background then
+        -- Show throneroom updater
+        XGUIEng.ShowWidget("/InGame/ThroneRoom", 1);
+        XGUIEng.PushPage("/InGame/ThroneRoom/Main", false);
+        XGUIEng.ShowWidget("/InGame/ThroneRoomBars", 0);
+        XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2", 0);
+        XGUIEng.ShowWidget("/InGame/ThroneRoomBars_Dodge", 0);
+        XGUIEng.ShowWidget("/InGame/ThroneRoomBars_2_Dodge", 0);
+        XGUIEng.ShowWidget("/InGame/ThroneRoom/KnightInfo", 0);
+        XGUIEng.ShowWidget("/InGame/ThroneRoom/Main", 1);
+        XGUIEng.ShowAllSubWidgets("/InGame/ThroneRoom/Main", 0);
+        XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/updater", 1);
+        XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionDialog/Text", " ");
+        XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionDialog/Title", " ");
+        XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionDialog/Objectives", " ");
 
-    -- Show message stuff
-    XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechStartAgainOrStop", 0);
-    XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechButtons/SpeechStartAgainOrStop", 0);
-    XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/Update", 0);
-    XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/SubTitles/Update", 0);
-    XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionDialog/Text", " ");
-    XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionDialog/Title", " ");
-    XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionDialog/Objectives", " ");
+        -- Show message stuff
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechStartAgainOrStop", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/SpeechButtons/SpeechStartAgainOrStop", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/Update", 0);
+        XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/SubTitles/Update", 0);
+        if self.Dialog[_PlayerID].HideNotes then
+            XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 0);
+        end
 
-    if self.Dialog[_PlayerID].HideNotes then
-        XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 0);
+        -- Change ui state for cinematic
+        self.SelectionBackup = {GUI.GetSelectedEntities()};
+        GUI.ClearSelection();
+        GUI.ClearNotes();
+        GUI.ForbidContextSensitiveCommandsInSelectionState();
+        GUI.ActivateCutSceneState();
+        GUI.SetFeedbackSoundOutputState(0);
+        GUI.EnableBattleSignals(false);
+        Input.CutsceneMode();
+        if not self.Dialog[_PlayerID].EnableFoW then
+            Display.SetRenderFogOfWar(0);
+        end
+        if self.Dialog[_PlayerID].EnableSky then
+            Display.SetRenderSky(1);
+        end
+        if not self.Dialog[_PlayerID].EnableBorderPins then
+            Display.SetRenderBorderPins(0);
+        end
+        Display.SetUserOptionOcclusionEffect(0);
+        Camera.SwitchCameraBehaviour(0);
     end
-
-    -- Change ui state for cinematic
-    self.SelectionBackup = {GUI.GetSelectedEntities()};
-    GUI.ClearSelection();
-    GUI.ClearNotes();
-    GUI.ForbidContextSensitiveCommandsInSelectionState();
-    GUI.ActivateCutSceneState();
-    GUI.SetFeedbackSoundOutputState(0);
-    GUI.EnableBattleSignals(false);
-    Input.CutsceneMode();
-    if not self.Dialog[_PlayerID].EnableFoW then
-        Display.SetRenderFogOfWar(0);
-    end
-    if self.Dialog[_PlayerID].EnableSky then
-        Display.SetRenderSky(1);
-    end
-    if not self.Dialog[_PlayerID].EnableBorderPins then
-        Display.SetRenderBorderPins(0);
-    end
-    Display.SetUserOptionOcclusionEffect(0);
-    Camera.SwitchCameraBehaviour(0);
 
     -- Prepare the fader
     InitializeFader();
@@ -1101,22 +1115,24 @@ function Lib.DialogSystem.Local:DeactivateCinematicMode(_PlayerID)
     g_Fade.To = 0;
     SetFaderAlpha(0);
     XGUIEng.PopPage();
-    Camera.SwitchCameraBehaviour(0);
-    Display.UseStandardSettings();
-    Input.GameMode();
-    GUI.EnableBattleSignals(true);
-    GUI.SetFeedbackSoundOutputState(1);
-    GUI.ActivateSelectionState();
-    GUI.PermitContextSensitiveCommandsInSelectionState();
-    for k, v in pairs(self.SelectionBackup) do
-        GUI.SelectEntity(v);
+    if not self.Dialog[_PlayerID].Background then
+        Camera.SwitchCameraBehaviour(0);
+        Display.UseStandardSettings();
+        Input.GameMode();
+        GUI.EnableBattleSignals(true);
+        GUI.SetFeedbackSoundOutputState(1);
+        GUI.ActivateSelectionState();
+        GUI.PermitContextSensitiveCommandsInSelectionState();
+        for k, v in pairs(self.SelectionBackup) do
+            GUI.SelectEntity(v);
+        end
+        if Options.GetIntValue("Display", "Occlusion", 0) > 0 then
+            Display.SetUserOptionOcclusionEffect(1);
+        end
     end
     Display.SetRenderSky(0);
     Display.SetRenderBorderPins(1);
     Display.SetRenderFogOfWar(1);
-    if  Options.GetIntValue("Display", "Occlusion", 0) > 0 then
-        Display.SetUserOptionOcclusionEffect(1);
-    end
 
     -- Hide the message stuff
     XGUIEng.SetText("/InGame/Root/Normal/AlignBottomLeft/SubTitles/VoiceText1", " ");
@@ -1128,9 +1144,10 @@ function Lib.DialogSystem.Local:DeactivateCinematicMode(_PlayerID)
     XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/SubTitles", 0);
 
     -- Reset the throneroom
-    XGUIEng.PopPage();
-    XGUIEng.ShowWidget("/InGame/ThroneRoom", 0);
-
+    if not self.Dialog[_PlayerID].Background then
+        XGUIEng.PopPage();
+        XGUIEng.ShowWidget("/InGame/ThroneRoom", 0);
+    end
     if self.Dialog[_PlayerID].HideNotes then
         XGUIEng.ShowWidget("/InGame/Root/Normal/NotesWindow", 1);
     end

@@ -6,7 +6,7 @@ Lib = {
         },
 
         Version = "LIB 1.3.2",
-        Root = "libertica",
+        Root = "S6CommunityLib/lua",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = false,
 

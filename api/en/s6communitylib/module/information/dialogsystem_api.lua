@@ -4,6 +4,65 @@
 --- animated heads in a function-stripped briefing.
 ---
 
+
+
+--- Initializes the builder for a briefing.
+---
+--- #### Functions `BriefingBuilder`:
+--- * `SetName(_Name)`:              Sets the name of the briefing.
+--- * `SetPlayer(_Player)`:          Sets the receiving player of the briefing.
+--- * `UseRestoreCamera(_Flag)`:     Restores the camera to its original state after the briefing.
+--- * `UseRestoreGameSpeed(_Flag)`:  Restores the game speed after the briefing.
+--- * `UseGlobalImmortality(_Flag)`: Makes all entities invulnerable during the briefing.
+--- * `SetHideNotes(_Flag)`:         Hides the notes window during the briefing.
+--- * `SetEnableSky(_Flag)`:         Enables the sky during the briefing.
+--- * `SetEnableFoW(_Flag)`:         Enables fog of war during the briefing.
+--- * `SetEnableBorderPins(_Flag)`:  Enables border pins during the briefing.
+--- * `SetBackground(_Flag)`:        Plays the dialog in background (experimentel)
+--- * `SetOnBegin(_Function)`:       Function executed at the beginning of the briefing.
+--- * `SetOnFinish(_Function)`:      Function executed at the end of the briefing.
+--- * `BeginPage()`:                 Opens the `PageBuilder`.
+--- * `Redirect(_Target)`:           Jumps to the page with the given name. No argument ends the briefing at this point.
+--- * `Start()`:                     Starts the briefing.
+---
+--- #### Functions `PageBuilder`:
+---
+--- A briefing can have an unlimited number of pages.
+--- * `SetName(_Name)`:            Sets the name of the page.
+--- * `SetActor(_Actor)`:          Sets the actor of the page.
+--- * `SetTitle(_Title)`:          Sets the title to display.
+--- * `SetText(_Text)`:            Sets the text to display.
+--- * `SetSpeech(_Speech)`:        Sets the path to the voice line.
+--- * `SetDuration(_Duration)`:    Sets the display duration of the page.
+--- * `UseCloseUp(_Flag)`:         Switches between close-up and wide view.
+--- * `SetPosition(_Position)`:    Sets the camera position.
+--- * `SetAngle(_Angle)`:          Sets the camera elevation angle.
+--- * `SetRotation(_Rotation)`:    Sets the camera rotation angle.
+--- * `SetZoom(_Zoom)`:            Sets the camera zoom level.
+--- * `SetFadeIn(_Time)`:          Fades in from black.
+--- * `SetFadeOut(_Time)`:         Fades out to black.
+--- * `SetFaderAlpha(_Opacity)`:   Sets the alpha value of the fader mask.
+--- * `SetAction(_Action)`:        Function executed each time the page is shown.
+--- * `UseBigBars(_Flag)`:         Uses wide briefing bars on this page.
+--- * `UsePerformanceMode(_Flag)`: Disables various graphic effects to improve performance.
+--- * `UseSkipping(_Flag)`:        Allows the page to be skipped.
+--- * `BeginChoice()`:             Opens the `ChoiceBuilder`.
+--- * `EndPage()`:                 Ends the `PageBuilder` and returns to the `BriefingBuilder`.
+---
+--- #### Functions `ChoiceBuilder`:
+---
+--- * `Option(_ID?, _Text, _Target, _Condition?)`: Adds a new option. (Parameters marked with ? are optional)
+--- * `EndChoice()`:                               Ends the `ChoiceBuilder` and returns to the `PageBuilder`.
+---
+--- @param _Name string Name of the NewDialog
+--- @param _PlayerID integer Player ID of the recipient
+--- @return table BriefingBuilder The builder object for the NewDialog
+function NewDialog(_Name, _PlayerID)
+    return {};
+end
+API.NewDialog = NewDialog;
+
+
 --- Starts a dialog.
 ---
 --- #### Fields `_Dialog`:
@@ -16,6 +75,7 @@
 --- * `EnableFoW`:               (optional) <b>boolean</b> Shows the fog of war during the introduction 
 --- * `EnableBorderPins`:        (optional) <b>boolean</b> Shows border pins during the introduction      
 --- * `HideNotes`:               (optional) <b>boolean</b> Hides messages
+--- * `Background`:              (optional) <b>boolean</b> Plays the dialog in background (experimentel)
 ---
 --- #### Example
 ---

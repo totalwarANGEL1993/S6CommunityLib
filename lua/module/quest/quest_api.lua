@@ -45,3 +45,41 @@ function AddDisableDecisionCondition(_Function)
 end
 API.AddDisableDecisionCondition = AddDisableDecisionCondition;
 
+-- Legacy support
+
+function QuestMessage(_Text, _Sender, _Receiver, _Callback, _AncestorWt, _Ancestor)
+    if type(_Callback) == "number" then
+        local tmp = _Callback;
+        _AncestorWt = _Callback;
+        _Callback = tmp;
+    end
+
+    local QuestTable = {
+        Name        = "QSB_QuestMessage_" ..(Quests[0] +1),
+        Success     = _Text,
+        Sender      = _Sender,
+        Receiver    = _Receiver,
+
+        Goal_InstantSuccess(),
+        Trigger_AlwaysActive(),
+    };
+    if _Callback then
+        table.insert(QuestTable, Reward_MapScriptFunction(_Callback));
+    end
+    if _Ancestor and _AncestorWt then
+        table.insert(QuestTable, Trigger_OnQuestSuccess(_Ancestor, _AncestorWt));
+    end
+    if _AncestorWt and not _Ancestor then
+        table.insert(QuestTable, {
+        Triggers.Custom2, {
+            {QuestName = _Ancestor, WaitTime = _AncestorWt or 1,},
+            function(_Data, _Quest)
+                _Quest.StartedAt = _Quest.StartedAt or GetSecondsRealTime();
+                return GetSecondsRealTime() > _AncestorWt + _Quest.StartedAt;
+            end
+        }});
+    end
+    SetupQuest(QuestTable);
+end
+API.CreateQuestMessage = QuestMessage;
+

@@ -142,6 +142,9 @@ function StartDialog(_Dialog, _Name, _PlayerID)
     if _Dialog.RestoreCamera == nil then
         _Dialog.RestoreCamera = true;
     end
+    if _Dialog.Background == nil then
+        _Dialog.Background = false;
+    end
     Lib.DialogSystem.Global:StartDialog(_Name, PlayerID, _Dialog);
 end
 API.StartDialog = StartDialog;
@@ -152,5 +155,67 @@ end
 
 function ASP(...)
     assert(false);
+end
+
+-- Legacy support
+
+function API.CreateQuestDialog(_Messages)
+    -- Check input
+    assert(type(_Messages) == "table" and #_Messages > 0);
+    assert(_Messages.Name ~= nil);
+    if not _Messages.PlayerID then
+        _Messages.PlayerID = _Messages.PlayerID or (_Messages[1][3] or 1);
+    end
+    assert(_Messages.PlayerID ~= nil);
+
+    -- Start dialog after delay
+    RequestJob(function(_Messages)
+        local TriggerDialog = true;
+        if _Messages.Ancestor then
+            local Quest = Quests[GetQuestID(_Messages.Ancestor)];
+            assert(Quest ~= nil);
+            TriggerDialog = false;
+            if Quest.State == QuestState.Over then
+                if Quest.Result ~= QuestResult.Interrupted then
+                    _Messages.Counter = _Messages.Counter or (_Messages.Delay or 0);
+                    _Messages.Counter = _Messages.Counter - 1;
+                    if _Messages.Counter <= 0 then
+                        TriggerDialog = true;
+                    end
+                end
+            end
+        end
+        if TriggerDialog then
+            API.CreateQuestDialog_Internal(_Messages);
+            return true;
+        end
+    end, _Messages);
+end
+
+function API.CreateQuestDialog_Internal(_Messages)
+    local Dialog = {
+        Background = true,
+        RestoreCamera = false
+    };
+    local AP = AddDialogPages(Dialog);
+    for i= 1, #_Messages do
+        AP {
+            Actor    = _Messages[i][2],
+            Title    = GetPlayerName(_Messages[i][2]),
+            Text     = _Messages[i][1],
+            Duration = _Messages[i][4] or -1,
+            Callback = _Messages[i][5],
+        }
+    end
+    Dialog.Finished = _Messages.Finished;
+    StartDialog(Dialog, _Messages.Name, _Messages.PlayerID);
+end
+
+function API.InterruptQuestDialog(_Dialog)
+    log("API.InterruptQuestDialog is not supported!");
+end
+
+function API.RestartQuestDialog()
+    log("API.RestartQuestDialog is not supported!");
 end
 

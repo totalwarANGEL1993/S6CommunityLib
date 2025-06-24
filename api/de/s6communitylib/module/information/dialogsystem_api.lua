@@ -6,7 +6,7 @@
 
 
 
---- Überprüft, ob ein Dialog aktiv ist.
+--- Initialisiert den Builder für einen Dialog.
 --- 
 --- #### Functions `BriefingBuilder`:
 --- * `SetName(_Name)`:              Setzt den Namen des Briefings.
@@ -18,6 +18,7 @@
 --- * `SetEnableSky(_Flag)`:         Zeigt den Himmel während des Briefings an.
 --- * `SetEnableFoW(_Flag)`:         Zeigt den Nebel des Krieges während des Briefings an.
 --- * `SetEnableBorderPins(_Flag)`:  Zeigt die Grenzsteine während des Briefing an.
+--- * `SetBackground(_Flag)`:        Dialog im Hintergrund ausführen (experimentell)
 --- * `SetOnBegin(_Function)`:       Funktion, die beim Start des Briefing ausgeführt wird.
 --- * `SetOnFinish(_Function)`:      Funktion, die beim Ende des Briefing ausgeführt wird.
 --- * `BeginPage()`:                 Eröffnet den `PageBuilder`.
@@ -98,6 +99,7 @@ API.AddDialogPages = AddDialogPages;
 --- * `EnableFoW`:               (optional) <b>boolean</b> Zeigt den Nebel des Krieges während der Einleitung an 
 --- * `EnableBorderPins`:        (optional) <b>boolean</b> Zeigt die Randnadeln während der Einleitung an     
 --- * `HideNotes`:               (optional) <b>boolean</b> Nachrichten nicht anzeigen
+--- * `Background`:              (optional) <b>boolean</b> Dialog im Hintergrund ausführen (experimentell)
 ---
 --- #### Example
 ---
