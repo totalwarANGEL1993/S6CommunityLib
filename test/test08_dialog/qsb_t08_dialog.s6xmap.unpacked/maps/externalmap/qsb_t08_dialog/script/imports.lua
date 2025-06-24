@@ -1,5 +1,5 @@
 if CONST_IS_IN_DEV then
-    Lib.Loader.PushPath("E:/Repositories/S6CommunityLib/lua/");
+    Lib.Loader.PushPath("E:/Repositories/");
 end
 
 Lib.Require("comfort/GetDistance");

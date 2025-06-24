@@ -533,11 +533,53 @@ function CreateTestNPCDialogBriefing2(_Name, _PlayerID)
     StartDialog(Dialog, _Name, _PlayerID);
 end
 
+-- > CreateTestNPCDialogBriefing3([[Foo]], 1)
+function CreateTestNPCDialogBriefing3(_Name, _PlayerID)
+    local Dialog = {
+        DisableFow = true,
+        DisableBoderPins = true,
+        RestoreGameSpeed = true,
+        RestoreCamera = true,
+        Background = true,
+    };
+    local AP, ASP = AddDialogPages(Dialog);
+
+    AP {
+        Actor    = 1,
+        Duration = -1,
+        Text     = "This is a test! We need an option for a dialog were the "..
+                   "player can continue to play. Let's see if it works.",
+    }
+    AP {
+        Actor    = 2,
+        Duration = -1,
+        Text     = "This is another test! We still want to check, if the "..
+                   "player can continue playing while the dialog is active.",
+    }
+
+    Dialog.Starting = function(_Data)
+    end
+    Dialog.Finished = function(_Data)
+    end
+    StartDialog(Dialog, _Name, _PlayerID);
+end
+
+-- > CreateTestBackgroundDialogQuest()
+function CreateTestBackgroundDialogQuest()
+    SetupQuest {
+        Name        = "TestNpcQuest10",
+        Suggestion  = "Sometimes it just work's!",
+        Receiver    = 1,
+
+        Goal_Produce("G_Gold", 10000),
+        Trigger_AlwaysActive(),
+    }
+end
+
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()
     ActivateDebugMode(true, true, true, true, false);
     SetPlayerPortrait(1);
-    SetUnofficialPatchRequired("UP 3.0.0");
 end
 
