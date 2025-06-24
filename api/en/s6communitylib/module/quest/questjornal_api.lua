@@ -15,12 +15,14 @@
 --- @param _Flag boolean Activate/deactivate
 function ShowJournalForQuest(_Quest, _Flag)
 end
+API.ShowJournalForQuest = ShowJournalForQuest;
 
 --- Allows the player to make notes in the jornal.
 --- @param _Quest string Name of quest
 --- @param _Flag boolean Activate/deactivate
 function AllowNotesForQuest(_Quest, _Flag)
 end
+API.AllowNotesForQuest = AllowNotesForQuest;
 
 --- Creates a new journal entry and returns the ID.
 ---
@@ -30,40 +32,47 @@ end
 function CreateJournalEntry(_Text)
     return 0;
 end
+API.CreateJournalEntry = CreateJournalEntry;
 
 --- Updates the journal entry with the ID.
 --- @param _ID integer ID of entry
 --- @param _Text string Text of entry
 function AlterJournalEntry(_ID, _Text)
 end
+API.AlterJournalEntry = AlterJournalEntry;
 
 --- Marks an journal entry as important and highlights it.
 --- @param _ID integer ID of entry
 --- @param _Important boolean Highlight entry
 function HighlightJournalEntry(_ID, _Important)
 end
+API.HighlightJournalEntry = HighlightJournalEntry;
 
 --- Deletes an entry. The entry will be deleted from all journals it is
 --- attached to.
 --- @param _ID integer ID of entry
 function DeleteJournalEntry(_ID)
 end
+API.DeleteJournalEntry = DeleteJournalEntry;
 
 --- Restores an deleted entry. The entry will reappear in all journals it
 --- is attached to.
 --- @param _ID integer ID of entry
 function RestoreJournalEntry(_ID)
 end
+API.RestoreJournalEntry = RestoreJournalEntry;
 
 --- Adds a entry to the jornal of the quest.
 --- @param _ID integer ID of entry
 --- @param _Quest string Name of quest
 function AddJournalEntryToQuest(_ID, _Quest)
 end
+API.AddJournalEntryToQuest = AddJournalEntryToQuest;
 
 --- Removes a entry from the journal of the quest.
 --- @param _ID integer ID of entry
 --- @param _Quest string Name of quest
 function RemoveJournalEntryFromQuest(_ID, _Quest)
 end
+API.RemoveJournalEntryFromQuest = RemoveJournalEntryFromQuest;
 

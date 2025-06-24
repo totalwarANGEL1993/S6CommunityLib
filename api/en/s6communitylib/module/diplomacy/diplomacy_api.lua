@@ -11,6 +11,7 @@
 --- @param ... integer List of player IDs
 function SetDiplomacyStateForPlayer(_PlayerID, _State, ...)
 end
+API.SetDiplomacyStateForPlayer = SetDiplomacyStateForPlayer;
 
 --- Changes the diplomacy between all listed players.
 ---
@@ -20,6 +21,7 @@ end
 --- @param ... integer List of player IDs
 function SetDiplomacyStateForPlayers(_State, ...)
 end
+API.SetDiplomacyStateForPlayers = SetDiplomacyStateForPlayers;
 
 --- Saves the current diplomatic relations between all parties.
 --- 
@@ -28,12 +30,14 @@ end
 --- A backup is only created if no backup exists.
 function SaveDiplomacyStates()
 end
+API.SaveDiplomacyStates = SaveDiplomacyStates;
 
 --- Resets the diplomacy states to the backup if it exist.
 --- 
 --- After that, the backup is invalidated.
 function ResetDiplomacyStates()
 end
+API.ResetDiplomacyStates = ResetDiplomacyStates;
 
 
 

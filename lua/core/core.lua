@@ -493,6 +493,10 @@ function API.SetLogLevel(_ScreenLogLevel, _FileLogLevel)
 end
 API.SetLoggingLevel = API.SetLogLevel
 
+function API.SetEntityOrientation(_Entity, _Orientation)
+    Logic.SetOrientation(GetID(_Entity), _Orientation);
+end
+
 function PrepareLibrary()
     assert(not IsLocalScript(), "Must be called from global script!");
     Lib.Core.Global:Initialize();
