@@ -12,18 +12,16 @@ LibPath = "maps/externalmap/" ..Framework.GetCurrentMapName() .."/";
 
 CONST_IS_IN_DEV = true;
 if CONST_IS_IN_DEV then
-    GlobalPath = "E:/Repositories/libertica/test/test21_city/qsb_t21_city.s6xmap.unpacked/" ..GlobalPath;
-    LibPath = "E:/Repositories/libertica/release/";
+    GlobalPath = "E:/Repositories/S6CommunityLib/test/test21_city/qsb_t21_city.s6xmap.unpacked/" ..GlobalPath;
+    LibPath = "E:/Repositories/S6CommunityLib/lua/";
 end
-Script.Load(LibPath.. "libertica/librarian.lua");
+Script.Load(LibPath.. "loader.lua");
 Script.Load(GlobalPath.. "/script/imports.lua");
-Script.Load(GlobalPath.. "script/global_main.lua");
+Script.Load(GlobalPath.. "/script/global_main.lua");
 
 -- ========================================================================== --
 
 function Mission_FirstMapAction()
-    Script.Load("maps/externalmap/qsb_t21_city/questsystembehavior.lua");
-
     -- Mapeditor-Einstellungen werden geladen
     if Framework.IsNetworkGame() ~= true then
         Startup_Player();

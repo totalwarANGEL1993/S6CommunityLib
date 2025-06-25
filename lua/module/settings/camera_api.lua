@@ -108,3 +108,13 @@ function FocusCameraOnEntity(_Entity, _Rotation, _ZoomFactor)
 end
 API.FocusCameraOnEntity = FocusCameraOnEntity;
 
+-- Legacy support
+
+function API.AllowExtendedZoom(_PlayerID, _Flag)
+    if _Flag then
+        ActivateExtendedZoom(_PlayerID);
+    else
+        DeactivateExtendedZoom(_PlayerID);
+    end
+end
+

@@ -16,12 +16,14 @@ function CustomRuleConstructBuilding(_PlayerID, _FunctionName, ...)
     return Lib.Construction.Global:CustomRuleConstructBuilding(_PlayerID, _FunctionName, unpack(arg));
 end
 API.CustomRuleConstructBuilding = CustomRuleConstructBuilding;
+API.RestrictBuildingCustomFunction = CustomRuleConstructBuilding;
 
 function CustomRuleConstructRoad(_PlayerID, _FunctionName, ...)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:CustomRuleConstructRoad(_PlayerID, _FunctionName, unpack(arg));
 end
 API.CustomRuleConstructRoad = CustomRuleConstructRoad;
+API.RestrictRoadCustomFunction = CustomRuleConstructRoad;
 
 function CustomRuleConstructWall(_PlayerID, _FunctionName, ...)
     assert(not IsLocalScript(), "Can not be used in local script!");
@@ -34,6 +36,7 @@ function CustomRuleKnockdownBuilding(_PlayerID, _FunctionName, ...)
     return Lib.Construction.Global:CustomRuleKnockdownBuilding(_PlayerID, _FunctionName, unpack(arg));
 end
 API.CustomRuleKnockdownBuilding = CustomRuleKnockdownBuilding;
+API.ProtectBuildingCustomFunction = CustomRuleKnockdownBuilding;
 
 function WhitelistConstructTypeInArea(_PlayerID, _Type, _X, _Y, _Area)
     assert(not IsLocalScript(), "Can not be used in local script!");
@@ -64,24 +67,28 @@ function BlacklistConstructTypeInArea(_PlayerID, _Type, _X, _Y, _Area)
     return Lib.Construction.Global:BlacklistConstructTypeInArea(_PlayerID, _Type, _X, _Y, _Area);
 end
 API.BlacklistConstructTypeInArea = BlacklistConstructTypeInArea;
+API.RestrictBuildingTypeInArea = BlacklistConstructTypeInArea;
 
 function BlacklistConstructCategoryInArea(_PlayerID, _Category, _X, _Y, _Area)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:BlacklistConstructCategoryInArea(_PlayerID, _Category, _X, _Y, _Area);
 end
 API.BlacklistConstructCategoryInArea = BlacklistConstructCategoryInArea;
+API.RestrictBuildingCategoryInArea = BlacklistConstructCategoryInArea;
 
 function BlacklistConstructTypeInTerritory(_PlayerID, _Type, _Territory)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:BlacklistConstructTypeInTerritory(_PlayerID, _Type, _Territory);
 end
 API.BlacklistConstructTypeInTerritory = BlacklistConstructTypeInTerritory;
+API.RestrictBuildingTypeInTerritory = BlacklistConstructTypeInTerritory;
 
 function BlacklistConstructCategoryInTerritory(_PlayerID, _Category, _Territory)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:BlacklistConstructCategoryInTerritory(_PlayerID, _Category, _Territory);
 end
 API.BlacklistConstructCategoryInTerritory = BlacklistConstructCategoryInTerritory;
+API.RestrictBuildingCategoryInTerritory = BlacklistConstructCategoryInTerritory;
 
 function WhitelistConstructRoadInArea(_PlayerID, _IsRoad, _X, _Y, _Area)
     assert(not IsLocalScript(), "Can not be used in local script!");
@@ -112,6 +119,12 @@ function BlacklistConstructRoadInArea(_PlayerID, _IsRoad, _X, _Y, _Area)
     return Lib.Construction.Global:BlacklistConstructRoadInArea(_PlayerID, _IsRoad, _X, _Y, _Area);
 end
 API.BlacklistConstructRoadInArea = BlacklistConstructRoadInArea;
+API.RestrictStreetInArea = function(_PlayerID, _X, _Y, _Area)
+    return BlacklistConstructRoadInArea(_PlayerID, true, _X, _Y, _Area);
+end;
+API.RestrictTrailInArea = function(_PlayerID, _X, _Y, _Area)
+    return BlacklistConstructRoadInArea(_PlayerID, false, _X, _Y, _Area);
+end;
 
 function BlacklistConstructWallInArea(_PlayerID, _IsWall, _X, _Y, _Area)
     assert(not IsLocalScript(), "Can not be used in local script!");
@@ -124,6 +137,12 @@ function BlacklistConstructRoadInTerritory(_PlayerID, _IsRoad, _Territory)
     return Lib.Construction.Global:BlacklistConstructRoadInTerritory(_PlayerID, _IsRoad, _Territory);
 end
 API.BlacklistConstructRoadInTerritory = BlacklistConstructRoadInTerritory;
+API.RestrictStreetInTerritory = function(_PlayerID, _Territory)
+    return BlacklistConstructRoadInTerritory(_PlayerID, true, _Territory);
+end;
+API.RestrictTrailInTerritory = function(_PlayerID, _Territory)
+    return BlacklistConstructRoadInTerritory(_PlayerID, false, _Territory);
+end;
 
 function BlacklistConstructWallInTerritory(_PlayerID, _IsWall, _Territory)
     assert(not IsLocalScript(), "Can not be used in local script!");
@@ -160,22 +179,40 @@ function BlacklistKnockdownTypeInArea(_PlayerID, _Type, _X, _Y, _Area)
     return Lib.Construction.Global:BlacklistKnockdownTypeInArea(_PlayerID, _Type, _X, _Y, _Area);
 end
 API.BlacklistKnockdownTypeInArea = BlacklistKnockdownTypeInArea;
+API.ProtectBuildingTypeInArea = BlacklistKnockdownTypeInArea;
 
 function BlacklistKnockdownCategoryInArea(_PlayerID, _Category, _X, _Y, _Area)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:BlacklistKnockdownCategoryInArea(_PlayerID, _Category, _X, _Y, _Area);
 end
 API.BlacklistKnockdownCategoryInArea = BlacklistKnockdownCategoryInArea;
+API.ProtectBuildingCategoryInArea = BlacklistKnockdownCategoryInArea;
 
 function BlacklistKnockdownTypeInTerritory(_PlayerID, _Type, _Territory)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:BlacklistKnockdownTypeInTerritory(_PlayerID, _Type, _Territory);
 end
 API.BlacklistKnockdownTypeInTerritory = BlacklistKnockdownTypeInTerritory;
+API.ProtectBuildingTypeInTerritory = BlacklistKnockdownTypeInTerritory;
 
 function BlacklistKnockdownCategoryInTerritory(_PlayerID, _Category, _Territory)
     assert(not IsLocalScript(), "Can not be used in local script!");
     return Lib.Construction.Global:BlacklistKnockdownCategoryInTerritory(_PlayerID, _Category, _Territory);
 end
 API.BlacklistKnockdownCategoryInTerritory = BlacklistKnockdownCategoryInTerritory;
+API.ProtectBuildingCategoryInTerritory = BlacklistKnockdownCategoryInTerritory;
+
+function DeleteFromProtectionList(_ID)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    Lib.Construction.Global:UnlistKnockdown(_ID);
+end
+API.DeleteProtection = DeleteFromProtectionList;
+API.DeleteFromProtectionList = DeleteFromProtectionList;
+
+function DeleteFromRestrictionList(_ID)
+    assert(not IsLocalScript(), "Can not be used in local script!");
+    Lib.Construction.Global:UnlistConstruction(_ID);
+end
+API.DeleteRestriction = DeleteFromRestrictionList;
+API.DeleteFromRestrictionList = DeleteFromRestrictionList;
 

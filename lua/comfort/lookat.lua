@@ -33,3 +33,9 @@ function LookAt(_Entity, _Target)
 end
 API.LookAt = LookAt;
 
+-- Legacy support
+function API.Confront(_Entity1, _Entity2)
+    LookAt(_Entity1, _Entity2);
+    LookAt(_Entity2, _Entity1);
+end
+

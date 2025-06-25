@@ -533,6 +533,76 @@ function CreateTestNPCDialogBriefing2(_Name, _PlayerID)
     StartDialog(Dialog, _Name, _PlayerID);
 end
 
+-- > CreateTestNPCDialogBriefing3([[Foo]], 1)
+function CreateTestNPCDialogBriefing3(_Name, _PlayerID)
+    local Dialog = {
+        DisableFow = true,
+        DisableBoderPins = true,
+        RestoreGameSpeed = true,
+        RestoreCamera = true,
+        Background = true,
+    };
+    local AP, ASP = AddDialogPages(Dialog);
+
+    AP {
+        Actor    = 1,
+        Duration = -1,
+        Text     = "This is a test! We need an option for a dialog were the "..
+                   "player can continue to play. Let's see if it works.",
+    }
+    AP {
+        Actor    = 2,
+        Duration = -1,
+        Text     = "This is another test! We still want to check, if the "..
+                   "player can continue playing while the dialog is active.",
+    }
+
+    Dialog.Starting = function(_Data)
+    end
+    Dialog.Finished = function(_Data)
+    end
+    StartDialog(Dialog, _Name, _PlayerID);
+end
+
+-- > CreateTestBackgroundDialogQuest()
+function CreateTestBackgroundDialogQuest()
+    SetupQuest {
+        Name        = "TestNpcQuest10",
+        Suggestion  = "Sometimes it just work's!",
+        Receiver    = 1,
+
+        Goal_Produce("G_Gold", 10000),
+        Trigger_AlwaysActive(),
+    }
+end
+
+-- > CreateLegacyQuestDialogTest()
+function CreateLegacyQuestDialogTest()
+    SetupQuest {
+        Name        = "TestNpcQuest11",
+        Success     = "Dialog starts soon.",
+        Goal_InstantSuccess(),
+        Trigger_Time(Logic.GetTime() + 10),
+    }
+
+    API.CreateQuestDialog{
+        Name = "TestDialogName",
+        Ancestor = "TestNpcQuest11",
+        Delay = 5,
+
+        {"Hallo, wie geht es dir?", 4, 1, 8},
+        {"Mir geht es gut, wie immer!", 1, 1, 8},
+        {"Das ist doch schön.", 4, 1, 8},
+    };
+
+    SetupQuest {
+        Name        = "TestNpcQuest12",
+        Success     = "Dialog has ended",
+        Goal_InstantSuccess(),
+        Trigger_Dialog("TestDialogName", 1, 0),
+    }
+end
+
 -- ========================================================================== --
 
 function GameCallback_Lib_LoadingFinished()

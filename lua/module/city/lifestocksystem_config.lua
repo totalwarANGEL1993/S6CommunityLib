@@ -1,5 +1,6 @@
-Lib.Register("module/io/LifestockSystem_Config");
+Lib.Register("module/city/LifestockSystem_Config");
 
+Lib.LifestockSystem = Lib.LifestockSystem or {};
 Lib.LifestockSystem.Config = {
     Technology = {
         -- Tech name, Description, Icon, Extra Number

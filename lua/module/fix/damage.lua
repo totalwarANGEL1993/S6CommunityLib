@@ -224,6 +224,15 @@ function Lib.Damage.Global:OverwriteVulnerabilityFunctions()
             Logic.SetEntityInvulnerabilityFlag(ID, 0);
         end
     end
+
+    -- Legacy support
+    function API.SetEntityVulnerableFlag(_Entity, _Flag)
+        if _Flag then
+            MakeInvulnerable(_Entity);
+        else
+            MakeVulnerable(_Entity);
+        end
+    end
 end
 
 function Lib.Damage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2, _PlayerID2)

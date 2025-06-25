@@ -282,3 +282,8 @@ function Lib.Core.LuaExtension:OverrideMath()
     end
 end
 
+-- Legacy support
+function API.TraverseTable(t, e)
+    return table.contains(t, e);
+end
+

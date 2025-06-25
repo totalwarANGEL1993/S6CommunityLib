@@ -6,6 +6,7 @@ function SetDiplomacyStateForPlayer(_PlayerID, _State, ...)
     error(not IsLocalScript(), "Can not be used in local script!");
     Lib.Diplomacy.Global:SetDiplomacyStateForPlayer(_PlayerID, _State, PlayerList);
 end
+API.SetDiplomacyStateForPlayer = SetDiplomacyStateForPlayer;
 
 function SetDiplomacyStateForPlayers(_State, ...)
     local PlayerList = {1,2,3,4,5,6,7,8};
@@ -14,14 +15,17 @@ function SetDiplomacyStateForPlayers(_State, ...)
         Lib.Diplomacy.Global:SetDiplomacyStateForPlayer(PlayerList[i], _State, PlayerList);
     end
 end
+API.SetDiplomacyStateForPlayer = SetDiplomacyStateForPlayer;
 
 function SaveDiplomacyStates()
     error(not IsLocalScript(), "Can not be used in local script!");
     Lib.Diplomacy.Global:SaveDiplomacy();
 end
+API.SaveDiplomacyStates = SaveDiplomacyStates;
 
 function ResetDiplomacyStates()
     error(not IsLocalScript(), "Can not be used in local script!");
     Lib.Diplomacy.Global:ResetDiplomacy();
 end
+API.ResetDiplomacyStates = ResetDiplomacyStates;
 

@@ -1,5 +1,6 @@
 Lib.Register("module/io/IO_Config");
 
+Lib.IO = Lib.IO or {};
 Lib.IO.Config = {
     Technology = {
         -- Tech name, Description, Icon, Extra Number

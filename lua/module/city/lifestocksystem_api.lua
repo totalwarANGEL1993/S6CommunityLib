@@ -24,6 +24,7 @@ function SetCattleBreedingParameters(_Data)
     ExecuteLocal([[Lib.LifestockSystem.Global.CattleStarveChance = %d]], CattleStarveChance);
     Lib.LifestockSystem.Global.CattleStarveChance = CattleStarveChance;
 end
+API.ConfigureCattleBreeding = SetCattleBreedingParameters;
 API.SetCattleBreedingParameters = SetCattleBreedingParameters;
 
 function SetSheepBreedingParameters(_Data)
@@ -49,6 +50,7 @@ function SetSheepBreedingParameters(_Data)
     ExecuteLocal([[Lib.LifestockSystem.Global.SheepStarveChance = %d]], SheepStarveChance);
     Lib.LifestockSystem.Global.SheepStarveChance = SheepStarveChance;
 end
+API.ConfigureSheepBreeding = SetSheepBreedingParameters;
 API.SetSheepBreedingParameters = SetSheepBreedingParameters;
 
 function RequireTitleToBreedCattle(_Title)
@@ -78,4 +80,33 @@ function RequireTitleToBreedSheep(_Title)
     end
 end
 API.RequireTitleToBreedSheep = RequireTitleToBreedSheep;
+
+-- Legacy support
+
+function ActivateCattleBreeding(_Flag)
+    for PlayerID = 1, 8 do
+        if _Flag then
+            UnLockFeaturesForPlayer(PlayerID, Technologies.R_Cattle);
+        else
+            LockFeaturesForPlayer(PlayerID, Technologies.R_Cattle);
+        end
+    end
+end
+API.ActivateCattleBreeding = ActivateCattleBreeding;
+API.UseBreedCattle = ActivateCattleBreeding;
+
+function ActivateSheepBreeding(_Flag)
+    for PlayerID = 1, 8 do
+        if _Flag then
+            UnLockFeaturesForPlayer(PlayerID, Technologies.R_Sheep);
+        else
+            LockFeaturesForPlayer(PlayerID, Technologies.R_Sheep);
+        end
+    end
+end
+API.ActivateSheepBreeding = ActivateSheepBreeding;
+API.UseBreedSheeps = ActivateSheepBreeding;
+
+function API.SetCattleBabyMode() end
+function API.SetSheepBabyMode() end
 
