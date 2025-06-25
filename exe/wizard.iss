@@ -5,7 +5,7 @@
 #define MyAppVersion "0.5.0"
 #define MyAppPublisher "totalwarANGEL"
 #define MyAppURL "www.siedelwood-neu.de"
-#define MyAppExeName "setup-" + MyAppVersion
+#define MyAppExeName "setup"
 
 [Setup]
 AppId={{F9C01BB5-7CA0-3E0C-76C1-107A771BCA0D}}
