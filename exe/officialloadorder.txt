@@ -41,7 +41,9 @@ comfort/ismultiplayer
 comfort/keyof
 comfort/lookat
 comfort/move
+comfort/MoveAndExecute
 comfort/moveandlookat
+comfort/MoveOnCheckpoints
 comfort/movetoposition
 comfort/replaceentity
 comfort/round
