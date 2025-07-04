@@ -183,13 +183,21 @@ function Lib.Core.LuaExtension:OverrideString()
         return self:find(s) ~= nil;
     end
 
-    --- Returns true if the partial string is found.
+    --- Returns the first index of the first occurance of the pattern.
     --- @param self stringlib String to search
     --- @param s string       Partial string
-    --- @return integer Begin Start of part
-    --- @return integer End   End of part
+    --- @return integer Index Index of pattern (0 if not found)
     string.indexOf = function (self, s)
-        return self:find(s);
+        return self:find(s) or 0;
+    end
+
+    --- Returns the last index of the first occurance of the pattern.
+    --- @param self stringlib String to search
+    --- @param s string Partial string
+    --- @return integer Index Index of pattern (0 if not found)
+    string.lastIndexOf = function(self, s)
+        local i = self:reverse():find(s, 1, true);
+        return (i and (self:len() - i + 1)) or 0;
     end
 
     --- Separates a string into multiple strings.

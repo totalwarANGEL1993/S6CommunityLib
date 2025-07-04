@@ -234,12 +234,12 @@ function Lib.LifestockSystem.Local:Initialize()
         Report.SheepStarved = CreateReport("Event_SheepStarved");
 
         -- Get texts
-        self.Text.CattleTitle = XGUIEng.GetStringTableText("Names/A_X_Cow01");
-        self.Text.CattleDescription = XGUIEng.GetStringTableText("UI_ObjectDescription/G_Cow");
-        self.Text.CattleDisabled = XGUIEng.GetStringTableText("UI_ButtonDisabled/PromoteKnight");
-        self.Text.SheepTitle = XGUIEng.GetStringTableText("Names/A_X_Sheep01");
-        self.Text.SheepDescription = XGUIEng.GetStringTableText("UI_ObjectDescription/G_Sheep");
-        self.Text.SheepDisabled = XGUIEng.GetStringTableText("UI_ButtonDisabled/PromoteKnight");
+        self.Text.CattleTitle = GetStringText("Names/A_X_Cow01");
+        self.Text.CattleDescription = GetStringText("UI_ObjectDescription/G_Cow");
+        self.Text.CattleDisabled = GetStringText("UI_ButtonDisabled/PromoteKnight");
+        self.Text.SheepTitle = GetStringText("Names/A_X_Sheep01");
+        self.Text.SheepDescription = GetStringText("UI_ObjectDescription/G_Sheep");
+        self.Text.SheepDisabled = GetStringText("UI_ButtonDisabled/PromoteKnight");
 
         -- Change base prices
         MerchantSystem.BasePricesOrigLifestockSystem                = {};
@@ -283,7 +283,7 @@ function Lib.LifestockSystem.Local:BuyAnimalAction(_Index, _WidgetID, _EntityID)
     local GrainCost = self[_Index.. "GrainCost"];
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     if GetPlayerResources(Goods.G_Grain, PlayerID) < GrainCost then
-        local Text = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_Resources");
+        local Text = GetStringText("Feedback_TextLines/TextLine_NotEnough_Resources");
         Message(Text);
         return;
     end

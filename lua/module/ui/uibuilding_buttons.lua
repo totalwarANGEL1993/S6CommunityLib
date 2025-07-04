@@ -149,7 +149,7 @@ function Lib.UIBuilding.Local.ExtraButton.Downgrade.ButtonTooltip(_WidgetID, _Bu
     Text = Lib.UIBuilding.Text.ExtraButton.Downgrade.Normal.Text;
     if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
         Error = Lib.UIBuilding.Text.ExtraButton.Downgrade.Normal.Error;
-        Error = XGUIEng.GetStringTableText(Error);
+        Error = GetStringText(Error);
     end
     local Cost = Lib.UIBuilding.Local.ExtraButton.Downgrade.Cost;
     API.SetTooltipCosts(
@@ -258,21 +258,21 @@ function Lib.UIBuilding.Local.ExtraButton.SingleReserve.ButtonTooltip(_WidgetID,
     local Title, Text, Error;
     if Logic.IsGoodLocked(PlayerID, GoodType) then
         Title = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Stopped.Title;
-        Title = XGUIEng.GetStringTableText(Title);
+        Title = GetStringText(Title);
         Text = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Stopped.Text;
-        Text = XGUIEng.GetStringTableText(Text);
+        Text = GetStringText(Text);
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
             Error = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Stopped.Error;
-            Error = XGUIEng.GetStringTableText(Error);
+            Error = GetStringText(Error);
         end
     else
         Title = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Normal.Title;
-        Title = XGUIEng.GetStringTableText(Title);
+        Title = GetStringText(Title);
         Text = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Normal.Text;
-        Text = XGUIEng.GetStringTableText(Text);
+        Text = GetStringText(Text);
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
             Error = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Normal.Error;
-            Error = XGUIEng.GetStringTableText(Error);
+            Error = GetStringText(Error);
         end
     end
     API.SetTooltipCosts(Title, Text, Error);
@@ -382,19 +382,19 @@ function Lib.UIBuilding.Local.ExtraButton.SingleStop.ButtonTooltip(_WidgetID, _B
     local Title, Text, Error;
     if Logic.IsBuildingStopped(_BuildingID) then
         Title = Lib.UIBuilding.Text.ExtraButton.SingleStop.Stopped.Title;
-        Title = XGUIEng.GetStringTableText(Title);
+        Title = GetStringText(Title);
         Text = Lib.UIBuilding.Text.ExtraButton.SingleStop.Stopped.Text;
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
             Error = Lib.UIBuilding.Text.ExtraButton.SingleStop.Stopped.Error;
-            Error = XGUIEng.GetStringTableText(Error);
+            Error = GetStringText(Error);
         end
     else
         Title = Lib.UIBuilding.Text.ExtraButton.SingleStop.Normal.Title;
-        Title = XGUIEng.GetStringTableText(Title);
+        Title = GetStringText(Title);
         Text = Lib.UIBuilding.Text.ExtraButton.SingleStop.Normal.Text;
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
             Error = Lib.UIBuilding.Text.ExtraButton.SingleStop.Normal.Error;
-            Error = XGUIEng.GetStringTableText(Error);
+            Error = GetStringText(Error);
         end
     end
     API.SetTooltipCosts(

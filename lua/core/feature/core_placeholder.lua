@@ -78,6 +78,27 @@ function Lib.Core.Placeholder:OverwriteGetStringTableText()
     end
 end
 
+function Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _OptionalTableName)
+    _Path = _Path:gsub("\\\\", "/");
+    Script.Load(_Path);
+    local Slash = _Path:lastIndexOf("/");
+    local Point = _Path:lastIndexOf(".");
+    local File = _Path:sub(Slash +1, Point -1);
+    if File:find("_[a-z][a-z]$") then
+        File = File:sub(1, File:len() -3);
+    end
+    local Table = (_G[_OptionalTableName] ~= nil and _G[_OptionalTableName]) or User_String_Table;
+    if Table then
+        for Key, Value in pairs(Table) do
+            self:AddStringTableOverwrite(File.. "/" ..Key, Value);
+        end
+        if _OptionalTableName then
+            _G[_OptionalTableName] = nil;
+        end
+    end
+    User_String_Table = nil;
+end
+
 function Lib.Core.Placeholder:AddStringTableOverwrite(_Key, _Text)
     local i = string.find(_Key, "/[^/]*$");
     local File = _Key:sub(1, i-1):lower();
@@ -288,7 +309,7 @@ API.ConvertPlaceholders = ConvertPlaceholders;
 function AddNote(_Text)
     _Text = ConvertPlaceholders(Localize(_Text));
     if not IsLocalScript() then
-        Logic.DEBUG_AddNote(_Text);
+        ExecuteLocal([[AddNote("%s")]], _Text);
         return;
     end
     if _Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
@@ -301,7 +322,7 @@ API.Note = AddNote;
 function AddStaticNote(_Text)
     _Text = ConvertPlaceholders(Localize(_Text));
     if not IsLocalScript() then
-        ExecuteLocal([[GUI.AddStaticNote("%s")]], _Text);
+        ExecuteLocal([[AddStaticNote("%s")]], _Text);
         return;
     end
     if _Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
@@ -350,6 +371,16 @@ function AddEntityTypePlaceholder(_Type, _Replacement)
     Lib.Core.Placeholder.Placeholders.EntityTypes[_Type] = _Replacement;
 end
 API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
+
+function LoadStringTextFromFile(_Path, _OptionalTableName)
+    if not IsLocalScript() then
+        local OptionalTableName = (_OptionalTableName and "\"" .._OptionalTableName.. "\"") or "nil";
+        ExecuteLocal([[LoadStringTextFromFile("%s", %s)]],_Path,OptionalTableName);
+        return;
+    end
+    Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _OptionalTableName);
+end
+API.LoadStringTextFromFile = LoadStringTextFromFile;
 
 function AddStringText(_Key, _Text)
     assert(IsLocalScript(), "Text can only be set in local script!");

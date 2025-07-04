@@ -260,7 +260,8 @@
         "this",
         "SetCameraProperties",
         "g_DefaultBorderScrollSize",
-        "g_DefaultZoomStateWheelSpeed"
+        "g_DefaultZoomStateWheelSpeed",
+        "Fake_String_Table"
     ],
     "Lua.workspace.ignoreDir": [
         "demo",

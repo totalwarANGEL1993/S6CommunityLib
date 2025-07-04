@@ -7,6 +7,20 @@
 
 -- ========================================================================== --
 
+-- |||| USER STRING TABLE |||| --
+
+function UserStringTableTest()
+    local BasePath = "E:/Repositories/S6CommunityLib/test/test08_dialog/qsb_t08_dialog.s6xmap.unpacked/";
+    LoadStringTextFromFile(BasePath.. "maps/externalmap/qsb_t08_dialog/text/Localization_Test_de.lua");
+    AddStaticNote("Localization_Test/Test_Message");
+    LoadStringTextFromFile(BasePath.. "maps/externalmap/qsb_t08_dialog/text/Localization_Test_en.lua");
+    AddStaticNote("Localization_Test/Test_Message");
+    LoadStringTextFromFile(BasePath.. "maps/externalmap/qsb_t08_dialog/text/Localization_Test_es.lua");
+    AddStaticNote("Localization_Test/Test_Message");
+    LoadStringTextFromFile(BasePath.. "maps/externalmap/qsb_t08_dialog/text/Localization_Test_pl.lua");
+    AddStaticNote("Localization_Test/Test_Message");
+end
+
 -- |||| JOURNAL |||| --
 
 function QuestJournalTest()
