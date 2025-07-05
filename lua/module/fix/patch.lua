@@ -330,7 +330,7 @@ function Lib.Patch.Local:FixInteractiveObjectClicked()
 
         local playerID = GUI.GetPlayerID();
         local costs = {Logic.InteractiveObjectGetEffectiveCosts(objectID, playerID)};
-        local canNotBuyString = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_Resources");
+        local canNotBuyString = GetStringText("Feedback_TextLines/TextLine_NotEnough_Resources");
 
         local isAffordable = function(costType, amount)
             if  Logic.GetGoodCategoryForGoodType(costType) ~= GoodCategories.GC_Resource
@@ -339,7 +339,7 @@ function Lib.Patch.Local:FixInteractiveObjectClicked()
                 return false;
             end
             if costType == Goods.G_Gold then
-                canNotBuyString = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_G_Gold");
+                canNotBuyString = GetStringText("Feedback_TextLines/TextLine_NotEnough_G_Gold");
             end
             return GetPlayerGoodsInSettlement(costType, playerID, false) >= amount;
         end

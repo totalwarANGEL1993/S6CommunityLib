@@ -654,7 +654,7 @@ function Lib.SettlementLimitation.Local:GetRestrictionTypeText(_PlayerID, _Terri
         local Text = string.format(
             "%s%s %d / %d{@color:255,255,255,255}{cr}",
             (Current >= Limit and "{@color:255,0,0,255}") or "{@color:255,255,255,255}",
-            XGUIEng.GetStringTableText("Names/" .. TypeName),
+            GetStringText("Names/" .. TypeName),
             Current,
             Limit
         );
@@ -767,11 +767,11 @@ function Lib.SettlementLimitation.Local:OverwriteClaimTerritory()
             end
             Costs = {};
         end
-        local CaptionText = XGUIEng.GetStringTableText("UI_ObjectNames/B_Outpost_ME");
-        local DescriptionText = XGUIEng.GetStringTableText("UI_ObjectDescription/B_Outpost_ME");
+        local CaptionText = GetStringText("UI_ObjectNames/B_Outpost_ME");
+        local DescriptionText = GetStringText("UI_ObjectDescription/B_Outpost_ME");
         local DisabledText = nil;
         if TooltipDisabledTextKey then
-            DisabledText = XGUIEng.GetStringTableText("UI_ButtonDisabled/" ..TooltipDisabledTextKey);
+            DisabledText = GetStringText("UI_ButtonDisabled/" ..TooltipDisabledTextKey);
         end
         local Limit = Lib.SettlementLimitation.Local:GetOutpostLimit(PlayerID);
         if Limit ~= -1 then

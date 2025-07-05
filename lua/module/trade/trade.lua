@@ -403,7 +403,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
             if Logic.GetGoodCategoryForGoodType(GoodType) == GoodCategories.GC_Resource then
                 if Logic.GetPlayerUnreservedStorehouseSpace(PlayerID) < OfferGoodAmount then
                     CanBeBought = false;
-                    local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_MerchantStorehouseSpace");
+                    local MessageText = GetStringText("Feedback_TextLines/TextLine_MerchantStorehouseSpace");
                     Message(MessageText);
                 end
             elseif Logic.GetGoodCategoryForGoodType(GoodType) == GoodCategories.GC_Animal then
@@ -411,7 +411,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
             else
                 if Logic.CanFitAnotherMerchantOnMarketplace(PlayersMarketPlaceID) == false then
                     CanBeBought = false;
-                    local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_MerchantMarketplaceFull");
+                    local MessageText = GetStringText("Feedback_TextLines/TextLine_MerchantMarketplaceFull");
                     Message(MessageText);
                 end
             end
@@ -419,7 +419,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
             GoodType, OfferGoodAmount, OfferAmount, AmountPrices = Logic.GetEntertainerTraderOffer(BuildingID, OfferIndex, BuildingID);
             if Logic.CanFitAnotherEntertainerOnMarketplace(PlayersMarketPlaceID) == false then
                 CanBeBought = false;
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_MerchantMarketplaceFull");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_MerchantMarketplaceFull");
                 Message(MessageText);
             end
         elseif TraderType == g_Merchant.MercenaryTrader then
@@ -440,7 +440,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
             end
             if (CurrentSoldierCount + SoldierSize) > CurrentSoldierLimit then
                 CanBeBought = false;
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_SoldierLimitReached");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_SoldierLimitReached");
                 Message(MessageText);
             end
         end
@@ -453,7 +453,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
                 CanBeBought = Lib.Trade.Local.PurchaseAllowed.Default(TraderType, GoodType, OfferGoodAmount, PlayerID, TraderPlayerID);
             end
             if not CanBeBought then
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_GenericNotReadyYet");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_GenericNotReadyYet");
                 Message(MessageText);
                 return;
             end
@@ -465,7 +465,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
             local PlayerSectorType = PlayerSectorTypes.Civil;
             local IsReachable = CanEntityReachTarget(PlayerID, Logic.GetStoreHouse(TraderPlayerID), Logic.GetStoreHouse(PlayerID), nil, PlayerSectorType);
             if IsReachable == false then
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_GenericUnreachable");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_GenericUnreachable");
                 Message(MessageText);
                 return;
             end
@@ -492,7 +492,7 @@ function Lib.Trade.Local:OverrideMerchantPurchaseOfferClicked()
                     TraderPlayerID
                 );
             else
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_G_Gold");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_NotEnough_G_Gold");
                 Message(MessageText);
             end
         end
@@ -521,7 +521,7 @@ function Lib.Trade.Local:OverrideMerchantSellGoodsClicked()
         end
         local IsReachable = CanEntityReachTarget(TargetID, Logic.GetStoreHouse(PlayerID), Logic.GetStoreHouse(TargetID), nil, PlayerSectorType);
         if IsReachable == false then
-            local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_GenericUnreachable");
+            local MessageText = GetStringText("Feedback_TextLines/TextLine_GenericUnreachable");
             Message(MessageText);
             return;
         end
@@ -530,18 +530,18 @@ function Lib.Trade.Local:OverrideMerchantSellGoodsClicked()
         elseif Logic.GetGoodCategoryForGoodType(g_Trade.GoodType) == GoodCategories.GC_Resource then
             local SpaceForNewGoods = Logic.GetPlayerUnreservedStorehouseSpace(TargetID);
             if SpaceForNewGoods < g_Trade.GoodAmount then
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_TargetFactionStorehouseSpace");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_TargetFactionStorehouseSpace");
                 Message(MessageText);
                 return;
             end
         else
             if Logic.GetNumberOfTradeGatherers(PlayerID) >= 1 then
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_TradeGathererUnderway");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_TradeGathererUnderway");
                 Message(MessageText);
                 return;
             end
             if Logic.CanFitAnotherMerchantOnMarketplace(Logic.GetMarketplace(TargetID)) == false then
-                local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_TargetFactionMarketplaceFull");
+                local MessageText = GetStringText("Feedback_TextLines/TextLine_TargetFactionMarketplaceFull");
                 Message(MessageText);
                 return;
             end
@@ -555,7 +555,7 @@ function Lib.Trade.Local:OverrideMerchantSellGoodsClicked()
             CanBeSold = Lib.Trade.Local.SaleAllowed.Default(g_Merchant.GoodTrader, g_Trade.GoodType, g_Trade.GoodAmount, PlayerID, TargetID);
         end
         if not CanBeSold then
-            local MessageText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_GenericNotReadyYet");
+            local MessageText = GetStringText("Feedback_TextLines/TextLine_GenericNotReadyYet");
             Message(MessageText);
             return;
         end

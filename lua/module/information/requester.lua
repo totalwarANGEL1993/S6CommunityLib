@@ -110,8 +110,8 @@ function Lib.Requester.Local:DialogAltF4Action()
     Input.KeyBindDown(Keys.ModifierAlt + Keys.F4, "", 30, false);
     self:OpenRequesterDialog(
         GUI.GetPlayerID(),
-        XGUIEng.GetStringTableText("UI_Texts/MainMenuExitGame_center"),
-        XGUIEng.GetStringTableText("UI_Texts/ConfirmQuitCurrentGame"),
+        GetStringText("UI_Texts/MainMenuExitGame_center"),
+        GetStringText("UI_Texts/ConfirmQuitCurrentGame"),
         function (_Yes)
             if _Yes then
                 Framework.ExitGame();
@@ -235,11 +235,11 @@ function Lib.Requester.Local:OpenRequesterDialog(_PlayerID, _Title, _Text, _Acti
         XGUIEng.ShowWidget(RequesterDialog_Ok,0);
 
         if _OkCancel then
-            XGUIEng.SetText(RequesterDialog_Yes, XGUIEng.GetStringTableText("UI_Texts/Ok_center"));
-            XGUIEng.SetText(RequesterDialog_No, XGUIEng.GetStringTableText("UI_Texts/Cancel_center"));
+            XGUIEng.SetText(RequesterDialog_Yes, GetStringText("UI_Texts/Ok_center"));
+            XGUIEng.SetText(RequesterDialog_No, GetStringText("UI_Texts/Cancel_center"));
         else
-            XGUIEng.SetText(RequesterDialog_Yes, XGUIEng.GetStringTableText("UI_Texts/Yes_center"));
-            XGUIEng.SetText(RequesterDialog_No, XGUIEng.GetStringTableText("UI_Texts/No_center"));
+            XGUIEng.SetText(RequesterDialog_Yes, GetStringText("UI_Texts/Yes_center"));
+            XGUIEng.SetText(RequesterDialog_No, GetStringText("UI_Texts/No_center"));
         end
 
         self.Requester.ActionRequester = nil;

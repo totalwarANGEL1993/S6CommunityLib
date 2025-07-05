@@ -386,7 +386,7 @@ function Lib.IO.Local:OverrideGameFunctions()
         end
         if CONST_IO[ScriptName] then
             if not CONST_IO[ScriptName].IsFullfilled then
-                local Text = XGUIEng.GetStringTableText("UI_ButtonDisabled/PromoteKnight");
+                local Text = GetStringText("UI_ButtonDisabled/PromoteKnight");
                 if CONST_IO[ScriptName].ConditionInfo then
                     Text = ConvertPlaceholders(Localize(CONST_IO[ScriptName].ConditionInfo));
                 end
@@ -628,17 +628,17 @@ function Lib.IO.Local:OverrideGameFunctions()
             end
             Title = ConvertPlaceholders(Localize(CONST_IO[ScriptName].Title or Title));
             if Title and Title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-                Title = XGUIEng.GetStringTableText(Title);
+                Title = GetStringText(Title);
             end
             Text = ConvertPlaceholders(Localize(CONST_IO[ScriptName].Text or Text));
             if Text and Text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-                Text = XGUIEng.GetStringTableText(Text);
+                Text = GetStringText(Text);
             end
             Disabled = CONST_IO[ScriptName].DisabledText or Disabled;
             if Disabled then
                 Disabled = ConvertPlaceholders(Localize(Disabled));
                 if Disabled and Disabled:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-                    Disabled = XGUIEng.GetStringTableText(Disabled);
+                    Disabled = GetStringText(Disabled);
                 end
             end
             Costs = CONST_IO[ScriptName].Costs;

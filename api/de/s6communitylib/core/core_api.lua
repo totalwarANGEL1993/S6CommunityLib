@@ -532,6 +532,36 @@ function AddEntityTypePlaceholder(_Type, _Replacement)
 end
 API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
 
+--- Läd alle Keys aus der angegebenen Lua-Datei.
+--- 
+--- Die erzeugten Keys setzen ihren Namen aus dem Dateinamen und den einzelnen
+--- Schlüsselwerten innerhalb der Datei zusammen.
+--- 
+--- #### Example:
+--- ```lua
+--- -- Es wird die Datei maps/externalmap/stringdemo/QuestText.lua geladen
+--- LoadStringTextFromFile("maps/externalmap/stringdemo/Quest_Text.lua")
+--- 
+--- -- Der Inhalt der Datei sieht wie folgt aus:
+--- User_String_Table = {
+---     ["Quest_Intro"] = "Just a bit of text.",
+---     ["Quest_Defeat_Player2"] = "Just a buch more text.",
+---     ["Quest_Finish"] = "Final lines of text.",
+--- }
+--- 
+--- -- Daraus entstehen die folgenden String Keys mit samt Text.
+--- -- "Quest_Text/Quest_Intro"
+--- -- "Quest_Text/Quest_Defeat_Player2"
+--- -- "Quest_Text/Quest_Finish"
+--- -- Diese können dann mit z.B. GetStringText verwendet werden.
+--- ```
+--- 
+--- @param _Path string Pfad zur Datei
+--- @param _OptionalTableName? any Name des Lua-Table
+function LoadStringTextFromFile(_Path, _OptionalTableName)
+end
+API.LoadStringTextFromFile = LoadStringTextFromFile;
+
 --- Speichert eine Zeichenfolgenüberschreibung unter dem Schlüssel.
 --- @param _Key string Schlüssel des Eintrags
 --- @param _Text any Text oder lokalisierte Tabelle

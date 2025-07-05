@@ -658,7 +658,7 @@ function Lib.Quest.Local:OverwriteQuestTexts()
         or _QuestType == Objective.DummyFail then
             local Text = _Quest.QuestDescription or "";
             if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-                return XGUIEng.GetStringTableText(Text);
+                return GetStringText(Text);
             end
         end
         return Lib.Quest.Local.Orig_QuestLog_GetQuestTypeCaption(_QuestType, _Quest);
@@ -673,7 +673,7 @@ function Lib.Quest.Local:OverwriteQuestTexts()
     --- @param _MessageKey string String table key of message
     --- @return string Text String table text
     Wrapped_GetStringTableText = function(_QuestIndex, _MessageKey)
-        local MessageText = XGUIEng.GetStringTableText(_MessageKey);
+        local MessageText = GetStringText(_MessageKey);
         if MessageText ~= "" then
             return MessageText;
         end
@@ -709,7 +709,7 @@ function Lib.Quest.Local:OverwriteQuestTexts()
             if Quest.QuestDescription then
                 local Text = Quest.QuestDescription or "";
                 if string.find(Text, "^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-                    Text = XGUIEng.GetStringTableText(Text);
+                    Text = GetStringText(Text);
                 end
                 return string.match(Text, "^[^~]+ ~ (.+)$") or Text;
             end

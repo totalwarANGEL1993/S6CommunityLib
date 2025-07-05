@@ -792,7 +792,7 @@ function Lib.DialogSystem.Local:DisplayPageTitle(_PlayerID, _PageID)
     if Page.Title then
         local Title = ConvertPlaceholders(Localize(Page.Title));
         if Title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-            Title = XGUIEng.GetStringTableText(Title);
+            Title = GetStringText(Title);
         end
         if Title:sub(1, 1) ~= "{" then
             Title = "{center}" ..Title;

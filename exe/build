@@ -42,5 +42,6 @@ cd ../..
 
 # compile installer
 ISCC.exe "exe\wizard.iss" #1>/dev/null
+mv var/release/setup.exe var/release/s6communitylib.exe
 
 echo "Done!"

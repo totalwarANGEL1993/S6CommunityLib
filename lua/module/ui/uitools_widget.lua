@@ -80,13 +80,13 @@ end
 
 function Lib.UITools.Widget:TooltipNormal(_title, _text, _disabledText)
     if _title and _title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-        _title = XGUIEng.GetStringTableText(_title);
+        _title = GetStringText(_title);
     end
     if _text and _text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-        _text = XGUIEng.GetStringTableText(_text);
+        _text = GetStringText(_text);
     end
     if _disabledText and _disabledText:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-        _disabledText = XGUIEng.GetStringTableText(_disabledText);
+        _disabledText = GetStringText(_disabledText);
     end
 
     local TooltipContainerPath = "/InGame/Root/Normal/TooltipNormal";
@@ -125,13 +125,13 @@ function Lib.UITools.Widget:TooltipCosts(_title,_text,_disabledText,_costs,_inSe
         Costs[i] = _costs[i];
     end
     if _title and _title:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-        _title = XGUIEng.GetStringTableText(_title);
+        _title = GetStringText(_title);
     end
     if _text and _text:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-        _text = XGUIEng.GetStringTableText(_text);
+        _text = GetStringText(_text);
     end
     if _disabledText and _disabledText:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
-        _disabledText = XGUIEng.GetStringTableText(_disabledText);
+        _disabledText = GetStringText(_disabledText);
     end
 
     local TooltipContainerPath = "/InGame/Root/Normal/TooltipBuy";
