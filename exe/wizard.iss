@@ -8,7 +8,7 @@
 #define MyAppExeName "setup"
 
 [Setup]
-AppId={{F9C01BB5-7CA0-3E0C-76C1-107A771BCA0D}}
+AppId={{F9C01BB5-7CA0-3E0C-76D1-107A771BCA0D}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -46,7 +46,7 @@ Source: "..\var\release\s6communitylib\license.md"; DestDir: "{app}"; Flags: ign
 Name: "desktopicon"; Description: "Desktop-Verknüpfung erstellen"; GroupDescription: "Zusätzliche Aufgaben:"
 
 [Icons]
-Name: "{group}\S6CommunityLib"; Filename: "{app}\S6CommunityLib.exe"; IconFilename: "{app}S6CommunityLib.exe"; IconIndex: 0
+Name: "{group}\S6CommunityLib"; Filename: "{app}\java\builder\S6CommunityLib.exe"; IconFilename: "{app}\java\builder\S6CommunityLib.exe"; IconIndex: 0
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{group}\{#MyAppName}"; Filename: "{uninstallexe}"; WorkingDir: "{app}"
-Name: "{commondesktop}\S6CommunityLib"; Filename: "{app}S6CommunityLib.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+Name: "{commondesktop}\S6CommunityLib"; Filename: "{app}\java\builder\S6CommunityLib.exe"; WorkingDir: "{app}\java\builder"; Tasks: desktopicon
