@@ -22,7 +22,7 @@ cp -r ../../lua ../../var/release/s6communitylib
 cp config/config.json ../../var/release/s6communitylib/java/builder/config
 cp S6CommunityLib.jar ../../var/release/s6communitylib/java/builder
 cp ../runner/librarian-runner.exe ../../var/release/s6communitylib/java/builder/S6CommunityLib.exe
-cp -r D:/Programme/BellSoft/jdk8u275-full ../../var/release/s6communitylib/java/jre
+cp -r D:/Programme/BellSoft/LibericaJDK-21/jre ../../var/release/s6communitylib/java/jre
 cp ../../instructions_de.md ../../var/release/s6communitylib
 cp ../../instructions_en.md ../../var/release/s6communitylib
 cp ../../license.md ../../var/release/s6communitylib
