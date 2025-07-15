@@ -32,7 +32,7 @@ cd ../..
 # build documentation
 lua lua/tools/ldoc/ldoc.lua -d var/release/s6communitylib/doc api/de/s6communitylib
 cd exe
-lua docbuilder.lua
+lua docbuilder_old.lua
 cd ..
 
 # zip release

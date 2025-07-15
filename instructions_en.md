@@ -14,14 +14,14 @@ Users can choose between a complete package or the individual import of componen
 * All required files are located in the subdirectory `single`. The map scripts are already prepared, so no further adjustments are necessary.
 * The file `mapscript.lua` must be imported into the map editor as the global script.
 * The file `localmapscript.lua` must be imported into the map editor as the local script.
-* The file `qsb.min.lua` must be imported into the map editor.
+* The file `questsystembehavior.lua` must be imported into the map editor.
 
 ### As a library
 
 **Important:** Note that using the library requires the BBA tool to import additional content into the map. Additionally, saving in the editor deletes all additional content. It is recommended to work with unpacked maps. The Lua debugger enables this.
 
 * As library a file `questsystembehavior.lua` is not used, hence it won't work with the quest assistent!
-* Import the subdirectory `libertica` into the map.
+* Import the subdirectory `library/s6communitylib` into the map.
 * Move `mapscript.lua` and `localmapscript.lua` to the root directory of the map. (That is `maps/externalmap/nameofmap`.) The map scripts are already prepared, so they should function in principle without any adjustments.
 * Customize the imports in both map scripts according to your needs. Imported components recursively load their dependencies.
 
@@ -31,19 +31,19 @@ To ensure full functionality, Visual Studio Code should be used as the editor. W
 
 ### Config for single file
 
-If the single file is used then the repository should be located somewhere central on the system. Example: `C:/Settlers6/QSB/libertica_release`
+If the single file is used then the repository should be located somewhere central on the system. Example: `C:/Settlers6/QSB/s6communitylib`
 
 The following is the project configuration. It is to be saved as `settings.json` im in the subdirectory `.vscode`.
 ```json
 {
     "Lua.diagnostics.globals": [],
     "Lua.workspace.ignoreDir": [
-        "C:/Settlers6/QSB/libertica_release/libertica_api/de",
-        "C:/Settlers6/QSB/libertica_release/libertica",
-        "C:/Settlers6/QSB/libertica_release/single"
+        "C:/Settlers6/QSB/s6communitylib/api/de",
+        "C:/Settlers6/QSB/s6communitylib/library",
+        "C:/Settlers6/QSB/s6communitylib/single"
     ],
     "Lua.workspace.library": [
-        "C:/Settlers6/QSB/libertica_release/libertica_api/en"
+        "C:/Settlers6/QSB/s6communitylib/api/en"
     ]
 }
 ```
@@ -51,19 +51,19 @@ If you wish to locate the repository somewhere else, the paths must be adjusted.
 
 ### Config for repository
 
-If the repository is used directly, the folder `libertica` is to be imported into the map. In that case the API documentation is also located inside the map.
+If the repository is used directly, the folder `library/s6communitylib` is to be imported into the map. In that case the API documentation is also located inside the map.
 
 The contet of `settings.json` will look as follows:
 ```json
 {
     "Lua.diagnostics.globals": [],
     "Lua.workspace.ignoreDir": [
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/de",
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica",
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/single"
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/api/de",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/library",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/single"
     ],
     "Lua.workspace.library": [
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/en"
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/api/en"
     ]
 }
 ```
@@ -76,7 +76,7 @@ To configure the game as a lua library you have to add it to the configuration. 
 ```json
 {
 "Lua.workspace.library": [
-    "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/en",
+    "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/api/en",
     "C:/Program Files (x86)/Steam/SteamApps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Global",
     "C:/Program Files (x86)/Steam/SteamApps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Local",
     "C:/Program Files (x86)/Steam/SteamApps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Shared",

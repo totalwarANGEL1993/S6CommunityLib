@@ -1,0 +1,159 @@
+#!/bin/bash
+
+# create folter
+echo "reset output directory..."
+rm -rf var/output/s6communitylib
+mkdir -p var/output/s6communitylib/library
+mkdir -p var/output/s6communitylib/single
+
+# create single file
+echo "build single file..."
+cp lua/core/mapscript_sf.lua var/output/s6communitylib/single/mapscript.lua
+cp lua/core/localmapscript_sf.lua var/output/s6communitylib/single/localmapscript.lua
+touch var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/loader_sf.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/core/qsb.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/addware.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/colortohex.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/copytable.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/createstock.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/dumptable.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getactiveplayers.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getanglebetween.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getbattalionsizebysoldiertype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getcategoriesofentity.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getcategoriesoftype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getcircleposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getCirclePositions.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getclosesttotarget.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getrandomsettlertype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/createcartbygoodtype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/createentityname.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getdelayedplayers.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getdistance.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getgeometricfocus.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/gethealth.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getquestid.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/ishistoryedition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/isincone.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/isinsight.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/ismultiplayerready.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/isunofficialpatch.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getlineposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getlinepositions.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getplayeratslot.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getpredatorspawnertypes.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getsiegeenginetypebycarttype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getsiegecarttypebyenginetype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getslotbyplayer.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getsoldiersofgroup.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getterritoryid.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/hextocolor.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/hextocolorstring.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/islocalscript.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/ismultiplayer.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/keyof.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/lookat.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/move.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/moveandexecute.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/moveandlookat.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/Moveoncheckpoints.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/movetoposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/replaceentity.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/round.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/sendcart.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/serializetable.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/sethealth.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/setposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/setpositionandlookat.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/setpositionrelativeto.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/setresourceamount.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/toboolean.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/isvalidposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/isvalidquest.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/isvalidquestname.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/unlocktitleforplayer.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/core/feature/core*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/core/core*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/fix/damage*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/fix/patch*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/diplomacy/diplomacy*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/city/construction*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/city/lifestocksystem*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/city/militiasystem*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/city/promotion*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/entity/entityevent*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/entity/entitysearch*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/entity/entityselection*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/entity/npc*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/faker/permadeath*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/faker/technology*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/information/briefingsystem*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/information/cutscenesystem*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/information/dialogsystem*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/information/information*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/information/requester*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/information/typewriter*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/io/io*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/io/iochest*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/io/iomine*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/io/iosite*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/mode/settlementsurvival*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/mode/settlementlimitation*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/quest/quest*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/quest/questbehavior*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/quest/questjornal*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/settings/camera*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/settings/sound*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/trade/trade*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/trade/traderoute*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/trade/warehouse*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/ui/uitools*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/ui/uieffects*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/ui/uibuilding*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+
+# create library
+echo "copy library files..."
+mkdir -p var/output/s6communitylib/library/s6communitylib
+cp lua/core/mapscript.lua var/output/s6communitylib/library/mapscript.lua
+cp lua/core/localmapscript.lua var/output/s6communitylib/library/localmapscript.lua
+cp lua/loader.lua var/output/s6communitylib/library
+mkdir var/output/s6communitylib/library/s6communitylib/lua
+mkdir var/output/s6communitylib/library/s6communitylib/lua/core
+cp -r lua/core/feature var/output/s6communitylib/library/s6communitylib/lua/core
+cp lua/core/core*.lua var/output/s6communitylib/library/s6communitylib/lua/core
+cp lua/core/qsb.lua var/output/s6communitylib/library/s6communitylib/lua/core
+cp -r lua/comfort var/output/s6communitylib/library/s6communitylib/lua
+cp -r lua/module var/output/s6communitylib/library/s6communitylib/lua
+
+# copy API
+echo "copy API..."
+mkdir -p var/output/s6communitylib/api/de/s6communitylib
+cp -r api/de/s6communitylib/comfort var/output/s6communitylib/api/de/s6communitylib
+cp -r api/de/s6communitylib/core var/output/s6communitylib/api/de/s6communitylib
+cp -r api/de/s6communitylib/module var/output/s6communitylib/api/de/s6communitylib
+mkdir -p var/output/s6communitylib/api/en/s6communitylib
+cp -r api/en/s6communitylib/comfort var/output/s6communitylib/api/en/s6communitylib
+cp -r api/en/s6communitylib/core var/output/s6communitylib/api/en/s6communitylib
+cp -r api/en/s6communitylib/module var/output/s6communitylib/api/en/s6communitylib
+
+# build documentation
+echo "create documentation..."
+lua lua/tools/ldoc/ldoc.lua -d var/output/s6communitylib/doc api/de/s6communitylib &>/dev/null
+cd exe
+lua docbuilder.lua
+cp ../changelog.md ../var/output/s6communitylib
+cp ../instructions_de.md ../var/output/s6communitylib
+cp ../instructions_en.md ../var/output/s6communitylib
+cp ../license.md ../var/output/s6communitylib
+cp ../readme.md ../var/output/s6communitylib
+cd ..
+
+# zip release
+echo "create output archive..."
+cd var/output
+zip -r s6communitylib.zip s6communitylib 1>/dev/null
+cd ../..
+
+echo "Done!"
