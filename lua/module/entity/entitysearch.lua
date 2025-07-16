@@ -3,6 +3,7 @@ Lib.EntitySearch.Name = "EntitySearch";
 Lib.EntitySearch.Global = {};
 Lib.EntitySearch.Local  = {};
 Lib.EntitySearch.Shared  = {
+    SearchEntitiesTypeLookup = {},
     Filters = {
         ["__Default"] = function(_ID) return true; end,
     },
@@ -53,38 +54,46 @@ end
 function Lib.EntitySearch.Shared:IterateOverEntities(_Filter)
     local FilterName = (self.Filters[_Filter] and _Filter) or "__Default";
     local Time = math.floor(Logic.GetTime());
+    local Turn = math.floor(Logic.GetCurrentTurn());
     local ResultList = {};
     local AllEntities;
 
     -- Invoke filter cache if not too old and return cache
-    if self.Caches.Filter[FilterName] and self.Caches.Filter[FilterName][1] then
-        -- Clear to old result...
-        if self.Caches.Filter[FilterName][1] +3 <= Time then
+    local FilterCache = self.Caches.Filter[FilterName];
+    if FilterCache and FilterCache[1] then
+        if FilterCache[1] + 3 <= Time then
             self.Caches.Filter[FilterName] = nil;
-        -- ...or use cache
-        elseif FilterName ~= "__Default" and self.Caches.Filter[FilterName][1] +1 <= Time then
-            return self.Caches.Filter[FilterName][2];
+        elseif FilterName ~= "__Default" and Time - FilterCache[1] <= 1 then
+            return FilterCache[2];
         end
     end
 
     -- Invoke entity cache if not to old or scan all entities
-    if self.Caches.Entity[1] and self.Caches.Entity[1] +1 > Time then
-        AllEntities = self.Caches.Entity[2];
+    local EntityCache = self.Caches.Entity;
+    if EntityCache[1] and Turn - EntityCache[1] <= 1 then
+        AllEntities = EntityCache[2];
     else
+        local j = 1;
         AllEntities = {};
         for _, v in pairs(Entities) do
-            for _, ID in pairs(Logic.GetEntitiesOfType(v)) do
-                AllEntities[#AllEntities +1] = ID;
+            local IDs = Logic.GetEntitiesOfType(v);
+            local n = #IDs;
+            for i = 1, n do
+                AllEntities[j] = IDs[i];
+                j = j + 1;
             end
         end
-        self.Caches.Entity = {Time, AllEntities};
+        self.Caches.Entity = {Turn, AllEntities};
     end
 
     -- Do actual search and save results in cache
+    local j = 1;
     local Filter = self.Filters[_Filter] or self.Filters["__Default"];
     for i= 1, #AllEntities do
-        if Filter(AllEntities[i]) then
-            ResultList[#ResultList +1] = AllEntities[i];
+        local ID = AllEntities[i];
+        if Filter(ID) then
+            ResultList[j] = AllEntities[i];
+            j = j + 1;
         end
     end
     self.Caches.Filter[FilterName] = {Time, ResultList};
@@ -95,60 +104,66 @@ function Lib.EntitySearch.Shared:SearchEntities(_PlayerID, _WithoutDefeatResista
     if _WithoutDefeatResistant == nil then
         _WithoutDefeatResistant = false;
     end
-
     local Time = math.floor(Logic.GetTime());
     local Key = "hupl_".._PlayerID.."_"..tostring(_WithoutDefeatResistant);
+    self.SearchEntitiesTypeLookup[Key] = self.SearchEntitiesTypeLookup[Key] or {};
 
-    local Function = function(_ID)
-        if _PlayerID and Logic.EntityGetPlayer(_ID) ~= _PlayerID then
-            return false;
-        end
-        if _WithoutDefeatResistant then
-            if (Logic.IsBuilding(_ID) or Logic.IsWall(_ID)) and Logic.IsConstructionComplete(_ID) == 0 then
-                return false;
-            end
-            local Type = Logic.GetEntityType(_ID);
-            local TypeName = Logic.GetEntityType(Type);
-            if TypeName and (string.find(TypeName, "^S_") or string.find(TypeName, "^XD_")) then
-                return false;
-            end
-        end
-        return true;
-    end
-
+    -- If filter doesn't exist, create it
     if not self.Filters[Key] then
+        local Function = function(_ID)
+            if _PlayerID and Logic.EntityGetPlayer(_ID) ~= _PlayerID then
+                return false;
+            end
+            if _WithoutDefeatResistant then
+                if (Logic.IsBuilding(_ID) or Logic.IsWall(_ID)) and Logic.IsConstructionComplete(_ID) == 0 then
+                    return false;
+                end
+                local Type = Logic.GetEntityType(_ID);
+                -- Check in regex result cache
+                if Lib.EntitySearch.Shared.SearchEntitiesTypeLookup[Key][Type] then
+                    return false;
+                end
+                -- Check type name by regex
+                local TypeName = Logic.GetEntityTypeName(Type);
+                if TypeName and (string.find(TypeName, "^S_") or string.find(TypeName, "^XD_")) then
+                    Lib.EntitySearch.Shared.SearchEntitiesTypeLookup[Key][Type] = true;
+                    return false;
+                end
+            end
+            return true;
+        end
         self:CreateFilter(Key, Function);
     end
-    if  self.Caches.Filter[Key]
-    and self.Caches.Filter[Key][2]
-    and self.Caches.Filter[Key][1] +1 > Time then
-        return self.Caches.Entity[Key][2];
+
+    -- Return from cache or execute filter
+    local Filter = self.Caches.Filter
+    if Filter[Key] and Filter[Key][2] and Time - Filter[Key][1] <= 1 then
+        return Filter[Key][2];
     end
-    return CommenceEntitySearch(Key);
+    return self:IterateOverEntities(Key);
 end
 
 function Lib.EntitySearch.Shared:SearchEntitiesByScriptname(_Pattern)
     local Time = math.floor(Logic.GetTime());
-
     local Key = "name_".._Pattern;
-
-    local Function = function(_ID)
-        local ScriptName = Logic.GetEntityName(_ID);
-        if not string.find(ScriptName, _Pattern) then
-            return false;
-        end
-        return true;
-    end
-
+    -- If filter doesn't exist, create it
     if not self.Filters[Key] then
+        local Function = function(_ID)
+            local ScriptName = Logic.GetEntityName(_ID);
+            if not string.find(ScriptName, _Pattern) then
+                return false;
+            end
+            return true;
+        end
         self:CreateFilter(Key, Function);
     end
-    if  self.Caches.Filter[Key]
-    and self.Caches.Filter[Key][2]
-    and self.Caches.Filter[Key][1] +1 > Time then
-        return self.Caches.Entity[Key][2];
+
+    -- Return from cache or execute filter
+    local Filter = self.Caches.Filter
+    if Filter[Key] and Filter[Key][2] and Filter[Key][1] +1 > Time then
+        return Filter[Key][2];
     end
-    return CommenceEntitySearch(Key);
+    return self:IterateOverEntities(Key);
 end
 
 function Lib.EntitySearch.Shared:SearchEntitiesInArea(_Area, _Position, _PlayerID, _Type, _Category)
@@ -159,75 +174,74 @@ function Lib.EntitySearch.Shared:SearchEntitiesInArea(_Area, _Position, _PlayerI
     end
 
     local a = _Area;
-    local x,y = Position.X, Position.Y;
+    local x,y = math.floor(Position.X / 100), math.floor(Position.Y / 100);
     local p = _PlayerID;
     local t = _Type;
     local c = _Category;
-
     local Key = "area_"..a.."_"..x.."_"..y.."_"..p.."_"..t.."_"..c;
 
-    local Function = function(_ID)
-        if _PlayerID and Logic.EntityGetPlayer(_ID) ~= _PlayerID then
-            return false;
-        end
-        if _Type and Logic.GetEntityType(_ID) ~= _Type then
-            return false;
-        end
-        if _Category and Logic.IsEntityInCategory(_ID, _Category) == 0 then
-            return false;
-        end
-        if GetDistance(_ID, Position) > _Area then
-            return false;
-        end
-        return true;
-    end
-
+    -- If filter doesn't exist, create it
     if not self.Filters[Key] then
+        local Function = function(_ID)
+            if _PlayerID and Logic.EntityGetPlayer(_ID) ~= _PlayerID then
+                return false;
+            end
+            if _Type and _Type > 0 and Logic.GetEntityType(_ID) ~= _Type then
+                return false;
+            end
+            if _Category and _Category > 0 and Logic.IsEntityInCategory(_ID, _Category) == 0 then
+                return false;
+            end
+            if GetDistance(_ID, Position) > _Area then
+                return false;
+            end
+            return true;
+        end
         self:CreateFilter(Key, Function);
     end
-    if  self.Caches.Filter[Key]
-    and self.Caches.Filter[Key][2]
-    and self.Caches.Filter[Key][1] +1 > Time then
-        return self.Caches.Entity[Key][2];
+
+    -- Return from cache or execute filter
+    local Filter = self.Caches.Filter
+    if Filter[Key] and Filter[Key][2] and Filter[Key][1] +1 > Time then
+        return Filter[Key][2];
     end
-    return CommenceEntitySearch(Key);
+    return self:IterateOverEntities(Key);
 end
 
 function Lib.EntitySearch.Shared:SearchEntitiesInTerritory(_Territory, _PlayerID, _Type, _Category)
     local Time = math.floor(Logic.GetTime());
-
     local a = _Territory;
     local p = _PlayerID;
     local t = _Type or "0";
     local c = _Category or "0";
-
     local Key = "teri_"..a.."_"..p.."_"..t.."_"..c;
 
-    local Function = function(_ID)
-        if _PlayerID and Logic.EntityGetPlayer(_ID) ~= _PlayerID then
-            return false;
-        end
-        if _Type and Logic.GetEntityType(_ID) ~= _Type then
-            return false;
-        end
-        if _Category and Logic.IsEntityInCategory(_ID, _Category) == 0 then
-            return false;
-        end
-        if _Territory and GetTerritoryUnderEntity(_ID) ~= _Territory then
-            return false;
-        end
-        return true;
-    end
-
+    -- If filter doesn't exist, create it
     if not self.Filters[Key] then
+        local Function = function(_ID)
+            if _PlayerID and Logic.EntityGetPlayer(_ID) ~= _PlayerID then
+                return false;
+            end
+            if _Type and _Type > 0 and Logic.GetEntityType(_ID) ~= _Type then
+                return false;
+            end
+            if _Category and _Category > 0 and Logic.IsEntityInCategory(_ID, _Category) == 0 then
+                return false;
+            end
+            if _Territory and GetTerritoryUnderEntity(_ID) ~= _Territory then
+                return false;
+            end
+            return true;
+        end
         self:CreateFilter(Key, Function);
     end
-    if  self.Caches.Filter[Key]
-    and self.Caches.Filter[Key][2]
-    and self.Caches.Filter[Key][1] +1 > Time then
-        return self.Caches.Entity[Key][2];
+
+    -- Return from cache or execute filter
+    local Filter = self.Caches.Filter
+    if Filter[Key] and Filter[Key][2] and Filter[Key][1] +1 > Time then
+        return Filter[Key][2];
     end
-    return CommenceEntitySearch(Key);
+    return self:IterateOverEntities(Key);
 end
 
 -- -------------------------------------------------------------------------- --

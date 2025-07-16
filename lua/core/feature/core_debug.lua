@@ -44,10 +44,6 @@ function Lib.Core.Debug:OnReportReceived(_ID, ...)
     end
 end
 
-function Lib.Core.Debug:Test(_Text)
-    AddNote(_Text)
-end
-
 function Lib.Core.Debug:ActivateDebugMode(_DisplayScriptErrors, _CheckAtRun, _DevelopingCheats, _DevelopingShell, _TraceQuests)
     if IsLocalScript() then
         return;

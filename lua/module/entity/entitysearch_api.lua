@@ -53,9 +53,10 @@ function GetEntitiesOfCategoriesInTerritories(_PlayerID, _Category, _Territory)
     local c = (type(_Category) == "table" and _Category) or {_Category};
     local t = (type(_Territory) == "table" and _Territory) or {_Territory};
     local PlayerEntities = {};
-    for i=1, #p, 1 do
-        for j=1, #c, 1 do
-            for k=1, #t, 1 do
+    local nP, nC, nT = #p, #c, #t;
+    for i=1, nP, 1 do
+        for j=1, nC, 1 do
+            for k=1, nT, 1 do
                 local Units = SearchEntitiesOfCategoryInTerritory(t[k], c[j], p[i]);
                 PlayerEntities = Array_Append(PlayerEntities, Units);
             end
