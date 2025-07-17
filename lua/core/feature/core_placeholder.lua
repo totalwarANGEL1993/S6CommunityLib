@@ -78,7 +78,7 @@ function Lib.Core.Placeholder:OverwriteGetStringTableText()
     end
 end
 
-function Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _OptionalTableName)
+function Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _Name)
     _Path = _Path:gsub("\\\\", "/");
     Script.Load(_Path);
     local Slash = _Path:lastIndexOf("/");
@@ -87,16 +87,20 @@ function Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _OptionalTableNam
     if File:find("_[a-z][a-z]$") then
         File = File:sub(1, File:len() -3);
     end
-    local Table = (_G[_OptionalTableName] ~= nil and _G[_OptionalTableName]) or User_String_Table;
-    if Table then
-        for Key, Value in pairs(Table) do
-            self:AddStringTableOverwrite(File.. "/" ..Key, Value);
-        end
-        if _OptionalTableName then
-            _G[_OptionalTableName] = nil;
+    local Table = (_G[_Name] ~= nil and _G[_Name]) or User_String_Table;
+    self:AddLuaStringTableFromTable(Table, File);
+    User_String_Table = nil;
+    if _Name then
+        _G[_Name] = nil;
+    end
+end
+
+function Lib.Core.Placeholder:AddLuaStringTableFromTable(_Table, _Name)
+    if _Table then
+        for Key, Value in pairs(_Table) do
+            self:AddStringTableOverwrite(_Name.. "/" ..Key, Value);
         end
     end
-    User_String_Table = nil;
 end
 
 function Lib.Core.Placeholder:AddStringTableOverwrite(_Key, _Text)
@@ -372,15 +376,24 @@ function AddEntityTypePlaceholder(_Type, _Replacement)
 end
 API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
 
-function LoadStringTextFromFile(_Path, _OptionalTableName)
+function LoadStringTextFromFile(_Path, _TableName)
     if not IsLocalScript() then
-        local OptionalTableName = (_OptionalTableName and "\"" .._OptionalTableName.. "\"") or "nil";
-        ExecuteLocal([[LoadStringTextFromFile("%s", %s)]],_Path,OptionalTableName);
+        local TableName = (_TableName and "\"" .._TableName.. "\"") or "User_String_Table";
+        ExecuteLocal([[LoadStringTextFromFile("%s", %s)]], _Path, TableName);
         return;
     end
-    Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _OptionalTableName);
+    Lib.Core.Placeholder:AddLuaStringTableFromFile(_Path, _TableName);
 end
 API.LoadStringTextFromFile = LoadStringTextFromFile;
+
+function LoadStringTextFromTable(_Path, _GroupName)
+    if not IsLocalScript() then
+        ExecuteLocal([[LoadStringTextFromTable("%s", "%s")]], _Path, _GroupName);
+        return;
+    end
+    Lib.Core.Placeholder:AddLuaStringTableFromTable(_Path, _GroupName);
+end
+API.LoadStringTextFromTable = LoadStringTextFromTable;
 
 function AddStringText(_Key, _Text)
     assert(IsLocalScript(), "Text can only be set in local script!");

@@ -557,10 +557,20 @@ API.AddEntityTypePlaceholder = AddEntityTypePlaceholder;
 --- ```
 --- 
 --- @param _Path string Pfad zur Datei
---- @param _OptionalTableName? any Name des Lua-Table
-function LoadStringTextFromFile(_Path, _OptionalTableName)
+--- @param _TableName? string Name des Lua-Table
+function LoadStringTextFromFile(_Path, _TableName)
 end
 API.LoadStringTextFromFile = LoadStringTextFromFile;
+
+--- Läd alle Keys aus der angegebenen Tabelle.
+--- 
+--- Die erzeugten Keys setzen ihren Namen aus dem Gruppennamen und den einzelnen
+--- Schlüsselwerten innerhalb der Tabelle.
+--- @param _Path string
+--- @param _GroupName string
+function LoadStringTextFromTable(_Path, _GroupName)
+end
+API.LoadStringTextFromTable = LoadStringTextFromTable;
 
 --- Speichert eine Zeichenfolgenüberschreibung unter dem Schlüssel.
 --- @param _Key string Schlüssel des Eintrags

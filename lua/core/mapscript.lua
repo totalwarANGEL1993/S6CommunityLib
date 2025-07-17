@@ -7,7 +7,7 @@
 
 -- ========================================================================== --
 
-Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
+Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "S6CommunityLib/lua/loader.lua");
 
 -- This must always be loaded!
 Lib.Require("core/Core");

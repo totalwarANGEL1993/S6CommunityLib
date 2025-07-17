@@ -118,7 +118,6 @@ echo "copy library files..."
 mkdir -p var/output/s6communitylib/library/s6communitylib
 cp lua/core/mapscript.lua var/output/s6communitylib/library/mapscript.lua
 cp lua/core/localmapscript.lua var/output/s6communitylib/library/localmapscript.lua
-cp lua/loader.lua var/output/s6communitylib/library
 mkdir var/output/s6communitylib/library/s6communitylib/lua
 mkdir var/output/s6communitylib/library/s6communitylib/lua/core
 cp -r lua/core/feature var/output/s6communitylib/library/s6communitylib/lua/core
@@ -126,6 +125,7 @@ cp lua/core/core*.lua var/output/s6communitylib/library/s6communitylib/lua/core
 cp lua/core/qsb.lua var/output/s6communitylib/library/s6communitylib/lua/core
 cp -r lua/comfort var/output/s6communitylib/library/s6communitylib/lua
 cp -r lua/module var/output/s6communitylib/library/s6communitylib/lua
+cp lua/loader.lua var/output/s6communitylib/library/s6communitylib/lua
 
 # copy API
 echo "copy API..."
