@@ -4,8 +4,8 @@
  <NameKey></NameKey>
  <DescKey></DescKey>
  <ModeKey></ModeKey>
- <Name>Testmap 23 - Localization</Name>
- <Desc>Showcase for multi-lingual maps.</Desc>
+ <Name>Demo 01 - Übersetzung</Name>
+ <Desc>Showcase für die Übersetzung von Maps in mehrere Sprachen.</Desc>
  <Mode></Mode>
  <SizeX>385</SizeX>
  <SizeY>385</SizeY>
@@ -17,7 +17,7 @@
  <PreloadModels>true</PreloadModels>
  <ClimateZone>MiddleEurope</ClimateZone>
  <GUID>
-  <GUID>2151a6e2-0896-4caa-ad3b-ddc0994f3646</GUID>
+  <GUID>a4316a8e-5ff5-46f3-8d14-08eb707aec92</GUID>
  </GUID>
  <PlayerInfos>
   <Info>
@@ -71,7 +71,7 @@
   <Info>
    <Name></Name>
    <Head>H_NPC_Villager01_ME</Head>
-   <AI>0</AI>
+   <AI>1</AI>
    <Diplomacy>
     <State>-1</State>
     <State>-1</State>
@@ -216,7 +216,12 @@
  </Keys>
  <StartPositions> </StartPositions>
  <ValidPlayerColors> </ValidPlayerColors>
- <ValidKnightNames> </ValidKnightNames>
+ <ValidKnightNames>
+  <ValidKnightName>U_KnightSaraya</ValidKnightName>
+  <ValidKnightName>U_KnightChivalry</ValidKnightName>
+  <ValidKnightName>U_KnightTrading</ValidKnightName>
+  <ValidKnightName>U_KnightWisdom</ValidKnightName>
+ </ValidKnightNames>
  <ValidResourceModificators> </ValidResourceModificators>
  <ValidVictoryConditions> </ValidVictoryConditions>
  <CombatMusic> </CombatMusic>
