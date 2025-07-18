@@ -45,6 +45,9 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Entity_EntitySelection_Tooltip_TrebuchetCart_Text = "- Kann einmalig zum Trebuchet ausgebaut werden",
     Entity_EntitySelection_Tooltip_Trebuchet_Title = "Trebuchet",
     Entity_EntitySelection_Tooltip_Trebuchet_Text = "- Kann über weite Strecken Gebäude angreifen {cr}- Kann Gebäude in Brand stecken {cr}- Trebuchet kann manuell zurückgeschickt werden",
+    -- IO
+    IO_IoSite_Description_Title = "Gebäude bauen";
+    IO_IoSite_Description_Text = "Beauftragt den Bau eines Gebäudes. Ein Siedler wird aus dem Lagerhaus kommen und mit dem Bau beginnen.";
 };
 
 -- English
@@ -88,6 +91,9 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Entity_EntitySelection_Tooltip_TrebuchetCart_Text = "- Can uniquely be transmuted into a trebuchet",
     Entity_EntitySelection_Tooltip_Trebuchet_Title = "Trebuchet",
     Entity_EntitySelection_Tooltip_Trebuchet_Text = "- Can perform long range attacks on buildings {cr}- Can set buildings on fire {cr}- The trebuchet can be manually send back to the city",
+    -- IO
+    IO_IoSite_Description_Title = "Create building";
+    IO_IoSite_Description_Text = "Order a building. A worker will come out of the storehouse and erect it.";
 };
 
 -- French
@@ -131,5 +137,8 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Entity_EntitySelection_Tooltip_TrebuchetCart_Text = "- Peut être transformé une seule fois en trébuchet",
     Entity_EntitySelection_Tooltip_Trebuchet_Title = "Trebuchet",
     Entity_EntitySelection_Tooltip_Trebuchet_Text = "- Peut attaquer des bâtiments sur de longues distances {cr}- Peut mettre le feu à des bâtiments {cr}- Le trébuchet peut être renvoyé manuellement",
+    -- IO
+    IO_IoSite_Description_Title = "Construire le bâtiment";
+    IO_IoSite_Description_Text = "Commande la construction d'un bâtiment. Un Settler sortira de l'entrepôt et commencera la construction.";
 };
 
