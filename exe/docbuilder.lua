@@ -1,6 +1,6 @@
 LibScribe = {
-    DocDirectory = "../var/release/s6communitylib/doc",
-    HtmlDirectory = "../var/release/s6communitylib/doc/modules",
+    DocDirectory = "../var/output/s6communitylib/doc",
+    HtmlDirectory = "../var/output/s6communitylib/doc/modules",
     WebDirectory = "../web",
 };
 

@@ -17,69 +17,86 @@ von Komponenten wählen.
 * Alle benötigten Dateien befinden sich im Unterverzeichnis `single`. Die Mapskripte sind bereits vorbereitet, sodass keine weiteren Anpassungen gemacht werden müssen.
 * Die Datei `mapscript.lua` muss im Mapeditor als globales Skript importiert werden
 * Die Datei `localmapscript.lua` muss im Mapeditor als lokales Skript importiert werden.
-* Die Datei `qsb.min.lua` muss im Mapeditor importiert werden.
+* Die Datei `questsystembehavior.lua` muss im Mapeditor als Quest-Bibliothek importiert werden.
 
 ### Als Bibliothek
 
-**Wichtig:** Beachte, dass für die Verwendung als Bibliothek das BBA-Tool benötigt wird, um zusätzliche Inhalte in die Map zu importieren. Außerdem löscht jedes Speichern im Editor alle zusatzinhalte. Es empfielt sich, mit entpackten Maps zu arbeiten. Der Lua-Debugger ermöglicht dies.
+**Wichtig:** Beachte, dass für die Verwendung als Bibliothek das BBA-Tool (oder 
+eine vergleichbae Software) benötigt wird, um zusätzliche Inhalte in die Map zu 
+importieren. Außerdem löscht jedes Speichern im Editor alle zusatzinhalte. Es 
+empfielt sich, mit entpackten Maps zu arbeiten.
 
 * Als Bibliothek wird die Datei `questsystembehavior.lua` nicht verwendet, daher funktioniert es nicht mit dem Quest-Assistenten!
-* Importiere das Unterverveichnis `libertica` in die Map.
-* Verschiebe `mapscript.lua` und `localmapscript.lua` in das Wurzelverzeichnis der Map. (Das ist `maps/externalmap/nameofmap`.) Die Mapskripte sind bereits vorbereitet, sodass sie ohne Anpassungen prinzipiell funktionieren.
-* Passe die Imports in beiden Mapskripten nach deinen Bedürfnissen an. Importierte Komponenten laden rekursiv ihre Abhängigkeiten.
+* Importiere das Unterverveichnis `library/s6communitylib` unverändert in die Map.
+* Kopiere `mapscript.lua` und `localmapscript.lua` in das Wurzelverzeichnis der Map. (Das ist `maps/externalmap/nameofmap`.) Die Mapskripte sind bereits vorbereitet, sodass sie ohne Anpassungen prinzipiell funktionieren.
+* Passe die Imports in beiden Mapskripten nach deinen Bedürfnissen an. Importierte Komponenten laden rekursiv ihre Abhängigkeiten. Du kannst Importe in einem separaten Skript
+durchführen, dass im globalen und lokalen Skript geladen wird.
 
 ## Projekt konfigurieren
 
-Um die vollständige Funktionalität zu garantieren, sollte Visual Studio Code als Editor verwendet werden. Ob die nachfolgend beschriebene Konfiguration auch in anderen Editoren vorgenommen werden kann, musst du selbst herausfinden. Für VSC gibt es das Plugin "Lua Language Server", das viele Comfort-Funktionen wie z.B. Auto-Vervollständigung oder Tooltips mit Funktionsdokumentationen anbietet.
+Um die vollständige Funktionalität zu garantieren, sollte Visual Studio Code als 
+Editor verwendet werden. Ob die nachfolgend beschriebene Konfiguration auch in 
+anderen Editoren vorgenommen werden kann, musst du selbst herausfinden. Für VSC 
+gibt es das Plugin "Lua Language Server", das viele Comfort-Funktionen wie z.B. 
+Auto-Vervollständigung oder Tooltips mit Funktionsdokumentationen anbietet.
 
 ### Konfigurationsdatei für Komplettpaket
 
-Wenn das Komplettpaket verwendet wird, dann sollte das Repository zentral auf dem Rechner abgelegt werden. Beispiel: `C:/Settlers6/QSB/libertica_release`
+Wenn das Komplettpaket verwendet wird, dann sollte die Bibliothek zentral auf 
+dem Rechner abgelegt werden. Beispiel: `C:/Settlers6/QSB/s6communitylib`
 
-Es folgt die grundlegende Projektkonfiguration. Diese ist als `settings.json` im Ordner `.vscode` abzulegen.
+Es folgt die grundlegende Projektkonfiguration. Diese ist als `settings.json` 
+im Ordner `.vscode` abzulegen.
 ```json
 {
     "Lua.diagnostics.globals": [],
     "Lua.workspace.ignoreDir": [
-        "C:/Settlers6/QSB/libertica_release/libertica_api/en",
-        "C:/Settlers6/QSB/libertica_release/libertica",
-        "C:/Settlers6/QSB/libertica_release/single"
+        "C:/Settlers6/QSB/s6communitylib/api/en",
+        "C:/Settlers6/QSB/s6communitylib/library",
+        "C:/Settlers6/QSB/s6communitylib/single"
     ],
     "Lua.workspace.library": [
-        "C:/Settlers6/QSB/libertica_release/libertica_api/de"
+        "C:/Settlers6/QSB/s6communitylib/api/de"
     ]
 }
 ```
-Wenn du das Repository in einem anderen Verzeichnis ablegts, müssen die Pfade angepasst werden.
+Wenn du die Bibliothek in einem anderen Verzeichnis ablegts, müssen die Pfade 
+angepasst werden!
 
-### Konfigurationsdatei für Repository
+### Konfigurationsdatei für Bibliothek
 
-Wenn das Repository verwendet wird, dann kann der Ordner `libertica` in die Map kopiert werden. Dann ist auch die API-Dokumentation bereits innerhalb der Map.
+Wenn die Bibliothek verwendet wird, dann muss der Ordner 
+`library/s6communitylib` in die Map kopiert werden. Dann ist auch die 
+API-Dokumentation bereits innerhalb der Map.
 
 In diesem Fall sieht die `settings.json` wie folgt aus:
 ```json
 {
     "Lua.diagnostics.globals": [],
     "Lua.workspace.ignoreDir": [
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/en",
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica",
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/single"
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/api/en",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/library",
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/single"
     ],
     "Lua.workspace.library": [
-        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/de"
+        "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/api/de"
     ]
 }
 ```
 
 ### HE als Bibliothek
 
-Für Besitzer der History Edition ist es zudem möglich, das Spiel selbst als Bibliothek anzugeben. Das hat den Vorteil, dass auch die Lua-Funktionen des Spiels in der Autovervollständigung auftauchen. Dies hat jedoch seine Grenzen, da die C-Bindungs (z.B. Logic) davon ausgenommen sind.
+Für Besitzer der History Edition ist es zudem möglich, das Spiel selbst als 
+Bibliothek anzugeben. Das hat den Vorteil, dass auch die Lua-Funktionen des 
+Spiels in der Autovervollständigung auftauchen. Dies hat jedoch seine Grenzen, 
+da die C-Bindungs (z.B. Logic) davon ausgenommen sind.
 
-Um das Spiel zur Bibliothek hinzuzufügen, muss es als Library konfiguriert werden. Achte darauf, dass die Pfade ggf. angepasst werden müssen!
+Um das Spiel zur Bibliothek hinzuzufügen, muss es als Library konfiguriert 
+werden. Achte darauf, dass die Pfade ggf. angepasst werden müssen!
 ```json
 {
 "Lua.workspace.library": [
-    "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/libertica_release/libertica_api/de",
+    "nameofmap.s6xmap.unpacked/maps/externalmap/nameofmap/s6communitylib/api/de",
     "C:/Program Files (x86)/Steam/SteamApps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Global",
     "C:/Program Files (x86)/Steam/SteamApps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Local",
     "C:/Program Files (x86)/Steam/SteamApps/common/The Settlers - Rise of an Empire - History Edition/Data/base/shr/Script/Shared",
@@ -102,15 +119,20 @@ Project
  |- maps
   |- externalmap
    |- mapname
-    |- libertica
+    |- s6communitylib
      |- ... library files
     |- scripts
     |- localmapscript.lua
     |- mapscript.lua
     |- ... other files
 ```
-Diese Struktur vereinfacht das Auslagern von Skripten. Die Skripte liegen im Ordner `scripts` und werden in den Hauptskripten nur geladen. Während der Entwicklung kann anstelle des Path in der Map der absolute Path im System angegeben werden.
+Diese Struktur vereinfacht das Auslagern von Skripten. Die Skripte liegen im 
+Ordner `scripts` und werden in den Hauptskripten nur geladen. Während der 
+Entwicklung kann anstelle des Path in der Map der absolute Path im System 
+angegeben werden.
 
-`maps/externalmap/mapname/scripts/luafile.lua` - Das ist ein relativer Pfad innerhalb des Spiels.
+`maps/externalmap/mapname/scripts/luafile.lua` - Das ist ein relativer Pfad 
+innerhalb des Spiels.
 
-`C:/Settlers6/mapname/scripts/luafile.lua` - Das ist ein absoluter Pfad auf deinem Rechner.
+`C:/Settlers6/mapname/scripts/luafile.lua` - Das ist ein absoluter Pfad auf 
+deinem Rechner.

@@ -13,9 +13,9 @@ LibPath = "maps/externalmap/" ..Framework.GetCurrentMapName() .."/";
 CONST_IS_IN_DEV = true;
 if CONST_IS_IN_DEV then
     GlobalPath = "E:/Repositories/S6CommunityLib/test/test21_city/qsb_t21_city.s6xmap.unpacked/" ..GlobalPath;
-    LibPath = "E:/Repositories/S6CommunityLib/lua/";
+    LibPath = "E:/Repositories/";
 end
-Script.Load(LibPath.. "loader.lua");
+Script.Load(LibPath.. "S6CommunityLib/lua/loader.lua");
 Script.Load(GlobalPath.. "/script/imports.lua");
 Script.Load(GlobalPath.. "/script/local_main.lua");
 
