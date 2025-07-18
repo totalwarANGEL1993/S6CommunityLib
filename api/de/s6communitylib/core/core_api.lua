@@ -207,13 +207,6 @@ API.SetPlayerPortrait = SetPlayerPortrait;
 function SetResourceAmount(_Entity, _StartAmount, _RefillAmount)
 end
 
---- Ändert die angezeigte Beschreibung eines benutzerdefinierten Verhaltens.
---- @param _QuestName string Name des Quests
---- @param _Text string Quest-Text
-function SetCustomBehaviorText(_QuestName, _Text)
-end
-API.SetCustomBehaviorText = SetCustomBehaviorText;
-
 --- Startet einen Quest neu.
 ---
 --- Quests müssen beendet sein, um erneut gestartet zu werden. Entweder müssen alle Trigger erfolgreich sein

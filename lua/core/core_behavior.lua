@@ -202,23 +202,26 @@ end
 
 function B_Goal_Diplomacy:GetDiplomacyMapping()
     return {
-        [DiplomacyStates.Allied]             = {de = "Verbündeter",    en = "Allied",               fr = "Allié"},
-        [DiplomacyStates.TradeContact]       = {de = "Handelspartner", en = "Trade Contact",        fr = "Partenaire commercial"},
-        [DiplomacyStates.EstablishedContact] = {de = "Bekannt",        en = "Established Contact",  fr = "Contact établi"},
-        [DiplomacyStates.Undecided]          = {de = "Unbekannt",      en = "Undecided",            fr = "Inconnu"},
-        [DiplomacyStates.Enemy]              = {de = "Feind",          en = "Enemy",                fr = "Ennemi"},
+        [DiplomacyStates.Allied]             = "UI_Texts/DiplomacyStateAllied",
+        [DiplomacyStates.TradeContact]       = "UI_Texts/DiplomacyStateEnemy",
+        [DiplomacyStates.EstablishedContact] = "UI_Texts/DiplomacyStateEstablishedContact",
+        [DiplomacyStates.Undecided]          = "UI_Texts/DiplomacyStateTradeContact",
+        [DiplomacyStates.Enemy]              = "UI_Texts/DiplomacyStateUndecided",
     };
 end
 
 function B_Goal_Diplomacy:ChangeCaption(_Quest)
     local DiplomacyMap = self:GetDiplomacyMapping();
     local PlayerName = GetPlayerName(self.PlayerID) or "";
-    local Text = string.format(
-        Localize(self.TextPattern),
-        Localize(DiplomacyMap[self.DiplState]),
-        PlayerName
-    );
-    Lib.Core.Quest:ChangeCustomQuestCaptionText(Text, _Quest);
+    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
+            _Quest,
+            "Lib_Strings/Core_Quest_Diplomacy_Pattern",
+            DiplomacyMap[self.DiplState],
+            PlayerName
+        );
+        _Quest.QuestDescription = "true";
+    end
 end
 
 function B_Goal_Diplomacy:CustomFunction(_Quest)
@@ -885,22 +888,17 @@ end
 
 function B_Goal_ActivateBuff:CustomFunction(_Quest)
    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
-        local tMapping = CopyTable(Lib.Core.Quest.Text.ActivateBuff.BuffsVanilla);
-        if g_GameExtraNo >= 1 then
-            tMapping = CopyTable(Lib.Core.Quest.Text.ActivateBuff.BuffsEx1, tMapping);
-        end
         Lib.Core.Quest:ChangeCustomQuestCaptionText(
-            string.format(
-                Localize(Lib.Core.Quest.Text.ActivateBuff.Pattern),
-                Localize(tMapping[self.BuffName])
-            ),
-            _Quest
+            _Quest,
+            "Lib_Strings/Core_Quest_ActivateBuff_Pattern",
+            "UI_ObjectNames/" ..self.BuffName,
+            "UI_ObjectNamesEx1/" ..self.BuffName
         );
+        _Quest.QuestDescription = "true";
     end
-
-    local Buff = Logic.GetBuff( self.PlayerID, self.Buff )
+    local Buff = Logic.GetBuff(self.PlayerID, self.Buff);
     if Buff and Buff ~= 0 then
-        return true
+        return true;
     end
 end
 
@@ -1480,17 +1478,19 @@ end
 
 function B_Goal_SoldierCount:CustomFunction(_Quest)
     if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
-        local Relation = tostring(self.bRelSmallerThan);
         local PlayerName = GetPlayerName(self.PlayerID) or "";
+        local Relation = "Lib_Strings/Core_Quest_SoldierCount_AtLeast";
+        if self.bRelSmallerThan then
+            Relation = "Lib_Strings/Core_Quest_SoldierCount_LowerThan";
+        end
         Lib.Core.Quest:ChangeCustomQuestCaptionText(
-            string.format(
-                Localize(Lib.Core.Quest.Text.SoldierCount.Pattern),
-                PlayerName,
-                Localize(Lib.Core.Quest.Text.SoldierCount.Relation[Relation]),
-                self.NumberOfUnits
-            ),
-            _Quest
+            _Quest,
+            "Lib_Strings/Core_Quest_SoldierCount_Pattern",
+            PlayerName,
+            Relation,
+            self.NumberOfUnits
         );
+        _Quest.QuestDescription = "true";
     end
 
     local NumSoldiers = Logic.GetCurrentSoldierCount( self.PlayerID )
@@ -1610,12 +1610,12 @@ function B_Goal_Festivals:CustomFunction(_Quest)
     if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
         local PlayerName = GetPlayerName(self.PlayerID) or "";
         Lib.Core.Quest:ChangeCustomQuestCaptionText(
-            string.format(
-                Localize(Lib.Core.Quest.Text.Festivals.Pattern),
-                PlayerName, self.NeededFestivals
-            ), 
-            _Quest
+            _Quest,
+            "Lib_String/Core_Quest_Festivals_Pattern",
+            PlayerName,
+            self.NeededFestivals
         );
+        _Quest.QuestDescription = "true";
     end
 
     if Logic.GetStoreHouse( self.PlayerID ) == 0  then

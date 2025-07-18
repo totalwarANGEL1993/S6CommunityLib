@@ -31,7 +31,6 @@ Lib.Require("core/feature/Core_Quest");
 Lib.Require("core/feature/Core_Player");
 
 Lib.Require("core/Core_Behavior");
-Lib.Require("core/Core_Text");
 Lib.Register("core/Core");
 
 ---@diagnostic disable: deprecated
@@ -453,8 +452,8 @@ function Lib.Core.Local:CloseGameIfNotPatched(_Version)
 
     if not IsMultiplayer() then
         -- Check patch version
-        local Title = Localize(Lib.Core.Text.PatchRequired.Title);
-        local Text = Localize(Lib.Core.Text.PatchRequired.Text);
+        local Title = GetStringText("Lib_Strings/Core_Dialog_PatchRequired_Title");
+        local Text = GetStringText("Lib_Strings/Core_Dialog_PatchRequired_Text");
         if IsUnofficialPatch() then
             local Pattern = "^([a-zA-Z]+) (%d+)%.(%d+)%.(%d+)";
             local _, mj1,mo1,bf1, _ = string.match(Required, Pattern);
@@ -463,7 +462,7 @@ function Lib.Core.Local:CloseGameIfNotPatched(_Version)
                 error(false, "Malformed version number: %s", Required);
                 Framework.CloseGame();
             end
-            Text = Localize(Lib.Core.Text.PatchVersionRequired.Text);
+            Text = GetStringText("Lib_Strings/Core_Dialog_PatchRequired_TextVersion");
             Text = Text:format(Required, "UP "..mj2.."."..mo2.."."..bf2);
             if Required == "UP 0.0.0" then
                 return;
