@@ -31,6 +31,20 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Quest_QuestJornal_Next = "Tagebuch anzeigen",
     Quest_QuestJornal_Title = "Tagebuch",
     Quest_QuestJornal_Note = "Notiz",
+    -- NPC
+    Entity_Npc_StartConversation = "Gespräch beginnen",
+    -- Entity Selection
+    Entity_EntitySelection_Tooltip_KnightButton_Title = "Ritter selektieren",
+    Entity_EntitySelection_Tooltip_KnightButton_Text = "- Klick selektiert den Ritter {cr}- Doppelklick springt zum Ritter{cr}- UMSCH halten selektiert alle Ritter",
+    Entity_EntitySelection_Tooltip_BattalionButton_Title = "Militär selektieren",
+    Entity_EntitySelection_Tooltip_BattalionButton_Text = "- Selektiert alle Einheiten {cr}- UMSCH halten selektiert Militär {cr}- ALT halten selektiert Kriegsmaschinen {cr}- STRG halten selektiert Diebe",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title = "Militär entlassen",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text = "- Eine Militäreinheit entlassen {cr}- Soldaten werden nacheinander entlassen",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled = "Kann nicht entlassen werden!",
+    Entity_EntitySelection_Tooltip_TrebuchetCart_Title = "Trebuchetwagen",
+    Entity_EntitySelection_Tooltip_TrebuchetCart_Text = "- Kann einmalig zum Trebuchet ausgebaut werden",
+    Entity_EntitySelection_Tooltip_Trebuchet_Title = "Trebuchet",
+    Entity_EntitySelection_Tooltip_Trebuchet_Text = "- Kann über weite Strecken Gebäude angreifen {cr}- Kann Gebäude in Brand stecken {cr}- Trebuchet kann manuell zurückgeschickt werden",
 };
 
 -- English
@@ -60,6 +74,20 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Quest_QuestJornal_Next = "Show Journal",
     Quest_QuestJornal_Title = "Journal",
     Quest_QuestJornal_Note = "Note",
+    -- NPC
+    Entity_Npc_StartConversation = "Start conversation",
+    -- Entity Selection
+    Entity_EntitySelection_Tooltip_KnightButton_Title = "Select Knight",
+    Entity_EntitySelection_Tooltip_KnightButton_Text = "- Click selects the knight {cr}- Double click jumps to knight{cr}- Press SHIFT to select all knights",
+    Entity_EntitySelection_Tooltip_BattalionButton_Title = "Select Units",
+    Entity_EntitySelection_Tooltip_BattalionButton_Text = "- Selects all units {cr}- Holding SHIFT selects military {cr}- Holding ALT selects siege engines {cr}- Holding CTRL selects thieves",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title = "Release military unit",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text = "- Dismiss a military unit {cr}- Soldiers will be dismissed each after another",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled = "Releasing is impossible!",
+    Entity_EntitySelection_Tooltip_TrebuchetCart_Title = "Trebuchet cart",
+    Entity_EntitySelection_Tooltip_TrebuchetCart_Text = "- Can uniquely be transmuted into a trebuchet",
+    Entity_EntitySelection_Tooltip_Trebuchet_Title = "Trebuchet",
+    Entity_EntitySelection_Tooltip_Trebuchet_Text = "- Can perform long range attacks on buildings {cr}- Can set buildings on fire {cr}- The trebuchet can be manually send back to the city",
 };
 
 -- French
@@ -89,5 +117,19 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Quest_QuestJornal_Next = "Afficher le journal",
     Quest_QuestJornal_Title = "Journal",
     Quest_QuestJornal_Note = "Note",
+    -- NPC
+    Entity_Npc_StartConversation = "Conversation",
+    -- Entity Selection
+    Entity_EntitySelection_Tooltip_KnightButton_Title = "Sélectionner le chevalier",
+    Entity_EntitySelection_Tooltip_KnightButton_Text = "- Clic sélectionne le chevalier {cr}- Double-clic saute au chevalier{cr}- Maintenir SHIFT sélectionne tous les chevaliers",
+    Entity_EntitySelection_Tooltip_BattalionButton_Title = "Sélectionner les unitées",
+    Entity_EntitySelection_Tooltip_BattalionButton_Text = "- Sélectionne toutes les unités {cr}- Maintenir SHIFT sélectionne les militaires {cr}- Maintenir ALT sélectionne les machines de guerre {cr}- Maintenir CTRL sélectionne les voleurs",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title = "licencier l'unitées",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text = "- Licencier une unité militaire {cr}- Les soldats sont licenciés les uns après les autres",
+    Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled = "Ne peut pas être licencié!",
+    Entity_EntitySelection_Tooltip_TrebuchetCart_Title = "Chariot à trébuchet",
+    Entity_EntitySelection_Tooltip_TrebuchetCart_Text = "- Peut être transformé une seule fois en trébuchet",
+    Entity_EntitySelection_Tooltip_Trebuchet_Title = "Trebuchet",
+    Entity_EntitySelection_Tooltip_Trebuchet_Text = "- Peut attaquer des bâtiments sur de longues distances {cr}- Peut mettre le feu à des bâtiments {cr}- Le trébuchet peut être renvoyé manuellement",
 };
 
