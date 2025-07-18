@@ -153,6 +153,7 @@ cd ..
 # zip release
 echo "create output archive..."
 cd var/output
+rm s6communitylib.zip
 zip -r s6communitylib.zip s6communitylib 1>/dev/null
 cd ../..
 

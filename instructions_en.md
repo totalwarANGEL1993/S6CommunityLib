@@ -2,9 +2,12 @@
 
 ## Introduction
 
-This library for "THE SETTLERS - Rise of an Empire" expands the included library, QSB, with numerous additional functionalities. The wheel is not reinvented, but built upon the existing QSB.
+This library for "THE SETTLERS - Rise of an Empire" expands the included 
+library, QSB, with numerous additional functionalities. The wheel is not 
+reinvented, but built upon the existing QSB.
 
-Users can choose between a complete package or the individual import of components.
+Users can choose between a complete package or the individual import of 
+components.
 
 ## Installation
 
@@ -18,22 +21,31 @@ Users can choose between a complete package or the individual import of componen
 
 ### As a library
 
-**Important:** Note that using the library requires the BBA tool to import additional content into the map. Additionally, saving in the editor deletes all additional content. It is recommended to work with unpacked maps. The Lua debugger enables this.
+**Important:** Note that using the library requires the BBA tool (or similar
+software) to import additional content into the map. Additionally, saving in 
+the editor deletes all additional content. It is recommended to work with 
+unpacked maps. The Lua debugger enables this.
 
-* As library a file `questsystembehavior.lua` is not used, hence it won't work with the quest assistent!
+* As library the file `questsystembehavior.lua` is not used, hence it won't work with the quest assistent!
 * Import the subdirectory `library/s6communitylib` into the map.
-* Move `mapscript.lua` and `localmapscript.lua` to the root directory of the map. (That is `maps/externalmap/nameofmap`.) The map scripts are already prepared, so they should function in principle without any adjustments.
-* Customize the imports in both map scripts according to your needs. Imported components recursively load their dependencies.
+* Copy `mapscript.lua` and `localmapscript.lua` to the root directory of the map. (That is `maps/externalmap/nameofmap`.) The map scripts are already prepared, so they should function in principle without any adjustments.
+* Customize the imports in both map scripts according to your needs. Imported components recursively load their dependencies. You can also use a seperate file for imports which you load into both global and local script.
 
 ## Configuring the Project
 
-To ensure full functionality, Visual Studio Code should be used as the editor. Whether the configuration described below can also be done in other editors, you'll have to find out yourself. For VSC, there's the "Lua Language Server" plugin, which offers many convenience functions such as auto-completion or tooltips with function documentation.
+To ensure full functionality, Visual Studio Code should be used as the editor. 
+Whether the configuration described below can also be done in other editors, 
+you'll have to find out yourself. For VSC, there's the "Lua Language Server" 
+plugin, which offers many convenience functions such as auto-completion or 
+tooltips with function documentation.
 
 ### Config for single file
 
-If the single file is used then the repository should be located somewhere central on the system. Example: `C:/Settlers6/QSB/s6communitylib`
+If the single file is used then the repository should be located somewhere 
+central on the system. Example: `C:/Settlers6/QSB/s6communitylib`.
 
-The following is the project configuration. It is to be saved as `settings.json` im in the subdirectory `.vscode`.
+The following is the project configuration. It is to be saved as `settings.json` 
+im in the subdirectory `.vscode`.
 ```json
 {
     "Lua.diagnostics.globals": [],
@@ -51,7 +63,9 @@ If you wish to locate the repository somewhere else, the paths must be adjusted.
 
 ### Config for repository
 
-If the repository is used directly, the folder `library/s6communitylib` is to be imported into the map. In that case the API documentation is also located inside the map.
+If the repository is used directly, the folder `library/s6communitylib` is to 
+be imported into the map. In that case the API documentation is also located 
+inside the map.
 
 The contet of `settings.json` will look as follows:
 ```json
@@ -70,9 +84,13 @@ The contet of `settings.json` will look as follows:
 
 ### HE as library
 
-As a owner of the History Edition you are able to use the game itself as a lua library. This comes with the advantage of having the lua functions of the game also available in the auto completion. Keep in mind that this won't work for the C bindings (Logic, ect.).
+As a owner of the History Edition you are able to use the game itself as a lua 
+library. This comes with the advantage of having the lua functions of the game 
+also available in the auto completion. Keep in mind that this won't work for 
+the C bindings (Logic, ect.).
 
-To configure the game as a lua library you have to add it to the configuration. Be careful, you might have to change the paths!
+To configure the game as a lua library you have to add it to the configuration. 
+Be careful, you might have to change the paths!
 ```json
 {
 "Lua.workspace.library": [
@@ -99,7 +117,7 @@ Project
  |- maps
   |- externalmap
    |- mapname
-    |- libertica
+    |- s6communitylib
      |- ... library files
     |- scripts
     |- localmapscript.lua
@@ -107,8 +125,13 @@ Project
     |- ... other files
 ```
 
-This structure simplifies the outsourcing of scripts. The scripts are located in the scripts folder and are only loaded in the main scripts. During development, the absolute path on the system can be specified instead of the path in the map.
+This structure simplifies the outsourcing of scripts. The scripts are located 
+in the scripts folder and are only loaded in the main scripts. During 
+development, the absolute path on the system can be specified instead of the 
+path in the map.
 
-`maps/externalmap/mapname/scripts/luafile.lua` - This is a relative path within the games file system.
+`maps/externalmap/mapname/scripts/luafile.lua` - This is a relative path within 
+the games file system.
 
-`C:/Settlers6/mapname/scripts/luafile.lua` - This is an absolute path on your computer.
+`C:/Settlers6/mapname/scripts/luafile.lua` - This is an absolute path on your 
+computer.
