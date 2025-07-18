@@ -120,11 +120,3 @@ function StopVoice(_Identifier)
 end
 API.StopVoice = StopVoice;
 
-function RequestAlternateSound()
-    if GUI then
-        Lib.Sound.Local:RequestAlternateSound();
-    end
-    ExecuteLocal("RequestAlternateSound()");
-end
-API.RequestAlternateSound = RequestAlternateSound;
-

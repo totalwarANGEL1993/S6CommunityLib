@@ -27,7 +27,6 @@ CONST_FARCLIPPLANE_DEFAULT = 0;
 Lib.Require("comfort/GetPosition");
 Lib.Require("core/Core");
 Lib.Require("module/settings/Camera_API");
-Lib.Require("module/settings/Camera_Text");
 Lib.Register("module/settings/Camera");
 
 -- -------------------------------------------------------------------------- --

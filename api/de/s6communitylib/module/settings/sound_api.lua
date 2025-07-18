@@ -169,10 +169,3 @@ function StopVoice(_Identifier)
 end
 API.StopVoice = StopVoice;
 
---- Fragt den Spieler, ob Laufstärkeänderung vorgenommen werden dürfen.
----
---- Diese Funktionalität ist im Multiplayer deaktiviert.
-function RequestAlternateSound()
-end
-API.RequestAlternateSound = RequestAlternateSound;
-
