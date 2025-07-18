@@ -217,6 +217,8 @@ function Lib.Core.Local:Initialize()
     if not self.IsInstalled then
         g_GameExtraNo = Framework.GetGameExtraNo();
 
+        self:InitTranslation();
+
         -- Init base features
         Lib.Core.LuaExtension:Initialize();
         Lib.Core.Report:Initialize();
@@ -418,6 +420,27 @@ end
 function Lib.Core.Local:Preload_ResetView()
     Camera.RTS_ToggleMapMode(0);
     Display.SetRenderFogOfWar(1);
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Lib.Core.Local:InitTranslation()
+    -- Load localizations
+    if not Lib.Loader.IsSingleFile then
+        local DirPath = Lib.Loader.Paths[1] .. Lib.Loader.Root .. "/text/";
+        Script.Load(DirPath.. "translation.lua");
+    end
+    -- Check localizations existing
+    assert(CONST_TRANSLATION_TEXT_STRINGS ~= nil);
+    -- Set initial language
+    local lang = Network.GetDesiredLanguage();
+    lang = (CONST_TRANSLATION_TEXT_STRINGS[lang] and lang) or "en";
+    LoadStringTextFromTable(CONST_TRANSLATION_TEXT_STRINGS[lang], "Lib_Strings");
+end
+
+function Lib.Core.Local:UpdateLanguage(_Selected)
+    local lang = (CONST_TRANSLATION_TEXT_STRINGS[_Selected] and _Selected) or "en";
+    LoadStringTextFromTable(CONST_TRANSLATION_TEXT_STRINGS[lang], "Lib_Strings");
 end
 
 -- -------------------------------------------------------------------------- --

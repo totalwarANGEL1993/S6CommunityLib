@@ -9,6 +9,7 @@ Lib = {
         Root = "S6CommunityLib/lua",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = false,
+        IsSingleFile = true,
 
         Sources = {},
         Loaded = {},
