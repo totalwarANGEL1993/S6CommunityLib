@@ -10,11 +10,6 @@ Lib.QuestJornal.Local = {
     NextButton = "/InGame/Root/Normal/AlignBottomLeft/Message/MessagePortrait/TutorialNextButton",
     NextButtonIcon = {16, 10},
 };
-Lib.QuestJornal.Text = {
-    Next  = {de = "Tagebuch anzeigen", en = "Show Journal", fr = "Afficher le journal"},
-    Title = {de = "Tagebuch",          en = "Journal",      fr = "Journal"},
-    Note  = {de = "Notiz",             en = "Note",         fr = "Note"},
-};
 
 Lib.Require("core/core");
 Lib.Require("module/information/Requester");
@@ -222,16 +217,16 @@ end
 
 function Lib.QuestJornal.Local:DisplayQuestJournal(_QuestName, _PlayerID, _Info, _Input)
     if _Info and GUI.GetPlayerID() == _PlayerID then
-        local Title = Localize(Lib.QuestJornal.Text.Title);
         local Data = {
-            PlayerID  = _PlayerID,
-            Caption   = Title,
-            Content   = ConvertPlaceholders(_Info),
-            QuestName = _QuestName
+            PlayerID   = _PlayerID,
+            Caption    = GetStringText("Lib_Strings/Quest_QuestJornal_Title"),
+            Content    = ConvertPlaceholders(_Info),
+            QuestName  = _QuestName,
+            NoSlowdown = true,
         }
         if _Input then
             Data.Button = {
-                Text   = Localize{de = "Notiz", en = "Note", fr = "Note"},
+                Text   = GetStringText("Lib_Strings/Quest_QuestJornal_Note"),
                 Action = function(_Data)
                     SendReportToGlobal(Report.QuestJournalPlayerNote, _Data.PlayerID, _Data.QuestName, _Input);
                 end
@@ -299,7 +294,8 @@ function Lib.QuestJornal.Local:OverrideTutorialNext()
 end
 
 function Lib.QuestJornal.Local:OverrideStringKeys()
-    AddStringText("UI_ObjectNames/TutorialNextButton", Lib.QuestJornal.Text.Next);
+    local Next = GetStringText("Lib_Strings/Quest_QuestJornal_Next");
+    AddStringText("UI_ObjectNames/TutorialNextButton", Next);
 end
 
 -- -------------------------------------------------------------------------- --
