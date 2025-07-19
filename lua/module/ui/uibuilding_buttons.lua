@@ -144,17 +144,14 @@ function Lib.UIBuilding.Local.ExtraButton.Downgrade.ButtonAction(_WidgetID, _Bui
 end
 
 function Lib.UIBuilding.Local.ExtraButton.Downgrade.ButtonTooltip(_WidgetID, _BuildingID)
-    local Title, Text, Error;
-    Title = Lib.UIBuilding.Text.ExtraButton.Downgrade.Normal.Title;
-    Text = Lib.UIBuilding.Text.ExtraButton.Downgrade.Normal.Text;
+    local Error;
     if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-        Error = Lib.UIBuilding.Text.ExtraButton.Downgrade.Normal.Error;
-        Error = GetStringText(Error);
+        Error = "UI_ButtonDisabled/AbilityNotReady";
     end
     local Cost = Lib.UIBuilding.Local.ExtraButton.Downgrade.Cost;
-    API.SetTooltipCosts(
-        ConvertPlaceholders(Localize(Title)),
-        ConvertPlaceholders(Localize(Text)),
+    SetTooltipCosts(
+        "Lib_Strings/UI_UIBuilding_ExtraButton_Downgrade_Normal_Title",
+        "Lib_Strings/UI_UIBuilding_ExtraButton_Downgrade_Normal_Text",
         Error,
         (Cost > 0 and {Goods.G_Gold, Cost}) or nil
     );
@@ -257,25 +254,19 @@ function Lib.UIBuilding.Local.ExtraButton.SingleReserve.ButtonTooltip(_WidgetID,
 
     local Title, Text, Error;
     if Logic.IsGoodLocked(PlayerID, GoodType) then
-        Title = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Stopped.Title;
-        Title = GetStringText(Title);
-        Text = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Stopped.Text;
-        Text = GetStringText(Text);
+        Title = "UI_ObjectNames/BuildingsMenuStopConsumption";
+        Text = "UI_ObjectDescription/BuildingsMenuStopConsumption";
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-            Error = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Stopped.Error;
-            Error = GetStringText(Error);
+            Error = "UI_ButtonDisabled/AbilityNotReady";
         end
     else
-        Title = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Normal.Title;
-        Title = GetStringText(Title);
-        Text = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Normal.Text;
-        Text = GetStringText(Text);
+        Title = "UI_ObjectNames/BuildingsMenuResumeConsumption";
+        Text = "UI_ObjectDescription/BuildingsMenuResumeConsumption";
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-            Error = Lib.UIBuilding.Text.ExtraButton.SingleReserve.Normal.Error;
-            Error = GetStringText(Error);
+            Error = "UI_ButtonDisabled/AbilityNotReady";
         end
     end
-    API.SetTooltipCosts(Title, Text, Error);
+    SetTooltipCosts(Title, Text, Error);
 end
 
 function Lib.UIBuilding.Local.ExtraButton.SingleReserve.ButtonUpdate(_WidgetID, _BuildingID)
@@ -381,27 +372,19 @@ end
 function Lib.UIBuilding.Local.ExtraButton.SingleStop.ButtonTooltip(_WidgetID, _BuildingID)
     local Title, Text, Error;
     if Logic.IsBuildingStopped(_BuildingID) then
-        Title = Lib.UIBuilding.Text.ExtraButton.SingleStop.Stopped.Title;
-        Title = GetStringText(Title);
-        Text = Lib.UIBuilding.Text.ExtraButton.SingleStop.Stopped.Text;
+        Title = "UI_ObjectNames/BuildingsMenuStopProduction";
+        Text = "Lib_Strings/UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text";
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-            Error = Lib.UIBuilding.Text.ExtraButton.SingleStop.Stopped.Error;
-            Error = GetStringText(Error);
+            Error = "UI_ButtonDisabled/AbilityNotReady";
         end
     else
-        Title = Lib.UIBuilding.Text.ExtraButton.SingleStop.Normal.Title;
-        Title = GetStringText(Title);
-        Text = Lib.UIBuilding.Text.ExtraButton.SingleStop.Normal.Text;
+        Title = "UI_ObjectNames/BuildingsMenuResumeProduction";
+        Text = "Lib_Strings/UI_UIBuilding_ExtraButton_SingleStop_Normal_Text";
         if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-            Error = Lib.UIBuilding.Text.ExtraButton.SingleStop.Normal.Error;
-            Error = GetStringText(Error);
+            Error = "UI_ButtonDisabled/AbilityNotReady";
         end
     end
-    API.SetTooltipCosts(
-        Title,
-        ConvertPlaceholders(Localize(Text)),
-        Error
-    );
+    SetTooltipCosts(Title, Text, Error);
 end
 
 function Lib.UIBuilding.Local.ExtraButton.SingleStop.ButtonUpdate(_WidgetID, _BuildingID)

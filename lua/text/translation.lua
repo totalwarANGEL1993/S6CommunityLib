@@ -65,6 +65,12 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Trade_Warehouse_OfferTitle_3 = "%s anheuern",
     Trade_Warehouse_OfferTitle_4 = "%s anheuern%s",
     Trade_Warehouse_OfferTitle_5 = "%s kaufen%s",
+    -- UI Tools
+    UI_UITools_Message_NoSpeedUp = "Die Spielgeschwindigkeit kann nicht erhöht werden!",
+    UI_UIBuilding_ExtraButton_Downgrade_Normal_Title = "Rückbau",
+    UI_UIBuilding_ExtraButton_Downgrade_Normal_Text = "- Reißt eine Ausbaustufe ab!",
+    UI_UIBuilding_ExtraButton_SingleStop_Normal_Text = "- Gebäude produziert keine Waren",
+    UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text = "- Gebäude produzieren Waren",
 };
 
 -- English
@@ -128,6 +134,12 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Trade_Warehouse_OfferTitle_3 = "Hire %s",
     Trade_Warehouse_OfferTitle_4 = "Hire %s%s",
     Trade_Warehouse_OfferTitle_5 = "Purchase %s%s",
+    -- UI Tools
+    UI_UITools_Message_NoSpeedUp = "The game speed can not be increased!",
+    UI_UIBuilding_ExtraButton_Downgrade_Normal_Title = "Downgrade",
+    UI_UIBuilding_ExtraButton_Downgrade_Normal_Text = "- Demolishes one upgrade level!",
+    UI_UIBuilding_ExtraButton_SingleStop_Normal_Text = "- Building does not produce goods",
+    UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text = "- Building produces goods",
 };
 
 -- French
@@ -191,5 +203,11 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Trade_Warehouse_OfferTitle_3 = "Embaucher %s",
     Trade_Warehouse_OfferTitle_4 = "Embaucher %s%s",
     Trade_Warehouse_OfferTitle_5 = "Achat %s%s",
+    -- UI Tools
+    UI_UITools_Message_NoSpeedUp = "La vitesse du jeu ne peut pas être augmentée!",
+    UI_UIBuilding_ExtraButton_Downgrade_Normal_Title = "Déconstruction",
+    UI_UIBuilding_ExtraButton_Downgrade_Normal_Text = "- Réduit le niveau du bâtiment d'un niveau!",
+    UI_UIBuilding_ExtraButton_SingleStop_Normal_Text = "- le bâtiment ne produit pas de biens",
+    UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text = "- Le bâtiment produit des biens",
 };
 

@@ -3,15 +3,6 @@ Lib.Register("module/ui/UITools_Speed");
 Lib.UITools = Lib.UITools or {};
 Lib.UITools.Speed = {
     SpeedLimit = 1,
-    Text = {
-        Message = {
-            NoSpeedUp = {
-                de = "Die Spielgeschwindigkeit kann nicht erhöht werden!",
-                en = "The game speed can not be increased!",
-                fr = "La vitesse du jeu ne peut pas être augmentée!"
-            }
-        }
-    };
 };
 
 function Lib.UITools.Speed:SetSpeedLimit(_Limit)
@@ -47,7 +38,7 @@ function Lib.UITools.Speed:InitForbidSpeedUp()
                 log("Lib.UITools.Speed: Speed is capped at " ..tostring(_Speed).. ".");
                 Game.GameTimeSetFactor(GUI.GetPlayerID(), Lib.UITools.Speed.SpeedLimit);
                 g_GameSpeed = 1;
-                Message(Lib.UITools.Speed.Text.Message.NoSpeedUp);
+                Message("Lib_Strings/UI_UITools_Message_NoSpeedUp");
             end
         end
     end

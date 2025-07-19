@@ -364,13 +364,13 @@ function Lib.EntitySelection.Local:OverwriteMultiselectIcon()
         end
         if EntityType == Entities.U_SiegeEngineCart then
             SetTooltipNormal(
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_TrebuchetCart_Title"),
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_TrebuchetCart_Text")
+                "Lib_Strings/Entity_EntitySelection_Tooltip_TrebuchetCart_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_TrebuchetCart_Text"
             );
         elseif EntityType == Entities.U_Trebuchet then
             SetTooltipNormal(
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_Trebuchet_Title"),
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_Trebuchet_Text")
+                "Lib_Strings/Entity_EntitySelection_Tooltip_Trebuchet_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_Trebuchet_Text"
             );
         end
     end
@@ -486,9 +486,9 @@ function Lib.EntitySelection.Local:OverwriteThiefDeliver()
             return;
         end
         SetTooltipNormal(
-            GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title"),
-            GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text"),
-            GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled")
+            "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title",
+            "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text",
+            "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled"
         );
     end
 
@@ -719,16 +719,16 @@ function Lib.EntitySelection.Local:OverwriteNamesAndDescription()
 
         if XGUIEng.GetWidgetID(MotherWidget.. "/MapFrame/KnightButton") == CurrentWidgetID then
             SetTooltipNormal(
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_KnightButton_Title"),
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_KnightButton_Text")
+                "Lib_Strings/Entity_EntitySelection_Tooltip_KnightButton_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_KnightButton_Text"
             );
             return;
         end
 
         if XGUIEng.GetWidgetID(MotherWidget.. "/MapFrame/BattalionButton") == CurrentWidgetID then
             SetTooltipNormal(
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_BattalionButton_Title"),
-                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_BattalionButton_Text")
+                "Lib_Strings/Entity_EntitySelection_Tooltip_BattalionButton_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_BattalionButton_Text"
             );
             return;
         end
@@ -745,9 +745,9 @@ function Lib.EntitySelection.Local:OverwriteNamesAndDescription()
                         local GuardedEntity = Logic.GetGuardedEntityID(SelectedEntity);
                         if GuardianEntity == 0 and GuardedEntity == 0 then
                             SetTooltipNormal(
-                                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title"),
-                                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text"),
-                                GetStringText("Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled")
+                                "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title",
+                                "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text",
+                                "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled"
                             );
                             return;
                         end
