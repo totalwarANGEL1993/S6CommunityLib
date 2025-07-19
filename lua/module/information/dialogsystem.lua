@@ -28,7 +28,6 @@ Lib.Require("comfort/GetPosition");
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/information/Information");
-Lib.Require("module/information/DialogSystem_Text");
 Lib.Require("module/information/DialogSystem_API");
 Lib.Require("module/information/DialogSystem_Behavior");
 Lib.Register("module/information/DialogSystem");
@@ -821,7 +820,8 @@ function Lib.DialogSystem.Local:DisplayPageText(_PlayerID, _PageID)
     local Text = ConvertPlaceholders(Localize(Page.Text));
     local Extension = "";
     if not Page.AutoSkip and not Page.MC then
-        Extension = ConvertPlaceholders(Localize(Lib.DialogSystem.Text.Continue));
+        Extension = GetStringText("Lib_Strings/Information_DialogSystem_Continue");
+        Extension = ConvertPlaceholders(Localize(Extension));
     end
     XGUIEng.SetText(SubtitlesWidget.. "/VoiceText1", Text .. Extension);
     self:SetSubtitlesPosition(_PlayerID, _PageID);

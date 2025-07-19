@@ -17,7 +17,7 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Core_Quest_SoldierCount_AtLeast = "Mindestens ",
     Core_Quest_Festivals_Pattern = "FESTE FEIERN {cr}{cr}Partei: %s{cr}{cr}Anzahl: %d",
     Core_Quest_Diplomacy_Pattern = "DIPLOMATIESTATUS ERREICHEN {cr}{cr}Status: %s{cr}Zur Partei: %s",
-    -- Quest Behavior
+    -- Quest
     Quest_QuestBehavior_Reputation_Pattern = "RUF DER STADT{cr}{cr}Hebe den Ruf der Stadt durch weise Herrschaft an!{cr}Benötigter Ruf: %d%s",
     Quest_QuestBehavior_DestroySoldiers_Pattern = "{center}SOLDATEN ZERSTÖREN {cr}{cr}von der Partei: %s{cr}{cr}Anzahl: %d",
     Quest_QuestBehavior_StealGold_Pattern = "Gold von %s stehlen {cr}{cr}Aus Stadtgebäuden zu stehlende Goldmenge: %d",
@@ -27,13 +27,12 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Quest_QuestBehavior_StealFromBuilding_Cistern = "Sabotage {cr}{cr} Sendet einen Dieb und sabotiert den markierten Brunnen.",
     Quest_QuestBehavior_StealFromBuilding_Cathedral = "Sabotage {cr}{cr} Sendet einen Dieb und sabotiert die markierte Kirche.",
     Quest_QuestBehavior_StealFromBuilding_Storehouse = "Lagerhaus bestehlen {cr}{cr} Sendet einen Dieb in das markierte Lagerhaus.",
-    -- Quest Jornal
     Quest_QuestJornal_Next = "Tagebuch anzeigen",
     Quest_QuestJornal_Title = "Tagebuch",
     Quest_QuestJornal_Note = "Notiz",
     -- NPC
     Entity_Npc_StartConversation = "Gespräch beginnen",
-    -- Entity Selection
+    -- Entity
     Entity_EntitySelection_Tooltip_KnightButton_Title = "Ritter selektieren",
     Entity_EntitySelection_Tooltip_KnightButton_Text = "- Klick selektiert den Ritter {cr}- Doppelklick springt zum Ritter{cr}- UMSCH halten selektiert alle Ritter",
     Entity_EntitySelection_Tooltip_BattalionButton_Title = "Militär selektieren",
@@ -48,10 +47,9 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     -- IO
     IO_IoSite_Description_Title = "Gebäude bauen";
     IO_IoSite_Description_Text = "Beauftragt den Bau eines Gebäudes. Ein Siedler wird aus dem Lagerhaus kommen und mit dem Bau beginnen.";
-    -- Settlemen tLimitation
+    -- Mode
     Mode_SettlementLimitation_BuildingLimit_Pattern = "%s%s %d / %d{@color:255,255,255,255}{cr}",
     Mode_SettlementLimitation_BuildingLimit_Info = "Gebäude: ",
-    -- Settlement Survival
     Mode_SettlementSurvival_Message_BuildingMourning = "Keine Baumaßnahmen möglich, solange Siedler trauern.",
     Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness = "{scarlet}Eure Nutztiere sterben an Krankheiten!",
     Mode_SettlementSurvival_Alarm_BuildingBurning = "{scarlet}Brände wüten in Eurer Stadt!",
@@ -59,18 +57,28 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Eure Siedler verwahrlosen und werden krank!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Eure Siedler haben nichts zu essen und verhungern!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Eure Siedler sterben an Krankheiten!",
-    -- Warehouse
+    -- Trade
     Trade_Warehouse_OfferTitle_1 = "Keine Angebote",
     Trade_Warehouse_OfferTitle_2 = "%d %s kaufen%s",
     Trade_Warehouse_OfferTitle_3 = "%s anheuern",
     Trade_Warehouse_OfferTitle_4 = "%s anheuern%s",
     Trade_Warehouse_OfferTitle_5 = "%s kaufen%s",
-    -- UI Tools
+    -- UI
     UI_UITools_Message_NoSpeedUp = "Die Spielgeschwindigkeit kann nicht erhöht werden!",
     UI_UIBuilding_ExtraButton_Downgrade_Normal_Title = "Rückbau",
     UI_UIBuilding_ExtraButton_Downgrade_Normal_Text = "- Reißt eine Ausbaustufe ab!",
     UI_UIBuilding_ExtraButton_SingleStop_Normal_Text = "- Gebäude produziert keine Waren",
     UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text = "- Gebäude produzieren Waren",
+    -- Information
+    Information_BriefingSystem_NextButton = "Weiter";
+    Information_BriefingSystem_PrevButton = "Zurück";
+    Information_BriefingSystem_EndButton = "Beenden";
+    Information_CutsceneSystem_FastForwardActivate = "Beschleunigen";
+    Information_CutsceneSystem_FastForwardDeactivate = "Zurücksetzen";
+    Information_CutsceneSystem_FastFormardMessage = "SCHNELLER VORLAUF";
+    Information_DialogSystem_Continue = "{cr}{cr}{azure}Weiter mit ESC";
+    Information_Requester_ChooseLanguage_Title = "Wählt die Sprache";
+    Information_Requester_ChooseLanguage_Text = "Wählt aus der Liste die Sprache aus, in die Handlungstexte übersetzt werden sollen.";
 };
 
 -- English
@@ -86,7 +94,7 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Core_Quest_SoldierCount_AtLeast = "At least ",
     Core_Quest_Festivals_Pattern = "HOLD PARTIES {cr}{cr}Faction: %s{cr}{cr}Amount: %d",
     Core_Quest_Diplomacy_Pattern = "DIPLOMATIC STATE {cr}{cr}State: %s{cr}To player: %s",
-    -- Quest Behavior
+    -- Quest
     Quest_QuestBehavior_Reputation_Pattern = "CITY REPUTATION{cr}{cr}Raise your reputation by fair rulership!{cr}Needed reputation: %d%s",
     Quest_QuestBehavior_DestroySoldiers_Pattern = "{center}DESTROY SOLDIERS {cr}{cr}from faction: %s{cr}{cr}Amount: %d",
     Quest_QuestBehavior_StealGold_Pattern = "Steal gold from %s {cr}{cr}Amount on gold to steal from city buildings: %d",
@@ -96,13 +104,12 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Quest_QuestBehavior_StealFromBuilding_Cistern = "Sabotage {cr}{cr} Send a thief and break the marked well of the enemy.",
     Quest_QuestBehavior_StealFromBuilding_Cathedral = "Sabotage {cr}{cr} Send a thief to sabotage the marked chapel.",
     Quest_QuestBehavior_StealFromBuilding_Storehouse = "Steal from storehouse {cr}{cr} Steal from the marked storehouse.",
-    -- Quest Jornal
     Quest_QuestJornal_Next = "Show Journal",
     Quest_QuestJornal_Title = "Journal",
     Quest_QuestJornal_Note = "Note",
     -- NPC
     Entity_Npc_StartConversation = "Start conversation",
-    -- Entity Selection
+    -- Entity
     Entity_EntitySelection_Tooltip_KnightButton_Title = "Select Knight",
     Entity_EntitySelection_Tooltip_KnightButton_Text = "- Click selects the knight {cr}- Double click jumps to knight{cr}- Press SHIFT to select all knights",
     Entity_EntitySelection_Tooltip_BattalionButton_Title = "Select Units",
@@ -117,10 +124,9 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     -- IO
     IO_IoSite_Description_Title = "Create building";
     IO_IoSite_Description_Text = "Order a building. A worker will come out of the storehouse and erect it.";
-    -- Settlemen tLimitation
+    -- Mode
     Mode_SettlementLimitation_BuildingLimit_Pattern = "%s%s %d / %d{@color:255,255,255,255}{cr}",
     Mode_SettlementLimitation_BuildingLimit_Info = "Buildings: ",
-    -- Settlement Survival
     Mode_SettlementSurvival_Message_BuildingMourning = "No construction work possible as long as settlers mourn.",
     Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness = "{scarlet}Your farm animals succumb to the plague!",
     Mode_SettlementSurvival_Alarm_BuildingBurning = "{scarlet}Fires are raging in your city!",
@@ -128,18 +134,28 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Your settlers are neglected and getting sick!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Your settlers are starving to death!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Your settlers succumb to the plague!",
-    -- Warehouse
+    -- Trade
     Trade_Warehouse_OfferTitle_1 = "No Offers",
     Trade_Warehouse_OfferTitle_2 = "Purchase %d %s%s",
     Trade_Warehouse_OfferTitle_3 = "Hire %s",
     Trade_Warehouse_OfferTitle_4 = "Hire %s%s",
     Trade_Warehouse_OfferTitle_5 = "Purchase %s%s",
-    -- UI Tools
+    -- UI
     UI_UITools_Message_NoSpeedUp = "The game speed can not be increased!",
     UI_UIBuilding_ExtraButton_Downgrade_Normal_Title = "Downgrade",
     UI_UIBuilding_ExtraButton_Downgrade_Normal_Text = "- Demolishes one upgrade level!",
     UI_UIBuilding_ExtraButton_SingleStop_Normal_Text = "- Building does not produce goods",
     UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text = "- Building produces goods",
+    -- Information
+    Information_BriefingSystem_NextButton = "Forward";
+    Information_BriefingSystem_PrevButton = "Previous";
+    Information_BriefingSystem_EndButton = "Close";
+    Information_CutsceneSystem_FastForwardActivate = "Fast Forward";
+    Information_CutsceneSystem_FastForwardDeactivate = "Normal Speed";
+    Information_CutsceneSystem_FastFormardMessage = "FAST FORWARD";
+    Information_DialogSystem_Continue = "{cr}{cr}{azure}Continue with ESC";
+    Information_Requester_ChooseLanguage_Title = "Chose your Tongue";
+    Information_Requester_ChooseLanguage_Text = "Choose from the list below which language story texts shall be presented to you.";
 };
 
 -- French
@@ -155,7 +171,7 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Core_Quest_SoldierCount_AtLeast = "Au moins ",
     Core_Quest_Festivals_Pattern = "FESTIVITÉS {cr}{cr}Faction: %s{cr}{cr}Nombre : %d",
     Core_Quest_Diplomacy_Pattern = "ATTEINDRE LE STATUT DE DIPLOMATIQUE {cr}{cr}Statut : %s{cr}Avec la faction : %s",
-    -- Quest Behavior
+    -- Quest
     Quest_QuestBehavior_Reputation_Pattern = "RÉPUTATION DE LA VILLE{cr}{cr} Augmente la réputation de la ville en la gouvernant sagement!{cr}Réputation requise : %d%s",
     Quest_QuestBehavior_DestroySoldiers_Pattern = "{center}DESTRUIRE DES SOLDATS {cr}{cr}de la faction: %s{cr}{cr}Nombre : %d",
     Quest_QuestBehavior_StealGold_Pattern = "Voler l'or de %s {cr}{cr}Quantité d'or à voler dans les bâtiments de la ville : %d",
@@ -165,13 +181,12 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Quest_QuestBehavior_StealFromBuilding_Cistern = "Sabotage {cr}{cr} Envoie un voleur et sabote le puits marqué.",
     Quest_QuestBehavior_StealFromBuilding_Cathedral = "Sabotage {cr}{cr} Envoyez un voleur pour saboter la chapelle marquée.",
     Quest_QuestBehavior_StealFromBuilding_Storehouse = "Voler un entrepôt {cr}{cr} Envoie un voleur dans l'entrepôt marqué.",
-    -- Quest Jornal
     Quest_QuestJornal_Next = "Afficher le journal",
     Quest_QuestJornal_Title = "Journal",
     Quest_QuestJornal_Note = "Note",
     -- NPC
     Entity_Npc_StartConversation = "Conversation",
-    -- Entity Selection
+    -- Entity
     Entity_EntitySelection_Tooltip_KnightButton_Title = "Sélectionner le chevalier",
     Entity_EntitySelection_Tooltip_KnightButton_Text = "- Clic sélectionne le chevalier {cr}- Double-clic saute au chevalier{cr}- Maintenir SHIFT sélectionne tous les chevaliers",
     Entity_EntitySelection_Tooltip_BattalionButton_Title = "Sélectionner les unitées",
@@ -186,10 +201,9 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     -- IO
     IO_IoSite_Description_Title = "Construire le bâtiment";
     IO_IoSite_Description_Text = "Commande la construction d'un bâtiment. Un Settler sortira de l'entrepôt et commencera la construction.";
-    -- Settlemen tLimitation
+    -- Mode
     Mode_SettlementLimitation_BuildingLimit_Pattern = "%s%s %d / %d{@color:255,255,255,255}{cr}",
     Mode_SettlementLimitation_BuildingLimit_Info = "Imeuble: ",
-    -- Settlement Survival
     Mode_SettlementSurvival_Message_BuildingMourning = "Aucun travail de construction possible tant que les colons pleurent.",
     Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness = "{scarlet}Vos animaux de ferme succombent à la peste!",
     Mode_SettlementSurvival_Alarm_BuildingBurning = "{scarlet}Les incendies font rage dans votre ville!",
@@ -197,17 +211,27 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Vos colons sont négligés et tombent malades!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Vos colons meurent de faim!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Vos colons succombent à la peste!",
-    -- Warehouse
+    -- Trade
     Trade_Warehouse_OfferTitle_1 = "Pas d'offres",
     Trade_Warehouse_OfferTitle_2 = "Achat %d %s%s",
     Trade_Warehouse_OfferTitle_3 = "Embaucher %s",
     Trade_Warehouse_OfferTitle_4 = "Embaucher %s%s",
     Trade_Warehouse_OfferTitle_5 = "Achat %s%s",
-    -- UI Tools
+    -- UI
     UI_UITools_Message_NoSpeedUp = "La vitesse du jeu ne peut pas être augmentée!",
     UI_UIBuilding_ExtraButton_Downgrade_Normal_Title = "Déconstruction",
     UI_UIBuilding_ExtraButton_Downgrade_Normal_Text = "- Réduit le niveau du bâtiment d'un niveau!",
     UI_UIBuilding_ExtraButton_SingleStop_Normal_Text = "- le bâtiment ne produit pas de biens",
     UI_UIBuilding_ExtraButton_SingleStop_Stopped_Text = "- Le bâtiment produit des biens",
+    -- Information
+    Information_BriefingSystem_NextButton = "Continuer";
+    Information_BriefingSystem_PrevButton = "Retour";
+    Information_BriefingSystem_EndButton = "Quitter";
+    Information_CutsceneSystem_FastForwardActivate = "Accélérer";
+    Information_CutsceneSystem_FastForwardDeactivate = "Réinitialiser";
+    Information_CutsceneSystem_FastFormardMessage = "AVANCÉ RAPIDE";
+    Information_DialogSystem_Continue = "{cr}{cr}{azure}Continuer avec ESC";
+    Information_Requester_ChooseLanguage_Title = "Sélectionnez la langue";
+    Information_Requester_ChooseLanguage_Text = "Sélectionne dans la liste la langue dans laquelle les textes narratifs doivent être traduits.";
 };
 

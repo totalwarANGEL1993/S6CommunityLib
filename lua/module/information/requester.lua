@@ -20,7 +20,6 @@ Lib.Require("core/core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester_API");
 Lib.Require("module/information/Requester_Behavior");
-Lib.Require("module/information/Requester_Text");
 Lib.Register("module/information/Requester");
 
 -- -------------------------------------------------------------------------- --

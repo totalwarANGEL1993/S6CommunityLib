@@ -41,7 +41,6 @@ CONST_BRIEFING = {
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/information/Information");
-Lib.Require("module/information/BriefingSystem_Text");
 Lib.Require("module/information/BriefingSystem_API");
 Lib.Require("module/information/BriefingSystem_Behavior");
 Lib.Register("module/information/BriefingSystem");
@@ -1336,10 +1335,10 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
         end
 
         -- Button texts
-        local SkipText = Localize(Lib.BriefingSystem.Text.NextButton);
+        local SkipText = GetStringText("Lib_Strings/Information_BriefingSystem_NextButton");
         local PageID = self.Briefing[_PlayerID].CurrentPage;
         if PageID == #self.Briefing[_PlayerID] or self.Briefing[_PlayerID][PageID+1] == -1 then
-            SkipText = Localize(Lib.BriefingSystem.Text.EndButton);
+            SkipText = GetStringText("Lib_Strings/Information_BriefingSystem_EndButton");
         end
         XGUIEng.SetText("/InGame/ThroneRoom/Main/Skip", "{center}" ..SkipText);
     end
