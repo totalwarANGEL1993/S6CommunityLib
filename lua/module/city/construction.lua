@@ -72,7 +72,6 @@ Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("core/Core");
 Lib.Require("module/city/Construction_API");
-Lib.Require("module/city/Construction_Text");
 Lib.Register("module/city/Construction");
 
 -- -------------------------------------------------------------------------- --
@@ -566,7 +565,7 @@ function Lib.Construction.Local:OverwriteGameCallbacks()
     GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
         local PlayerID = Logic.EntityGetPlayer(_BuildingID);
         if not Lib.Construction.Local:IsKnockdownAllowed(PlayerID, _BuildingID, _State) then
-            Message(Localize(Lib.Construction.Text.NoKnockdown));
+            Message("Lib_Strings/City_Construction_NoKnockdown");
             GUI.CancelBuildingKnockDown(_BuildingID);
             return;
         end
@@ -649,7 +648,7 @@ function Lib.Construction.Local:OverridePlacementUpdate()
         local PlayerID = Logic.EntityGetPlayer(EntityID);
         local x,y,z = Logic.EntityGetPos(EntityID)
         if Lib.Construction.Local:AreOtherBallistasToCloseToPosition(PlayerID, x, y, 2500) then
-            Message(Localize(Lib.Construction.Text.NoBallista));
+            Message("Lib_Strings/City_Construction_NoBallista");
             return;
         end
         Lib.Construction.Local.Orig_UpgradeTurretClicked();
@@ -838,13 +837,13 @@ function Lib.Construction.Local:CancleConstructRoad(_PlayerID, _Length)
 end
 
 function Lib.Construction.Local:CancelState(_PlacementType)
-    local Text = Lib.Construction.Text.NoWall;
+    local Text = "Lib_Strings/City_Construction_NoWall";
     if _PlacementType == 1 then
-        Text = Lib.Construction.Text.NoRoad;
+        Text = "Lib_Strings/City_Construction_NoRoad";
     elseif _PlacementType == -1 then
-        Text = Lib.Construction.Text.NoWallGate;
+        Text = "Lib_Strings/City_Construction_NoWallGate";
     end
-    Message(Localize(Text));
+    Message(Text);
     GUI.CancelState();
 end
 

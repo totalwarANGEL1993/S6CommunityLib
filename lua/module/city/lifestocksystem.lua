@@ -11,11 +11,6 @@ Lib.LifestockSystem.Global = {
     SheepGrainUpkeep = 1,
     SheepFeedingTimer = 0,
     SheepStarveChance = 35,
-
-    Text = {
-        CattleStaved = "",
-        SheepStarved = "",
-    }
 };
 Lib.LifestockSystem.Local  = {
     BuyLock = false,
@@ -50,7 +45,6 @@ Lib.Require("module/faker/Technology");
 Lib.Require("module/city/Promotion");
 Lib.Require("module/city/LifestockSystem_API");
 Lib.Require("module/city/LifestockSystem_Config");
-Lib.Require("module/city/LifestockSystem_Text");
 Lib.Register("module/city/LifestockSystem");
 
 -- -------------------------------------------------------------------------- --
@@ -64,10 +58,6 @@ function Lib.LifestockSystem.Global:Initialize()
         Report.SheepBought = CreateReport("Event_SheepBought");
         Report.CattleStarved = CreateReport("Event_CattleStarved");
         Report.SheepStarved = CreateReport("Event_SheepStarved");
-
-        -- Get texts
-        self.Text.CattleStarved = Localize(Lib.LifestockSystem.Text.CattleStarved);
-        self.Text.SheepStarved = Localize(Lib.LifestockSystem.Text.SheepStarved);
 
         -- Change base prices
         MerchantSystem.BasePricesOrigLifestockSystem                = {};
@@ -99,8 +89,7 @@ function Lib.LifestockSystem.Global:OnReportReceived(_ID, ...)
     if _ID == Report.LoadingFinished then
         self.LoadscreenClosed = true;
     elseif _ID == Report.LanguageChanged then
-        self.Text.CattleStarved = Localize(Lib.LifestockSystem.Text.CattleStarved);
-        self.Text.SheepStarved = Localize(Lib.LifestockSystem.Text.SheepStarved);
+        -- Nothing to do?
     elseif _ID == Report.BreedAnimalClicked then
         --- @diagnostic disable-next-line: param-type-mismatch
         Lib.LifestockSystem.Global:BuyAnimal(arg[1], arg[2], arg[3]);
@@ -152,7 +141,7 @@ function Lib.LifestockSystem.Global:ControlFeeding()
                         end
                         -- Show message if animals have starved
                         if AnimalStarved then
-                            local Text = Localize(self.Text.CattleStarved);
+                            local Text = Localize("Lib_Strings/City_LifestockSystem_CattleStarved");
                             AddMessage(Text);
                         end
                     else
@@ -184,8 +173,7 @@ function Lib.LifestockSystem.Global:ControlFeeding()
                         end
                         -- Show message if animals have starved
                         if AnimalStarved then
-                            local Text = Localize(self.Text.SheepStarved);
-                            AddMessage(Text);
+                            AddMessage("Lib_Strings/City_LifestockSystem_SheepStarved");
                         end
                     else
                         AddGood(Goods.G_Grain, (-1) * Upkeep, PlayerID);
