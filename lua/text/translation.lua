@@ -59,6 +59,12 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Eure Siedler verwahrlosen und werden krank!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Eure Siedler haben nichts zu essen und verhungern!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Eure Siedler sterben an Krankheiten!",
+    -- Warehouse
+    Trade_Warehouse_OfferTitle_1 = "Keine Angebote",
+    Trade_Warehouse_OfferTitle_2 = "%d %s kaufen%s",
+    Trade_Warehouse_OfferTitle_3 = "%s anheuern",
+    Trade_Warehouse_OfferTitle_4 = "%s anheuern%s",
+    Trade_Warehouse_OfferTitle_5 = "%s kaufen%s",
 };
 
 -- English
@@ -116,6 +122,12 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Your settlers are neglected and getting sick!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Your settlers are starving to death!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Your settlers succumb to the plague!",
+    -- Warehouse
+    Trade_Warehouse_OfferTitle_1 = "No Offers",
+    Trade_Warehouse_OfferTitle_2 = "Purchase %d %s%s",
+    Trade_Warehouse_OfferTitle_3 = "Hire %s",
+    Trade_Warehouse_OfferTitle_4 = "Hire %s%s",
+    Trade_Warehouse_OfferTitle_5 = "Purchase %s%s",
 };
 
 -- French
@@ -173,5 +185,11 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Vos colons sont négligés et tombent malades!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Vos colons meurent de faim!",
     Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Vos colons succombent à la peste!",
+    -- Warehouse
+    Trade_Warehouse_OfferTitle_1 = "Pas d'offres",
+    Trade_Warehouse_OfferTitle_2 = "Achat %d %s%s",
+    Trade_Warehouse_OfferTitle_3 = "Embaucher %s",
+    Trade_Warehouse_OfferTitle_4 = "Embaucher %s%s",
+    Trade_Warehouse_OfferTitle_5 = "Achat %s%s",
 };
 

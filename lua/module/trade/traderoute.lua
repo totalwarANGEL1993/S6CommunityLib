@@ -5,7 +5,6 @@ Lib.TradeRoute.Global = {
     Harbors = {},
 };
 Lib.TradeRoute.Local = {};
-Lib.TradeRoute.Text = {};
 
 ShipTraderState = {
     Waiting = 1,
