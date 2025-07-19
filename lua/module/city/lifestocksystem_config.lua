@@ -4,8 +4,8 @@ Lib.LifestockSystem = Lib.LifestockSystem or {};
 Lib.LifestockSystem.Config = {
     Technology = {
         -- Tech name, Description, Icon, Extra Number
-        {"R_Cattle", {de = "Kühe züchten",   en = "Breeding Cows",   fr = "Vaches reproductrices"}, {3, 16, 0}, 0},
-        {"R_Sheep",  {de = "Schafe züchten", en = "Breeding Sheeps", fr = "Moutons reproducteurs"}, {4,  1, 0}, 0},
+        {"R_Cattle", "Lib_Strings/Technology_R_Cattle", {3, 16, 0}, 0},
+        {"R_Sheep",  "Lib_Strings/Technology_R_Sheep", {4,  1, 0}, 0},
     },
 };
 

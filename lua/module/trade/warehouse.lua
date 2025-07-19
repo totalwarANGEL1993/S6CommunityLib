@@ -20,15 +20,6 @@ Lib.Warehouse.Local = {
         Max = 1.75,
     },
 };
-Lib.Warehouse.Text = {
-    OfferTitle = {
-        {de = "Keine Angebote", en = "No Offers",},
-        {de = "%d %s kaufen%s", en = "Purchase %d %s%s",},
-        {de = "%s anheuern", en = "Hire %s",},
-        {de = "%s anheuern%s", en = "Hire %s%s",},
-        {de = "%s kaufen%s", en = "Purchase %s%s",},
-    },
-};
 
 WarehouseOfferType = {
     Entertainer = 1,
@@ -639,7 +630,8 @@ function Lib.Warehouse.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _En
     local s,e = string.find(ScriptName, "_Post");
     ScriptName = string.sub(ScriptName, 1, s-1);
     if XGUIEng.IsButtonDisabled(_WidgetID) == 1 then
-        SetTooltipCosts(ConvertPlaceholders(Localize(Lib.Warehouse.Text.OfferTitle[1])), "");
+        local FormattedText = GetStringText("Lib_Strings/Trade_Warehouse_OfferTitle_1");
+        SetTooltipCosts(FormattedText, "");
         return;
     end
     local Index = self:GetIndex(ScriptName);
@@ -692,17 +684,22 @@ function Lib.Warehouse.Local:WarehouseButtonTooltip(_ButtonIndex, _WidgetID, _En
     -- Format tooltip text
     local OfferTitle = "";
     if KeyOf(Data.GoodType, Goods) ~= nil then
-        OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[2]), Data.GoodAmount, OfferName, Quantity);
+        local FormattedText = GetStringText("Lib_Strings/Trade_Warehouse_OfferTitle_2");
+        OfferTitle = string.format(FormattedText, Data.GoodAmount, OfferName, Quantity);
     elseif KeyOf(Data.GoodType, Entities) ~= nil then
         if Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.Military) == 1 then
-            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[4]), OfferName, Quantity);
+            local FormattedText = GetStringText("Lib_Strings/Trade_Warehouse_OfferTitle_4");
+            OfferTitle = string.format(FormattedText, OfferName, Quantity);
         elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SiegeEngine) == 1 then
-            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[5]), OfferName, Quantity);
+            local FormattedText = GetStringText("Lib_Strings/Trade_Warehouse_OfferTitle_5");
+            OfferTitle = string.format(FormattedText, OfferName, Quantity);
         elseif Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.CattlePasture) == 1
             or Logic.IsEntityTypeInCategory(Data.GoodType, EntityCategories.SheepPasture) == 1 then
-            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[5]), OfferName, Quantity);
+            local FormattedText = GetStringText("Lib_Strings/Trade_Warehouse_OfferTitle_5");
+            OfferTitle = string.format(FormattedText, OfferName, Quantity);
         else
-            OfferTitle = string.format(Localize(Lib.Warehouse.Text.OfferTitle[3]), OfferName);
+            local FormattedText = GetStringText("Lib_Strings/Trade_Warehouse_OfferTitle_3");
+            OfferTitle = string.format(FormattedText, OfferName);
         end
     end
     -- Set text

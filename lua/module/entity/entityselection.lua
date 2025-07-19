@@ -16,7 +16,6 @@ Lib.Require("comfort/IsUnofficialPatch");
 Lib.Require("core/Core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/entity/EntitySelection_API");
-Lib.Require("module/entity/EntitySelection_Text");
 Lib.Register("module/entity/EntitySelection");
 
 -- -------------------------------------------------------------------------- --
@@ -365,13 +364,13 @@ function Lib.EntitySelection.Local:OverwriteMultiselectIcon()
         end
         if EntityType == Entities.U_SiegeEngineCart then
             SetTooltipNormal(
-                Localize(Lib.EntitySelection.Text.Tooltips.TrebuchetCart.Title),
-                Localize(Lib.EntitySelection.Text.Tooltips.TrebuchetCart.Text)
+                "Lib_Strings/Entity_EntitySelection_Tooltip_TrebuchetCart_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_TrebuchetCart_Text"
             );
         elseif EntityType == Entities.U_Trebuchet then
             SetTooltipNormal(
-                Localize(Lib.EntitySelection.Text.Tooltips.Trebuchet.Title),
-                Localize(Lib.EntitySelection.Text.Tooltips.Trebuchet.Text)
+                "Lib_Strings/Entity_EntitySelection_Tooltip_Trebuchet_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_Trebuchet_Text"
             );
         end
     end
@@ -487,9 +486,9 @@ function Lib.EntitySelection.Local:OverwriteThiefDeliver()
             return;
         end
         SetTooltipNormal(
-            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Title),
-            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Text),
-            Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Disabled)
+            "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title",
+            "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text",
+            "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled"
         );
     end
 
@@ -720,16 +719,16 @@ function Lib.EntitySelection.Local:OverwriteNamesAndDescription()
 
         if XGUIEng.GetWidgetID(MotherWidget.. "/MapFrame/KnightButton") == CurrentWidgetID then
             SetTooltipNormal(
-                Localize(Lib.EntitySelection.Text.Tooltips.KnightButton.Title),
-                Localize(Lib.EntitySelection.Text.Tooltips.KnightButton.Text)
+                "Lib_Strings/Entity_EntitySelection_Tooltip_KnightButton_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_KnightButton_Text"
             );
             return;
         end
 
         if XGUIEng.GetWidgetID(MotherWidget.. "/MapFrame/BattalionButton") == CurrentWidgetID then
             SetTooltipNormal(
-                Localize(Lib.EntitySelection.Text.Tooltips.BattalionButton.Title),
-                Localize(Lib.EntitySelection.Text.Tooltips.BattalionButton.Text)
+                "Lib_Strings/Entity_EntitySelection_Tooltip_BattalionButton_Title",
+                "Lib_Strings/Entity_EntitySelection_Tooltip_BattalionButton_Text"
             );
             return;
         end
@@ -746,9 +745,9 @@ function Lib.EntitySelection.Local:OverwriteNamesAndDescription()
                         local GuardedEntity = Logic.GetGuardedEntityID(SelectedEntity);
                         if GuardianEntity == 0 and GuardedEntity == 0 then
                             SetTooltipNormal(
-                                Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Title),
-                                Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Text),
-                                Localize(Lib.EntitySelection.Text.Tooltips.ReleaseSoldiers.Disabled)
+                                "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Title",
+                                "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Text",
+                                "Lib_Strings/Entity_EntitySelection_Tooltip_ReleaseSoldiers_Disabled"
                             );
                             return;
                         end

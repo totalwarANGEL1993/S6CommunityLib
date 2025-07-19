@@ -122,11 +122,6 @@ B_Goal_CityReputation = {
     Parameter = {
         { ParameterType.Number, en = "City reputation", de = "Ruf der Stadt", fr = "Réputation de la ville" },
     },
-    Text = {
-        de = "RUF DER STADT{cr}{cr}Hebe den Ruf der Stadt durch weise Herrschaft an!{cr}Benötigter Ruf: %d",
-        en = "CITY REPUTATION{cr}{cr}Raise your reputation by fair rulership!{cr}Needed reputation: %d",
-        fr = "RÉPUTATION DE LA VILLE{cr}{cr} Augmente la réputation de la ville en la gouvernant sagement!{cr}Réputation requise : %d",
-    }
 }
 
 function B_Goal_CityReputation:GetGoalTable()
@@ -140,17 +135,18 @@ function B_Goal_CityReputation:AddParameter(_Index, _Parameter)
 end
 
 function B_Goal_CityReputation:CustomFunction(_Quest)
-    self:SetCaption(_Quest);
+    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
+            _Quest, 
+            "Lib_Strings/Quest_QuestBehavior_Reputation_Pattern",
+            self.Reputation,
+            "%"
+        );
+        _Quest.QuestDescription = "true";
+    end
     local CityReputation = Logic.GetCityReputation(_Quest.ReceivingPlayer) * 100;
     if CityReputation >= self.Reputation then
         return true;
-    end
-end
-
-function B_Goal_CityReputation:SetCaption(_Quest)
-    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
-        local Text = string.format(Localize(self.Text), self.Reputation);
-        Lib.Core.Quest:ChangeCustomQuestCaptionText(Text .."%", _Quest);
     end
 end
 
@@ -284,19 +280,29 @@ function B_Goal_StealGold:GetCustomData(_Index)
     end
 end
 
-function B_Goal_StealGold:SetDescriptionOverwrite(_Quest)
-    local TargetPlayerName = Localize({
-        de = " anderen Spielern ",
-        en = " different parties ",
-        fr = " d'autres joueurs ",
-    });
-
-    if self.Target ~= -1 then
-        TargetPlayerName = GetPlayerName(self.Target);
-        if TargetPlayerName == nil or TargetPlayerName == "" then
-            TargetPlayerName = " PLAYER_NAME_MISSING ";
+function B_Goal_StealGold:SetDescriontionText(_Quest)
+    if not _Quest.Description or _Quest.Description == "" then
+        local amount = self.Amount - self.StohlenGold;
+        amount = (amount > 0 and amount) or 0;
+        local TargetPlayerName = "Lib_Strings/Quest_QuestBehavior_StealGold_AnyPlayer";
+        if self.Target ~= -1 then
+            TargetPlayerName = GetPlayerName(self.Target);
+            if TargetPlayerName == nil or TargetPlayerName == "" then
+                TargetPlayerName = " PLAYER_NAME_MISSING ";
+            end
         end
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
+            _Quest,
+            "Lib_Strings/Quest_QuestBehavior_StealGold_Pattern",
+            TargetPlayerName,
+            amount
+        );
+        _Quest.Description = "true";
     end
+end
+
+function B_Goal_StealGold:CustomFunction(_Quest)
+    self:SetDescriontionText(_Quest);
 
     -- Cheat earnings
     if self.CheatEarnings then
@@ -316,21 +322,7 @@ function B_Goal_StealGold:SetDescriptionOverwrite(_Quest)
             end
         end
     end
-
-    local amount = self.Amount - self.StohlenGold;
-    amount = (amount > 0 and amount) or 0;
-    local text = {
-        de = "Gold von %s stehlen {cr}{cr}Aus Stadtgebäuden zu stehlende Goldmenge: %d",
-        en = "Steal gold from %s {cr}{cr}Amount on gold to steal from city buildings: %d",
-        fr = "Voler l'or de %s {cr}{cr}Quantité d'or à voler dans les bâtiments de la ville : %d",
-    };
-    return "{center}" ..string.format(Localize(text), TargetPlayerName, amount);
-end
-
-function B_Goal_StealGold:CustomFunction(_Quest)
-    if Lib.Core.Quest then
-        Lib.Core.Quest:ChangeCustomQuestCaptionText(self:SetDescriptionOverwrite(_Quest), _Quest);
-    end
+    -- Check gold
     if self.StohlenGold >= self.Amount then
         return true;
     end
@@ -350,6 +342,9 @@ function B_Goal_StealGold:Debug(_Quest)
 end
 
 function B_Goal_StealGold:Reset(_Quest)
+    if _Quest.QuestDescription == "true" then
+        _Quest.QuestDescription = nil;
+    end
     self.StohlenGold = 0;
 end
 
@@ -394,41 +389,23 @@ function B_Goal_StealFromBuilding:GetCustomData(_Index)
     end
 end
 
-function B_Goal_StealFromBuilding:SetDescriptionOverwrite(_Quest)
-    local isCathedral = Logic.IsEntityInCategory(GetID(self.Building), EntityCategories.Cathedrals) == 1;
-    local isWarehouse = Logic.GetEntityType(GetID(self.Building)) == Entities.B_StoreHouse;
-    local isCistern = Logic.GetEntityType(GetID(self.Building)) == Entities.B_Cistern;
-    local text;
-
-    if isCathedral then
-        text = {
-            de = "Sabotage {cr}{cr} Sendet einen Dieb und sabotiert die markierte Kirche.",
-            en = "Sabotage {cr}{cr} Send a thief to sabotage the marked chapel.",
-            fr = "Sabotage {cr}{cr} Envoyez un voleur pour saboter la chapelle marquée.",
-        };
-    elseif isWarehouse then
-        text = {
-            de = "Lagerhaus bestehlen {cr}{cr} Sendet einen Dieb in das markierte Lagerhaus.",
-            en = "Steal from storehouse {cr}{cr} Steal from the marked storehouse.",
-            fr = "Voler un entrepôt {cr}{cr} Envoie un voleur dans l'entrepôt marqué.",
-        };
-    elseif isCistern then
-        text = {
-            de = "Sabotage {cr}{cr} Sendet einen Dieb und sabotiert den markierten Brunnen.",
-            en = "Sabotage {cr}{cr} Send a thief and break the marked well of the enemy.",
-            fr = "Sabotage {cr}{cr} Envoie un voleur et sabote le puits marqué.",
-        };
-    else
-        text = {
-            de = "Gebäude bestehlen {cr}{cr} Sendet einen Dieb und bestehlt das markierte Gebäude.",
-            en = "Steal from building {cr}{cr} Send a thief to steal from the marked building.",
-            fr = "Voler un bâtiment {cr}{cr} Envoie un voleur et vole le bâtiment marqué.",
-        };
+function B_Goal_StealFromBuilding:SetDescriontionText(_Quest)
+    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
+        local Key = "Lib_Strings/Quest_QuestBehavior_StealFromBuilding_Building";
+        if Logic.IsEntityInCategory(GetID(self.Building), EntityCategories.Cathedrals) == 1 then
+            Key = "Lib_Strings/Quest_QuestBehavior_StealFromBuilding_Cathedral";
+        elseif Logic.GetEntityType(GetID(self.Building)) == Entities.B_StoreHouse then
+            Key = "Lib_Strings/Quest_QuestBehavior_StealFromBuilding_Storehouse";
+        elseif Logic.GetEntityType(GetID(self.Building)) == Entities.B_Cistern then
+            Key = "Lib_Strings/Quest_QuestBehavior_StealFromBuilding_Cistern";
+        end
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(_Quest, Key);
+        _Quest.QuestDescription = "true";
     end
-    return "{center}" .. Localize(text);
 end
 
 function B_Goal_StealFromBuilding:CustomFunction(_Quest)
+    self:SetDescriontionText(_Quest);
     if not IsExisting(self.Building) then
         if self.Marker then
             Logic.DestroyEffect(self.Marker);
@@ -482,6 +459,9 @@ function B_Goal_StealFromBuilding:Debug(_Quest)
 end
 
 function B_Goal_StealFromBuilding:Reset(_Quest)
+    if _Quest.QuestDescription == "true" then
+        _Quest.QuestDescription = nil;
+    end
     self.SuccessfullyStohlen = false;
     self.RobberList = {};
     self.Marker = nil;
@@ -536,20 +516,21 @@ function B_Goal_SpyOnBuilding:GetCustomData(_Index)
     end
 end
 
-function B_Goal_SpyOnBuilding:SetDescriptionOverwrite(_Quest)
-    if not _Quest.QuestDescription then
-        local text = {
-            de = "Gebäude infriltrieren {cr}{cr}Spioniere das markierte Gebäude mit einem Dieb aus!",
-            en = "Infiltrate building {cr}{cr}Spy on the highlighted buildings with a thief!",
-            fr = "Infiltrer un bâtiment {cr}{cr}Espionner le bâtiment marqué avec un voleur!",
-        };
-        return Localize(text);
-    else
-        return _Quest.QuestDescription;
+function B_Goal_SpyOnBuilding:SetDescriontionText(_Quest)
+    if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
+        Lib.Core.Quest:ChangeCustomQuestCaptionText(
+            _Quest,
+            "Lib_Strings/Quest_QuestBehavior_SpyOnBuilding_Pattern",
+            GetPlayerName(self.AttackedPlayer) or ("Player " ..self.AttackedPlayer),
+            self.KillsNeeded
+        );
+        _Quest.QuestDescription = "true";
     end
 end
 
 function B_Goal_SpyOnBuilding:CustomFunction(_Quest)
+    self:SetDescriontionText(_Quest);
+
     if not IsExisting(self.Building) then
         if self.Marker then
             Logic.DestroyEffect(self.Marker);
@@ -594,6 +575,9 @@ function B_Goal_SpyOnBuilding:Debug(_Quest)
 end
 
 function B_Goal_SpyOnBuilding:Reset(_Quest)
+    if _Quest.QuestDescription == "true" then
+        _Quest.QuestDescription = nil;
+    end
     self.Infiltrated = false;
     self.Marker = nil;
 end
@@ -622,12 +606,6 @@ B_Goal_DestroySoldiers = {
         {ParameterType.PlayerID, en = "Defending Player",   de = "Verteidiger", fr = "Défenseur", },
         {ParameterType.Number,   en = "Amount",             de = "Anzahl",      fr = "Quantité", },
     },
-
-    Text = {
-        de = "{center}SOLDATEN ZERSTÖREN {cr}{cr}von der Partei: %s{cr}{cr}Anzahl: %d",
-        en = "{center}DESTROY SOLDIERS {cr}{cr}from faction: %s{cr}{cr}Amount: %d",
-        fr = "{center}DESTRUIRE DES SOLDATS {cr}{cr}de la faction: %s{cr}{cr}Nombre : %d",
-    }
 }
 
 function B_Goal_DestroySoldiers:GetGoalTable()
@@ -646,15 +624,13 @@ end
 
 function B_Goal_DestroySoldiers:CustomFunction(_Quest)
     if not _Quest.QuestDescription or _Quest.QuestDescription == "" then
-        local PlayerName = GetPlayerName(self.AttackedPlayer) or
-                           ("Player " ..self.AttackedPlayer);
         Lib.Core.Quest:ChangeCustomQuestCaptionText(
-            string.format(
-                Lib.Core.Placeholder:Localize(self.Text),
-                PlayerName, self.KillsNeeded
-            ),
-            _Quest
+            _Quest,
+            "Lib_Strings/Quest_QuestBehavior_DestroySoldiers_Pattern",
+            GetPlayerName(self.AttackedPlayer) or ("Player " ..self.AttackedPlayer),
+            self.KillsNeeded
         );
+        _Quest.QuestDescription = "true";
     end
 
     local KillsCurrent = GetEnemySoldierKillsOfPlayer(

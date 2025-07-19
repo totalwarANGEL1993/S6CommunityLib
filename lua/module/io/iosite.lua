@@ -7,7 +7,6 @@ Lib.IOSite.Local  = {};
 
 Lib.Require("core/Core");
 Lib.Require("module/io/IO");
-Lib.Require("module/io/IOSite_Text");
 Lib.Require("module/io/IOSite_API");
 Lib.Register("module/io/IOSite");
 
@@ -42,8 +41,8 @@ end
 
 function Lib.IOSite.Global:CreateIOBuildingSite(_Data)
     local Costs = _Data.Costs or {Logic.GetEntityTypeFullCost(_Data.Type)};
-    local Title = _Data.Title or Lib.IOSite.Text.Description.Title;
-    local Text = _Data.Text or Lib.IOSite.Text.Description.Text;
+    local Title = _Data.Title or "Lib_Strings/IO_IoSite_Description_Title"
+    local Text = _Data.Text or "Lib_Strings/IO_IoSite_Description_Text";
 
     local EntityID = GetID(_Data.ScriptName);
     Logic.SetModel(EntityID, Models.Buildings_B_BuildingPlot_10x10);

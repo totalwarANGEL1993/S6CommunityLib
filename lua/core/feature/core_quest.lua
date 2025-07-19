@@ -1,53 +1,6 @@
 Lib.Core = Lib.Core or {};
 Lib.Core.Quest = {
     QuestCounter = 0,
-    Text = {
-        ActivateBuff = {
-            Pattern = {
-                de = "BONUS AKTIVIEREN{cr}{cr}%s",
-                en = "ACTIVATE BUFF{cr}{cr}%s",
-                fr = "ACTIVER BONUS{cr}{cr}%s",
-            },
-            BuffsVanilla = {
-                ["Buff_Spice"]                  = {de = "Salz", en = "Salt", fr = "Sel"},
-                ["Buff_Colour"]                 = {de = "Farben", en = "Color", fr = "Couleurs"},
-                ["Buff_Entertainers"]           = {de = "Entertainer", en = "Entertainer", fr = "Artistes"},
-                ["Buff_FoodDiversity"]          = {de = "Vielfältige Nahrung", en = "Food diversity", fr = "Diversité alimentaire"},
-                ["Buff_ClothesDiversity"]       = {de = "Vielfältige Kleidung", en = "Clothes diversity", fr = "Diversité vestimentaire"},
-                ["Buff_HygieneDiversity"]       = {de = "Vielfältige Reinigung", en = "Hygiene diversity", fr = "Diversité hygiénique"},
-                ["Buff_EntertainmentDiversity"] = {de = "Vielfältige Unterhaltung", en = "Entertainment diversity", fr = "Diversité des dievertissements"},
-                ["Buff_Sermon"]                 = {de = "Predigt", en = "Sermon", fr = "Sermon"},
-                ["Buff_Festival"]               = {de = "Fest", en = "Festival", fr = "Festival"},
-                ["Buff_ExtraPayment"]           = {de = "Sonderzahlung", en = "Extra payment", fr = "Paiement supplémentaire"},
-                ["Buff_HighTaxes"]              = {de = "Hohe Steuern", en = "High taxes", fr = "Hautes taxes"},
-                ["Buff_NoPayment"]              = {de = "Kein Sold", en = "No payment", fr = "Aucun paiement"},
-                ["Buff_NoTaxes"]                = {de = "Keine Steuern", en = "No taxes", fr = "Aucune taxes"},
-            },
-            BuffsEx1 = {
-                ["Buff_Gems"]              = {de = "Edelsteine", en = "Gems", fr = "Gemmes"},
-                ["Buff_MusicalInstrument"] = {de = "Musikinstrumente", en = "Musical instruments", fr = "Instruments musicaux"},
-                ["Buff_Olibanum"]          = {de = "Weihrauch", en = "Olibanum", fr = "Encens"},
-            }
-        },
-        SoldierCount = {
-            Pattern = {
-                de = "SOLDATENANZAHL {cr}Partei: %s{cr}{cr}%s %d",
-                en = "SOLDIER COUNT {cr}Faction: %s{cr}{cr}%s %d",
-                fr = "NOMBRE DE SOLDATS {cr}Faction: %s{cr}{cr}%s %d",
-            },
-            Relation = {
-                ["true"]  = {de = "Weniger als ", en = "Less than ", fr = "Moins de"},
-                ["false"] = {de = "Mindestens ", en = "At least ", fr = "Au moins"},
-            }
-        },
-        Festivals = {
-            Pattern = {
-                de = "FESTE FEIERN {cr}{cr}Partei: %s{cr}{cr}Anzahl: %d",
-                en = "HOLD PARTIES {cr}{cr}Faction: %s{cr}{cr}Amount: %d",
-                fr = "FESTIVITÉS {cr}{cr}Faction: %s{cr}{cr}Nombre : %d",
-            },
-        }
-    }
 }
 
 CONST_EFFECT_NAME_TO_ID = {};
@@ -293,7 +246,7 @@ function Lib.Core.Quest:OverrideQuestSystemGlobal()
         for i=1,this.Objectives[0] do
             if this.Objectives[i].Type == Objective.Custom2 and this.Objectives[i].Data[1].SetDescriptionOverwrite then
                 local Desc = this.Objectives[i].Data[1]:SetDescriptionOverwrite(this);
-                Lib.Core.Quest:ChangeCustomQuestCaptionText(Desc, this);
+                -- TODO
                 break;
             end
         end
@@ -347,20 +300,47 @@ function Lib.Core.Quest:OverrideQuestSystemGlobal()
     end
 end
 
-function Lib.Core.Quest:ChangeCustomQuestCaptionText(_Text, _Quest)
-    if _Quest and _Quest.Visible then
-        _Quest.QuestDescription = _Text;
-        ExecuteLocal([[
-            XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives/Custom/BGDeco",0)
-            local identifier = "%s"
-            for i=1, Quests[0] do
-                if Quests[i].Identifier == identifier then
-                    local text = Quests[i].QuestDescription
-                    XGUIEng.SetText("/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives/Custom/Text", "%s")
-                    break
-                end
+function Lib.Core.Quest:ChangeCustomQuestCaptionText(_Quest, ...)
+    local Quest = _Quest;
+    if type(Quest) == "string" or type(Quest) == "number" then
+        Quest = Quests[GetQuestID(_Quest)];
+    end
+    if not IsLocalScript() then
+        if Quest and Quest.Visible then
+            local Parameters = "";
+            for i= 1, #arg do
+                Parameters = Parameters .. ((i > 1 and ", ") or "");
+                Parameters = Parameters .. ((type(arg[i]) == "string" and "\"" ..arg[i].. "\"") or tostring(arg[i]));
             end
-        ]], _Quest.Identifier, _Text);
+            ExecuteLocal(
+                [[Lib.Core.Quest:ChangeCustomQuestCaptionText("%s", %s)]],
+                Quest.Identifier,
+                Parameters
+            );
+        end
+    else
+        local Parameters = {};
+        for i= 1, #arg do
+            local Param = arg[i];
+            if type(arg[i]) == "string" and arg[i]:find("^[A-Za-z0-9_]+/[A-Za-z0-9_]+$") then
+                Param = GetStringText(arg[i]);
+            end
+            if Param then
+                table.insert(Parameters, Param);
+            end
+        end
+        local Pattern = table.remove(Parameters, 1);
+        local Description = Pattern;
+        if #Parameters > 0 then
+            Description = string.format(Pattern, unpack(Parameters));
+        end
+        for i=1, Quests[0] do
+            if Quests[i].Identifier == Quest.Identifier then
+                XGUIEng.ShowWidget("/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives/Custom/BGDeco",0);
+                XGUIEng.SetText("/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives/Custom/Text", Description);
+                break;
+            end
+        end
     end
 end
 
@@ -382,14 +362,6 @@ function SetResourceAmount(_Entity, _StartAmount, _RefillAmount)
         CONST_REFILL_AMOUNT[EntityID] = _RefillAmount;
     end
 end
-
-function SetCustomBehaviorText(_QuestName, _Text)
-    local QuestID = GetQuestID(_QuestName);
-    local Quest = Quests[QuestID];
-    assert(Quest ~= nil, "Quest '" .._QuestName.. "' not found!");
-    Lib.Core.Quest:ChangeCustomQuestCaptionText(_Text, Quest);
-end
-API.SetCustomBehaviorText = SetCustomBehaviorText;
 
 function RestartQuest(_QuestName, _NoMessage)
     -- All changes on default behavior must be considered in this function.

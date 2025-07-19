@@ -20,7 +20,6 @@ Lib.Require("core/core");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/information/Requester_API");
 Lib.Require("module/information/Requester_Behavior");
-Lib.Require("module/information/Requester_Text");
 Lib.Register("module/information/Requester");
 
 -- -------------------------------------------------------------------------- --
@@ -354,7 +353,9 @@ function Lib.Requester.Local:ShowTextWindow(_Data)
     self:CloseTextWindow(PlayerID);
     self:AlterChatLog();
     self:LockSaveGame();
-    self:LockGameSpeed();
+    if not _Data.NoSlowdown then
+        self:LockGameSpeed();
+    end
     XGUIEng.SetText("/InGame/Root/Normal/ChatOptions/ChatLog", _Data.Content);
     XGUIEng.SetText("/InGame/Root/Normal/MessageLog/Name","{center}" .._Data.Caption);
     if _Data.DisableClose then
@@ -379,7 +380,9 @@ function Lib.Requester.Local:CloseTextWindow(_PlayerID)
     end
     self.DialogWindowShown = nil;
     self:ResumeSaveGame();
-    self:ResumeGameSpeed();
+    if not self.Chat.Data[PlayerID].NoSlowdown then
+        self:ResumeGameSpeed();
+    end
     GUI_Chat.CloseChatMenu();
 end
 

@@ -6,13 +6,6 @@ Lib.NPC.Global = {
     UseMarker = true,
 };
 Lib.NPC.Local  = {};
-Lib.NPC.Text = {
-    StartConversation = {
-        de = "Gespräch beginnen",
-        en = "Start conversation",
-        fr = "Conversation",
-    }
-};
 
 CONST_LAST_NPC_INTERACTED = 0;
 CONST_LAST_HERO_INTERACTED = 0;
@@ -565,8 +558,7 @@ function Lib.NPC.Local:OverrideQuestFunctions()
                 XGUIEng.SetMaterialColor(ColorWidget, 0, 255, 255, 255, 0);
 
                 SetIcon(QuestObjectiveContainer .. "/QuestTypeIcon",{16,12});
-                local caption = Lib.NPC.Text.StartConversation;
-                QuestTypeCaption = Localize(caption);
+                QuestTypeCaption = GetStringText("Lib_Strings/Entity_Npc_StartConversation");
 
                 XGUIEng.SetText(QuestObjectiveContainer.."/Caption","{center}"..QuestTypeCaption);
                 XGUIEng.ShowWidget(QuestObjectiveContainer, 1);

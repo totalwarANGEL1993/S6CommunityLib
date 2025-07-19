@@ -31,7 +31,6 @@ Lib.Require("core/feature/Core_Quest");
 Lib.Require("core/feature/Core_Player");
 
 Lib.Require("core/Core_Behavior");
-Lib.Require("core/Core_Text");
 Lib.Register("core/Core");
 
 ---@diagnostic disable: deprecated
@@ -216,6 +215,8 @@ end
 function Lib.Core.Local:Initialize()
     if not self.IsInstalled then
         g_GameExtraNo = Framework.GetGameExtraNo();
+
+        self:InitTranslation();
 
         -- Init base features
         Lib.Core.LuaExtension:Initialize();
@@ -422,6 +423,27 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+function Lib.Core.Local:InitTranslation()
+    -- Load localizations
+    if not Lib.Loader.IsSingleFile then
+        local DirPath = Lib.Loader.Paths[1] .. Lib.Loader.Root .. "/text/";
+        Script.Load(DirPath.. "translation.lua");
+    end
+    -- Check localizations existing
+    assert(CONST_TRANSLATION_TEXT_STRINGS ~= nil);
+    -- Set initial language
+    local lang = Network.GetDesiredLanguage();
+    lang = (CONST_TRANSLATION_TEXT_STRINGS[lang] and lang) or "en";
+    LoadStringTextFromTable(CONST_TRANSLATION_TEXT_STRINGS[lang], "Lib_Strings");
+end
+
+function Lib.Core.Local:UpdateLanguage(_Selected)
+    local lang = (CONST_TRANSLATION_TEXT_STRINGS[_Selected] and _Selected) or "en";
+    LoadStringTextFromTable(CONST_TRANSLATION_TEXT_STRINGS[lang], "Lib_Strings");
+end
+
+-- -------------------------------------------------------------------------- --
+
 function Lib.Core.Local:CloseGameIfNotPatched(_Version)
     local Required = _Version;
     local Current = g_UnofficialPatchVersion;
@@ -430,8 +452,8 @@ function Lib.Core.Local:CloseGameIfNotPatched(_Version)
 
     if not IsMultiplayer() then
         -- Check patch version
-        local Title = Localize(Lib.Core.Text.PatchRequired.Title);
-        local Text = Localize(Lib.Core.Text.PatchRequired.Text);
+        local Title = GetStringText("Lib_Strings/Core_Dialog_PatchRequired_Title");
+        local Text = GetStringText("Lib_Strings/Core_Dialog_PatchRequired_Text");
         if IsUnofficialPatch() then
             local Pattern = "^([a-zA-Z]+) (%d+)%.(%d+)%.(%d+)";
             local _, mj1,mo1,bf1, _ = string.match(Required, Pattern);
@@ -440,7 +462,7 @@ function Lib.Core.Local:CloseGameIfNotPatched(_Version)
                 error(false, "Malformed version number: %s", Required);
                 Framework.CloseGame();
             end
-            Text = Localize(Lib.Core.Text.PatchVersionRequired.Text);
+            Text = GetStringText("Lib_Strings/Core_Dialog_PatchRequired_TextVersion");
             Text = Text:format(Required, "UP "..mj2.."."..mo2.."."..bf2);
             if Required == "UP 0.0.0" then
                 return;

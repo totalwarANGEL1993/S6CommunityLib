@@ -141,19 +141,19 @@ Lib.MilitiaSystem.Config = {
     },
     Technology = {
         -- Tech name, Description, Icon, Extra Number
-        {"R_MilitaryBandit_Melee_AS",  {de = "Hindun Schwertkämpfer",   en = "Hindun Swordmen",},    {6,  3, 1}, 1},
-        {"R_MilitaryBandit_Ranged_AS", {de = "Hindun Bogenschützen",    en = "Hindun Archers",},     {6,  2, 1}, 1},
-        {"R_MilitaryBandit_Melee_ME",  {de = "Westerlin Keulenkämpfer", en = "Westerlin Macemen",},  {9,  9, 0}, 0},
-        {"R_MilitaryBandit_Ranged_ME", {de = "Westerlin Bogenschützen", en = "Westerlin Archers",},  {9, 10, 0}, 0},
-        {"R_MilitaryBandit_Melee_NA",  {de = "Janub Schwertkämpfer",    en = "Janub Swordmen",},     {9, 11, 0}, 0},
-        {"R_MilitaryBandit_Ranged_NA", {de = "Janub Bogenschützen",     en = "Janub Archers",},      {9, 12, 0}, 0},
-        {"R_MilitaryBandit_Melee_NE",  {de = "Narlind Axtkämpfer",      en = "Narlind Axemen",},     {9, 13, 0}, 0},
-        {"R_MilitaryBandit_Ranged_NE", {de = "Narlind Axtwerfer",       en = "Narlind Axethrower",}, {9, 14, 0}, 0},
-        {"R_MilitaryBandit_Melee_SE",  {de = "Raudrlin Schwertkämpfer", en = "Raudrlin Swordmen",},  {9, 15, 0}, 0},
-        {"R_MilitaryBandit_Ranged_SE", {de = "Raudrlin Bogenschützen",  en = "Raudrlin Archers",},   {9, 26, 0}, 0},
+        {"R_MilitaryBandit_Melee_AS",  "Lib_Strings/Technology_R_MilitaryBandit_Melee_AS",  {6,  3, 1}, 1},
+        {"R_MilitaryBandit_Ranged_AS", "Lib_Strings/Technology_R_MilitaryBandit_Ranged_AS", {6,  2, 1}, 1},
+        {"R_MilitaryBandit_Melee_ME",  "Lib_Strings/Technology_R_MilitaryBandit_Melee_ME",  {9,  9, 0}, 0},
+        {"R_MilitaryBandit_Ranged_ME", "Lib_Strings/Technology_R_MilitaryBandit_Ranged_ME", {9, 10, 0}, 0},
+        {"R_MilitaryBandit_Melee_NA",  "Lib_Strings/Technology_R_MilitaryBandit_Melee_NA",  {9, 11, 0}, 0},
+        {"R_MilitaryBandit_Ranged_NA", "Lib_Strings/Technology_R_MilitaryBandit_Ranged_NA", {9, 12, 0}, 0},
+        {"R_MilitaryBandit_Melee_NE",  "Lib_Strings/Technology_R_MilitaryBandit_Melee_NE",  {9, 13, 0}, 0},
+        {"R_MilitaryBandit_Ranged_NE", "Lib_Strings/Technology_R_MilitaryBandit_Ranged_NE", {9, 14, 0}, 0},
+        {"R_MilitaryBandit_Melee_SE",  "Lib_Strings/Technology_R_MilitaryBandit_Melee_SE",  {9, 15, 0}, 0},
+        {"R_MilitaryBandit_Ranged_SE", "Lib_Strings/Technology_R_MilitaryBandit_Ranged_SE", {9, 26, 0}, 0},
         --
-        {"R_Mercenary_Melee",          {de = "Miliz Nahkämpfer",        en = "Militia Infantry",},   {9,  9, 0}, 0},
-        {"R_Mercenary_Ranged",         {de = "Miliz Fernkämpfer",       en = "Militia Archers",},    {9, 10, 0}, 0},
+        {"R_Mercenary_Melee",          "Lib_Strings/Technology_R_Mercenary_Melee",          {9,  9, 0}, 0},
+        {"R_Mercenary_Ranged",         "Lib_Strings/Technology_R_Mercenary_Ranged",         {9, 10, 0}, 0},
     },
     ConscriptTasks = {
         Idle = {

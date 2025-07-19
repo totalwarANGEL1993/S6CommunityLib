@@ -67,6 +67,9 @@ function Lib.Core.Placeholder:OnSaveGameLoaded()
 end
 
 function Lib.Core.Placeholder:OnReportReceived(_ID, ...)
+    if IsLocalScript() and _ID == Report.LanguageChanged then
+        Lib.Core.Local:UpdateLanguage(arg[2]);
+    end
 end
 
 -- -------------------------------------------------------------------------- --

@@ -10,7 +10,6 @@ Lib.UIBuilding.Local.BuildingButtons = {
 Lib.Require("core/Core");
 Lib.Require("module/ui/UIBuilding_API");
 Lib.Require("module/ui/UIBuilding_Config");
-Lib.Require("module/ui/UIBuilding_Text");
 Lib.Require("module/ui/UIBuilding_Buttons");
 Lib.Register("module/ui/UIBuilding");
 

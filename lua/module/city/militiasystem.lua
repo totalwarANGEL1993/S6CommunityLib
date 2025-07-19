@@ -7,6 +7,18 @@ Lib.MilitiaSystem.Local  = {
     Buttons = {},
     ConscriptCount = {},
     MilitiaMapping = {},
+    Unit = {
+        "U_MilitaryBandit_Melee_AS",
+        "U_MilitaryBandit_Ranged_AS",
+        "U_MilitaryBandit_Melee_ME",
+        "U_MilitaryBandit_Ranged_ME",
+        "U_MilitaryBandit_Melee_NA",
+        "U_MilitaryBandit_Ranged_NA",
+        "U_MilitaryBandit_Melee_NE",
+        "U_MilitaryBandit_Ranged_NE",
+        "U_MilitaryBandit_Melee_SE",
+        "U_MilitaryBandit_Ranged_SE",
+    },
 };
 Lib.MilitiaSystem.Shared = {
     ConscriptConfig = "Work",
@@ -23,7 +35,6 @@ Lib.Require("module/faker/Technology");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/city/MilitiaSystem_API");
 Lib.Require("module/city/MilitiaSystem_Config");
-Lib.Require("module/city/MilitiaSystem_Text");
 Lib.Register("module/city/MilitiaSystem");
 
 -- -------------------------------------------------------------------------- --
@@ -200,9 +211,12 @@ function Lib.MilitiaSystem.Local:Initialize()
         self:InitConscriptUpdate();
         self:InitOverwriteMultiselection();
 
-        for k, v in pairs(Lib.MilitiaSystem.Text.Unit) do
-            AddStringText("UI_ObjectNames/" ..k, v.Title);
-            AddStringText("UI_ObjectDescription/Abilities_" ..k, v.Text);
+        for i= 1, #self.Unit do
+            local UnitType = self.Unit[i];
+            local Title = GetStringText("Lib_Strings/City_MilitarySystem_Unit_" ..UnitType.. "_Title");
+            AddStringText("UI_ObjectNames/" ..UnitType, Title);
+            local Text = GetStringText("Lib_Strings/City_MilitarySystem_Unit_" ..UnitType.. "_Text");
+            AddStringText("UI_ObjectDescription/Abilities_" ..UnitType, Text);
         end
 
         -- Garbage collection
@@ -293,7 +307,7 @@ function Lib.MilitiaSystem.Local:CastleMilitiaButtonAction(_Index, _WidgetID, _E
         return;
     end
     if self.ConscriptCount[PlayerID] < GetBattalionSizeBySoldierType(UnitType) then
-        AddMessage(Lib.MilitiaSystem.Text.Message.NoConscripts);
+        AddMessage("Lib_Strings/City_MilitarySystem_Message_NoConscripts");
         return;
     end
     SendReportToGlobal(Report.BuyMilitia, PlayerID, UnitType);
@@ -355,8 +369,8 @@ function Lib.MilitiaSystem.Local:GetUnitScreenDescription(_Type)
     local Text = GetStringText("UI_ObjectDescription/Abilities_" ..TypeName);
     if Lib.MilitiaSystem.Shared.TypeSkills[TypeName] then
         local SkillName = Lib.MilitiaSystem.Shared.TypeSkills[TypeName].Name;
-        local SkillText = Lib.MilitiaSystem.Text.Skills[SkillName];
-        Text = Text.. "{cr}" .. Localize(SkillText);
+        local SkillText = GetStringText("Lib_Strings/City_MilitarySystem_Skills_" ..SkillName);
+        Text = Text.. "{cr}" .. SkillText;
     end
     return Text;
 end

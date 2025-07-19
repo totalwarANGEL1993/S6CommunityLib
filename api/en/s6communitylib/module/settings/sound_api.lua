@@ -167,10 +167,3 @@ function StopVoice(_Identifier)
 end
 API.StopVoice = StopVoice;
 
---- Asks the player, if they permit temporarily changes of the sound volume.
----
---- This functionality is not available in Multiplayer.
-function RequestAlternateSound()
-end
-API.RequestAlternateSound = RequestAlternateSound;
-

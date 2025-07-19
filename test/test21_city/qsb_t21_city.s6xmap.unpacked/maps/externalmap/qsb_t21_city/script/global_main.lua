@@ -7,6 +7,26 @@
 
 -- ========================================================================== --
 
+function TestLocalizeQuest()
+    SetupQuest {
+        Name        = "TestNoChange",
+        Suggestion  = "Bla Bla Bla",
+
+        Goal_NoChange(),
+        Trigger_Time(0),
+    }
+
+    SetupQuest {
+        Name        = "TestActivateBuff",
+        Visible     = true,
+
+        Goal_ActivateBuff(1, "Buff_Spice"),
+        Trigger_Time(10),
+    }
+end
+
+-- ========================================================================== --
+
 function TestWarehouses()
     CreateWarehouse {
         ScriptName = "TP1",

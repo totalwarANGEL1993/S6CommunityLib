@@ -15,7 +15,6 @@ Lib.CutsceneSystem.Local = {
 Lib.Require("comfort/IsMultiplayer");
 Lib.Require("core/Core");
 Lib.Require("module/information/Information");
-Lib.Require("module/information/CutsceneSystem_Text");
 Lib.Require("module/information/CutsceneSystem_API");
 Lib.Require("module/information/CutsceneSystem_Behavior");
 Lib.Register("module/information/CutsceneSystem");
@@ -642,9 +641,9 @@ function Lib.CutsceneSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
         -- XGUIEng.ShowWidget("/InGame/ThroneRoom/Main/Skip", 1);
 
         -- Button text
-        local SkipText = Localize(Lib.CutsceneSystem.Text.FastForwardActivate);
+        local SkipText = GetStringText("Lib_Strings/Information_CutsceneSystem_FastForwardActivate");
         if self.Cutscene[_PlayerID].FastForward then
-            SkipText = Localize(Lib.CutsceneSystem.Text.FastForwardDeactivate);
+            SkipText = GetStringText("Lib_Strings/Information_CutsceneSystem_FastForwardDeactivate");
         end
         XGUIEng.SetText("/InGame/ThroneRoom/Main/Skip", "{center}" ..SkipText);
 
@@ -661,9 +660,9 @@ function Lib.CutsceneSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
                 end
                 self.Cutscene[_PlayerID].FastForwardRealTime = RealTime;
             end
-            local Text = "{cr}{cr}" ..Localize(Lib.CutsceneSystem.Text.FastFormardMessage);
+            local Text = GetStringText("Lib_Strings/Information_CutsceneSystem_FastFormardMessage");
             local Indent = string.rep("  ", (self.Cutscene[_PlayerID].FastForwardIndent or 0));
-            XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", Text..Indent.. ". . .");
+            XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", "{cr}{cr}" ..Text..Indent.. ". . .");
         else
             XGUIEng.SetText("/InGame/ThroneRoom/Main/MissionBriefing/Objectives", " ");
         end
