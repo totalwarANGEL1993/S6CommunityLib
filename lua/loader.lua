@@ -5,7 +5,7 @@ Lib = {
             "script/",
         },
 
-        Version = "4.4.0",
+        Version = "4.5.0",
         Root = "S6CommunityLib/lua",
         IsLocalEnv = GUI ~= nil,
         IsHistoryEdition = false,
