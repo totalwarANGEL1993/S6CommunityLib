@@ -48,6 +48,17 @@ CONST_TRANSLATION_TEXT_STRINGS.de = {
     -- IO
     IO_IoSite_Description_Title = "Gebäude bauen";
     IO_IoSite_Description_Text = "Beauftragt den Bau eines Gebäudes. Ein Siedler wird aus dem Lagerhaus kommen und mit dem Bau beginnen.";
+    -- Settlemen tLimitation
+    Mode_SettlementLimitation_BuildingLimit_Pattern = "%s%s %d / %d{@color:255,255,255,255}{cr}",
+    Mode_SettlementLimitation_BuildingLimit_Info = "Gebäude: ",
+    -- Settlement Survival
+    Mode_SettlementSurvival_Message_BuildingMourning = "Keine Baumaßnahmen möglich, solange Siedler trauern.",
+    Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness = "{scarlet}Eure Nutztiere sterben an Krankheiten!",
+    Mode_SettlementSurvival_Alarm_BuildingBurning = "{scarlet}Brände wüten in Eurer Stadt!",
+    Mode_SettlementSurvival_Alarm_SettlerTemperature = "{scarlet}Eure Siedler haben kein Feuerholz und frieren!",
+    Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Eure Siedler verwahrlosen und werden krank!",
+    Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Eure Siedler haben nichts zu essen und verhungern!",
+    Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Eure Siedler sterben an Krankheiten!",
 };
 
 -- English
@@ -94,6 +105,17 @@ CONST_TRANSLATION_TEXT_STRINGS.en = {
     -- IO
     IO_IoSite_Description_Title = "Create building";
     IO_IoSite_Description_Text = "Order a building. A worker will come out of the storehouse and erect it.";
+    -- Settlemen tLimitation
+    Mode_SettlementLimitation_BuildingLimit_Pattern = "%s%s %d / %d{@color:255,255,255,255}{cr}",
+    Mode_SettlementLimitation_BuildingLimit_Info = "Buildings: ",
+    -- Settlement Survival
+    Mode_SettlementSurvival_Message_BuildingMourning = "No construction work possible as long as settlers mourn.",
+    Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness = "{scarlet}Your farm animals succumb to the plague!",
+    Mode_SettlementSurvival_Alarm_BuildingBurning = "{scarlet}Fires are raging in your city!",
+    Mode_SettlementSurvival_Alarm_SettlerTemperature = "{scarlet}Your settlers lack of firewood to warm themselves!",
+    Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Your settlers are neglected and getting sick!",
+    Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Your settlers are starving to death!",
+    Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Your settlers succumb to the plague!",
 };
 
 -- French
@@ -140,5 +162,16 @@ CONST_TRANSLATION_TEXT_STRINGS.fr = {
     -- IO
     IO_IoSite_Description_Title = "Construire le bâtiment";
     IO_IoSite_Description_Text = "Commande la construction d'un bâtiment. Un Settler sortira de l'entrepôt et commencera la construction.";
+    -- Settlemen tLimitation
+    Mode_SettlementLimitation_BuildingLimit_Pattern = "%s%s %d / %d{@color:255,255,255,255}{cr}",
+    Mode_SettlementLimitation_BuildingLimit_Info = "Imeuble: ",
+    -- Settlement Survival
+    Mode_SettlementSurvival_Message_BuildingMourning = "Aucun travail de construction possible tant que les colons pleurent.",
+    Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness = "{scarlet}Vos animaux de ferme succombent à la peste!",
+    Mode_SettlementSurvival_Alarm_BuildingBurning = "{scarlet}Les incendies font rage dans votre ville!",
+    Mode_SettlementSurvival_Alarm_SettlerTemperature = "{scarlet}Vos colons manquent de bois de chauffage pour se réchauffer!",
+    Mode_SettlementSurvival_Alarm_SettlerNegligence = "{scarlet}Vos colons sont négligés et tombent malades!",
+    Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger = "{scarlet}Vos colons meurent de faim!",
+    Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness = "{scarlet}Vos colons succombent à la peste!",
 };
 

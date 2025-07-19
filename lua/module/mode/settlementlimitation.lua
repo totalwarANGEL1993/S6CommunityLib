@@ -84,7 +84,6 @@ Lib.Require("module/faker/Technology");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/mode/SettlementLimitation_API");
-Lib.Require("module/mode/SettlementLimitation_Text");
 Lib.Register("module/mode/SettlementLimitation");
 
 -- -------------------------------------------------------------------------- --
@@ -610,13 +609,11 @@ function Lib.SettlementLimitation.Local:GetRestrictionText(_PlayerID, _Territory
         local Bonus = this:GetAdditionalBuildingBonusAmount(playerID, territoryID);
         local Limit = buildingLimit;
         Limit = (Limit > 0 and Limit + Bonus) or Limit;
-        local Text = string.format(
-            "%s%s %d / %d{@color:255,255,255,255}{cr}",
-            (Current >= Limit and "{@color:255,0,0,255}") or "{@color:255,255,255,255}",
-            Localize(Lib.SettlementLimitation.Text.BuildingLimit),
-            Current,
-            Limit
-        );
+
+        local Pattern = GetStringText("Lib_Strings/Mode_SettlementLimitation_BuildingLimit_Pattern");
+        local Info = GetStringText("Lib_Strings/Mode_SettlementLimitation_BuildingLimit_Info");
+        local Color = (Current >= Limit and "{@color:255,0,0,255}") or "{@color:255,255,255,255}";
+        local Text = string.format(Pattern, Color, Info, Current, Limit);
         return Text;
     end
 

@@ -99,7 +99,6 @@ Lib.Require("module/faker/Permadeath");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/ui/UITools");
 Lib.Require("module/mode/SettlementSurvival_API");
-Lib.Require("module/mode/SettlementSurvival_Text");
 Lib.Register("module/mode/SettlementSurvival");
 
 -- -------------------------------------------------------------------------- --
@@ -431,7 +430,7 @@ function Lib.SettlementSurvival.Global:ControlAnimalsSuccumToPlague(_Turn)
             end
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.AnimalDiedFromIllness);
+                self:Print(PlayerID, "Lib_Strings/Mode_SettlementSurvival_Alarm_AnimalDiedFromIllness");
             end
         end
     end
@@ -527,7 +526,7 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringHotWeather(_Turn)
                         end
                     end
                     if AnyIgnited then
-                        self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.BuildingBurning);
+                        self:Print(PlayerID, "Lib_Strings/Mode_SettlementSurvival_Alarm_BuildingBurning");
                     end
                 end
             end
@@ -599,7 +598,7 @@ function Lib.SettlementSurvival.Global:ControlBuildingsDuringColdWeather(_Turn)
                                 end
                             end
                         end
-                        self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerTemperature);
+                        self:Print(PlayerID, "Lib_Strings/Mode_SettlementSurvival_Alarm_SettlerTemperature");
                     end
                 end
             end
@@ -661,7 +660,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersBecomeIllDueToNegligence(_
 
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerNegligence);
+                self:Print(PlayerID, "Lib_Strings/Mode_SettlementSurvival_Alarm_SettlerNegligence");
             end
         end
     end
@@ -742,7 +741,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToFamine(_Turn)
             end
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerDiedFromHunger);
+                self:Print(PlayerID, "Lib_Strings/Mode_SettlementSurvival_Alarm_SettlerDiedFromHunger");
             end
         end
     end
@@ -817,7 +816,7 @@ function Lib.SettlementSurvival.Global:ControlSettlersSuccumToPlague(_Turn)
             end
             -- Show info
             if ShowMessage then
-                self:Print(PlayerID, Lib.SettlementSurvival.Text.Alarms.SettlerDiedFromIllness);
+                self:Print(PlayerID, "Lib_Strings/Mode_SettlementSurvival_Alarm_SettlerDiedFromIllness");
             end
         end
     end
@@ -917,13 +916,14 @@ end
 -- -------------------------------------------------------------------------- --
 
 function Lib.SettlementSurvival.Global:Print(_PlayerID, _Text)
-    local Text = ConvertPlaceholders(Localize(_Text));
-    ExecuteLocal([[
-        if GUI.GetPlayerID() == %d then
-            GUI.ClearNotes()
-            GUI.AddNote("%s")
-        end
-    ]], _PlayerID, Text);
+    ExecuteLocal(
+        [[if GUI.GetPlayerID() == %d then
+              GUI.ClearNotes()
+              GUI.AddNote("%s")
+          end]],
+        _PlayerID,
+        _Text
+    );
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1040,7 +1040,7 @@ function Lib.SettlementSurvival.Local:OverrideGameCallbacks()
     self.Orig_GameCallback_GUI_DeleteEntityStateBuilding = GameCallback_GUI_DeleteEntityStateBuilding;
     GameCallback_GUI_DeleteEntityStateBuilding = function(_BuildingID, _State)
         if Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(_BuildingID) then
-            Message(Localize(Lib.Permadeath.Text.Messages.BuildingMourning));
+            Message("Lib_Strings/Mode_SettlementSurvival_Message_BuildingMourning");
             GUI.CancelBuildingKnockDown(_BuildingID);
             return;
         end
@@ -1055,7 +1055,7 @@ function Lib.SettlementSurvival.Local:OverwriteUpgradeButton()
     GUI_BuildingButtons.UpgradeClicked = function()
         local BuildingID = GUI.GetSelectedEntity();
         if Lib.SettlementSurvival.Local:HasBuildingDeadSettlers(BuildingID) then
-            Message(Localize(Lib.SettlementSurvival.Text.Messages.BuildingMourning));
+            Message("Lib_Strings/Mode_SettlementSurvival_Message_BuildingMourning");
             GUI.CancelBuildingKnockDown(BuildingID);
             return;
         end
