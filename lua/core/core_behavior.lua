@@ -1611,7 +1611,7 @@ function B_Goal_Festivals:CustomFunction(_Quest)
         local PlayerName = GetPlayerName(self.PlayerID) or "";
         Lib.Core.Quest:ChangeCustomQuestCaptionText(
             _Quest,
-            "Lib_String/Core_Quest_Festivals_Pattern",
+            "Lib_Strings/Core_Quest_Festivals_Pattern",
             PlayerName,
             self.NeededFestivals
         );
