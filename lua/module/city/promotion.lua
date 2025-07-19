@@ -12,6 +12,7 @@ Lib.Promotion.Shared = {
 CONST_REQUIREMENT_TOOLTIP_TYPE = {};
 CONST_CONSUMED_GOODS_COUNTER = {};
 
+Lib.Require("comfort/KeyOf");
 Lib.Require("core/Core");
 Lib.Require("module/faker/Technology");
 Lib.Require("module/ui/UITools");
@@ -541,29 +542,28 @@ function Lib.Promotion.Local:OverwriteTooltips()
         end
         Lib.Promotion.Local:RequirementTooltipWrapped(key, num);
     end
-
-    Lib.Promotion.Config:InitAddonText();
 end
 
 function Lib.Promotion.Local:RewardTooltipWrapped(_i)
     local TechnologyType = GUI_Knight.NextRightsForTitle[_i];
     local TechnologyTypeName =  GetNameOfKeyInTable(Technologies, TechnologyType);
     local Name = string.gsub(TechnologyTypeName, "R_", "");
-    local TooltipName = "";
 
-    local Key = "B_" .. Name;
-    if GetStringText("UI_ObjectNames/" .. Key) == "" then
-        Key = "U_" .. Name;
+    local Text;
+    Text = GetStringText("UI_ObjectNames/B_" .. Name);
+    if Text == nil or Text == "" then
+        Text = GetStringText("UI_ObjectNames/U_" .. Name);
     end
-    if GetStringText("UI_ObjectNames/" .. Key) == "" then
-        Key = "Start" .. Name;
+    if Text == nil or Text == "" then
+        Text = GetStringText("UI_ObjectNames/Start" .. Name);
     end
-    if GetStringText("UI_ObjectNames/" .. Key) == "" then
-        Key = "R_" .. Name;
+    if Text == nil or Text == "" then
+        Text = GetStringText("UI_ObjectNames/R_" .. Name);
     end
-
-    TooltipName = GetStringText("UI_ObjectNames/" .. Key);
-    SetTooltipNormal(Localize(TooltipName), "");
+    if Text == nil or Text == "" then
+        Text = GetStringText("Lib_Strings/Technology_R_" .. Name);
+    end
+    SetTooltipNormal(Text or ("KEY MISSING: " ..Name), "");
 end
 
 function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
@@ -575,36 +575,28 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
     if _key == "Consume" or _key == "Goods" or _key == "DecoratedBuildings" then
         local GoodType     = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
         local GoodTypeName = Logic.GetGoodTypeName(GoodType);
-        local GoodName     = GetStringText("UI_ObjectNames/" .. GoodTypeName);
-
+        local GoodName     = "UI_ObjectNames/" .. GoodTypeName;
         if GoodName == nil then
             GoodName = "Goods." .. GoodTypeName;
         end
         Title = GoodName;
-        Text  = Lib.Promotion.Config.Description[_key].Text;
+        Text  = "Lib_Strings/City_Promotion_" .._key.. "_Text";
 
     elseif _key == "Products" then
-        local GoodCategoryNames = Lib.Promotion.Config.GoodCategoryNames;
         local Category = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
-        local CategoryName = Localize(GoodCategoryNames[Category]);
-
-        if CategoryName == nil then
-            CategoryName = "ERROR: Name missng!";
-        end
-        Title = CategoryName;
-        Text  = Lib.Promotion.Config.Description[_key].Text;
+        local CategoryKey = KeyOf(Category, GoodCategories);
+        Title = "Lib_Strings/City_Promotion_GoodCategories_" ..CategoryKey;
+        Text  = "Lib_Strings/City_Promotion_" .._key.. "_Text";
 
     elseif _key == "Entities" then
         local EntityType     = KnightTitleRequirements[KnightTitle+1][_key][_i][1];
         local EntityTypeName = Logic.GetEntityTypeName(EntityType);
         local EntityName = GetStringText("Names/" .. EntityTypeName);
-
         if EntityName == nil then
             EntityName = "Entities." .. EntityTypeName;
         end
-
         Title = EntityName;
-        Text  = Lib.Promotion.Config.Description[_key].Text;
+        Text  = "Lib_Strings/City_Promotion_" .._key.. "_Text";
 
     elseif _key == "Custom" then
         local Custom = KnightTitleRequirements[KnightTitle+1].Custom[_i];
@@ -612,19 +604,14 @@ function Lib.Promotion.Local:RequirementTooltipWrapped(_key, _i)
         Text  = Custom[4];
 
     elseif _key == "Buff" then
-        local BuffTypeNames = Lib.Promotion.Config.BuffTypeNames;
         local BuffType = KnightTitleRequirements[KnightTitle+1][_key][_i];
-        local BuffTitle = Localize(BuffTypeNames[BuffType]);
-
-        if BuffTitle == nil then
-            BuffTitle = "ERROR: Name missng!";
-        end
-        Title = BuffTitle;
-        Text  = Lib.Promotion.Config.Description[_key].Text;
+        local BuffTypeKey = KeyOf(BuffType, Buffs);
+        Title = "Lib_Strings/City_Promotion_Buffs_" ..BuffTypeKey;
+        Text  = "Lib_Strings/City_Promotion_" .._key.. "_Text";
 
     else
-        Title = Lib.Promotion.Config.Description[_key].Title;
-        Text  = Lib.Promotion.Config.Description[_key].Text;
+        Title = "Lib_Strings/City_Promotion_" .._key.. "_Title";
+        Text  = "Lib_Strings/City_Promotion_" .._key.. "_Text";
     end
     SetTooltipNormal(Localize(Title), Localize(Text), nil);
 end
