@@ -1,0 +1,1 @@
+Lib.Register("module/mode/EvilHeroes_API");
