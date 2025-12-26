@@ -68,13 +68,8 @@ function Lib.Camera.Local:Initialize()
         Report.ExtendedZoomDeactivated = CreateReport("Event_ExtendedZoomDeactivated");
         Report.ExtendedZoomActivated = CreateReport("Event_ExtendedZoomActivated");
 
-        local ZoomMin = Camera.RTS_GetZoomFactorMin();
-        local ZoomMax = Camera.RTS_GetZoomFactorMax();
-        self.CameraNormalZoom[1][1] = ZoomMin;
-        self.CameraNormalZoom[1][3] = ZoomMax;
-        self.CameraNormalZoom[2][1] = ZoomMin;
-        self.CameraNormalZoom[2][3] = ZoomMax;
-
+        local ZoomMin = self.CameraNormalZoom[2][3];
+        local ZoomMax = self.CameraNormalZoom[2][1];
         self:ResetRenderDistance();
         self:UpdateCamera(ZoomMin, ZoomMax);
 

@@ -1,1 +1,1 @@
-Script.Load("E:/Repositories/libertica/test/test01_load/localmapscript.lua");
+Script.Load("D:/Projects/Settlers/libertica/test/test01_load/localmapscript.lua");

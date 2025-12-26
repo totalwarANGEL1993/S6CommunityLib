@@ -1,5 +1,5 @@
 if CONST_IS_IN_DEV then
-    Lib.Loader.PushPath("E:/Repositories/");
+    Lib.Loader.PushPath("E:/Projects/Settlers/Repositories/");;
 end
 
 Lib.Require("comfort/KeyOf");

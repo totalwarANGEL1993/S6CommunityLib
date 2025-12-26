@@ -53,7 +53,7 @@ API.DeactivateBorderScroll = DeactivateBorderScroll;
 function ActivateExtendedZoom(_PlayerID)
     _PlayerID = _PlayerID or -1;
     if not GUI then
-        ExecuteLocal([[API.ActivateExtendedZoom(%s, %d)]], _PlayerID);
+        ExecuteLocal([[ActivateExtendedZoom(%s)]], _PlayerID);
         return;
     end
     Lib.Camera.Local:ActivateExtendedZoom(_PlayerID);
@@ -63,7 +63,7 @@ API.ActivateExtendedZoom = ActivateExtendedZoom;
 function DeactivateExtendedZoom(_PlayerID)
     _PlayerID = _PlayerID or -1;
     if not GUI then
-        ExecuteLocal([[API.DeactivateExtendedZoom(%s, %d)]], _PlayerID);
+        ExecuteLocal([[DeactivateExtendedZoom(%s)]], _PlayerID);
         return;
     end
     Lib.Camera.Local:DeactivateExtendedZoom(_PlayerID);
