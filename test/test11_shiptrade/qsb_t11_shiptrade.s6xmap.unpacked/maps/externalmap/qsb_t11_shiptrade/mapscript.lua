@@ -12,8 +12,8 @@ LibPath = "maps/externalmap/" ..Framework.GetCurrentMapName() .."/";
 
 CONST_IS_IN_DEV = true;
 if CONST_IS_IN_DEV then
-    GlobalPath = "E:/Repositories/libertica/test/test11_shiptrade/qsb_t11_shiptrade.s6xmap.unpacked/" ..GlobalPath;
-    LibPath = "E:/Repositories/libertica/release/";
+    GlobalPath = "D:/Projects/Settlers/libertica/test/test11_shiptrade/qsb_t11_shiptrade.s6xmap.unpacked/" ..GlobalPath;
+    LibPath = "D:/Projects/Settlers/libertica/release/";
 end
 Script.Load(LibPath.. "libertica/librarian.lua");
 Script.Load(GlobalPath.. "/script/imports.lua");

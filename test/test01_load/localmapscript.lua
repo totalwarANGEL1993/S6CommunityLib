@@ -9,7 +9,7 @@
 
 Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/S6CommunityLib/lua/loader.lua");
 
-Lib.Loader.PushPath("E:/Repositories/");
+Lib.Loader.PushPath("D:/Projects/Settlers/");
 
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");

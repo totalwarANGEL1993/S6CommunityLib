@@ -9,7 +9,7 @@
 
 Script.Load("maps/externalmap/" ..Framework.GetCurrentMapName().. "/libertica/librarian.lua");
 
-Lib.Loader.PushPath("E:/Repositories/libertica/var/");
+Lib.Loader.PushPath("D:/Projects/Settlers/libertica/var/");
 
 Lib.Require("core/Core");
 Lib.Require("module/quest/Quest");
