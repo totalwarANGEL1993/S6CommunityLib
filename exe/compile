@@ -99,6 +99,7 @@ cat lua/module/io/io*.lua >> var/output/s6communitylib/single/questsystembehavio
 cat lua/module/io/iochest*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/io/iomine*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/io/iosite*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/mode/settlementmultiplayer*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/mode/settlementsurvival*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/mode/settlementlimitation*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/quest/quest*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
