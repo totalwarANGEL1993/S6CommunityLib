@@ -1,4 +1,3 @@
-bin/*.exe
 java/Architect/*.jar
 java/Architect/target
 release/
