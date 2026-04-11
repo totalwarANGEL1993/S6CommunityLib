@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#exe/compile
+
+rm -rf var/output/cms &>/dev/null
+mkdir -p var/output/cms &>/dev/null
+
+# copy scripts
+cp cms/cms_mapscript_global.lua var/output/cms
+cp cms/cms_mapscript_local.lua var/output/cms
+cp cms/cms_loader.lua var/output/cms
+cp cms/cms_imports.lua var/output/cms
+
+# build cms (AeK)
+cp -r cms/cms.s6map.unpacked var/output/cms
+cp -r var/output/s6communitylib/library/s6communitylib var/output/cms/cms.s6map.unpacked/maps/development/cms
+bin/bba6.exe "var/output/cms/cms.s6map.unpacked"
+rm -rf var/output/cms/cms.s6map.unpacked
+
+# build cms (RdO)
+cp -r cms/cms.s6xmap.unpacked var/output/cms
+cp -r var/output/s6communitylib/library/s6communitylib var/output/cms/cms.s6xmap.unpacked/maps/development/cms
+bin/bba6.exe "var/output/cms/cms.s6xmap.unpacked"
+rm -rf var/output/cms/cms.s6xmap.unpacked
