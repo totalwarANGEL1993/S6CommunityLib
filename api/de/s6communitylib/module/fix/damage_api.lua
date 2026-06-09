@@ -94,6 +94,17 @@ function SetHeightModifier(_PlayerID, _Bonus)
 end
 API.SetHeightModifier = SetHeightModifier;
 
+--- Setzt den allgemeinen Faktor für den Kampfschaden des Spielers.
+---
+--- Der angegebene Faktor wird mit dem finalen Schaden multipliziert. Für
+--- 0.5 bedeutet dies, der ausgeteilte Schaden wird halbiert.
+---
+--- @param _PlayerID integer ID des Spielers
+--- @param _Modifier number Faktor
+function SetPlayerModifier(_PlayerID, _Modifier)
+end
+API.SetPlayerModifier = SetPlayerModifier;
+
 --- Prüft, ob die Entität unverwundbar ist.
 --- @param _Entity any Skriptname oder Entität-ID
 --- @return boolean Invulnerable Entität ist unverwundbar

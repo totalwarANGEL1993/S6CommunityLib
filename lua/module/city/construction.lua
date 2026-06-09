@@ -252,7 +252,7 @@ function Lib.Construction.Global:UnlistConstruction(_ID)
     for List, PlayerData in pairs(self.Construction.Restriction) do
         for PlayerID = 1, 8 do
             for i= #PlayerData[PlayerID], 1, -1 do
-                if PlayerData[PlayerID][i].ID == _ID then
+                if _ID == -1 or PlayerData[PlayerID][i].ID == _ID then
                     table.remove(self.Construction.Restriction[List][PlayerID], 1);
                 end
             end
@@ -351,7 +351,7 @@ function Lib.Construction.Global:UnlistKnockdown(_ID)
     for List, PlayerData in pairs(self.Knockdown.Restriction) do
         for PlayerID = 1, 8 do
             for i= #PlayerData[PlayerID], 1, -1 do
-                if PlayerData[PlayerID][i].ID == _ID then
+                if _ID == -1 or PlayerData[PlayerID][i].ID == _ID then
                     table.remove(self.Knockdown.Restriction[List][PlayerID], 1);
                 end
             end
@@ -482,7 +482,7 @@ function Lib.Construction.Local:UnlistConstruction(_ID)
     for List, PlayerData in pairs(self.Construction.Restriction) do
         for PlayerID = 1, 8 do
             for i= #PlayerData[PlayerID], 1, -1 do
-                if PlayerData[PlayerID][i].ID == _ID then
+                if _ID == -1 or PlayerData[PlayerID][i].ID == _ID then
                     table.remove(self.Construction.Restriction[List][PlayerID], 1);
                 end
             end
@@ -494,7 +494,7 @@ function Lib.Construction.Local:UnlistKnockdown(_ID)
     for List, PlayerData in pairs(self.Knockdown.Restriction) do
         for PlayerID = 1, 8 do
             for i= #PlayerData[PlayerID], 1, -1 do
-                if PlayerData[PlayerID][i].ID == _ID then
+                if _ID == -1 or PlayerData[PlayerID][i].ID == _ID then
                     table.remove(self.Knockdown.Restriction[List][PlayerID], 1);
                 end
             end

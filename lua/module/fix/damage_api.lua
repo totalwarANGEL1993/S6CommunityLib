@@ -73,6 +73,15 @@ function SetHeightModifier(_PlayerID, _Bonus)
 end
 API.SetHeightModifier = SetHeightModifier;
 
+function SetPlayerModifier(_PlayerID, _Modifier)
+    assert(not IsLocalScript());
+    assert(type(_Modifier) == "number");
+    Lib.Damage.AquireContext();
+    this.PlayerModifier[_PlayerID] = _Modifier or 1;
+    Lib.Damage.ReleaseContext();
+end
+API.SetPlayerModifier = SetPlayerModifier;
+
 function IsInvulnerable(_Entity)
     local Result = false;
     if not IsLocalScript() then

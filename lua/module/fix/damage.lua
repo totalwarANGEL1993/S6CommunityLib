@@ -8,6 +8,7 @@ Lib.Damage.Global = {
     EntityTypeArmor = {},
     EntityNameArmor = {},
     --
+    PlayerModifier = {},
     TerritoryBonus = {},
     HeightModifier = {},
 };
@@ -27,6 +28,7 @@ function Lib.Damage.Global:Initialize()
         for PlayerID = 0, 8 do
             self.TerritoryBonus[PlayerID] = 1;
             self.HeightModifier[PlayerID] = 1;
+            self.PlayerModifier[PlayerID] = 1;
         end
         self:OverwriteVulnerabilityFunctions();
 
@@ -279,6 +281,7 @@ function Lib.Damage.Global:OnEntityHurtEntity(_EntityID1, _PlayerID1, _EntityID2
     Damage = Damage * (math.max(MoralFactor, 0.5) + TerritoryBonus) * HeightModifier;
     Damage = self:ApllyRangedCloseCombatDamage(AggressorID, Damage);
     Damage = self:ApllyWallCatapultCombatDamage(AggressorID, Damage);
+    Damage = Damage * (self.PlayerModifier[_PlayerID1] or 1);
     Damage = math.max(Damage - Armor, 1);
     if GameCallback_Lib_CalculateBattleDamage ~= nil then
         Damage = GameCallback_Lib_CalculateBattleDamage(AggressorID, _PlayerID1, TargetID, _PlayerID2, Damage);

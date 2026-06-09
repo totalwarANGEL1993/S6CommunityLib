@@ -23,10 +23,8 @@ if Lib.SettlementMultiplayer then
     Script.Load("maps/externalmap/" .. MapName:lower() .. "/cms_imports.lua");
     if IS_LOCAL then
         Script.Load(CMS_PATH.. "localmapscript.lua");
-        Script.Load("maps/externalmap/" .. MapName:lower() .. "/cms_mapscript_local.lua");
     else
         Script.Load(CMS_PATH.. "mapscript.lua");
-        Script.Load("maps/externalmap/" .. MapName:lower() .. "/cms_mapscript_global.lua");
     end
 end
 
