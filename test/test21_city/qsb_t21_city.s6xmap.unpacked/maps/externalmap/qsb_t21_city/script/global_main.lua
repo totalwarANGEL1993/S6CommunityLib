@@ -283,6 +283,46 @@ end
 
 -- ========================================================================== --
 
+function Profile_RegisterValues()
+    RegisterTransientProfileValue(ProfileDataType.BOOLEAN, "_Profile_TransitTest", "ProfileKey1");
+    RegisterTransientProfileValue(ProfileDataType.NUMBER, "_Profile_TransitTest", "ProfileKey2");
+    RegisterTransientProfileValue(ProfileDataType.STRING, "_Profile_TransitTest", "ProfileKey3");
+
+    RegisterProfileValue(ProfileDataType.BOOLEAN, "_Profile_Test", "ProfileKey1");
+    RegisterProfileValue(ProfileDataType.NUMBER, "_Profile_Test", "ProfileKey2");
+    RegisterProfileValue(ProfileDataType.STRING, "_Profile_Test", "ProfileKey3");
+end
+
+function Profile_LoadTransientValues()
+    LoadTransientProfileData();
+end
+
+function Profile_SaveTransientValues()
+    SaveTransientProfileData();
+end
+
+function Profile_SetTransientValues()
+    SetTransientProfileValue("_Profile_TransitTest", "ProfileKey1", true);
+    SetTransientProfileValue("_Profile_TransitTest", "ProfileKey2", 1.25);
+    SetTransientProfileValue("_Profile_TransitTest", "ProfileKey3", "abc");
+end
+
+function Profile_LoadPersistentValues()
+    LoadProfileData();
+end
+
+function Profile_SavePersistentValues()
+    SaveProfileData();
+end
+
+function Profile_SetPersistentValues()
+    SetProfileValue("_Profile_Test", "ProfileKey1", true);
+    SetProfileValue("_Profile_Test", "ProfileKey2", 1.25);
+    SetProfileValue("_Profile_Test", "ProfileKey3", "abc");
+end
+
+-- ========================================================================== --
+
 function GameCallback_Lib_LoadingFinished()
     ActivateDebugMode(true, true, true, true, false);
 

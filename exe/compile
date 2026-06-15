@@ -105,6 +105,7 @@ cat lua/module/quest/quest*.lua >> var/output/s6communitylib/single/questsystemb
 cat lua/module/quest/questbehavior*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/quest/questjornal*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/settings/camera*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/module/settings/profile*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/settings/sound*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/trade/trade*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/module/trade/traderoute*.lua >> var/output/s6communitylib/single/questsystembehavior.lua
