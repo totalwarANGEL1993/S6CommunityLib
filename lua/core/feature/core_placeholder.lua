@@ -3,7 +3,6 @@ Lib.Core.Placeholder = {
     Languages = {
         {"de", "Deutsch", "en"},
         {"en", "English", "en"},
-        {"fr", "Français", "en"},
     },
 
     Colors = {

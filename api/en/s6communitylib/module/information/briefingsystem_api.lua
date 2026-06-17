@@ -2,7 +2,27 @@
 ---
 --- The pinnacle for scripting dialogs and simple camera animations.
 --- A versatile tool for scripting map presentations.
+--- 
+--- @diagnostic disable: doc-field-no-class
 ---
+
+
+
+--- Types of camera animations
+--- @field DEFAULT integer The camera animation is played once and then stops
+--- @field LOOP integer The camera animation is played and repeated after the end
+CameraAnimationTypes = {
+    DEFAULT = 0,
+    LOOP = 1,
+};
+
+--- Types of parallax animations
+--- @field DEFAULT integer The parallax animation is played once and then stops
+--- @field LOOP integer The parallax animation is played and repeated after the end
+ParallaxAnimationTypes = {
+    DEFAULT = 0,
+    LOOP = 1,
+};
 
 --- Initializes the builder for a briefing.
 ---
@@ -70,7 +90,7 @@
 ---
 --- #### Functions `CameraAnimationBuilder`:
 ---
---- * `SetRepeat(_Flag)`:          Repeats the animations after they end.
+--- * `SetType(_Flag)`:            Sets the type of the animation (CameraAnimationTypes).
 --- * `SetClear(_Flag)`:           Removes all running animations from the queue.
 --- * `SetPostpone(_Flag)`:        Postpones all running animations.
 --- * `BeginAnimationSet()`:       Begins the `AnimationSetBuilder`.
@@ -78,27 +98,26 @@
 ---
 --- #### Functions `AnimationSetBuilder`:
 ---
---- * `SetDuration(_Duration)`:                  Sets the duration of the animation.
---- * `SetLocal(_Flag)`:                         The animation is bound to the page.
---- * `Animation(_px, _py, _pz, _lx, _ly, _lz)`: Coordinates for position and look-at target of the camera.
---- * `EndAnimationSet()`:                       Ends the `AnimationSetBuilder` and returns to the `CameraAnimationBuilder`.
+--- * `SetDuration(_Duration)`:             Sets the duration of the animation.
+--- * `SetLocal(_Flag)`:                    The animation is bound to the page.
+--- * `Node(_px, _py, _pz, _lx, _ly, _lz)`: Coordinates for position and look-at target of the camera.
+--- * `EndAnimationSet()`:                  Ends the `AnimationSetBuilder` and returns to the `CameraAnimationBuilder`.
 ---
 --- #### Functions `ParallaxAnimationBuilder`:
 ---
---- * `SetRepeat(_Flag)`:       Repeats the animations after they end.
 --- * `SetClear(_Flag)`:        Removes all running animations from the queue.
---- * `SetPostpone(_Flag)`:     Postpones all running animations.
 --- * `BeginLayer()`:           Begins the `LayerBuilder`.
 --- * `EndParallaxAnimation()`: Ends the `ParallaxAnimationBuilder` and returns to the `PageBuilder`.
 ---
 --- #### Functions `LayerBuilder`:
 ---
 --- Up to 6 different layers can exist.
---- * `SetDuration(_Duration)`:            Sets the duration of the animation.
---- * `SetImage(_Image)`:                  Path to the displayed image.
---- * `SetLocal(_Flag)`:                   The animation is bound to the page.
---- * `Animation(_u0, _v0, _u1, _v1, _a)`: Coordinates and alpha value of the displayed graphic portion (coordinates between 0 and 1).
---- * `EndLayer()`:                        Ends the `LayerBuilder` and returns to the `ParallaxAnimationBuilder`.
+--- * `SetType(_Flag)`:               Typ of the animation (ParallaxAnimationTypes)
+--- * `SetDuration(_Duration)`:       Sets the duration of the animation.
+--- * `SetImage(_Image)`:             Path to the displayed image.
+--- * `SetLocal(_Flag)`:              The animation is bound to the page.
+--- * `Node(_u0, _v0, _u1, _v1, _a)`: Coordinates and alpha value of the displayed graphic portion (coordinates between 0 and 1).
+--- * `EndLayer()`:                   Ends the `LayerBuilder` and returns to the `ParallaxAnimationBuilder`.
 ---
 --- #### Example:
 --- Create a simple briefing that uses the dialog camera.
@@ -153,8 +172,8 @@
 ---             :BeginAnimationSet()
 ---                 :SetDuration(30)
 ---                 :SetLocal(true)
----                 :Animation("Pos1", -2500, "npc1", -2200)
----                 :Animation("Pos2", -2500, "npc1", -2000)
+---                 :Node("Pos1", -2500, "npc1", -2200)
+---                 :Node("Pos2", -2500, "npc1", -2000)
 ---             :EndAnimationSet()
 ---         :EndCameraAnimation()
 ---     :EndPage()

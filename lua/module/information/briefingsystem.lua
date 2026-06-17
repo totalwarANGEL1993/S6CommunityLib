@@ -47,6 +47,16 @@ Lib.Register("module/information/BriefingSystem");
 
 CinematicEventTypes.Briefing = 2;
 
+CameraAnimationTypes = {
+    DEFAULT = 0,
+    LOOP = 1,
+};
+
+ParallaxAnimationTypes = {
+    DEFAULT = 0,
+    LOOP = 1,
+};
+
 -- -------------------------------------------------------------------------- --
 -- Global
 
@@ -392,18 +402,8 @@ function Lib.BriefingSystem.Global:CreateBriefingPageSetParallaxAnimation(_Page)
     _Page.BeginParallaxAnimation = _Page.BeginParallaxAnimation or function(Page, ...)
         Page.Parallax = {};
 
-        Page.Parallax.SetRepeat = function(_self)
-            _self.Repeat = true;
-            return _self;
-        end
-
         Page.Parallax.SetClear = function(_self)
             _self.Clear = true;
-            return _self;
-        end
-
-        Page.Parallax.SetPostpone = function(_self)
-            _self.Postpone = true;
             return _self;
         end
 
@@ -412,7 +412,13 @@ function Lib.BriefingSystem.Global:CreateBriefingPageSetParallaxAnimation(_Page)
             local Entry = {};
             Entry.AnimData = {};
             Entry.Source = Page.Name;
+            Entry.Type = ParallaxAnimationTypes.DEFAULT;
             Entry.Duration = 2 * 60;
+
+            Entry.Parallax.SetType = function(_this, _Type)
+                _this.Type = _Type;
+                return _this;
+            end
 
             Entry.SetDuration = function(_this, _Duration)
                 _this.Duration = _Duration;
@@ -434,7 +440,7 @@ function Lib.BriefingSystem.Global:CreateBriefingPageSetParallaxAnimation(_Page)
                 return _this;
             end
 
-            Entry.Animation = function(_this, _u0, _v0, _u1, _v1, _a)
+            Entry.Node = function(_this, _u0, _v0, _u1, _v1, _a)
                 table.insert(_this.AnimData, {_u0 or 0, _v0 or 0, _u1 or 1, _v1 or 1, _a or 255});
                 return _this;
             end
@@ -576,10 +582,12 @@ end
 
 function Lib.BriefingSystem.Global:CreateBriefingPageSetCameraAnimation(_Page)
     _Page.BeginCameraAnimation = _Page.BeginCameraAnimation or function(Page, ...)
-        Page.Animations = {};
+        Page.Animations = {
+            Type = CameraAnimationTypes.DEFAULT;
+        };
 
-        Page.Animations.SetRepeat = function(_self)
-            _self.Repeat = true;
+        Page.Animations.SetType = function(_self, _Type)
+            _self.Type = _Type;
             return _self;
         end
 
@@ -614,7 +622,7 @@ function Lib.BriefingSystem.Global:CreateBriefingPageSetCameraAnimation(_Page)
                 return _this;
             end
 
-            Entry.Animation = function(_this, _px, _py, _pz, _lx, _ly, _lz)
+            Entry.Node = function(_this, _px, _py, _pz, _lx, _ly, _lz)
                 local px, py, pz, lx, ly, lz = _px, _py, _pz, _lx, _ly, _lz;
                 if type(px) == "string" then
                     local Entity1, ZOffset1, Entity2, ZOffset2 = px, py, pz, lx;
@@ -1198,7 +1206,7 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
             local Size = {GUI.GetScreenSize()};
 
             local Factor = math.lerp(Data.Started, CurrentTime, Data.Duration);
-            if Factor > 1 and Data.Repeat then
+            if Factor > 1 and Data.Type == ParallaxAnimationTypes.LOOP then
                 self.Briefing[_PlayerID].ParallaxLayers[Index].Started = CurrentTime;
                 Factor = math.lerp(Data.Started, CurrentTime, Data.Duration);
             end
@@ -1222,6 +1230,7 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
             local u0,v0,u1,v1,Alpha = 0, 0, 1, 1, 255;
             if Data.AnimData then
                 if Data.AnimData[3] and type(Data.AnimData[3]) ~= "table" then
+                    --- @diagnostic disable-next-line: cast-local-type
                     u0,v0,u1,v1,Alpha = unpack(Data.AnimData);
                 else
                     if #Data.AnimData >= 2 then
@@ -1237,7 +1246,7 @@ function Lib.BriefingSystem.Local:ControlParallaxes(_PlayerID)
                 u1 = u1 - (u1 * 0.125);
             end
 
-            XGUIEng.SetMaterialColor(Widget, 0, 255, 255, 255, Alpha or 255);
+            XGUIEng.SetMaterialAlpha(Widget, 0, Alpha or 255);
             XGUIEng.SetMaterialTexture(Widget, 0, Image);
             XGUIEng.SetMaterialUV(Widget, 0, u0, v0, u1, v1);
         end
@@ -1359,7 +1368,7 @@ function Lib.BriefingSystem.Local:ControlCameraAnimation(_PlayerID)
             local PageID = self.Briefing[_PlayerID].CurrentPage;
             local Page = self.Briefing[_PlayerID][PageID];
             local Next = table.remove(self.Briefing[_PlayerID].AnimationQueue, 1);
-            if Page and Page.Animations and Page.Animations.Repeat then
+            if Page and Page.Animations and Page.Animations.Type == CameraAnimationTypes.LOOP then
                 table.insert(self.Briefing[_PlayerID].AnimationQueue, Next);
             end
             Next.Started = XGUIEng.GetSystemTime();

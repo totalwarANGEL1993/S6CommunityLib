@@ -2,9 +2,27 @@
 ---
 --- Der Höhepunkt für das Skripten von Dialogen und einfachen Kameraanimationen.
 --- Ein vielseitiges Tool zum Skripten der Kartendarstellung.
+--- 
+--- @diagnostic disable: doc-field-no-class
 ---
 
 
+
+--- Arten von Kameraanimationen
+--- @field DEFAULT integer Die Kameraanimationen werden einmal abgespielt
+--- @field LOOP integer Die Kameraanimationen wiederholen sich nach ihrem Ende
+CameraAnimationTypes = {
+    DEFAULT = 0,
+    LOOP = 1,
+};
+
+--- Arten von Parallaxanimationen
+--- @field DEFAULT integer Die Parallaxanimationen werden einmal abgespielt
+--- @field LOOP integer Die Parallaxanimationen wiederholen sich nach ihrem Ende
+ParallaxAnimationTypes = {
+    DEFAULT = 0,
+    LOOP = 1,
+};
 
 --- Initialisiert den Builder für ein Briefing.
 --- 
@@ -72,7 +90,7 @@
 --- 
 --- #### Functions `CameraAnimationBuilder`:
 --- 
---- * `SetRepeat(_Flag)`:          Die Animationen wiederholen sich nach ihrem Ende.
+--- * `SetType(_Flag)`:            Typ der Animation (CameraAnimationTypes)
 --- * `SetClear(_Flag)`:           Alle laufenden Animationen werden aus der Queue entfernt.
 --- * `SetPostpone(_Flag)`:        Alle laufenden Animationen werden zurückgestellt.
 --- * `BeginAnimationSet()`:       Beginnt den `AnimationSetBuilder`.
@@ -80,30 +98,29 @@
 --- 
 --- #### Functions `AnimationSetBuilder`:
 --- 
---- * `SetDuration(_Duration)`:                  Setzt die Dauer der Animation.
---- * `SetLocal(_Flag)`:                         Die Animation ist an die Page gebunden.
---- * `Animation(_px, _py, _pz, _lx, _ly, _lz)`: Koordinaten für Position und Blickziel der Kamera.
---- * `EndAnimationSet()`:                       Beendet den `AnimationSetBuilder` und kehrt zum `CameraAnimationBuilder` zurück.
+--- * `SetDuration(_Duration)`:             Setzt die Dauer der Animation.
+--- * `SetLocal(_Flag)`:                    Die Animation ist an die Page gebunden.
+--- * `Node(_px, _py, _pz, _lx, _ly, _lz)`: Koordinaten für Position und Blickziel der Kamera.
+--- * `EndAnimationSet()`:                  Beendet den `AnimationSetBuilder` und kehrt zum `CameraAnimationBuilder` zurück.
 --- 
 --- #### Functions `ParallaxAnimationBuilder`:
 --- 
---- * `SetRepeat(_Flag)`:       Die Animationen wiederholen sich nach ihrem Ende.
 --- * `SetClear(_Flag)`:        Alle laufenden Animationen werden aus der Queue entfernt.
---- * `SetPostpone(_Flag)`:     Alle laufenden Animationen werden zurückgestellt.
 --- * `BeginLayer()`:           Beginnt den `LayerBuilder`.
 --- * `EndParallaxAnimation()`: Beendet den `ParallaxAnimationBuilder` und kehrt zum `PageBuilder` zurück.
 --- 
 --- #### Functions `LayerBuilder`:
 --- 
 --- Es kann bis zu 6 verschiedene Layer geben.
---- * `SetDuration(_Duration)`:            Setzt die Dauer der Animation.
---- * `SetImage(_Image)`:                  Pfad zum angezeigten Bild.
---- * `SetLocal(_Flag)`:                   Die Animation ist an die Page gebunden.
---- * `Animation(_u0, _v0, _u1, _v1, _a)`: Koordinaten und Alphawert der angezeigten Teilgrafik (Koordinaten zwischen 0 und 1).
---- * `EndLayer()`:                        Beendet den `LayerBuilder` und kehrt zum `ParallaxAnimationBuilder` zurück.
+--- * `SetType(_Flag)`:               Typ der Animation (ParallaxAnimationTypes)
+--- * `SetDuration(_Duration)`:       Setzt die Dauer der Animation.
+--- * `SetImage(_Image)`:             Pfad zum angezeigten Bild.
+--- * `SetLocal(_Flag)`:              Die Animation ist an die Page gebunden.
+--- * `Node(_u0, _v0, _u1, _v1, _a)`: Koordinaten und Alphawert der angezeigten Teilgrafik (Koordinaten zwischen 0 und 1).
+--- * `EndLayer()`:                   Beendet den `LayerBuilder` und kehrt zum `ParallaxAnimationBuilder` zurück.
 --- 
 --- #### Example:
---- Eine einfaches Briefing erzeugen, das die Dialogkamera benutzt.
+--- Ein einfaches Briefing erzeugen, das die Dialogkamera benutzt.
 --- ```lua
 --- NewBriefing("TestBriefing", 1)
 ---     :BeginPage()
@@ -118,7 +135,7 @@
 --- ```
 --- 
 --- #### Example:
---- Eine einfaches Briefing erzeugen, das eine einfache Kamerabewegung macht.
+--- Ein einfaches Briefing erzeugen, das eine einfache Kamerabewegung macht.
 --- ```lua
 --- NewBriefing("TestBriefing", 1)
 ---     :BeginPage()
@@ -141,7 +158,7 @@
 --- ```
 --- 
 --- #### Example:
---- Eine Briefing erzeugen, das komplexe Kameraanimationen nutzt. Die Funktion
+--- Ein Briefing erzeugen, das komplexe Kameraanimationen nutzt. Die Funktion
 --- `Animation` kann mit direkten Koordinaten genutzt werden, oder hier die
 --- Koordinaten ermitteln. Die negative Zahl bedeutet eine direkte Höhenangabe.
 --- Eine positive Zahl wäre ein Offset zur Höhe der Entität.
@@ -155,8 +172,8 @@
 ---             :BeginAnimationSet()
 ---                 :SetDuration(30)
 ---                 :SetLocal(true)
----                 :Animation("Pos1", -2500, "npc1", -2200)
----                 :Animation("Pos2", -2500, "npc1", -2000)
+---                 :Node("Pos1", -2500, "npc1", -2200)
+---                 :Node("Pos2", -2500, "npc1", -2000)
 ---             :EndAnimationSet()
 ---         :EndCameraAnimation()
 ---     :EndPage()

@@ -15,7 +15,7 @@ if CONST_IS_IN_DEV then
     GlobalPath = "D:/Projects/Settlers/libertica/test/test11_shiptrade/qsb_t11_shiptrade.s6xmap.unpacked/" ..GlobalPath;
     LibPath = "D:/Projects/Settlers/libertica/release/";
 end
-Script.Load(LibPath.. "libertica/librarian.lua");
+Script.Load(LibPath.. "s6communitylib/lua/loader.lua");
 Script.Load(GlobalPath.. "/script/imports.lua");
 Script.Load(GlobalPath.. "/script/local_main.lua");
 

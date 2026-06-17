@@ -20,6 +20,7 @@ Lib.Require("module/quest/Quest");
 Lib.Require("module/mode/SettlementLimitation");
 Lib.Require("module/entity/EntitySearch");
 Lib.Require("module/trade/Warehouse");
+Lib.Require("module/settings/Profile");
 Lib.Require("module/information/Requester");
 Lib.Require("module/ui/UIBuilding");
 Lib.Require("module/city/MilitiaSystem");
