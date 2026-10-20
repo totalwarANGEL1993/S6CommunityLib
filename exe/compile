@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # create folter
 echo "reset output directory..."
@@ -24,7 +25,7 @@ cat lua/comfort/getbattalionsizebysoldiertype.lua >> var/output/s6communitylib/s
 cat lua/comfort/getcategoriesofentity.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/getcategoriesoftype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/getcircleposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
-cat lua/comfort/getCirclePositions.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/getcirclepositions.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/getclosesttotarget.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/getrandomsettlertype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/createcartbygoodtype.lua >> var/output/s6communitylib/single/questsystembehavior.lua
@@ -58,7 +59,7 @@ cat lua/comfort/lookat.lua >> var/output/s6communitylib/single/questsystembehavi
 cat lua/comfort/move.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/moveandexecute.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/moveandlookat.lua >> var/output/s6communitylib/single/questsystembehavior.lua
-cat lua/comfort/Moveoncheckpoints.lua >> var/output/s6communitylib/single/questsystembehavior.lua
+cat lua/comfort/moveoncheckpoints.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/movetoposition.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/replaceentity.lua >> var/output/s6communitylib/single/questsystembehavior.lua
 cat lua/comfort/round.lua >> var/output/s6communitylib/single/questsystembehavior.lua
@@ -157,7 +158,7 @@ cd ..
 # zip release
 echo "create output archive..."
 cd var/output
-rm s6communitylib.zip
+rm -f s6communitylib.zip
 zip -r s6communitylib.zip s6communitylib 1>/dev/null
 cd ../..
 
