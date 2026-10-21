@@ -1320,10 +1320,11 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
                 PX, PY, PZ, LX, LY, LZ = unpack(CurrentAnimation.AnimFrames[1]);
             end
         else
-            PX, PY, PZ = self:GetPagePosition(_PlayerID);
-            LX, LY, LZ = self:GetPageLookAt(_PlayerID);
+            local Factor = self:GetInterpolationFactor(_PlayerID);
+            PX, PY, PZ = self:GetPagePosition(_PlayerID, Factor);
+            LX, LY, LZ = self:GetPageLookAt(_PlayerID, Factor);
             if PX and not LX then
-                LX, LY, LZ, PX, PY, PZ, FOV = self:GetCameraProperties(_PlayerID, FOV);
+                LX, LY, LZ, PX, PY, PZ, FOV = self:GetCameraProperties(_PlayerID, FOV, Factor);
             end
         end
         Camera.ThroneRoom_SetPosition(PX, PY, PZ);
@@ -1377,7 +1378,7 @@ function Lib.BriefingSystem.Local:ControlCameraAnimation(_PlayerID)
     end
 end
 
-function Lib.BriefingSystem.Local:GetPagePosition(_PlayerID)
+function Lib.BriefingSystem.Local:GetPagePosition(_PlayerID, _Factor)
     local x, y, z = 0,0,0;
     local Position, FlyTo;
     if self.Briefing[_PlayerID].CurrentAnimation then
@@ -1387,16 +1388,17 @@ function Lib.BriefingSystem.Local:GetPagePosition(_PlayerID)
         if FlyTo then
             local lX, lY, lZ = self:ConvertPosition(FlyTo.Position);
             if lX and lY and lZ then
-                x = x + (lX - x) * self:GetInterpolationFactor(_PlayerID);
-                y = y + (lY - y) * self:GetInterpolationFactor(_PlayerID);
-                z = z + (lZ - z) * self:GetInterpolationFactor(_PlayerID);
+                _Factor = _Factor or self:GetInterpolationFactor(_PlayerID);
+                x = x + (lX - x) * _Factor;
+                y = y + (lY - y) * _Factor;
+                z = z + (lZ - z) * _Factor;
             end
         end
     end
     return x, y, z;
 end
 
-function Lib.BriefingSystem.Local:GetPageLookAt(_PlayerID)
+function Lib.BriefingSystem.Local:GetPageLookAt(_PlayerID, _Factor)
     local LookAt, FlyTo;
     if self.Briefing[_PlayerID].CurrentAnimation then
         LookAt = self.Briefing[_PlayerID].CurrentAnimation.Start.LookAt;
@@ -1407,9 +1409,10 @@ function Lib.BriefingSystem.Local:GetPageLookAt(_PlayerID)
     if FlyTo and x then
         local lX, lY, lZ = self:ConvertPosition(FlyTo.LookAt);
         if lX and lY and lZ then
-            x = x + (lX - x) * self:GetInterpolationFactor(_PlayerID);
-            y = y + (lY - y) * self:GetInterpolationFactor(_PlayerID);
-            z = z + (lZ - z) * self:GetInterpolationFactor(_PlayerID);
+            _Factor = _Factor or self:GetInterpolationFactor(_PlayerID);
+            x = x + (lX - x) * _Factor;
+            y = y + (lY - y) * _Factor;
+            z = z + (lZ - z) * _Factor;
         end
     end
     return x, y, z;
@@ -1467,45 +1470,28 @@ function Lib.BriefingSystem.Local:SplineCurve(_Factor, ...)
     local n = #Points;
     _Factor = math.max(0, math.min(1, _Factor));
 
-    -- Calculate camera position
-    local posSegment = math.floor((n - 1) * _Factor) + 1;
-    local localTPos = (_Factor * (n - 1)) % 1;
+    local Segment = math.floor((n - 1) * _Factor) + 1;
+    local t = (_Factor * (n - 1)) % 1;
+    local p0 = Points[math.max(1, Segment - 1)];
+    local p1 = Points[Segment];
+    local p2 = Points[math.min(Segment + 1, n)];
+    local p3 = Points[math.min(Segment + 2, n)];
 
-    local p0 = Points[math.max(1, posSegment - 1)];
-    local p1 = Points[posSegment];
-    local p2 = Points[math.min(posSegment + 1, n)];
-    local p3 = Points[math.min(posSegment + 2, n)];
-
-    local x1 = self:CatmullRom(localTPos, p0[1], p1[1], p2[1], p3[1]);
-    local y1 = self:CatmullRom(localTPos, p0[2], p1[2], p2[2], p3[2]);
-    local z1 = self:CatmullRom(localTPos, p0[3], p1[3], p2[3], p3[3]);
-
-    -- Calculate camera target
-    local lookSegment = math.floor((n - 1) * _Factor) + 1;
-    local localTLook = (_Factor * (n - 1)) % 1;
-
-    local l0 = Points[math.max(1, lookSegment - 1)];
-    local l1 = Points[lookSegment];
-    local l2 = Points[math.min(lookSegment + 1, n)];
-    local l3 = Points[math.min(lookSegment + 2, n)];
-
-    local x2 = self:CatmullRom(localTLook, l0[4], l1[4], l2[4], l3[4]);
-    local y2 = self:CatmullRom(localTLook, l0[5], l1[5], l2[5], l3[5]);
-    local z2 = self:CatmullRom(localTLook, l0[6], l1[6], l2[6], l3[6]);
-
-    return x1, y1, z1, x2, y2, z2;
-end
-
-function Lib.BriefingSystem.Local:CatmullRom(t, p0, p1, p2, p3)
     local t2 = t * t;
     local t3 = t2 * t;
-
     local c0 = -0.5 * t3 + t2 - 0.5 * t;
     local c1 = 1.5 * t3 - 2.5 * t2 + 1;
     local c2 = -1.5 * t3 + 2 * t2 + 0.5 * t;
     local c3 = 0.5 * t3 - 0.5 * t2;
 
-    return c0 * p0 + c1 * p1 + c2 * p2 + c3 * p3;
+    local x1 = c0 * p0[1] + c1 * p1[1] + c2 * p2[1] + c3 * p3[1];
+    local y1 = c0 * p0[2] + c1 * p1[2] + c2 * p2[2] + c3 * p3[2];
+    local z1 = c0 * p0[3] + c1 * p1[3] + c2 * p2[3] + c3 * p3[3];
+    local x2 = c0 * p0[4] + c1 * p1[4] + c2 * p2[4] + c3 * p3[4];
+    local y2 = c0 * p0[5] + c1 * p1[5] + c2 * p2[5] + c3 * p3[5];
+    local z2 = c0 * p0[6] + c1 * p1[6] + c2 * p2[6] + c3 * p3[6];
+
+    return x1, y1, z1, x2, y2, z2;
 end
 
 function Lib.BriefingSystem.Local:BezierCurveParallax(_Factor, ...)
@@ -1528,7 +1514,7 @@ function Lib.BriefingSystem.Local:BernsteinPolynome(n, i, t)
     return (math.factorial(n) / (math.factorial(i) * math.factorial(n - i))) * (t ^ i) * ((1 - t) ^ (n - i));
 end
 
-function Lib.BriefingSystem.Local:GetCameraProperties(_PlayerID, _FOV)
+function Lib.BriefingSystem.Local:GetCameraProperties(_PlayerID, _FOV, _Factor)
     local CurrPage, FlyTo;
     if self.Briefing[_PlayerID].CurrentAnimation then
         CurrPage = self.Briefing[_PlayerID].CurrentAnimation.Start;
@@ -1544,7 +1530,7 @@ function Lib.BriefingSystem.Local:GetCameraProperties(_PlayerID, _FOV)
     local startZoomDistance = CurrPage.Zoom;
     local endZoomDistance = (FlyTo and FlyTo.Zoom) or CurrPage.Zoom;
 
-    local factor = self:GetInterpolationFactor(_PlayerID);
+    local factor = _Factor or self:GetInterpolationFactor(_PlayerID);
 
     local lPLX, lPLY, lPLZ = self:ConvertPosition(startPosition);
     local cPLX, cPLY, cPLZ = self:ConvertPosition(endPosition);
