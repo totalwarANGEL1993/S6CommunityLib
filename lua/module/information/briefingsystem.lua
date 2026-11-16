@@ -1317,6 +1317,7 @@ function Lib.BriefingSystem.Local:ThroneRoomCameraControl(_PlayerID, _Page)
                     unpack(CurrentAnimation.AnimFrames)
                 );
             else
+                --- @diagnostic disable-next-line: cast-local-type
                 PX, PY, PZ, LX, LY, LZ = unpack(CurrentAnimation.AnimFrames[1]);
             end
         else

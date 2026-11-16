@@ -261,7 +261,17 @@
         "SetCameraProperties",
         "g_DefaultBorderScrollSize",
         "g_DefaultZoomStateWheelSpeed",
-        "Fake_String_Table"
+        "Fake_String_Table",
+        "g_UnofficialPatchVersion",
+        "DiplomaticEntity",
+        "GUI_Minimap",
+        "Debug_EnableDebugOutput",
+        "g_OnGameStartPresentationMode",
+        "PlacementState",
+        "GetEntityTypeForClimatezone",
+        "PlayerActiveNeeds",
+        "GetBuildingIDAlsoWhenWorkerIsSelected",
+        "g_OverrideTextKeyPattern"
     ],
     "Lua.workspace.ignoreDir": [
         "demo",
