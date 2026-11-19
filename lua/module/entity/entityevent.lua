@@ -157,9 +157,9 @@ function Lib.EntityEvent.Global:OverrideCallback()
     end
 
     GameCallback_OnBuildingUpgraded_Orig_QSB_EntityCore = GameCallback_OnBuildingUpgradeFinished;
-	GameCallback_OnBuildingUpgradeFinished = function(_PlayerID, _EntityID, _NewUpgradeLevel)
-		GameCallback_OnBuildingUpgraded_Orig_QSB_EntityCore(_PlayerID, _EntityID, _NewUpgradeLevel);
-        Lib.EntityEvent.Global:TriggerUpgradeCompleteEvent(_PlayerID, _EntityID, _NewUpgradeLevel);
+	GameCallback_OnBuildingUpgradeFinished = function(_EntityID, _PlayerID, _NewUpgradeLevel)
+		GameCallback_OnBuildingUpgraded_Orig_QSB_EntityCore(_EntityID, _PlayerID, _NewUpgradeLevel);
+        Lib.EntityEvent.Global:TriggerUpgradeCompleteEvent(_EntityID, _PlayerID, _NewUpgradeLevel);
     end
 
     GameCallback_OnUpgradeLevelCollapsed_Orig_QSB_EntityCore = GameCallback_OnUpgradeLevelCollapsed;

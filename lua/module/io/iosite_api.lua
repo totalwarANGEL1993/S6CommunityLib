@@ -19,20 +19,24 @@ function CreateIOBuildingSite(_Data)
     error(not _Data.Action or type(_Data.Action) == "function",
           "Action must be a function!");
 
-    error((not _Data.Costs or not _Data.Costs[1]) or GetNameOfKeyInTable(Goods, _Data.Costs[1]),
-          "First cost type '%s' is wrong!",
-          tostring(_Data.Costs[1]));
-    error((not _Data.Costs or not _Data.Costs[2]) or (type(_Data.Costs[2]) == "number" and _Data.Costs[2] > 0),
-          "First cost amount must be above 0!",
-          tostring(_Data.Costs[1]));
-    error((not _Data.Costs or not _Data.Costs[3]) or GetNameOfKeyInTable(Goods, _Data.Costs[3]),
-          "Second cost type '%s' is wrong!",
-          tostring(_Data.Costs[3]));
-    error((not _Data.Costs or not _Data.Costs[4]) or (type(_Data.Costs[4]) == "number" and _Data.Costs[4] > 0),
-          "Second cost amount must be above 0!",
-          tostring(_Data.Costs[4]));
+    if _Data.Costs then
+        error(type(_Data.Costs) == "table" and #_Data.Costs == 4,
+              "Costs must be a table with 4 entries!");
+        error((not _Data.Costs or not _Data.Costs[1]) or GetNameOfKeyInTable(Goods, _Data.Costs[1]),
+              "First cost type '%s' is wrong!",
+              tostring(_Data.Costs[1]));
+        error((not _Data.Costs or not _Data.Costs[2]) or (type(_Data.Costs[2]) == "number" and _Data.Costs[2] > 0),
+              "First cost amount must be above 0!",
+              tostring(_Data.Costs[1]));
+        error((not _Data.Costs or not _Data.Costs[3]) or GetNameOfKeyInTable(Goods, _Data.Costs[3]),
+              "Second cost type '%s' is wrong!",
+              tostring(_Data.Costs[3]));
+        error((not _Data.Costs or not _Data.Costs[4]) or (type(_Data.Costs[4]) == "number" and _Data.Costs[4] > 0),
+              "Second cost amount must be above 0!",
+              tostring(_Data.Costs[4]));
+    end
 
-    Lib.IOMine.Global:CreateIOBuildingSite(_Data);
+    Lib.IOSite.Global:CreateIOBuildingSite(_Data);
 end
 API.CreateIOBuildingSite = CreateIOBuildingSite;
 

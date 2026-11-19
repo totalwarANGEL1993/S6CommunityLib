@@ -112,6 +112,13 @@ function Lib.Core.Quest:OverrideDisplayQuestObjective()
             end
         end
         GUI_Interaction.DisplayQuestObjective_Orig_Lib_Core(_QuestIndex, _MessageKey);
+
+        local QuestObjectivesPath = "/InGame/Root/Normal/AlignBottomLeft/Message/QuestObjectives";
+        local QuestObjectiveContainer = QuestObjectivesPath .. "/Message";
+        if Quest.Visible == false then
+            XGUIEng.ShowWidget(QuestObjectiveContainer .. "/BGDeco", 1);
+            XGUIEng.SetText(QuestObjectiveContainer .. "/Text", "");
+        end
     end
 end
 

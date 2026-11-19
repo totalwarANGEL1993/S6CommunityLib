@@ -249,6 +249,7 @@ function Lib.Patch.Local:Initialize()
             self:FixAbilityInfoWhenHomeless();
             self:OverrideGameSpeedChanged();
             self:FixBigCathedralName();
+            self:FixMissingMainBuildingStart();
         else
             -- Garbage collection
             self.OverrideSelection = nil;
@@ -257,6 +258,7 @@ function Lib.Patch.Local:Initialize()
             self.FixAbilityInfoWhenHomeless = nil;
             self.OverrideGameSpeedChanged = nil;
             self.FixBigCathedralName = nil;
+            self.FixMissingMainBuildingStart = nil;
         end
 
         -- Garbage collection
@@ -544,6 +546,203 @@ function Lib.Patch.Local:FixBigCathedralName()
         "Names/B_Cathedral_Big",
         {de = "Kathedrale", en = "Cathedral", fr = "Cathédrale"}
     );
+end
+
+-- -------------------------------------------------------------------------- --
+-- Cathedral name
+
+function Lib.Patch.Local:FixMissingMainBuildingStart()
+    AreCostsAffordable = function(_Costs, _GoodsInSettlementBoolean)
+        local PlayerID = GUI.GetPlayerID();
+        local CanBuyBoolean = true;
+        local CanNotBuyString = "";
+        local CanNotBuyStringSections = {};
+        CanNotBuyStringSections.Number = 0;
+
+        local CastleID = Logic.GetHeadquarters(PlayerID);
+        local StorehouseID = Logic.GetStoreHouse(PlayerID);
+        local PlayerGoldAmount = (CastleID == 0 and 0) or Logic.GetAmountOnOutStockByGoodType(CastleID, Goods.G_Gold);
+        local PlayerStoneAmount = (StorehouseID == 0 and 0) or Logic.GetAmountOnOutStockByGoodType(StorehouseID, Goods.G_Stone);
+        local PlayerWoodAmount = (StorehouseID == 0 and 0) or Logic.GetAmountOnOutStockByGoodType(StorehouseID, Goods.G_Wood);
+        local PlayerWeaponOrPartAmount = 0;
+        local WeaponOrPartType;
+        local BarracksID = GUI.GetSelectedEntity();
+        local GoldCost = 0;
+        local StoneCost = 0;
+        local WoodCost = 0;
+        local WeaponOrPartCost = 0;
+        for i = 1, #_Costs, 2 do
+            if _Costs[i] == Goods.G_Gold then
+                GoldCost = _Costs[i + 1];
+            elseif _Costs[i] == Goods.G_Stone then
+                StoneCost = _Costs[i + 1];
+            elseif _Costs[i] == Goods.G_Wood then
+                WoodCost = _Costs[i + 1];
+            else
+                if WeaponOrPartType == nil then
+                    WeaponOrPartType = _Costs[i];
+                    WeaponOrPartCost = _Costs[i + 1];
+                else
+                    GUI.AddNote("Debug: Too many good types in cost table");
+                end
+            end
+        end
+
+        if WeaponOrPartType ~= nil
+        and BarracksID ~= nil
+        and _GoodsInSettlementBoolean ~= true then
+            local CastleGoodIndex = (CastleID == 0 and -1) or Logic.GetIndexOnOutStockByGoodType(CastleID, WeaponOrPartType);
+            local StorehouseGoodIndex = (StorehouseID == 0 and -1) or Logic.GetIndexOnOutStockByGoodType(StorehouseID, WeaponOrPartType);
+            local BarracksGoodIndex = (BarracksID == 0 and -1) or Logic.GetIndexOnOutStockByGoodType(BarracksID, WeaponOrPartType);
+            if BarracksGoodIndex == nil
+            and Logic.IsEntityInCategory(BarracksID, EntityCategories.Leader) == 1 then
+                BarracksID = Logic.GetRefillerID(BarracksID);
+                BarracksGoodIndex = Logic.GetIndexOnOutStockByGoodType(BarracksID, WeaponOrPartType);
+            end
+            if CastleGoodIndex == -1 and StorehouseGoodIndex == -1 and BarracksGoodIndex == -1 then
+                return;
+            end
+            local BuildingID;
+            if CastleGoodIndex ~= -1 then
+                BuildingID = CastleID;
+            elseif StorehouseGoodIndex ~= -1 then
+                BuildingID = StorehouseID;
+            elseif BarracksGoodIndex ~= -1 then
+                BuildingID = BarracksID;
+            end
+            PlayerWeaponOrPartAmount = (BuildingID == 0 and 0) or Logic.GetAmountOnOutStockByGoodType(BuildingID, WeaponOrPartType);
+        elseif _GoodsInSettlementBoolean == true then
+            PlayerWeaponOrPartAmount = GetPlayerGoodsInSettlement(WeaponOrPartType, PlayerID, true);
+        end
+        if PlayerGoldAmount < GoldCost then
+            CanBuyBoolean = false;
+            local GoodName = Logic.GetGoodTypeName(Goods.G_Gold);
+            CanNotBuyStringSections.Number = CanNotBuyStringSections.Number + 1;
+            CanNotBuyStringSections[CanNotBuyStringSections.Number] = GoodName;
+        end
+        if PlayerStoneAmount < StoneCost then
+            CanBuyBoolean = false;
+            local GoodName = Logic.GetGoodTypeName(Goods.G_Stone);
+            CanNotBuyStringSections.Number = CanNotBuyStringSections.Number + 1;
+            CanNotBuyStringSections[CanNotBuyStringSections.Number] = GoodName;
+        end
+        if PlayerWoodAmount < WoodCost then
+            CanBuyBoolean = false;
+            local GoodName = Logic.GetGoodTypeName(Goods.G_Wood);
+            CanNotBuyStringSections.Number = CanNotBuyStringSections.Number + 1;
+            CanNotBuyStringSections[CanNotBuyStringSections.Number] = GoodName;
+        end
+        if PlayerWeaponOrPartAmount < WeaponOrPartCost then
+            CanBuyBoolean = false;
+            local GoodName = Logic.GetGoodTypeName(WeaponOrPartType);
+            CanNotBuyStringSections.Number = CanNotBuyStringSections.Number + 1;
+            CanNotBuyStringSections[CanNotBuyStringSections.Number] = GoodName;
+        end
+        if CanNotBuyStringSections.Number == 1 then
+            CanNotBuyString = "TextLine_NotEnough_" .. CanNotBuyStringSections[1];
+        elseif CanNotBuyStringSections.Number == 2 then
+            CanNotBuyString = "TextLine_NotEnough_" .. CanNotBuyStringSections[1] .. "_" .. CanNotBuyStringSections[2];
+        end
+        local CanNotBuyStringTableText = XGUIEng.GetStringTableText("Feedback_TextLines/" .. CanNotBuyString);
+        if CanBuyBoolean == false
+        and CanNotBuyStringTableText == "" then
+            local StorehouseGoodIndex = Logic.GetIndexOnOutStockByGoodType(StorehouseID, _Costs[1]);
+            if _Costs[1] == Goods.G_Gold then
+                CanNotBuyStringTableText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_G_Gold");
+            elseif StorehouseGoodIndex ~= -1 then
+                CanNotBuyStringTableText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_Resources");
+            else
+                CanNotBuyStringTableText = XGUIEng.GetStringTableText("Feedback_TextLines/TextLine_NotEnough_Goods");
+            end
+        end
+        return CanBuyBoolean, CanNotBuyStringTableText;
+    end
+
+    GUI_Tooltip.SetCosts = function(_TooltipCostsContainer, _Costs, _GoodsInSettlementBoolean)
+        local TooltipCostsContainerPath = XGUIEng.GetWidgetPathByID(_TooltipCostsContainer);
+        local Good1ContainerPath = TooltipCostsContainerPath .. "/1Good";
+        local Goods2ContainerPath = TooltipCostsContainerPath .. "/2Goods";
+        local NumberOfValidAmounts = 0;
+        local Good1Path;
+        local Good2Path;
+        for i = 2, #_Costs, 2 do
+            if _Costs[i] ~= 0 then
+                NumberOfValidAmounts = NumberOfValidAmounts + 1;
+            end
+        end
+        if NumberOfValidAmounts == 0 then
+            XGUIEng.ShowWidget(Good1ContainerPath, 0);
+            XGUIEng.ShowWidget(Goods2ContainerPath, 0);
+            return
+        elseif NumberOfValidAmounts == 1 then
+            XGUIEng.ShowWidget(Good1ContainerPath, 1);
+            XGUIEng.ShowWidget(Goods2ContainerPath, 0);
+            Good1Path = Good1ContainerPath .. "/Good1Of1";
+        elseif NumberOfValidAmounts == 2 then
+            XGUIEng.ShowWidget(Good1ContainerPath, 0);
+            XGUIEng.ShowWidget(Goods2ContainerPath, 1);
+            Good1Path = Goods2ContainerPath .. "/Good1Of2";
+            Good2Path = Goods2ContainerPath .. "/Good2Of2";
+        elseif NumberOfValidAmounts > 2 then
+            GUI.AddNote("Debug: Invalid Costs table. Not more than 2 GoodTypes allowed.");
+        end
+
+        local ContainerIndex = 1
+        for i = 1, #_Costs, 2 do
+            if _Costs[i + 1] ~= 0 then
+                local CostsGoodType = _Costs[i]
+                local CostsGoodAmount = _Costs[i + 1]
+                local IconWidget
+                local AmountWidget
+                if ContainerIndex == 1 then
+                    IconWidget = Good1Path .. "/Icon"
+                    AmountWidget = Good1Path .. "/Amount"
+                else
+                    IconWidget = Good2Path .. "/Icon"
+                    AmountWidget = Good2Path .. "/Amount"
+                end
+                SetIcon(IconWidget, g_TexturePositions.Goods[CostsGoodType], 44);
+                local PlayerID = GUI.GetPlayerID();
+                local PlayersGoodAmount;
+                if _GoodsInSettlementBoolean == true then
+                    PlayersGoodAmount = GetPlayerGoodsInSettlement(CostsGoodType, PlayerID, true);
+                else
+                    local IsInOutStock;
+                    local BuildingID;
+                    if CostsGoodType == Goods.G_Gold then
+                        BuildingID = Logic.GetHeadquarters(PlayerID);
+                        IsInOutStock = (BuildingID == 0 and -1) or Logic.GetIndexOnOutStockByGoodType(BuildingID, CostsGoodType);
+                    else
+                        BuildingID = Logic.GetStoreHouse(PlayerID);
+                        IsInOutStock = (BuildingID == 0 and -1) or Logic.GetIndexOnOutStockByGoodType(BuildingID, CostsGoodType);
+                    end
+                    if IsInOutStock ~= -1 then
+                        PlayersGoodAmount = Logic.GetAmountOnOutStockByGoodType(BuildingID, CostsGoodType);
+                    else
+                        BuildingID = GUI.GetSelectedEntity();
+                        if BuildingID ~= nil then
+                            if Logic.GetIndexOnOutStockByGoodType(BuildingID, CostsGoodType) == nil then
+                                BuildingID = Logic.GetRefillerID(GUI.GetSelectedEntity());
+                            end
+                            PlayersGoodAmount = Logic.GetAmountOnOutStockByGoodType(BuildingID, CostsGoodType);
+                        else
+                            PlayersGoodAmount = 0;
+                        end
+                    end
+                end
+                local Color = "";
+                if PlayersGoodAmount < CostsGoodAmount then
+                    Color = "{@script:ColorRed}"
+                end
+                if CostsGoodAmount > 0 then
+                    XGUIEng.SetText(AmountWidget, "{center}" .. Color .. CostsGoodAmount);
+                else
+                    XGUIEng.SetText(AmountWidget, "");
+                end
+                ContainerIndex = ContainerIndex + 1;
+            end
+        end
+    end
 end
 
 -- -------------------------------------------------------------------------- --

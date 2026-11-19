@@ -76,7 +76,7 @@ end
 function Lib.Core.Placeholder:OverwriteGetStringTableText()
     XGUIEng.GetStringTableText_Orig_Core = XGUIEng.GetStringTableText;
     XGUIEng.GetStringTableText = function(_key)
-        return Lib.Core.Placeholder:GetStringTableOverwrite(_key)
+        return Lib.Core.Placeholder:GetStringTableOverwrite(_key);
     end
 end
 
