@@ -15,6 +15,7 @@ CONST_IO_SLAVE_STATE = {};
 CONST_IO_LAST_OBJECT = 0;
 CONST_IO_LAST_HERO = 0;
 
+Lib.Require("comfort/AddWare");
 Lib.Require("comfort/GetClosestToTarget");
 Lib.Require("comfort/IsLocalScript");
 Lib.Require("comfort/IsHistoryEdition");
@@ -36,6 +37,8 @@ function Lib.IO.Global:Initialize()
         Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
         Report.ObjectReset = CreateReport("Event_ObjectReset");
         Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+
+        Report.Internal_PayInstant = CreateReport("Event_Internal_PayInstant");
 
         Lib.IO.Shared:CreateTechnologies();
 
@@ -59,6 +62,8 @@ function Lib.IO.Global:OnReportReceived(_ID, ...)
         self.LoadscreenClosed = true;
     elseif _ID == Report.ObjectInteraction then
         self:OnObjectInteraction(arg[1], arg[2], arg[3]);
+    elseif _ID == Report.Internal_PayInstant then
+        self:PayInteractionCostsInstantly(arg[1], arg[2]);
     elseif _ID == Report.ChatClosed then
         if arg[3] then
             self:ProcessChatInput(arg[1]);
@@ -183,10 +188,10 @@ function Lib.IO.Global:SetupObject(_Object)
     if _Object.Reward then
         Logic.InteractiveObjectAddRewards(ID, _Object.Reward[1], _Object.Reward[2]);
     end
-    if _Object.Costs and _Object.Costs[1] then
+    if _Object.Costs and _Object.Costs[1] and not _Object.InstantPay then
         Logic.InteractiveObjectAddCosts(ID, _Object.Costs[1], _Object.Costs[2]);
     end
-    if _Object.Costs and _Object.Costs[3] then
+    if _Object.Costs and _Object.Costs[3] and not _Object.InstantPay then
         Logic.InteractiveObjectAddCosts(ID, _Object.Costs[3], _Object.Costs[4]);
     end
     table.insert(HiddenTreasures, ID);
@@ -330,6 +335,17 @@ function Lib.IO.Global:StartObjectConditionController()
     end);
 end
 
+function Lib.IO.Global:PayInteractionCostsInstantly(_ScriptName, _PlayerID)
+    if CONST_IO[_ScriptName] and CONST_IO[_ScriptName].Costs then
+        for i= 1, 3, 2 do
+            if CONST_IO[_ScriptName].Costs[i] then
+                local GoodType, GoodAmount = CONST_IO[_ScriptName].Costs[i], CONST_IO[_ScriptName].Costs[i+1];
+                AddWare(GoodType, (-1) * GoodAmount, _PlayerID);
+            end
+        end
+    end
+end
+
 -- -------------------------------------------------------------------------- --
 -- Local
 
@@ -339,6 +355,8 @@ function Lib.IO.Local:Initialize()
         Report.ObjectInteraction = CreateReport("Event_ObjectInteraction");
         Report.ObjectReset = CreateReport("Event_ObjectReset");
         Report.ObjectDelete = CreateReport("Event_ObjectDelete");
+
+        Report.Internal_PayInstant = CreateReport("Event_Internal_PayInstant");
 
         Lib.IO.Shared:CreateTechnologies();
 
@@ -368,6 +386,18 @@ function Lib.IO.Local:OnReportReceived(_ID, ...)
     end
 end
 
+function Lib.IO.Local:InteractiveObjectClickedInstant(_ScriptName, _PlayerID)
+    if CONST_IO[_ScriptName] and CONST_IO[_ScriptName].Costs then
+        local CanBuy, CanNotBuyString = AreCostsAffordable(CONST_IO[_ScriptName].Costs);
+        if not CanBuy then
+            Message(CanNotBuyString);
+            return;
+        end
+        SendReportToGlobal(Report.Internal_PayInstant, _ScriptName, _PlayerID);
+    end
+    GUI_Interaction.InteractiveObjectClicked_Orig_Lib_IO();
+end
+
 function Lib.IO.Local:OverrideGameFunctions()
     g_CurrentDisplayedQuestID = 0;
 
@@ -393,13 +423,9 @@ function Lib.IO.Local:OverrideGameFunctions()
                 Message(Text);
                 return;
             end
-            if type(CONST_IO[ScriptName].Costs) == "table" and #CONST_IO[ScriptName].Costs ~= 0 then
-                local StoreHouseID = Logic.GetStoreHouse(PlayerID);
-                local CastleID     = Logic.GetHeadquarters(PlayerID);
-                if StoreHouseID == nil or StoreHouseID == 0 or CastleID == nil or CastleID == 0 then
-                    GUI.AddNote("DEBUG: Player needs special buildings when using activation costs!");
-                    return;
-                end
+            if CONST_IO[ScriptName].Costs and CONST_IO[ScriptName].InstantPay then
+                Lib.IO.Local:InteractiveObjectClickedInstant(ScriptName, PlayerID);
+                return;
             end
         end
         GUI_Interaction.InteractiveObjectClicked_Orig_Lib_IO();
